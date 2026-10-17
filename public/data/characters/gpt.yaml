@@ -1,0 +1,108 @@
+# Real art (generated from her own three-view reference, keyed with the
+# conservative RGB pass — magenta keying eats pale characters, see
+# project_memory.md). The AI output is archived in raws/.
+id: gpt
+name: GPT
+nameZh: "GPT 小龙娘"
+description: |
+    A small white dragon-girl who has never once been the last one standing and does not intend to start now. Everything about her is fast — the run, the reload, the apology she offers after ricocheting off three walls.
+descriptionZh: |
+    小小的白龙娘，从来没当过最后一个站着的人，也不打算从现在开始。她身上一切都快——跑得快、换弹快，连撞了三面墙之后道歉也快。
+imageSize: 2048x2048
+prompt: |
+    The 11th Forest — GPT sprite sheet
+
+    GPT — fast and fragile, rapid fire, white dragon / twin-tail sets.
+
+    Layout and hard negatives follow the house format documented in
+    `whale-girl.yaml`: 2048x2048, 4x4 grid, one flat continuous magenta field,
+    no grid lines, no text, no watermark, and the same character in all 16
+    cells — idle (row 1), walk (row 2), run (row 3), dodge (row 4).
+hp: 72
+sp: 95
+luck: 7
+moveSpeed: 6.4
+spRegenMs: 3000
+gender: female
+body:
+    halfW: 22
+    halfH: 22
+dodge:
+    spCost: 10
+    speed: 18
+    durationMs: 180
+    cooldownMs: 420
+hotbar: []
+weaponMax: 4
+upgrades:
+    # Tavern upgrade ladders. `costs.length` IS the max level. The cheapest
+    # column is the character's own growth axis — that is what separates the
+    # five AI girls from each other, see 角色数值总表.md.
+    armor:
+        costs: [40, 80, 132, 198, 288]
+        effects:
+            - { stat: hp, mode: mul, perLevel: 1.12 }
+    agility:
+        costs: [30, 60, 98, 144, 204]
+        effects:
+            - { stat: moveSpeed, mode: mul, perLevel: 1.08 }
+    spirit:
+        costs: [26, 52, 86, 126, 180]
+        effects:
+            - { stat: sp, mode: mul, perLevel: 1.15 }
+            - { stat: spRegenMs, mode: mul, perLevel: 0.92 }
+    luck:
+        costs: [64, 128, 208, 320]
+        effects:
+            - { stat: luck, mode: add, perLevel: 1 }
+stats:
+    # Display-only radar values for the tavern select card (1-10).
+    strength: 4
+    agility: 10
+    vitality: 3
+    spirit: 7
+sfx:
+    dodge: dodge
+    hurtFemale: player-hurt-female
+    throttleMs: 1200
+    footstep: footstep
+    footstepThrottleMs: 200
+    lowHpHeartbeat: low-hp-heartbeat
+    lowHpThreshold: 0.3
+    lowHpPulseMs: 900
+sprite:
+    texture: assets/image/characters/gpt.png
+    grid:
+        rows: 4
+        cols: 4
+    # Visual scale tracks `body` against whale-girl's 26x26 → 1.35, so the
+    # sprite and the physics box stay in proportion across the roster.
+    scale: 1.15
+    offset:
+        left: -2
+        bottom: -4
+anims:
+    idle:
+        frames:
+            - 0
+            - 3
+        frameRate: 6
+        repeat: -1
+    walk:
+        frames:
+            - 4
+            - 7
+        frameRate: 10
+        repeat: -1
+    run:
+        frames:
+            - 8
+            - 11
+        frameRate: 12
+        repeat: -1
+    dodge:
+        frames:
+            - 12
+            - 15
+        frameRate: 14
+        repeat: 0

@@ -1,0 +1,108 @@
+# PLACEHOLDER ASSET — `sprite.texture` is a copy of the retired upstream
+# bunny-girl sheet (same 4x4 layout) so the character is playable before her real
+# art lands. Swap the texture, then drop this comment — YAML-only, no code.
+id: claude
+name: Claude
+nameZh: "克劳德"
+description: |
+    A tall, unhurried scholar who treats the battlefield as a page to be annotated. Slow to arrive and slow to fall, she answers the room one long shot at a time and would rather already have the answer than be fast about finding it.
+descriptionZh: |
+    个子高、做事慢的学者，把战场当成一页等着批注的稿纸。来得慢，倒得也慢；她一向用一发长射来回复整个房间，宁愿答案先在手，也不愿快着去找。
+imageSize: 2048x2048
+prompt: |
+    The 11th Forest — Claude sprite sheet
+
+    Claude — thick and slow, long-range single shot, book/page motif.
+
+    Layout and hard negatives follow the house format documented in
+    `whale-girl.yaml`: 2048x2048, 4x4 grid, one flat continuous magenta field,
+    no grid lines, no text, no watermark, and the same character in all 16
+    cells — idle (row 1), walk (row 2), run (row 3), dodge (row 4).
+hp: 115
+sp: 55
+luck: 5
+moveSpeed: 3.6
+spRegenMs: 5200
+gender: female
+body:
+    halfW: 30
+    halfH: 30
+dodge:
+    spCost: 16
+    speed: 13
+    durationMs: 240
+    cooldownMs: 700
+hotbar: []
+weaponMax: 2
+upgrades:
+    # Tavern upgrade ladders. `costs.length` IS the max level. The cheapest
+    # column is the character's own growth axis — that is what separates the
+    # five AI girls from each other, see 角色数值总表.md.
+    armor:
+        costs: [24, 48, 80, 120, 176]
+        effects:
+            - { stat: hp, mode: mul, perLevel: 1.12 }
+    agility:
+        costs: [52, 104, 168, 248, 352]
+        effects:
+            - { stat: moveSpeed, mode: mul, perLevel: 1.08 }
+    spirit:
+        costs: [44, 88, 144, 212, 300]
+        effects:
+            - { stat: sp, mode: mul, perLevel: 1.15 }
+            - { stat: spRegenMs, mode: mul, perLevel: 0.92 }
+    luck:
+        costs: [96, 192, 312, 480]
+        effects:
+            - { stat: luck, mode: add, perLevel: 1 }
+stats:
+    # Display-only radar values for the tavern select card (1-10).
+    strength: 3
+    agility: 2
+    vitality: 9
+    spirit: 4
+sfx:
+    dodge: dodge
+    hurtFemale: player-hurt-female
+    throttleMs: 1200
+    footstep: footstep
+    footstepThrottleMs: 200
+    lowHpHeartbeat: low-hp-heartbeat
+    lowHpThreshold: 0.3
+    lowHpPulseMs: 900
+sprite:
+    texture: assets/image/characters/claude.png
+    grid:
+        rows: 4
+        cols: 4
+    # Visual scale tracks `body` against whale-girl's 26x26 → 1.35, so the
+    # sprite and the physics box stay in proportion across the roster.
+    scale: 1.55
+    offset:
+        left: -2
+        bottom: -4
+anims:
+    idle:
+        frames:
+            - 0
+            - 3
+        frameRate: 6
+        repeat: -1
+    walk:
+        frames:
+            - 4
+            - 7
+        frameRate: 10
+        repeat: -1
+    run:
+        frames:
+            - 8
+            - 11
+        frameRate: 12
+        repeat: -1
+    dodge:
+        frames:
+            - 12
+            - 15
+        frameRate: 14
+        repeat: 0

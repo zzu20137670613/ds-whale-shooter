@@ -45,6 +45,24 @@ const SpriteOffsetSchema = z
     .strict()
     .optional();
 
+/**
+ * A character skill. Only `headgear` exists so far (Seed): press the key to
+ * put the mascot head on, it soaks up the next few hits instead of her HP,
+ * then breaks and goes on cooldown. Absorbing counts HITS, not HP, so the
+ * value reads as "how many mistakes it forgives".
+ */
+const SkillSchema = z
+    .object({
+        kind: z.literal('headgear'),
+        /** Hits soaked up before it breaks. */
+        absorbHits: z.number().int().gt(0),
+        /** Cooldown before a broken headgear can be worn again. */
+        cooldownMs: z.number().int().gte(0),
+        /** Additive tint while worn. Defaults to HEADGEAR_DEFAULT_TINT. */
+        tintColor: z.number().int().gte(0).optional(),
+    })
+    .strict();
+
 const SpriteSchema = z
     .object({
         texture: z.string().min(1),
@@ -181,6 +199,7 @@ export const CharacterSpecSchema = z
         luck: z.number().int().gte(1).lte(10).optional(),
         /** Per-character audio identity — SFX ids + tuning knobs for
          *  dodge / hurt / footstep / low-HP heartbeat. All optional. */
+        skill: SkillSchema.optional(),
         sfx: CharacterSfxSchema.optional(),
         sprite: SpriteSchema.optional(),
         anims: AnimsSchema.optional(),

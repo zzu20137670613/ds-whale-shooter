@@ -1,0 +1,108 @@
+# PLACEHOLDER ASSET — `sprite.texture` is a copy of the retired upstream
+# kitty sheet (same 4x4 layout) so the character is playable before her real
+# art lands. Swap the texture, then drop this comment — YAML-only, no code.
+id: qwen
+name: Qwen
+nameZh: "千问"
+description: |
+    A technician who fights like she is drawing a diagram: a fan here, a talisman there, and the room arranged the way she wants it before anyone notices she has started.
+descriptionZh: |
+    技法型的角色，打架像在画图：这边一扇、那边一符，等别人反应过来，房间已经被她摆成想要的样子了。
+imageSize: 2048x2048
+prompt: |
+    The 11th Forest — Qwen sprite sheet
+
+    Qwen — technique type, fan and talisman crowd control. (Needs a new portrait.)
+
+    Layout and hard negatives follow the house format documented in
+    `whale-girl.yaml`: 2048x2048, 4x4 grid, one flat continuous magenta field,
+    no grid lines, no text, no watermark, and the same character in all 16
+    cells — idle (row 1), walk (row 2), run (row 3), dodge (row 4).
+hp: 88
+sp: 85
+luck: 8
+moveSpeed: 4.6
+spRegenMs: 3400
+gender: female
+body:
+    halfW: 25
+    halfH: 25
+dodge:
+    spCost: 14
+    speed: 15
+    durationMs: 200
+    cooldownMs: 480
+hotbar: []
+weaponMax: 3
+upgrades:
+    # Tavern upgrade ladders. `costs.length` IS the max level. The cheapest
+    # column is the character's own growth axis — that is what separates the
+    # five AI girls from each other, see 角色数值总表.md.
+    armor:
+        costs: [34, 68, 112, 168, 240]
+        effects:
+            - { stat: hp, mode: mul, perLevel: 1.12 }
+    agility:
+        costs: [46, 92, 150, 222, 316]
+        effects:
+            - { stat: moveSpeed, mode: mul, perLevel: 1.08 }
+    spirit:
+        costs: [28, 56, 92, 136, 192]
+        effects:
+            - { stat: sp, mode: mul, perLevel: 1.15 }
+            - { stat: spRegenMs, mode: mul, perLevel: 0.92 }
+    luck:
+        costs: [68, 136, 220, 340]
+        effects:
+            - { stat: luck, mode: add, perLevel: 1 }
+stats:
+    # Display-only radar values for the tavern select card (1-10).
+    strength: 5
+    agility: 6
+    vitality: 5
+    spirit: 9
+sfx:
+    dodge: dodge
+    hurtFemale: player-hurt-female
+    throttleMs: 1200
+    footstep: footstep
+    footstepThrottleMs: 200
+    lowHpHeartbeat: low-hp-heartbeat
+    lowHpThreshold: 0.3
+    lowHpPulseMs: 900
+sprite:
+    texture: assets/image/characters/qwen.png
+    grid:
+        rows: 4
+        cols: 4
+    # Visual scale tracks `body` against whale-girl's 26x26 → 1.35, so the
+    # sprite and the physics box stay in proportion across the roster.
+    scale: 1.35
+    offset:
+        left: -2
+        bottom: -4
+anims:
+    idle:
+        frames:
+            - 0
+            - 3
+        frameRate: 6
+        repeat: -1
+    walk:
+        frames:
+            - 4
+            - 7
+        frameRate: 10
+        repeat: -1
+    run:
+        frames:
+            - 8
+            - 11
+        frameRate: 12
+        repeat: -1
+    dodge:
+        frames:
+            - 12
+            - 15
+        frameRate: 14
+        repeat: 0

@@ -82,6 +82,7 @@ export const KEY_FIVE = 53;
 export const KEY_SIX = 54;
 export const KEY_SEVEN = 55;
 export const KEY_R = 82;
+export const KEY_E = 69;
 
 // ─── HUD: shared layout values (apply to all HUDs) ────────────────────
 
@@ -189,6 +190,12 @@ export const HUD_WEAPON_AMMO_BAR_INSET = 24;
 
 /** Status bar: bar-local vertical offset for the "Reloading…/Full" caption. */
 export const HUD_STATUS_LABEL_OFFSET_Y = -2;
+
+// ─── Skill: headgear (Seed) ────────────────────────────────────────────
+
+/** Additive tint that shows the mascot headgear is worn. A warm mascot gold,
+ *  deliberately unlike the crimson hurt flash and the cyan dodge trail. */
+export const HEADGEAR_DEFAULT_TINT = 0xffe9a8;
 
 // ─── Character: locomotion (sprint) ────────────────────────────────────
 

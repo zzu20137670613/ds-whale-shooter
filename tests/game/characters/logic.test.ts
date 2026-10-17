@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+    absorbHit,
     clampToBounds,
     dodgeIntent,
     moveIntent,
@@ -8,6 +9,7 @@ import {
     resolveHurtSfx,
     resolveLocomotion,
     resolveMoveSpeed,
+    resolveSkill,
 } from '@/game/characters/logic';
 import { CHARACTER_SPRINT_MULTIPLIER } from '@/lib/constants';
 
@@ -199,5 +201,42 @@ describe('characters/logic — pickNearestMonster (mobile auto-aim)', () => {
         const m = { id: 'm', x: -50, y: -50 };
         const got = pickNearestMonster([m], 0, 0);
         expect(got).toBe(m);
+    });
+});
+
+describe('characters/logic — resolveSkill (Seed headgear)', () => {
+    it('wears the headgear on a press when it is off and ready', () => {
+        expect(resolveSkill(true, 0, 0, 1000, 3)).toEqual({ wear: true, hitsLeft: 3 });
+    });
+
+    it('does nothing without a press', () => {
+        expect(resolveSkill(false, 0, 0, 1000, 3)).toEqual({ wear: false, hitsLeft: 0 });
+    });
+
+    it('refuses to wear it again while it is already on', () => {
+        expect(resolveSkill(true, 2, 0, 1000, 3)).toEqual({ wear: false, hitsLeft: 2 });
+    });
+
+    it('refuses while a broken headgear is still on cooldown', () => {
+        expect(resolveSkill(true, 0, 5000, 1000, 3)).toEqual({ wear: false, hitsLeft: 0 });
+        expect(resolveSkill(true, 0, 1000, 1000, 3)).toEqual({ wear: true, hitsLeft: 3 });
+    });
+});
+
+describe('characters/logic — absorbHit', () => {
+    it('absorbs one hit and counts down', () => {
+        expect(absorbHit(3)).toEqual({ hitsLeft: 2, absorbed: true });
+    });
+
+    it('the last hit breaks it', () => {
+        expect(absorbHit(1)).toEqual({ hitsLeft: 0, absorbed: true });
+    });
+
+    it('lets the hit through when it is not worn', () => {
+        expect(absorbHit(0)).toEqual({ hitsLeft: 0, absorbed: false });
+    });
+
+    it('never goes negative', () => {
+        expect(absorbHit(-2)).toEqual({ hitsLeft: 0, absorbed: false });
     });
 });
