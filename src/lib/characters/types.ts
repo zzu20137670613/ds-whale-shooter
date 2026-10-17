@@ -9,7 +9,10 @@
  *   moveSpeed       — px/sec top-down
  *   spRegenMs       — time to refill SP from 0 to max
  *   body            — physical body dimensions (Matter rectangle)
- *   dodge           — Shift-dodge parameters (SP cost, speed, timing)
+ *   dodge           — Space-dodge parameters (SP cost, speed, timing)
+ *   anims           — named animation tracks: idle / walk / run / dodge.
+ *                     `run` is the sprint (held Shift), and one is only needed
+ *                     if the sheet has a run row — otherwise sprints walk.
  *   hotbar          — starting weapon IDs in display order
  *                    (mutable in memory: future pickups swap entries)
  *

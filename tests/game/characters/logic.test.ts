@@ -6,7 +6,41 @@ import {
     moveIntent,
     pickNearestMonster,
     resolveHurtSfx,
+    resolveLocomotion,
+    resolveMoveSpeed,
 } from '@/game/characters/logic';
+import { CHARACTER_SPRINT_MULTIPLIER } from '@/lib/constants';
+
+describe('characters/logic — resolveLocomotion', () => {
+    it('stands still when there is no movement input, sprint or not', () => {
+        expect(resolveLocomotion(false, false)).toBe('idle');
+        expect(resolveLocomotion(false, true)).toBe('idle');
+    });
+
+    it('walks when moving without the sprint key', () => {
+        expect(resolveLocomotion(true, false)).toBe('walk');
+    });
+
+    it('runs when moving and sprinting', () => {
+        expect(resolveLocomotion(true, true)).toBe('run');
+    });
+});
+
+describe('characters/logic — resolveMoveSpeed', () => {
+    it('returns the spec speed untouched when not sprinting', () => {
+        expect(resolveMoveSpeed(5, false)).toBe(5);
+        expect(resolveMoveSpeed(0, false)).toBe(0);
+    });
+
+    it('applies the sprint multiplier when sprinting', () => {
+        expect(resolveMoveSpeed(5, true)).toBeCloseTo(5 * CHARACTER_SPRINT_MULTIPLIER);
+    });
+
+    it('is always faster than walking — a multiplier below 1 would be a bug', () => {
+        expect(CHARACTER_SPRINT_MULTIPLIER).toBeGreaterThan(1);
+        expect(resolveMoveSpeed(7, true)).toBeGreaterThan(resolveMoveSpeed(7, false));
+    });
+});
 
 describe('characters/logic — moveIntent', () => {
     it('returns zero when no key pressed', () => {
@@ -49,7 +83,7 @@ describe('characters/logic — dodgeIntent', () => {
     const NO_INTENT = { vx: 0, vy: 0 };
     const FWD = { vx: 1, vy: 0 };
 
-    it('returns null when shift not pressed', () => {
+    it('returns null when the dodge key is not pressed (dodge is Space, not Shift)', () => {
         expect(dodgeIntent(false, FWD, 100, 15, 600, 0, 0, 28, 1000)).toBeNull();
     });
 
