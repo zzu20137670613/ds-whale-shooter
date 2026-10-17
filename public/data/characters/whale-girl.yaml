@@ -1,0 +1,163 @@
+id: whale-girl
+name: Whale
+nameZh: "鲸娘"
+description: |
+    A small whale-girl who drifted in with the tide and stayed for the
+    tavern's cooking. She keeps a round whale plush tucked under one arm
+    and treats every weapon in the room as something worth trying once.
+    Even-tempered, hard to knock down, and impossible to talk out of a
+    fight she has already decided to enjoy.
+descriptionZh: |
+    随潮水漂来的小鲸娘，为了酒馆的饭菜留了下来。她总把一只圆滚滚的鲸鱼玩偶夹在腋下，把屋里每把武器都当成值得试一次的东西。脾气很稳，很难被放倒，一旦决定要享受这场架，谁也劝不动。
+# PLACEHOLDER ASSET — `sprite.texture` currently points at a copy of the
+# bunny-girl sheet (same 4x4 layout) so the data pipeline can be
+# exercised before her real art exists. Swap the texture path (and add a
+# `sprite.script` block for the raw sheet) once the real art lands — that
+# is a YAML-only change, no code.
+imageSize: 2048x2048
+prompt: |
+    The 11th Forest — Whale Girl sprite sheet
+
+    HARD NEGATIVE PROMPTS (must NOT appear in the image):
+      - No visible grid, no dividers, no borders, no ground, no scene,
+        no text, no logo, no watermark.
+      - No grid lines, no cell borders, no separators of any kind between
+        the 4x4 frames.
+      - No guide marks, no reference crosses, no axis labels, no frame
+        numbers, no "Frame N" text, no index annotations.
+      - No checkerboard pattern, no tile outline overlays, no debug
+        visualizations.
+      - The 4x4 layout is COMPLETELY IMPLIED by the character's position
+        — the magenta background is one continuous flat field everywhere
+        except where the character is drawn.
+
+    CRITICAL LAYOUT (must be EXACTLY this — 16 cells, no more, no less,
+    4 rows x 4 columns, every cell the same size):
+
+      ┌────┬────┬────┬────┐
+      │  0 │  1 │  2 │  3 │   row 1: idle (4 frames)
+      ├────┼────┼────┼────┤
+      │  4 │  5 │  6 │  7 │   row 2: walk (4 frames)
+      ├────┼────┼────┼────┤
+      │  8 │  9 │ 10 │ 11 │   row 3: run (4 frames)
+      ├────┼────┼────┼────┤
+      │ 12 │ 13 │ 14 │ 15 │   row 4: dodge (4 frames)
+      └────┴────┴────┴────┘
+
+    Image size 2048x2048 (1:1), laid out as a 4x4 grid so each cell is
+    512x512 px. The character is ~360x480 px in each cell, centered
+    horizontally, with feet at ~85% cell height. No overlapping between
+    cells. The character faces RIGHT in every frame (her right side =
+    screen right); left-facing or back-facing poses are wrong.
+
+    Character: a chibi whale-girl — a small round-bodied girl with short
+    deep-blue hair fading to white at the tips, two small whale-fluke
+    hair ornaments, and a soft white belly patch visible at her collar.
+    A tiny whale tail pokes out at the small of her back. She wears a
+    navy-and-white maid-style dress with a pale apron, short puffed
+    sleeves, white thigh-highs and dark rounded shoes. One arm hugs a
+    small round whale plush against her chest in every frame. Chibi
+    head-to-body ratio (~1:2). Outline: 1-pixel dark navy outline, clean
+    pixel-art shading with 2-3 tonal steps per material (no smooth
+    gradients).
+
+    Same character in every frame — face, hair, flukes, outfit, plush,
+    proportions are identical. Only the pose changes.
+
+    Frames 0-3 (idle, 4 frames, row 1):
+      Standing still, plush hugged to her chest, calm breathing, slight
+      bob, fluke ornaments swaying. No leaning forward, no running.
+
+    Frames 4-7 (walk, 4 frames, row 2):
+      A single WALK CYCLE — walks in place, legs alternating, free arm
+      swinging in counter-rhythm. Upright and unhurried, not a run.
+
+    Frames 8-11 (run, 4 frames, row 3):
+      A sprint cycle. Body leaning forward, hair and flukes streaming
+      back, legs in long strides, plush still clutched tight.
+
+    Frames 12-15 (dodge, 4 frames, row 4):
+      A forward dive / roll, body low and horizontal mid-air. Frame 15
+      recovers to a half-crouch ready to spring again.
+
+    Style requirements:
+    - High-end handcrafted 16-bit RPG aesthetic.
+    - Inspired by Chrono Trigger, Eastward, Children of Morta, Hyper Light
+      Drifter, and premium modern indie pixel games.
+    - Hard clean pixel edges, no anti-aliasing on the silhouette.
+    - Limited muted palette: ~32 colors total.
+    - No magenta or pink anywhere on the character body; the background
+      is the only place magenta appears.
+hp: 95
+sp: 75
+luck: 6
+moveSpeed: 5
+spRegenMs: 4200
+gender: female
+body:
+    halfW: 26
+    halfH: 26
+dodge:
+    spCost: 12
+    speed: 15
+    durationMs: 200
+    cooldownMs: 500
+hotbar: []
+weaponMax: 3
+upgrades:
+    # Tavern upgrade ladders. `costs.length` IS the max level.
+    # armor->hp, agility->moveSpeed, spirit->sp+spRegenMs, luck->luck.
+    armor:
+        costs: [30, 60, 100, 150, 220]
+        effects:
+            - { stat: hp, mode: mul, perLevel: 1.12 }
+    agility:
+        costs: [40, 80, 130, 190, 270]
+        effects:
+            - { stat: moveSpeed, mode: mul, perLevel: 1.08 }
+    spirit:
+        costs: [35, 70, 115, 170, 240]
+        effects:
+            - { stat: sp, mode: mul, perLevel: 1.15 }
+            - { stat: spRegenMs, mode: mul, perLevel: 0.92 }
+    luck:
+        costs: [80, 160, 260, 400]
+        effects:
+            - { stat: luck, mode: add, perLevel: 1 }
+sfx:
+    dodge: dodge
+    hurtFemale: player-hurt-female
+    throttleMs: 1200
+    footstep: footstep
+    footstepThrottleMs: 200
+    lowHpHeartbeat: low-hp-heartbeat
+    lowHpThreshold: 0.3
+    lowHpPulseMs: 900
+sprite:
+    texture: assets/image/characters/whale-girl.png
+    grid:
+        rows: 4
+        cols: 4
+    scale: 1.35
+    offset:
+        left: -2
+        bottom: -4
+anims:
+    idle:
+        frames:
+            - 0
+            - 3
+        frameRate: 6
+        repeat: -1
+    walk:
+        frames:
+            - 4
+            - 7
+        frameRate: 10
+        repeat: -1
+    dodge:
+        frames:
+            - 12
+            - 15
+        frameRate: 14
+        repeat: 0

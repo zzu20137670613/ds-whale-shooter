@@ -1,0 +1,45 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Env files: keep .env.example tracked, ignore the rest
+.env
+.env.*
+!.env.example
+
+# Local scratch / AI gen outputs (image, music, …)
+/tmp/
+.playground
+
+# Claude working notes (plans, scratch)
+.claude
+# Public backup (created before editor changes for safe rollback)
+public-bk/
+
+grok
+.grok
+# AI source sheets (assets/**/raws/) - the game loads the PROCESSED
+# sprites, not these. They are source material, not runtime assets, and
+# make up ~73 of the ~110 MB in public/. Excluded on the owner's call.
+raws/

@@ -1,0 +1,26 @@
+name: Thorn Bolt
+nameZh: "荆棘弩矢"
+damage: 6
+cooldownMs: 550
+range: 520
+upgrades:
+    # Tavern weapon ladder. `costs.length` IS the max level.
+    costs: [40, 90, 160, 250, 360]
+    damageMulPerLevel: 1.15
+bulletsPerShot: 1
+bullet:
+    texture: assets/image/weapons/thorn-bolt.png
+    type: projectile
+    scale: 0.5
+    anchor: [0.5, 0.5]
+projectile:
+    speed: 22
+    visual:
+        radius: 3
+        width: 10
+        height: 4
+        color: 0x586B48
+    lifeMs: 1500
+sfx:
+    shoot: gunner-shoot
+    bulletWall: bullet-wall

@@ -1,0 +1,311 @@
+/**
+ * src/editor/sections/scenes-list.tsx
+ * --------------------------------------------------------------------------
+ * Scenes sub-tab — list every scene in index.yaml, jump to it (in-Phaser
+ * restart), create a new scene.
+ */
+
+import { useEffect, useId, useRef, useState } from 'react';
+import { ArrowRight, ChevronDown, ChevronRight, Plus } from 'lucide-react';
+
+import { Button } from '@/components/ui/button';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import type { Level } from '@/lib/levels/types';
+import { resolveAndRestart } from '@/lib/phaser-game';
+
+import { BackgroundSection } from './background';
+import { SettingsSection } from './settings';
+import { TeleportersSection } from './teleporters';
+
+interface SceneRow {
+    id: string;
+    title: string;
+}
+
+interface Props {
+    currentSceneId: string | null;
+    onSceneChange: (id: string) => void;
+    level?: Level | null;
+    setLevel?: (next: Level) => void;
+    /**
+     * Scene id of the row currently expanded inline to show its
+     * Background + Settings. Click the same row to collapse.
+     */
+    expandedSceneId: string | null;
+    onToggleExpand: (id: string | null) => void;
+    /** Forwarded to BackgroundSection so the level gets re-loaded. */
+    onAfterBackgroundSave?: () => void | Promise<void>;
+}
+
+export function ScenesListSection({
+    currentSceneId,
+    onSceneChange,
+    level,
+    setLevel,
+    expandedSceneId,
+    onToggleExpand,
+    onAfterBackgroundSave,
+}: Props) {
+    const [scenes, setScenes] = useState<SceneRow[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const [newOpen, setNewOpen] = useState(false);
+    const [creating, setCreating] = useState(false);
+    // Uncontrolled inputs — refs read on submit. Bypasses every possible
+    // state-vs-DOM fight (Phaser focus theft, browser autofill latching,
+    // controlled-input race conditions).
+    const newIdRef = useRef<HTMLInputElement>(null);
+    const newTitleRef = useRef<HTMLInputElement>(null);
+    // Fresh name per mount so the browser autofill matcher can't latch onto
+    // the input. Without this Chrome will "own" the field and React's
+    // onChange never fires — keystrokes look silently dropped.
+    const formNs = useId();
+
+    useEffect(() => {
+        refresh();
+    }, []);
+
+    async function refresh() {
+        setLoading(true);
+        setError(null);
+        try {
+            const res = await fetch('/api/editor/list-scenes');
+            const body = await res.json();
+            if (!res.ok) throw new Error(body.error ?? `HTTP ${res.status}`);
+            setScenes(body.scenes ?? []);
+        } catch (e) {
+            setError(String((e as Error).message ?? e));
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    async function jumpTo(id: string) {
+        try {
+            await resolveAndRestart(id);
+            onSceneChange(id);
+        } catch (e) {
+            setError(`Failed to jump: ${(e as Error).message ?? e}`);
+        }
+    }
+
+    async function handleCreate() {
+        const id = (newIdRef.current?.value ?? '').trim();
+        if (!id) return;
+        setCreating(true);
+        setError(null);
+        try {
+            const res = await fetch('/api/editor/create-scene', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    id,
+                    title: (newTitleRef.current?.value ?? '').trim() || id,
+                }),
+            });
+            const body = await res.json();
+            if (!res.ok) throw new Error(body.error ?? `HTTP ${res.status}`);
+            setNewOpen(false);
+            if (newIdRef.current) newIdRef.current.value = '';
+            if (newTitleRef.current) newTitleRef.current.value = '';
+            await refresh();
+            // jump to the new scene
+            await jumpTo(id);
+        } catch (e) {
+            setError(String((e as Error).message ?? e));
+        } finally {
+            setCreating(false);
+        }
+    }
+
+    return (
+        <div className="flex flex-col gap-3 text-xs">
+            {error && <div className="text-red-400 text-[11px]">{error}</div>}
+
+            <div className="flex items-center justify-between">
+                <div className="font-semibold text-neutral-300">Scenes</div>
+                <Button
+                    size="sm"
+                    className="gap-1 bg-cyan-500 hover:bg-cyan-400 text-black font-semibold h-7 text-xs"
+                    onClick={() => setNewOpen(true)}
+                >
+                    <Plus className="size-3" />
+                    New
+                </Button>
+            </div>
+
+            {loading && <div className="text-neutral-500 italic">Loading…</div>}
+            {!loading && scenes.length === 0 && (
+                <div className="text-neutral-500 italic text-center py-4">
+                    No scenes in index.yaml.
+                </div>
+            )}
+
+            <div className="flex flex-col gap-1">
+                {scenes.map((s) => {
+                    const isCurrent = s.id === currentSceneId;
+                    const isExpanded = expandedSceneId === s.id;
+                    return (
+                        <div
+                            key={s.id}
+                            className={`border rounded ${
+                                isCurrent
+                                    ? 'bg-cyan-950/40 border-cyan-500/60 text-cyan-200'
+                                    : 'bg-neutral-900 border-neutral-800 text-neutral-300'
+                            }`}
+                        >
+                            <div className="flex items-center gap-2 px-2 py-1.5">
+                                <button
+                                    type="button"
+                                    onClick={() => onToggleExpand(isExpanded ? null : s.id)}
+                                    className="text-neutral-400 hover:text-neutral-100"
+                                    aria-label={isExpanded ? 'Collapse' : 'Expand'}
+                                >
+                                    {isExpanded ? (
+                                        <ChevronDown className="size-3" />
+                                    ) : (
+                                        <ChevronRight className="size-3" />
+                                    )}
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => onToggleExpand(isExpanded ? null : s.id)}
+                                    className="flex-1 min-w-0 text-left"
+                                    title={isExpanded ? 'Collapse this scene' : 'Expand this scene'}
+                                >
+                                    <div className="font-medium truncate text-[12px]">
+                                        {s.title}
+                                    </div>
+                                    <div className="text-[10px] font-mono text-neutral-500 truncate">
+                                        {s.id}
+                                    </div>
+                                </button>
+                                {isCurrent ? (
+                                    <span className="text-[10px] font-semibold text-cyan-400 px-1.5">
+                                        Active
+                                    </span>
+                                ) : (
+                                    <Button
+                                        size="sm"
+                                        variant="outline"
+                                        onClick={() => jumpTo(s.id)}
+                                        className="h-6 text-[10px] gap-1 px-2 bg-transparent border-neutral-700"
+                                    >
+                                        Jump
+                                        <ArrowRight className="size-3" />
+                                    </Button>
+                                )}
+                            </div>
+                            {isExpanded && isCurrent && level && setLevel && (
+                                <div className="border-t border-neutral-800 p-2 flex flex-col gap-3">
+                                    <BackgroundSection
+                                        sceneId={s.id}
+                                        level={level}
+                                        setLevel={setLevel}
+                                        onAfterSave={onAfterBackgroundSave}
+                                    />
+                                    <SettingsSection level={level} setLevel={setLevel} />
+                                    <TeleportersSection level={level} setLevel={setLevel} />
+                                </div>
+                            )}
+                            {isExpanded && !isCurrent && (
+                                <div className="border-t border-neutral-800 px-2 py-2 text-[10px] text-neutral-500 italic">
+                                    Jump to this scene to edit its background, settings &amp;
+                                    teleporters.
+                                </div>
+                            )}
+                        </div>
+                    );
+                })}
+            </div>
+
+            <Dialog open={newOpen} onOpenChange={setNewOpen}>
+                <DialogContent className="bg-neutral-900 border-neutral-800 text-neutral-200">
+                    <DialogHeader>
+                        <DialogTitle className="text-base font-semibold">New Scene</DialogTitle>
+                        <DialogDescription className="text-xs text-neutral-400 pt-1">
+                            Creates an empty level yaml + appends to <code>levels/index.yaml</code>.
+                            You'll be jumped to it immediately.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="flex flex-col gap-2">
+                        <div>
+                            <Label className="text-[11px] text-neutral-400 leading-none font-normal mb-0.5">
+                                ID (kebab-case, used as filename)
+                            </Label>
+                            <Input
+                                autoFocus
+                                autoComplete="off"
+                                spellCheck={false}
+                                data-form-type="other"
+                                data-lpignore="true"
+                                data-1p-ignore="true"
+                                name={`${formNs}-id`}
+                                defaultValue=""
+                                ref={newIdRef}
+                                onInput={(e) => {
+                                    // kebab-case sanitisation runs in onInput
+                                    // so the cursor doesn't fight controlled
+                                    // re-renders while the user is typing.
+                                    const v = e.currentTarget.value
+                                        .toLowerCase()
+                                        .replace(/[^a-z0-9-]/g, '')
+                                        .replace(/^-+|-+$/g, '');
+                                    if (v !== e.currentTarget.value) {
+                                        e.currentTarget.value = v;
+                                    }
+                                }}
+                                placeholder="ruined-garden"
+                                className="h-8 text-xs bg-neutral-950 border-neutral-700 mt-0.5"
+                            />
+                        </div>
+                        <div>
+                            <Label className="text-[11px] text-neutral-400 leading-none font-normal mb-0.5">
+                                Title (shown in HUD)
+                            </Label>
+                            <Input
+                                autoComplete="off"
+                                spellCheck={false}
+                                data-form-type="other"
+                                data-lpignore="true"
+                                data-1p-ignore="true"
+                                name={`${formNs}-title`}
+                                defaultValue=""
+                                ref={newTitleRef}
+                                placeholder="Ruined Garden"
+                                className="h-8 text-xs bg-neutral-950 border-neutral-700 mt-0.5"
+                            />
+                        </div>
+                    </div>
+                    <DialogFooter className="gap-2 sm:gap-0">
+                        <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => setNewOpen(false)}
+                            className="bg-neutral-800 border-neutral-700 text-neutral-300 hover:bg-neutral-700 text-xs"
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            size="sm"
+                            disabled={creating}
+                            onClick={handleCreate}
+                            className="bg-cyan-500 hover:bg-cyan-400 text-black font-semibold text-xs"
+                        >
+                            {creating ? 'Creating…' : 'Create & jump'}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+        </div>
+    );
+}

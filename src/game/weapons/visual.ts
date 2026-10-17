@@ -1,0 +1,185 @@
+/**
+ * src/game/weapons/visual.ts
+ * --------------------------------------------------------------------------
+ * WeaponVisualController: Handles Brotato-style floating weapon attachments,
+ * aiming rotations, fixed depth layer sorting, recoil procedural tweening,
+ * melee arc swings, and laser beam rendering.
+ */
+
+import type * as Phaser from 'phaser';
+import { DEPTH } from '@/lib/constants';
+import type { WeaponSpec } from '@/lib/weapons';
+
+export class WeaponVisualController {
+    private readonly scene: Phaser.Scene;
+    private sprite: Phaser.GameObjects.Sprite | null = null;
+    private currentSpec: WeaponSpec | null = null;
+
+    // Procedural Animation State
+    private recoilOffset = 0;
+    private swingOffsetAngle = 0;
+    private recoilTween: Phaser.Tweens.Tween | null = null;
+    private swingTween: Phaser.Tweens.Tween | null = null;
+
+    constructor(scene: Phaser.Scene) {
+        this.scene = scene;
+    }
+
+    /** Set or change active weapon spec to display. */
+    public setWeapon(spec: WeaponSpec): void {
+        this.currentSpec = spec;
+        const textureKey = spec.visual?.texture;
+
+        if (this.sprite) {
+            this.sprite.destroy();
+            this.sprite = null;
+        }
+
+        if (textureKey && this.scene.textures.exists(textureKey)) {
+            this.sprite = this.scene.add.sprite(0, 0, textureKey);
+            const anchor = spec.visual?.anchor ?? [0.2, 0.5];
+            const scale = spec.visual?.scale ?? 0.16;
+            this.sprite.setOrigin(anchor[0], anchor[1]);
+            this.sprite.setScale(scale);
+        }
+    }
+
+    /**
+     * Update weapon position, angle, orientation, and depth relative to player character.
+     * @param playerX Character center X
+     * @param playerY Character center Y
+     * @param aimAngle Angle in radians toward mouse/target
+     * @param depth Optional depth override. Defaults to `DEPTH.WEAPON`
+     *  (flat layer in front of bullets). Monsters pass their own footY so
+     *  the weapon stays pinned to its owner's depth slot — the weapon
+     *  never Y-sorts independently of the monster that holds it.
+     */
+    public update(
+        playerX: number,
+        playerY: number,
+        aimAngle: number,
+        depth: number = DEPTH.WEAPON,
+    ): void {
+        if (!this.sprite || !this.currentSpec) return;
+
+        const orbitRadius = this.currentSpec.visual?.orbitRadius ?? 16;
+
+        // 1. Calculate Orbit Position around player center
+        const totalDist = orbitRadius - this.recoilOffset;
+        const weaponX = playerX + Math.cos(aimAngle) * totalDist;
+        const weaponY = playerY + Math.sin(aimAngle) * totalDist;
+
+        this.sprite.setPosition(weaponX, weaponY);
+
+        // 2. Aim Rotation, Spec Rotation Offset, & Swing Offset
+        const rotOffsetRad = ((this.currentSpec.visual?.rotationOffset ?? 0) * Math.PI) / 180;
+        const finalAngle = aimAngle + rotOffsetRad + (this.swingOffsetAngle * Math.PI) / 180;
+        this.sprite.setRotation(finalAngle);
+
+        // 3. Flip Y depending on aiming side (Left vs Right)
+        const cosAngle = Math.cos(aimAngle);
+        if (cosAngle < 0) {
+            this.sprite.setFlipY(true);
+        } else {
+            this.sprite.setFlipY(false);
+        }
+
+        // 4. Fixed depth — the weapon sits in front of bullets (so a
+        // passing shot never draws over the gun) and above the character
+        // sprite. No aim-direction depth swap: a top-down shooter with
+        // flat depth wants the held weapon to read as permanently in hand.
+        // Monsters override with their footY so the weapon rides along
+        // with its owner's depth slot rather than drawing at a fixed
+        // layer above everything.
+        this.sprite.setDepth(depth);
+    }
+
+    /** Trigger procedural recoil impulse when firing a ranged weapon. */
+    public triggerRecoil(): void {
+        if (!this.currentSpec || !this.scene) return;
+
+        const distance = this.currentSpec.visual?.recoilDistance ?? 6;
+        const duration = this.currentSpec.visual?.recoilDuration ?? 80;
+
+        if (this.recoilTween) {
+            this.recoilTween.stop();
+        }
+
+        this.recoilOffset = distance;
+        this.recoilTween = this.scene.tweens.add({
+            targets: this,
+            recoilOffset: 0,
+            duration: duration,
+            ease: 'Cubic.out',
+        });
+    }
+
+    /** Trigger procedural melee swing arc animation. */
+    public triggerSwing(): void {
+        if (!this.currentSpec || !this.scene) return;
+
+        const swingAngle = this.currentSpec.visual?.swingAngle ?? 120;
+        const halfSwing = swingAngle / 2;
+
+        if (this.swingTween) {
+            this.swingTween.stop();
+        }
+
+        this.swingOffsetAngle = -halfSwing;
+        this.swingTween = this.scene.tweens.add({
+            targets: this,
+            swingOffsetAngle: halfSwing,
+            duration: 120,
+            ease: 'Quad.out',
+            onComplete: () => {
+                this.swingOffsetAngle = 0;
+            },
+        });
+    }
+
+    /** Hide or show the weapon sprite. */
+    public setVisible(visible: boolean): void {
+        if (this.sprite) {
+            this.sprite.setVisible(visible);
+        }
+    }
+
+    /** Apply or clear hit flash tint (50% additive white highlight). */
+    public setHitFlash(active: boolean): void {
+        if (!this.sprite) return;
+        if (active) {
+            this.sprite.setTint(0x808080);
+            (this.sprite as any).setTintMode?.(2);
+        } else if ((this.sprite as any).tintMode !== 0) {
+            this.sprite.clearTint();
+            (this.sprite as any).setTintMode?.(0);
+        }
+    }
+
+    /** Get exact world position of the weapon muzzle tip based on rotation and muzzleOffset. */
+    public getMuzzlePosition(fallbackX: number, fallbackY: number): { x: number; y: number } {
+        if (!this.sprite || !this.currentSpec) return { x: fallbackX, y: fallbackY };
+
+        const scale = this.currentSpec.visual?.scale ?? 0.16;
+        const anchor = this.currentSpec.visual?.anchor ?? [0.2, 0.5];
+        // Total unscaled pixel offset along the weapon length from anchor point to barrel tip
+        const rawOffset = (this.currentSpec.visual?.muzzleOffset ?? 400) * (1 - anchor[0]);
+        const muzzleDistance = rawOffset * scale;
+
+        const rotation = this.sprite.rotation;
+        return {
+            x: this.sprite.x + Math.cos(rotation) * muzzleDistance,
+            y: this.sprite.y + Math.sin(rotation) * muzzleDistance,
+        };
+    }
+
+    /** Clean up resources on destruction. */
+    public destroy(): void {
+        if (this.recoilTween) this.recoilTween.stop();
+        if (this.swingTween) this.swingTween.stop();
+        if (this.sprite) {
+            this.sprite.destroy();
+            this.sprite = null;
+        }
+    }
+}

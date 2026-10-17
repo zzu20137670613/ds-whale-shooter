@@ -1,0 +1,9 @@
+characters:
+    - otaku
+    - kitty
+    - bunny-girl
+    - wanderer
+    # Appended LAST on purpose: tavern.yaml's npcSpawns are positional
+    # (`npcSpawns[i]`), so inserting earlier would shift every existing
+    # NPC's stage position.
+    - whale-girl

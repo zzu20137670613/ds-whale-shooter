@@ -1,0 +1,625 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+        <link rel="icon" type="image/png" sizes="64x64" href="/favicon.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+        <title>The 11th Forest</title>
+        <meta
+            name="description"
+            content="A Top-Down Gothic Anime Pixel Shooter & Visual Level Editor exploring AI Game Development Pipelines."
+        />
+
+        <!-- Open Graph + Twitter card: what a pasted link looks like in a chat, a feed or a DM.
+             og.jpg is /public/og.jpg — 1200×630, the ratio every scraper crops to — cut from the
+             key art by width so the tree, the arch and all four characters survive the crop.
+             og:image and og:url MUST be absolute or the scrapers silently drop them, so the
+             production origin is spelled out here rather than left relative. -->
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="The 11th Forest" />
+        <meta property="og:title" content="The 11th Forest" />
+        <meta
+            property="og:description"
+            content="A Top-Down Gothic Anime Pixel Shooter & Visual Level Editor exploring AI Game Development Pipelines."
+        />
+        <meta property="og:url" content="https://forest.firetable.tech/" />
+        <meta property="og:locale" content="en_US" />
+        <meta property="og:image" content="https://forest.firetable.tech/og.jpg" />
+        <meta property="og:image:type" content="image/jpeg" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta
+            property="og:image:alt"
+            content="The 11th Forest — four characters standing in a sunlit forest clearing beneath the title"
+        />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="The 11th Forest" />
+        <meta
+            name="twitter:description"
+            content="A Top-Down Gothic Anime Pixel Shooter & Visual Level Editor exploring AI Game Development Pipelines."
+        />
+        <meta name="twitter:image" content="https://forest.firetable.tech/og.jpg" />
+
+        <!-- Preload pixel font to prevent FOUT text flash -->
+        <link
+            rel="preload"
+            href="/assets/font/press-start-2p-latin-400.woff2"
+            as="font"
+            type="font/woff2"
+            crossorigin
+        />
+        <link
+            rel="preload"
+            href="/assets/image/ui/loading/forest-loading-key.webp"
+            as="image"
+            type="image/webp"
+            fetchpriority="high"
+        />
+        <!-- The animated layers, fetched in parallel with the key art so the canvas can take over
+             as soon as the splash script runs instead of waiting on a second round of requests. -->
+        <link
+            rel="preload"
+            href="/assets/image/ui/loading/forest-loading-bg.webp"
+            as="image"
+            type="image/webp"
+        />
+        <link
+            rel="preload"
+            href="/assets/image/ui/loading/forest-loading-chars.webp"
+            as="image"
+            type="image/webp"
+        />
+        <link
+            rel="preload"
+            href="/assets/image/ui/loading/forest-loading-title.webp"
+            as="image"
+            type="image/webp"
+        />
+        <link
+            rel="preload"
+            href="/assets/image/ui/loading/forest-loading-fg.webp"
+            as="image"
+            type="image/webp"
+        />
+        <link
+            rel="preload"
+            href="/assets/image/ui/loading/forest-loading-mask-bg.webp"
+            as="image"
+            type="image/webp"
+        />
+        <link
+            rel="preload"
+            href="/assets/image/ui/loading/forest-loading-mask-depth.webp"
+            as="image"
+            type="image/webp"
+        />
+        <link
+            rel="preload"
+            href="/assets/image/ui/loading/forest-loading-mask-chars.webp"
+            as="image"
+            type="image/webp"
+        />
+
+        <style>
+            @font-face {
+                font-family: 'Press Start 2P';
+                font-style: normal;
+                font-weight: 400;
+                font-display: block;
+                src: url('/assets/font/press-start-2p-latin-400.woff2') format('woff2');
+            }
+
+            /* ALL styles strictly scoped inside #boot container to prevent polluting global/React styles */
+            #boot,
+            #boot * {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+
+            #boot {
+                position: fixed;
+                inset: 0;
+                /* Dynamic viewport height so the mobile URL bar collapsing cannot crop the art. */
+                height: 100dvh;
+                z-index: 9999;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: flex-end;
+                /* No padding: the art must cover the WHOLE viewport edge to edge, so the safe-area
+                   insets live on the panel (.boot-content) instead of eating into the stage. */
+                padding: 0;
+                background: #030508;
+                font-family: 'Press Start 2P', monospace;
+                user-select: none;
+                transition: opacity 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+                overflow: hidden;
+            }
+
+            /* Portrait phones: rotate the whole splash into landscape, like a game, so the full
+               scene (all four characters + title) fits instead of being cover-cropped. */
+            @media (orientation: portrait) and (max-width: 900px) {
+                #boot {
+                    inset: auto;
+                    top: 0;
+                    left: 100vw;
+                    width: 100dvh;
+                    height: 100vw;
+                    transform-origin: top left;
+                    transform: rotate(90deg);
+                }
+            }
+
+            #boot.boot-done {
+                opacity: 0;
+                pointer-events: none;
+            }
+
+            /* Shared stage for the artwork. The <img> and the WebGL canvas are SIBLINGS inside
+               it and are never repositioned individually: CSS owns the layout, start.ts reads where
+               the browser put things and follows. The inline script after the markup snaps this
+               wrapper to whole device pixels before the first paint. */
+            #boot .forest-stage {
+                position: absolute;
+                inset: 0;
+                pointer-events: none;
+                z-index: 1;
+            }
+
+            /* Ambient Forest Artwork Background. This box IS the layout — `object-fit: cover` here
+               is the single source of truth for where the art lands, and nothing in JS moves it.
+               Beats Tailwind preflight's `img { max-width: 100% }`, which would squash the box. */
+            #boot .forest-bg {
+                position: absolute;
+                inset: 0;
+                width: 100%;
+                height: 100%;
+                max-width: none;
+                object-fit: cover;
+                object-position: 50% 50%;
+                opacity: 1;
+                pointer-events: none;
+            }
+
+            /* WebGL layer canvas: in the markup from the first paint, over the <img> at opacity 0.
+               No filter / background / mask here — Chrome paints such canvases as a white box while
+               loading. start.ts never inserts or removes it; it only flips the two opacities in one
+               task once the canvas has a frame, and puts them back on dispose. */
+            #boot .forest-gl {
+                position: absolute;
+                inset: 0;
+                width: 100%;
+                height: 100%;
+                opacity: 0;
+                pointer-events: none;
+            }
+
+            #boot .forest-overlay {
+                position: absolute;
+                inset: 0;
+                /* Darkens the bottom band so the panel always has contrast, whatever the crop. */
+                background: linear-gradient(
+                    to bottom,
+                    transparent 0%,
+                    transparent 78%,
+                    rgba(3, 5, 8, 0.32) 92%,
+                    rgba(3, 5, 8, 0.62) 100%
+                );
+                z-index: 2;
+                pointer-events: none;
+            }
+
+            /* No particle layer: the floating light dots are gone, and the sky is frozen. What
+               still moves is all painted into the art (mushroom glow, grass, the arch, the
+               characters) plus the runner below. */
+
+            /* Main Content Container — the panel. Kept deliberately short (≈105 px tall): the art is
+               never shrunk to make room for it, so its height is what keeps the bar clear of the
+               characters' feet. Width-constrained, and the panel gives up height — not the art — on
+               short or narrow screens. */
+            #boot .boot-content {
+                position: relative;
+                z-index: 10;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                width: min(88vw, 460px);
+                padding-bottom: calc(
+                    12px + max(20px, env(safe-area-inset-bottom))
+                ); /* a little headroom */
+                padding-left: max(0px, env(safe-area-inset-left));
+                padding-right: max(0px, env(safe-area-inset-right));
+            }
+
+            /* Header. The <h1> is for screen readers only (the art carries the real logo); it is
+               taken out of flow entirely, so it costs the panel no height. */
+            #boot h1 {
+                position: absolute;
+                width: 1px;
+                height: 1px;
+                overflow: hidden;
+                clip: rect(0 0 0 0);
+                white-space: nowrap;
+                font-size: clamp(16px, 3.5vw, 24px);
+                line-height: 1.3;
+                letter-spacing: 0.14em;
+                color: #71f6fd;
+                text-shadow:
+                    0 0 16px rgba(6, 182, 212, 0.7),
+                    2px 2px 0px #020d12;
+                text-align: center;
+                white-space: nowrap;
+            }
+
+            /* Path & Character Progress Component */
+            #boot .progress-wrapper {
+                /* The fill runs from 7px (3px frame + 4px well) to 7px short of the right edge.
+                   The runner's centre tracks the same span, so it always stands on the fill head. */
+                --fill-x0: 7px;
+                --fill-w: calc(100% - 14px);
+                position: relative;
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                gap: 3px;
+            }
+
+            /* Character Movement Track — exactly as tall as the runner, so nothing is ever clipped */
+            #boot .runner-track {
+                position: relative;
+                width: 100%;
+                height: 48px;
+            }
+
+            /* Moving Pixel Character. The canvas inside is a 20×24 sprite drawn by
+               src/lib/boot-loading/runner.ts. Both sizes below are WHOLE multiples of that backing
+               store — 2× on desktop, 1× on a phone — because `image-rendering: pixelated` is only
+               crisp at an integer scale; anything else gives uneven 1px/2px blocks. */
+            #boot .pixel-runner {
+                position: absolute;
+                bottom: 0;
+                left: var(--fill-x0);
+                transform: translateX(-50%);
+                width: 40px;
+                height: 48px;
+                z-index: 15;
+                filter: drop-shadow(0 2px 0 rgba(0, 0, 0, 0.55));
+                /* First paint, before any JS: frame 0 of the runner sprite inlined as a 20×24 PNG,
+                   so he is on screen with the bar. The canvas runner.ts mounts covers it exactly.
+                   tests/lib/boot-loading/runner-inline.test.ts fails if it drifts. */
+                background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAYCAYAAAD6S912AAAAxElEQVR42mNgoAdQkRL6TwxNtGFWWrJEYaIMhhkY4qAPxuiGIIsTNJAU1xHlSkKuw+ZaggZ+Oj6HKHx7RQ2YJspAERERojBJBp5/9gmOYQagiw2cC9ExSBybHCgciUo6xEYM0Qn7+7cPRGGC3oV5AaT4zu2LOA2CySHrwWsgKV4my0BCkUXQy7BcQCinEBXDIBydbUsUJjqWQYpdQwxwGgSTI8lAXBoIydPWQJCC379/wDEuAwmpoa2BO3dugmNcBuJTAwDvh4jDxpePLQAAAABJRU5ErkJggg==')
+                    center / 100% 100% no-repeat;
+                image-rendering: pixelated;
+                animation: boot-runner-move 10s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+            }
+            #boot.boot-done .pixel-runner {
+                animation: none;
+                left: calc(var(--fill-x0) + var(--fill-w));
+                transition: left 0.3s ease-out;
+            }
+
+            #boot .runner-canvas {
+                display: block;
+                width: 100%;
+                height: 100%;
+                image-rendering: pixelated;
+            }
+
+            @keyframes boot-runner-move {
+                0% {
+                    left: 0%;
+                }
+                100% {
+                    left: calc(var(--fill-x0) + 0.92 * var(--fill-w));
+                }
+            }
+
+            /* ── Progress bar: a mossy log frame around a warm, glowing fill ──
+               The fill is still ::after and still transform: scaleX(...) — setBootProgress reads
+               its computed matrix, so the fill element itself must never change shape. Only the
+               paint is restyled: bark frame → recessed mossy well → amber lantern fill. */
+            #boot .progress-bar {
+                position: relative;
+                width: 100%;
+                height: 20px;
+                border: 3px solid #5c3f26;
+                border-radius: 2px;
+                /* bark: a lit top edge, vertical grain, a dark underside */
+                background:
+                    repeating-linear-gradient(
+                        90deg,
+                        rgba(0, 0, 0, 0.22) 0 2px,
+                        rgba(0, 0, 0, 0) 2px 7px
+                    ),
+                    linear-gradient(180deg, #4d3a24 0%, #32241a 58%, #1c1310 100%);
+                box-shadow:
+                    0 0 0 2px #150e08,
+                    0 3px 0 rgba(0, 0, 0, 0.4),
+                    0 6px 16px rgba(0, 0, 0, 0.5);
+                overflow: hidden;
+            }
+
+            /* The well: dark soil, pixel tick marks, moss tufts along the top lip and a slow
+               sheen sweeping across it. ::before is the only pseudo-element the fill never used. */
+            #boot .progress-bar::before {
+                content: '';
+                position: absolute;
+                top: 3px;
+                right: 3px;
+                bottom: 3px;
+                left: 3px;
+                background:
+                    radial-gradient(
+                        circle at 14% 0%,
+                        rgba(122, 180, 74, 0.55) 0 3px,
+                        rgba(122, 180, 74, 0) 4px
+                    ),
+                    radial-gradient(
+                        circle at 38% 0%,
+                        rgba(122, 180, 74, 0.4) 0 4px,
+                        rgba(122, 180, 74, 0) 5px
+                    ),
+                    radial-gradient(
+                        circle at 66% 0%,
+                        rgba(122, 180, 74, 0.5) 0 3px,
+                        rgba(122, 180, 74, 0) 4px
+                    ),
+                    radial-gradient(
+                        circle at 88% 0%,
+                        rgba(122, 180, 74, 0.35) 0 2px,
+                        rgba(122, 180, 74, 0) 3px
+                    ),
+                    /* sheen: 60% wide, swept across the well by background-position */
+                    linear-gradient(
+                            90deg,
+                            rgba(255, 255, 255, 0) 0%,
+                            rgba(255, 255, 255, 0.09) 50%,
+                            rgba(255, 255, 255, 0) 100%
+                        ),
+                    /* pixel ticks */
+                    repeating-linear-gradient(
+                            90deg,
+                            rgba(255, 255, 255, 0.05) 0 1px,
+                            rgba(0, 0, 0, 0) 1px 10px
+                        ),
+                    linear-gradient(180deg, #101a0c 0%, #060c06 100%);
+                background-size:
+                    auto,
+                    auto,
+                    auto,
+                    auto,
+                    60% 100%,
+                    auto,
+                    auto;
+                background-repeat: no-repeat;
+                background-position:
+                    0 0,
+                    0 0,
+                    0 0,
+                    0 0,
+                    -80% 0,
+                    0 0,
+                    0 0;
+                box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.95);
+                animation: boot-bar-sheen 3.2s linear infinite;
+            }
+
+            /* The fill: a warm lantern glow. ::after must stay the fill — progress.ts reads
+               getComputedStyle('.progress-bar', '::after').transform for the hand-over. */
+            #boot .progress-bar::after {
+                content: '';
+                position: absolute;
+                top: 4px;
+                bottom: 4px;
+                left: 4px;
+                right: 4px;
+                background:
+                    linear-gradient(
+                        180deg,
+                        rgba(255, 255, 255, 0.55) 0%,
+                        rgba(255, 255, 255, 0) 45%
+                    ),
+                    linear-gradient(90deg, #b45309 0%, #f59e0b 45%, #fde68a 100%);
+                border-radius: 1px;
+                box-shadow:
+                    0 0 10px rgba(245, 158, 11, 0.7),
+                    0 0 18px rgba(245, 158, 11, 0.35),
+                    inset 0 -2px 0 rgba(120, 53, 15, 0.55);
+                transform-origin: left center;
+                transform: scaleX(0);
+                animation: boot-bar-fill 10s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+            }
+
+            @keyframes boot-bar-sheen {
+                0% {
+                    background-position:
+                        0 0,
+                        0 0,
+                        0 0,
+                        0 0,
+                        -90% 0,
+                        0 0,
+                        0 0;
+                }
+                100% {
+                    background-position:
+                        0 0,
+                        0 0,
+                        0 0,
+                        0 0,
+                        190% 0,
+                        0 0,
+                        0 0;
+                }
+            }
+
+            #boot.boot-done .progress-bar::after {
+                animation: none;
+                transform: scaleX(1);
+                transition: transform 0.3s ease-out;
+            }
+
+            /* Real loader progress takes over from the CSS fill once it arrives. Same specificity
+               as the boot-done rules above, so these must come after — hence the explicit
+               boot-done.boot-real overrides that keep the bar full at 100 %. */
+            #boot.boot-real .progress-bar::after {
+                animation: none;
+                transform: scaleX(var(--boot-p, 0));
+                transition: transform 0.25s linear;
+            }
+            #boot.boot-real .pixel-runner {
+                animation: none;
+                left: calc(var(--fill-x0) + var(--boot-p, 0) * var(--fill-w));
+                transition: left 0.25s linear;
+            }
+            #boot.boot-done.boot-real .progress-bar::after {
+                transform: scaleX(1);
+            }
+            #boot.boot-done.boot-real .pixel-runner {
+                left: calc(var(--fill-x0) + var(--fill-w));
+            }
+
+            /* Status Text — announced, never painted. The art and the bar carry the whole visual
+               message; every visible pixel here is panel height the key art does not get. Hidden
+               the same way the <h1> is: clipped to a 1px box, still read by screen readers. */
+            #boot .status-text {
+                position: absolute;
+                width: 1px;
+                height: 1px;
+                overflow: hidden;
+                clip: rect(0 0 0 0);
+                white-space: nowrap;
+            }
+
+            @keyframes boot-bar-fill {
+                to {
+                    transform: scaleX(0.92);
+                }
+            }
+
+            /* The art is never scaled to make room for the panel, so on a short or narrow screen
+               the panel gives up height — a smaller runner, tighter gaps — and never the runner.
+               1× the sprite on a phone, still a whole multiple, so the pixels stay square. */
+            @media (max-width: 560px), (max-height: 520px) {
+                #boot .runner-track,
+                #boot .pixel-runner {
+                    height: 24px;
+                }
+                #boot .pixel-runner {
+                    width: 20px;
+                }
+                #boot .boot-content {
+                    gap: 6px;
+                    padding-bottom: calc(6px + max(14px, env(safe-area-inset-bottom)));
+                }
+                #boot .progress-bar {
+                    height: 18px;
+                }
+            }
+
+            @media (prefers-reduced-motion: reduce) {
+                #boot .pixel-runner {
+                    animation: none;
+                }
+                #boot .progress-bar::before {
+                    animation: none;
+                }
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="boot">
+            <!-- Artwork stage. The <img> and the WebGL canvas are siblings and stay siblings:
+                 start.ts only ever writes their `opacity`, never their box, and never adds or
+                 removes either of them. -->
+            <div class="forest-stage" id="forest-stage">
+                <!-- Key Art Background (static fallback + animation source) -->
+                <img
+                    src="/assets/image/ui/loading/forest-loading-key.webp"
+                    class="forest-bg"
+                    id="boot-art"
+                    width="1920"
+                    height="1072"
+                    alt=""
+                    aria-hidden="true"
+                    fetchpriority="high"
+                    decoding="async"
+                />
+                <!-- WebGL layer canvas, present from the first paint. -->
+                <canvas class="forest-gl" id="boot-gl" aria-hidden="true"></canvas>
+            </div>
+            <script>
+                /*
+                 * Pixel-snap the stage BEFORE the first paint. The cover image lands on a
+                 * fractional device pixel (the art is 1920x1072, the box rarely is), and Chrome
+                 * rasterises an <img> at that phase — a canvas texture is drawn at whatever uFit
+                 * says, so moving the shared wrapper by minus its sub-pixel offset puts both on
+                 * the same whole pixel and there is nothing left to re-raster at the handover.
+                 * Deliberately a classic inline script: a module is deferred and would land long
+                 * after the image painted. If it fails to run nothing breaks — the CSS cover is
+                 * still a correct layout, just a sub-pixel one.
+                 */
+                (function () {
+                    var stage = document.getElementById('forest-stage');
+                    var img = document.getElementById('boot-art');
+                    function snap() {
+                        if (!stage || !img) return;
+                        stage.style.translate = '';
+                        var iw = img.naturalWidth || img.width;
+                        var ih = img.naturalHeight || img.height;
+                        if (!iw || !ih) return;
+                        var r = img.getBoundingClientRect();
+                        var s = Math.max(r.width / iw, r.height / ih);
+                        var x = r.left + (r.width - iw * s) / 2;
+                        var y = r.top + (r.height - ih * s) / 2;
+                        var d = window.devicePixelRatio || 1;
+                        var fx = x * d - Math.round(x * d);
+                        var fy = y * d - Math.round(y * d);
+                        stage.style.translate =
+                            Math.abs(fx) + Math.abs(fy) > 0.01
+                                ? -fx / d + 'px ' + -fy / d + 'px'
+                                : '';
+                    }
+                    snap();
+                    img.addEventListener('load', snap);
+                    window.addEventListener('resize', snap);
+                })();
+            </script>
+            <div class="forest-overlay"></div>
+
+            <!-- Central Content Container -->
+            <div class="boot-content">
+                <h1>THE 11TH FOREST</h1>
+
+                <div class="progress-wrapper">
+                    <!-- Runner Track. The <canvas> inside is injected by
+                         src/lib/boot-loading/runner.ts (mountRunner). -->
+                    <div class="runner-track">
+                        <div class="pixel-runner"></div>
+                    </div>
+
+                    <!-- Progress Bar Track -->
+                    <div class="forest-path">
+                        <div class="progress-bar"></div>
+                    </div>
+                </div>
+
+                <p class="status-text" role="status" aria-live="polite">
+                    LOADING THE FOREST&hellip;
+                </p>
+            </div>
+        </div>
+
+        <div id="root"></div>
+        <script type="module" async src="/src/boot.ts"></script>
+        <script type="module" src="/src/main.tsx"></script>
+    </body>
+</html>

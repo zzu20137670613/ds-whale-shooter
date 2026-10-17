@@ -1,0 +1,41 @@
+name: Whale Cannon
+nameZh: "鲸娘重炮"
+damage: 40
+aoeRadius: 75
+cooldownMs: 1100
+range: 760
+upgrades:
+    # Tavern weapon ladder. `costs.length` IS the max level.
+    costs: [40, 90, 160, 250, 360]
+    damageMulPerLevel: 1.15
+clipSize: 3
+reloadTimeMs: 2600
+bulletsPerShot: 1
+# PLACEHOLDER ASSET — reuses the rocket-launcher / rocket-missile
+# sprites until whale-themed weapon art exists.
+visual:
+    texture: assets/image/weapons/rocket-launcher.png
+    scale: 0.18
+    orbitRadius: 22
+    anchor: [0.45, 0.5]
+    recoilDistance: 13
+    recoilDuration: 150
+bullet:
+    texture: assets/image/weapons/rocket-missile.png
+    type: projectile
+    speed: 520
+    scale: 0.13
+    anchor: [0.5, 0.5]
+projectile:
+    speed: 17
+    visual:
+        radius: 7
+        width: 26
+        height: 9
+        color: 0x2A6FA8
+sfx:
+    shoot: rocket-launcher-shoot
+    dryFire: dry-fire
+    bulletWall: bullet-wall
+    reloadStart: reload-start
+    reloadFinish: reload-finish
