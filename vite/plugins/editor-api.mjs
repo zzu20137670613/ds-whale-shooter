@@ -1114,7 +1114,7 @@ async function handleCreateCharacter(req, res) {
         spRegenMs: 1000,
         body: { halfW: 28, halfH: 24 },
         dodge: { spCost: 15, speed: 14, durationMs: 220, cooldownMs: 600 },
-        hotbar: ['assault-rifle'],
+        hotbar: ['whale-cannon'],
     };
     const out = path.join(PUBLIC_DIR, 'data/characters', `${id}.yaml`);
     await writeFile(out, stringifyYaml(template, { lineWidth: -1, noRefs: true }), 'utf8');

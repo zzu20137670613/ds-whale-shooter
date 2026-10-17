@@ -1,3 +1,6 @@
+# Reserved for the galgame level — ranged AoE.
+# Damage and upgrade numbers below are the upstream placeholder values:
+# they are not final until that level is designed.
 name: Rocket Launcher
 nameZh: "火箭筒"
 damage: 55

@@ -1,10 +1,8 @@
 weapons:
-    # General player weapons (unused since loadouts became per-character —
-    # see 角色数值总表.md for the open question about them)
-    - assault-rifle
-    - laser-cannon
-    - plasma-sword
-    - shotgun
+    # Reserved rewards — not in any loadout. Damage / upgrade numbers stay at
+    # their upstream placeholder values until those levels are designed.
+    - arcana-staff      # hidden level 1 — ranged single shot
+    - rocket-launcher   # galgame level   — ranged AoE
     - arcana-staff
     - rocket-launcher
     # Whale-girl weapons (placeholder art; see each YAML for the swap note)

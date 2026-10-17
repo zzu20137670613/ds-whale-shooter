@@ -1,3 +1,6 @@
+# Reserved for hidden level 1 — a ranged single shot.
+# Damage and upgrade numbers below are the upstream placeholder values:
+# they are not final until that level is designed.
 name: Arcana Staff
 nameZh: "秘法法杖"
 damage: 24

@@ -192,12 +192,12 @@ attack cycles. If the math doesn't balance, fix the weapon's `damage` /
 
 | Weapon          | damage | cooldownMs | range | dps       | Role                 |
 | --------------- | ------ | ---------- | ----- | --------- | -------------------- |
-| assault-rifle   | 2      | 100        | 550   | 20        | chip / baseline      |
-| laser-cannon    | 2      | 60         | 700   | 33        | sustained beam       |
-| shotgun         | 5×5=25 | 800        | 400   | ~31 burst | close-quarters burst |
-| plasma-sword    | 22     | 400        | 180   | 55        | melee AOE            |
 | arcana-staff    | 14     | 350        | 1000  | 40        | long-range caster    |
 | rocket-launcher | 55     | 1200       | 800   | 46        | heavy burst          |
+
+> The five AI girls' signature kit is defined per weapon YAML, and the two
+> reserved rewards (arcana-staff for hidden level 1, rocket-launcher for the
+> galgame level) keep their upstream numbers until those levels are designed.
 
 When adding a new weapon, place its dps on the **same axis** as an
 existing one (rifle=20, laser=33, plasma=55) — don't sneak in 80 dps
