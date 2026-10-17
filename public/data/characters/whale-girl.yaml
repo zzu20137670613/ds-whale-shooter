@@ -159,6 +159,12 @@ anims:
             - 7
         frameRate: 10
         repeat: -1
+    run:
+        frames:
+            - 8
+            - 11
+        frameRate: 12
+        repeat: -1
     dodge:
         frames:
             - 12

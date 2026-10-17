@@ -22,6 +22,9 @@ import type * as Phaser from 'phaser';
 import { pickText } from '@/locales';
 
 import {
+    AIM_ASSIST,
+    CHARACTER_HURT_FLASH_MS,
+    CHARACTER_SPRINT_MULTIPLIER,
     KEY_A,
     KEY_D,
     KEY_FIVE,
@@ -30,14 +33,13 @@ import {
     KEY_R,
     KEY_S,
     KEY_SEVEN,
-    KEY_SPACE,
+    KEY_SHIFT,
     KEY_SIX,
+    KEY_SPACE,
     KEY_THREE,
     KEY_TWO,
     KEY_W,
     SFX_EVENT,
-    AIM_ASSIST,
-    CHARACTER_HURT_FLASH_MS,
 } from '@/lib/constants';
 import { getCheats } from '@/lib/dev/cheats';
 import { EventBus } from '@/lib/events/bus';
@@ -74,6 +76,27 @@ export function moveIntent(keys: {
     const len = Math.hypot(vx, vy);
     if (len === 0) return { vx: 0, vy: 0 };
     return { vx: vx / len, vy: vy / len };
+}
+
+/** Locomotion state for a frame: standing, walking, or sprinting. */
+export type Locomotion = 'idle' | 'walk' | 'run';
+
+/**
+ * Which locomotion state this frame is in: `idle` when standing still (sprint
+ * key or not), `run` while moving with the sprint key held, `walk` otherwise.
+ * Pure, so the choice is testable without a scene.
+ */
+export function resolveLocomotion(isMoving: boolean, isSprinting: boolean): Locomotion {
+    if (!isMoving) return 'idle';
+    return isSprinting ? 'run' : 'walk';
+}
+
+/**
+ * Movement speed for a frame: the spec's own `moveSpeed`, boosted while
+ * sprinting. Pure, so the arithmetic is testable without a physics body.
+ */
+export function resolveMoveSpeed(baseSpeed: number, isSprinting: boolean): number {
+    return isSprinting ? baseSpeed * CHARACTER_SPRINT_MULTIPLIER : baseSpeed;
 }
 
 export interface DodgeIntent {
@@ -474,14 +497,18 @@ export class CharacterController {
         }
 
         // ── Velocity resolution ─────────────────────────────────────
+        // Hold the sprint key to move faster. The animation follows the speed
+        // (walk -> run), not the other way round.
+        const sprinting = kb.addKey(KEY_SHIFT).isDown;
+        const speed = resolveMoveSpeed(this.spec.moveSpeed, sprinting);
         let finalVx = 0;
         let finalVy = 0;
         if (now < this.dodgeActiveUntil) {
             finalVx = this.dodgeVx;
             finalVy = this.dodgeVy;
         } else if (intent.vx !== 0 || intent.vy !== 0) {
-            finalVx = intent.vx * this.spec.moveSpeed;
-            finalVy = intent.vy * this.spec.moveSpeed;
+            finalVx = intent.vx * speed;
+            finalVy = intent.vy * speed;
         }
         this.parts.matter.Body.setVelocity(this.parts.body, { x: finalVx, y: finalVy });
 
@@ -555,7 +582,7 @@ export class CharacterController {
         this.updateAimTarget(now);
 
         // ── Animation state machine ─────────────────────────────────
-        this.driveAnims(intent.vx !== 0 || intent.vy !== 0, now < this.dodgeActiveUntil);
+        this.driveAnims(intent.vx !== 0 || intent.vy !== 0, now < this.dodgeActiveUntil, sprinting);
 
         // ── SP regen ────────────────────────────────────────────────
         if (now >= this.dodgeActiveUntil && this.sp < this.spec.sp) {
@@ -640,7 +667,8 @@ export class CharacterController {
      * State machine: idle ↔ run ↔ dodge.
      *   - `dodge` plays for the entire dodge window (covers the full
      *     roll animation, even past the 220ms physics window).
-     *   - `run` while moving and not in a dodge roll.
+     *   - `walk` while moving, `run` while moving with the sprint key held
+     *     (a character that declares no `run` anim keeps walking instead).
      *   - `idle` otherwise.
      *   - When the dodge roll's animationcomplete fires, onAnimComplete
      *     chains to walk or idle based on current movement.
@@ -648,10 +676,11 @@ export class CharacterController {
      * Each anim is gated on `scene.anims.exists(key)` so a character
      * without declared anims falls through silently (debug fallback).
      */
-    private driveAnims(isMovingInput: boolean, isDodging: boolean): void {
+    private driveAnims(isMovingInput: boolean, isDodging: boolean, isSprinting = false): void {
         if (!this.spec.anims) return;
         const sprite = this.parts.sprite;
         const walkKey = animKey(this.spec, 'walk');
+        const runKey = animKey(this.spec, 'run');
         const dodgeKey = animKey(this.spec, 'dodge');
         const idleKey = animKey(this.spec, 'idle');
         const cur = sprite.anims.currentAnim?.key ?? null;
@@ -667,8 +696,12 @@ export class CharacterController {
             // walk or idle based on movement state.
             return;
         }
-        const moving = isMovingInput;
-        if (moving) {
+        const state = resolveLocomotion(isMovingInput, isSprinting);
+        if (state === 'run' && this.scene.anims.exists(runKey)) {
+            if (cur !== runKey) sprite.anims.play(runKey, true);
+        } else if (state !== 'idle') {
+            // A character that declares no `run` anim still sprints — it just
+            // keeps the walk cycle while it does.
             if (cur !== walkKey && this.scene.anims.exists(walkKey)) {
                 sprite.anims.play(walkKey, true);
             }

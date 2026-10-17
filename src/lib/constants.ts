@@ -190,6 +190,16 @@ export const HUD_WEAPON_AMMO_BAR_INSET = 24;
 /** Status bar: bar-local vertical offset for the "Reloading…/Full" caption. */
 export const HUD_STATUS_LABEL_OFFSET_Y = -2;
 
+// ─── Character: locomotion (sprint) ────────────────────────────────────
+
+/**
+ * Speed multiplier while the sprint key (`KEY_SHIFT`) is held. 1 disables the
+ * sprint outright. Sprinting is deliberately free — no SP cost — so it reads as
+ * a way to cross the map rather than a second dodge; raise this to make it
+ * matter more, or move the cost into the character's SP if it should.
+ */
+export const CHARACTER_SPRINT_MULTIPLIER = 1.4;
+
 // ─── Combat: contact damage rate-limit (player) ────────────────────────
 
 /** Minimum gap between consecutive damage events to the player. Prevents
