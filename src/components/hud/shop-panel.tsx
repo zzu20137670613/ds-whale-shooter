@@ -179,7 +179,7 @@ export function ShopPanel() {
     const rowClass =
         'flex items-center justify-between gap-2 border-b border-stone-800/60 py-1.5 last:border-0';
     const buyClass = (affordable: boolean) =>
-        `flex items-center gap-1 border px-1.5 py-0.5 text-[9px] tabular-nums ${
+        `flex items-center gap-1 border px-1.5 py-0.5 text-[10px] tabular-nums ${
             affordable
                 ? 'border-amber-700 text-amber-300 hover:bg-amber-900/40'
                 : 'cursor-not-allowed border-stone-800 text-stone-600'
@@ -191,7 +191,7 @@ export function ShopPanel() {
                 type="button"
                 data-testid="shop-toggle"
                 onClick={() => setOpen((v) => !v)}
-                className={`absolute bottom-4 left-1/2 z-30 flex -translate-x-1/2 items-center gap-1.5 ${RETRO_BOX} px-3 py-1.5 font-['Silkscreen',monospace] text-[10px] font-bold uppercase tracking-widest text-amber-300 pointer-events-auto select-none hover:text-amber-200`}
+                className={`absolute bottom-4 left-1/2 z-30 flex -translate-x-1/2 items-center gap-1.5 ${RETRO_BOX} px-3 py-1.5 font-['Silkscreen',monospace] text-[12px] font-bold uppercase tracking-widest text-amber-300 pointer-events-auto select-none hover:text-amber-200`}
             >
                 <ShoppingBag className="size-3" />
                 {t('shop.open')}
@@ -206,13 +206,13 @@ export function ShopPanel() {
                         <CornerPixels />
 
                         <div className="mb-2 flex items-center justify-between">
-                            <span className="text-[11px] font-bold uppercase tracking-widest text-amber-300">
+                            <span className="text-[12px] font-bold uppercase tracking-widest text-amber-300">
                                 {t('shop.title')}
                             </span>
                             <div className="flex items-center gap-2">
                                 <span
                                     data-testid="shop-balance"
-                                    className="flex items-center gap-1 text-[10px] tabular-nums text-amber-300"
+                                    className="flex items-center gap-1 text-[11px] tabular-nums text-amber-300"
                                 >
                                     <Coins className="size-3 text-amber-400" />
                                     {money}
@@ -230,17 +230,17 @@ export function ShopPanel() {
                         </div>
 
                         {!characterId ? (
-                            <p data-testid="shop-hint" className="text-[9px] text-stone-400">
+                            <p data-testid="shop-hint" className="text-[11px] text-stone-400">
                                 {t('shop.noCharacter')}
                             </p>
                         ) : (
                             rows.map((row) => (
                                 <div key={row.id} data-testid={`shop-row-${row.id}`} className={rowClass}>
                                     <div className="flex flex-col gap-0.5">
-                                        <span className="text-[10px] text-stone-200">{row.name}</span>
+                                        <span className="text-[12px] text-stone-200">{row.name}</span>
                                         <span
                                             data-testid={`shop-level-${row.id}`}
-                                            className="text-[8px] text-stone-500"
+                                            className="text-[10px] text-stone-500"
                                         >
                                             {t('shop.level')} {row.level}/{row.max}
                                         </span>
@@ -249,7 +249,7 @@ export function ShopPanel() {
                                     {row.price === null ? (
                                         <span
                                             data-testid={`shop-maxed-${row.id}`}
-                                            className="text-[9px] text-amber-500"
+                                            className="text-[10px] text-amber-500"
                                         >
                                             {t('shop.maxed')}
                                         </span>
@@ -271,12 +271,12 @@ export function ShopPanel() {
 
                         {characterId && (
                             <>
-                                <div className="mt-3 mb-1 text-[9px] uppercase tracking-widest text-amber-500/80">
+                                <div className="mt-3 mb-1 text-[11px] uppercase tracking-widest text-amber-500/80">
                                     {t('shop.weapons')}
                                 </div>
 
                                 {weaponRows.length === 0 ? (
-                                    <p data-testid="shop-weapons-empty" className="text-[9px] text-stone-400">
+                                    <p data-testid="shop-weapons-empty" className="text-[11px] text-stone-400">
                                         {t('shop.empty')}
                                     </p>
                                 ) : (
@@ -287,12 +287,12 @@ export function ShopPanel() {
                                             className={rowClass}
                                         >
                                             <div className="flex flex-col gap-0.5">
-                                                <span className="text-[10px] text-stone-200">
+                                                <span className="text-[12px] text-stone-200">
                                                     {row.name}
                                                 </span>
                                                 <span
                                                     data-testid={`shop-weapon-level-${row.id}`}
-                                                    className="text-[8px] text-stone-500"
+                                                    className="text-[10px] text-stone-500"
                                                 >
                                                     {t('shop.level')} {row.level}/{row.max}
                                                 </span>
@@ -301,7 +301,7 @@ export function ShopPanel() {
                                             {row.price === null ? (
                                                 <span
                                                     data-testid={`shop-weapon-maxed-${row.id}`}
-                                                    className="text-[9px] text-amber-500"
+                                                    className="text-[10px] text-amber-500"
                                                 >
                                                     {t('shop.maxed')}
                                                 </span>
@@ -323,7 +323,7 @@ export function ShopPanel() {
 
                                 {slots.length > 0 && (
                                     <div data-testid="shop-refill-row" className={rowClass}>
-                                        <span className="text-[10px] text-stone-200">
+                                        <span className="text-[12px] text-stone-200">
                                             {t('shop.ammo')}
                                         </span>
                                         <button
