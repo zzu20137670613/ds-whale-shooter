@@ -32,7 +32,10 @@ dodge:
     speed: 13
     durationMs: 240
     cooldownMs: 700
-hotbar: []
+hotbar:
+    - page-sheaf
+    - inkwell-mortar
+
 weaponMax: 2
 upgrades:
     # Tavern upgrade ladders. `costs.length` IS the max level. The cheapest

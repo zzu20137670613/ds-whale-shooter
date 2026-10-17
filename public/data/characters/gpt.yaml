@@ -32,7 +32,10 @@ dodge:
     speed: 18
     durationMs: 180
     cooldownMs: 420
-hotbar: []
+hotbar:
+    - white-dragon-fangs
+    - twin-tail-rippers
+
 weaponMax: 4
 upgrades:
     # Tavern upgrade ladders. `costs.length` IS the max level. The cheapest

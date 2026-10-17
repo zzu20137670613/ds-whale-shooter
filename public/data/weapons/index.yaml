@@ -1,5 +1,6 @@
 weapons:
-    # Player weapons
+    # General player weapons (unused since loadouts became per-character —
+    # see 角色数值总表.md for the open question about them)
     - assault-rifle
     - laser-cannon
     - plasma-sword
@@ -9,7 +10,7 @@ weapons:
     # Whale-girl weapons (placeholder art; see each YAML for the swap note)
     - whale-minigun
     - whale-cannon
-    # Monster weapons (level-2 Rusted Hollow Citadel)
+    # Monster weapons — one per monster in the levels that exist today
     - thorn-scythe-claws
     - moss-bark-rifle
     - vine-lash
