@@ -1,0 +1,35 @@
+# Claude — slow, heavy, and it leaves a mark.
+# PLACEHOLDER ART — reuses the rocket-launcher.png / rocket-missile.png sprites until Inkwell Mortar art
+# exists. Stats and behaviour are final; only the textures are borrowed.
+name: Inkwell Mortar
+nameZh: "墨壶迫击"
+damage: 46
+cooldownMs: 1500
+range: 700
+aoeRadius: 90
+upgrades:
+    # Tavern weapon ladder. `costs.length` IS the max level.
+    costs: [55, 120, 205, 315, 455]
+    damageMulPerLevel: 1.18
+clipSize: 1
+reloadTimeMs: 3200
+visual:
+    texture: assets/image/weapons/rocket-launcher.png
+    scale: 0.18
+    orbitRadius: 22
+    anchor: [0.45, 0.5]
+    recoilDistance: 14
+    recoilDuration: 180
+bullet:
+    texture: assets/image/weapons/rocket-missile.png
+    type: projectile
+    speed: 14
+    scale: 0.13
+    anchor: [0.5, 0.5]
+projectile:
+    speed: 520
+    visual:
+        radius: 9
+        width: 28
+        height: 11
+        color: 0x2B2B44

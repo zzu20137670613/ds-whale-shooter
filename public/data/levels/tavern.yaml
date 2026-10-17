@@ -327,6 +327,38 @@ dropSpawns:
       x: 1600
       'y': 1300
       weaponId: whale-cannon
+    - type: weapon-drop
+      x: 400
+      'y': 1000
+      weaponId: page-sheaf
+    - type: weapon-drop
+      x: 800
+      'y': 1000
+      weaponId: inkwell-mortar
+    - type: weapon-drop
+      x: 1200
+      'y': 1000
+      weaponId: white-dragon-fangs
+    - type: weapon-drop
+      x: 1600
+      'y': 1000
+      weaponId: twin-tail-rippers
+    - type: weapon-drop
+      x: 2400
+      'y': 1100
+      weaponId: crane-fan
+    - type: weapon-drop
+      x: 2400
+      'y': 1200
+      weaponId: sealing-talisman
+    - type: weapon-drop
+      x: 2400
+      'y': 1300
+      weaponId: mascot-banner
+    - type: weapon-drop
+      x: 2400
+      'y': 1400
+      weaponId: supply-crate
 materials:
     - id: mat-msewt3ct
       texture: assets/image/materials/tavern/frame-00.png

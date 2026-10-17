@@ -1,0 +1,35 @@
+# Seed — keeps everyone supplied, one crate at a time.
+# PLACEHOLDER ART — reuses the bramble-knuckles.png / thorn-orb.png sprites until Supply Crate art
+# exists. Stats and behaviour are final; only the textures are borrowed.
+name: Supply Crate
+nameZh: "补给箱"
+damage: 8
+cooldownMs: 1200
+range: 400
+aoeRadius: 110
+upgrades:
+    # Tavern weapon ladder. `costs.length` IS the max level.
+    costs: [40, 90, 158, 244, 352]
+    damageMulPerLevel: 1.12
+clipSize: 2
+reloadTimeMs: 3000
+visual:
+    texture: assets/image/weapons/bramble-knuckles.png
+    scale: 0.15
+    orbitRadius: 18
+    anchor: [0.3, 0.5]
+    recoilDistance: 10
+    recoilDuration: 150
+bullet:
+    texture: assets/image/weapons/thorn-orb.png
+    type: projectile
+    speed: 13
+    scale: 0.18
+    anchor: [0.5, 0.5]
+projectile:
+    speed: 480
+    visual:
+        radius: 10
+        width: 30
+        height: 14
+        color: 0xC9A06A

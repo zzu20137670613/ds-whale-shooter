@@ -1,0 +1,35 @@
+# Qwen — a paper charm that holds the room still.
+# PLACEHOLDER ART — reuses the rune-shield.png / rune-shard.png sprites until Sealing Talisman art
+# exists. Stats and behaviour are final; only the textures are borrowed.
+name: Sealing Talisman
+nameZh: "封印符"
+damage: 20
+cooldownMs: 900
+range: 600
+aoeRadius: 70
+upgrades:
+    # Tavern weapon ladder. `costs.length` IS the max level.
+    costs: [42, 94, 164, 254, 368]
+    damageMulPerLevel: 1.14
+clipSize: 3
+reloadTimeMs: 2600
+visual:
+    texture: assets/image/weapons/rune-shield.png
+    scale: 0.16
+    orbitRadius: 20
+    anchor: [0.3, 0.5]
+    recoilDistance: 10
+    recoilDuration: 140
+bullet:
+    texture: assets/image/weapons/rune-shard.png
+    type: projectile
+    speed: 16
+    scale: 0.16
+    anchor: [0.5, 0.5]
+projectile:
+    speed: 560
+    visual:
+        radius: 8
+        width: 24
+        height: 10
+        color: 0xFFD98A

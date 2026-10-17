@@ -17,3 +17,12 @@ weapons:
     - branch-sweep
     - bramble-knuckles
     - thorn-bolt
+    # Five AI girls' signature kit (placeholder art; see each YAML)
+    - page-sheaf
+    - inkwell-mortar
+    - white-dragon-fangs
+    - twin-tail-rippers
+    - crane-fan
+    - sealing-talisman
+    - mascot-banner
+    - supply-crate
