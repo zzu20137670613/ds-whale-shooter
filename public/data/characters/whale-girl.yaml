@@ -9,11 +9,9 @@ description: |
     fight she has already decided to enjoy.
 descriptionZh: |
     随潮水漂来的小鲸娘，为了酒馆的饭菜留了下来。她总把一只圆滚滚的鲸鱼玩偶夹在腋下，把屋里每把武器都当成值得试一次的东西。脾气很稳，很难被放倒，一旦决定要享受这场架，谁也劝不动。
-# PLACEHOLDER ASSET — `sprite.texture` currently points at a copy of the
-# bunny-girl sheet (same 4x4 layout) so the data pipeline can be
-# exercised before her real art exists. Swap the texture path (and add a
-# `sprite.script` block for the raw sheet) once the real art lands — that
-# is a YAML-only change, no code.
+# Real art. `sprite.texture` is the processed sheet; the AI output it came from is
+# archived beside it in `raws/`, and `sprite.script` below records the exact
+# split-sheet pass that turned one into the other, so the pair stays reproducible.
 imageSize: 2048x2048
 prompt: |
     The 11th Forest — Whale Girl sprite sheet
@@ -142,6 +140,12 @@ sprite:
     offset:
         left: -2
         bottom: -4
+    # Provenance for `texture`: the 1024x1024 sheet in raws/ (magenta field, 4x4)
+    # was split, chroma-keyed, downsampled by 2 and quantised to 32 colours.
+    script:
+        downsample: 2
+        colors: 32
+        pad: 2
 anims:
     idle:
         frames:
