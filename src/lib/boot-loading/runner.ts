@@ -1,14 +1,19 @@
 import { BOOT_LOADING } from '@/lib/boot-loading/config';
 
 /**
- * The runner that walks the progress bar: the chubby boy on the left of the key art, redrawn as
- * a 20×24 pixel sprite so it stays crisp at any CSS size (`image-rendering: pixelated` does the
- * nearest-neighbour upscale — the canvas backing store is always exactly one sprite, and CSS sizes
- * it in whole multiples of that in index.html).
+ * The runner that walks the progress bar: 鲸鲸 herself, redrawn as a 20×24 pixel sprite so she
+ * stays crisp at any CSS size (`image-rendering: pixelated` does the nearest-neighbour upscale —
+ * the canvas backing store is always exactly one sprite, and CSS sizes it in whole multiples of
+ * that in index.html).
+ *
+ * She is the same face as the loading key art: long blue hair that pales to white at the tips, a
+ * frilled white headdress, a navy maid dress under a white apron that carries the little whale
+ * mark. Every colour here is sampled straight off that art, so the sprite and the illustration
+ * behind it read as one character rather than two.
  *
  * The walk is four frames on the SAME rhythm the characters breathe on: one full walk cycle takes
- * exactly one breath period, `2π / BOOT_LOADING.BREATH_W`. The belly jiggles at twice that rate —
- * it is widest on the two "down" (pass) frames, narrowest on the two contact frames.
+ * exactly one breath period, `2π / BOOT_LOADING.BREATH_W`. The stride lives in the legs — nothing
+ * above them moves — and the two pass frames bob up a pixel, so the step reads as a step.
  */
 
 /** Sprite width, in pixels. Every row is exactly this long. */
@@ -22,23 +27,25 @@ export const RUNNER_STEPS_PER_BREATH = 4;
 
 /**
  * Every colour the sprite can use, keyed by the single character that stands for it in the row
- * strings below: a dark outline plus one shade level per material. `.` is transparent and
- * deliberately has no entry.
+ * strings below: a dark outline plus one flat tone per material, with a shade or a highlight only
+ * where the art needs one — the jaw, the lit streak down her hair, the eye catchlight. `.` is
+ * transparent and deliberately has no entry.
  */
 export const RUNNER_PALETTE = {
-    o: '#241a12', // outline — the dark rim that holds the figure together
-    H: '#3a2a1d', // hair, messy dark brown
-    h: '#54402f', // hair, the lit side of the mess
-    S: '#f2c79c', // warm skin
-    s: '#dba87c', // skin shade — the jaw and the navel
-    G: '#141414', // glasses, black rims
-    L: '#cfe6f2', // glasses, the lens itself
-    T: '#f7f6f0', // tank top, white
-    t: '#dcdbd1', // tank top, shaded where the arm meets it
-    C: '#5b6b3d', // army-green cargo shorts
-    c: '#455430', // cargo, the side pockets
-    W: '#fbfbf8', // white sneakers
-    x: '#b9b9b2', // their soles
+    o: '#131a33', // outline - the dark rim that holds the figure together
+    A: '#fbfbf8', // the frilled headdress, white
+    H: '#3e5d9d', // hair, the blue she and the key art share
+    l: '#629ac5', // hair, the lit streak down the crown
+    W: '#dceef5', // hair tips - they pale to white, her signature
+    S: '#f8d9c0', // warm skin
+    s: '#e3b494', // skin shade - the jaw and the blush line
+    E: '#1f3262', // the iris
+    e: '#ffffff', // the catchlight; without it the eyes vanish at 20 px
+    B: '#e58aa0', // the mouth and the cheeks
+    D: '#22305c', // the maid dress, navy
+    P: '#f6f7f5', // the apron, white
+    m: '#4a86c8', // the little whale mark on the apron
+    K: '#1a2444', // her shoes
 } as const;
 
 /** The character a sprite pixel is drawn with. */
@@ -54,119 +61,119 @@ const FRAME_CONTACT_L: RunnerFrame = {
     bob: 0,
     rows: [
         '....................', //  0  empty margin, so the bob on the pass frames has room
-        '.....o.o.o.o.o......', //  1  spiky tips of the mess
-        '....oHHHHHHHHHHo....', //  2
-        '....oHhhHHHHhhHo....', //  3
-        '...oHHHHHHHHHHHHo...', //  4  the head: wide and low, deliberately more than half the sprite
-        '...oHhhHHHHHHHHho...', //  5
-        '...oSSSSSSSSSSsSo...', //  6  forehead
-        '...oSGGGGGGGGGGSo...', //  7  top rims
-        '...oSGLLLGGLLLGSo...', //  8  two lenses, split by the bridge
-        '...oSGGGGGGGGGGSo...', //  9  bottom rims
-        '...oSSSSSooSSSSso...', // 10  cheeks, open mouth
-        '....oSSSSSSSSSSo....', // 11  chin
-        '....oTTTTTTTTTTo....', // 12  shoulders, tank top
-        '..osoTtTTTTTTtToso..', // 13  chest: the tank top is cropped here
-        '..osoSSSSSSSSSSoso..', // 14  bare round belly
-        '..osoSSSSoSSSSSoo...', // 15  the navel
-        '..ososSSSSSSSSso....', // 16  belly, shaded at the sides
-        '...ooCCCCCCCCCCo....', // 17  army-green cargo shorts
-        '....oCcCCCCCCcCo....', // 18  side pockets
-        '....oCCo....oCCo....', // 19  legs
-        '....oCCo....oCCo....', // 20
-        '...oWWWo....oWWWo...', // 21  white sneakers
-        '...oWWWo....oWWWo...', // 22
-        '...oxxxo....oxxxo...', // 23  soles — the row he stands on
+        '.......o.o..........', //  1  the ahoge - one stray hair, the only thing above the frill
+        '....oAAAAAAAAo......', //  2  frilled headdress: a single scalloped row, white
+        '...oHHHHHHHHHHo.....', //  3  her hair, wide and low - the head is over half the sprite
+        '..oHHlllllllHHo.....',
+        '..oHlllllllllHo.....',
+        '..oHHSSSSSSSHHo.....', //  6  forehead
+        '..oHSEESSSEESHo.....', //  7  two big anime eyes, split by a narrow bridge
+        '..oHSEeSSSEeSHo.....', //  8  catchlights, one in each eye
+        '..oHHSSSBBSSHHo.....', //  9  cheeks and an open mouth
+        '..oWHHSSSSSHHWo.....', // 10  chin: the hair already paling to white at the temples
+        '..oWWHHsSSsHHWWo....', // 11  neck, where the jaw shade meets the pale tips
+        '..oWWHHDDDDHHWWo....', // 12  shoulders - maid dress, her hair falling past them either side
+        '..oWWHDPPPPDHWWo....', // 13  apron bib
+        '..oWWHDPmmPDHWWo....', // 14  the little whale mark on the apron
+        '..oWWHDPmmPDHWWo....',
+        '..oWWDDPPPPDDWWo....', // 16  apron hem, dress either side
+        '.oWWDDDDDDDDDDWWo...', // 17  the skirt, flaring out past her hair
+        '.oWWDDDDDDDDDDWWo...',
+        '.oWWDDDDDDDDDDWWo...',
+        '..oWDDDDDDDDDDWo....', // 20  hem
+        '...ooooooooooo......', // 21  the row she stands on
+        '...oKKo...oKKo......', // 22  one foot forward
+        '...oooo...oooo......',
     ],
 };
 
 const FRAME_PASS_DOWN: RunnerFrame = {
     bob: 1,
     rows: [
-        '....................',
-        '.....o.o.o.o.o......',
-        '....oHHHHHHHHHHo....',
-        '....oHhhHHHHhhHo....',
-        '...oHHHHHHHHHHHHo...',
-        '...oHhhHHHHHHHHho...',
-        '...oSSSSSSSSSSsSo...',
-        '...oSGGGGGGGGGGSo...',
-        '...oSGLLLGGLLLGSo...',
-        '...oSGGGGGGGGGGSo...',
-        '...oSSSSSooSSSSso...',
-        '....oSSSSSSSSSSo....',
-        '....oTTTTTTTTTTo....',
-        '..osoTtTTTTTTtToso..',
-        '..osoSSSSSSSSSSoso..', // 14  bare round belly
-        '..osoSSSSoSSSSSoso..', // 15  the navel, pushed up by the swell
-        '...oosSSSSSSSSsoo...', // 16
-        '....oCCCCCCCCCCo....',
-        '....oCcCCCCCCcCo....',
-        '.....oCCo..oCCo.....', // 19  legs together, under him
-        '.....oCCo..oCCo.....', // 20
-        '....oWWWo..oWWWo....', // 21
-        '....oWWWo..oWWWo....', // 22
-        '....oxxxo..oxxxo....', // 23
+        '....................', //  0  empty margin, so the bob on the pass frames has room
+        '.......o.o..........', //  1  the ahoge - one stray hair, the only thing above the frill
+        '....oAAAAAAAAo......', //  2  frilled headdress: a single scalloped row, white
+        '...oHHHHHHHHHHo.....', //  3  her hair, wide and low - the head is over half the sprite
+        '..oHHlllllllHHo.....',
+        '..oHlllllllllHo.....',
+        '..oHHSSSSSSSHHo.....', //  6  forehead
+        '..oHSEESSSEESHo.....', //  7  two big anime eyes, split by a narrow bridge
+        '..oHSEeSSSEeSHo.....', //  8  catchlights, one in each eye
+        '..oHHSSSBBSSHHo.....', //  9  cheeks and an open mouth
+        '..oWHHSSSSSHHWo.....', // 10  chin: the hair already paling to white at the temples
+        '..oWWHHsSSsHHWWo....', // 11  neck, where the jaw shade meets the pale tips
+        '..oWWHHDDDDHHWWo....', // 12  shoulders - maid dress, her hair falling past them either side
+        '..oWWHDPPPPDHWWo....', // 13  apron bib
+        '..oWWHDPmmPDHWWo....', // 14  the little whale mark on the apron
+        '..oWWHDPmmPDHWWo....',
+        '..oWWDDPPPPDDWWo....', // 16  apron hem, dress either side
+        '.oWWDDDDDDDDDDWWo...', // 17  the skirt, flaring out past her hair
+        '.oWWDDDDDDDDDDWWo...',
+        '.oWWDDDDDDDDDDWWo...',
+        '..oWDDDDDDDDDDWo....', // 20  hem
+        '...ooooooooooo......', // 21  the row she stands on
+        '....oKKo.oKKo.......', // 22  both feet in, under her
+        '....oooo.oooo.......',
     ],
 };
 
 const FRAME_CONTACT_R: RunnerFrame = {
     bob: 0,
     rows: [
-        '....................',
-        '.....o.o.o.o.o......',
-        '....oHHHHHHHHHHo....',
-        '....oHhhHHHHhhHo....',
-        '...oHHHHHHHHHHHHo...',
-        '...oHhhHHHHHHHHho...',
-        '...oSSSSSSSSSSsSo...',
-        '...oSGGGGGGGGGGSo...',
-        '...oSGLLLGGLLLGSo...',
-        '...oSGGGGGGGGGGSo...',
-        '...oSSSSSooSSSSso...',
-        '....oSSSSSSSSSSo....',
-        '....oTTTTTTTTTTo....',
-        '..osoTtTTTTTTtToso..',
-        '..osoSSSSSSSSSSoso..',
-        '...ooSSSSoSSSSSoso..',
-        '....osSSSSSSSSsoso..',
-        '....oCCCCCCCCCCoo...',
-        '....oCcCCCCCCcCo....',
-        '.....oCCo.oCCo......', // 19  the other foot forward
-        '.....oCCo.oCCo......', // 20
-        '....oWWWo.oWWWo.....', // 21
-        '....oWWWo.oWWWo.....', // 22
-        '....oxxxo.oxxxo.....', // 23
+        '....................', //  0  empty margin, so the bob on the pass frames has room
+        '.......o.o..........', //  1  the ahoge - one stray hair, the only thing above the frill
+        '....oAAAAAAAAo......', //  2  frilled headdress: a single scalloped row, white
+        '...oHHHHHHHHHHo.....', //  3  her hair, wide and low - the head is over half the sprite
+        '..oHHlllllllHHo.....',
+        '..oHlllllllllHo.....',
+        '..oHHSSSSSSSHHo.....', //  6  forehead
+        '..oHSEESSSEESHo.....', //  7  two big anime eyes, split by a narrow bridge
+        '..oHSEeSSSEeSHo.....', //  8  catchlights, one in each eye
+        '..oHHSSSBBSSHHo.....', //  9  cheeks and an open mouth
+        '..oWHHSSSSSHHWo.....', // 10  chin: the hair already paling to white at the temples
+        '..oWWHHsSSsHHWWo....', // 11  neck, where the jaw shade meets the pale tips
+        '..oWWHHDDDDHHWWo....', // 12  shoulders - maid dress, her hair falling past them either side
+        '..oWWHDPPPPDHWWo....', // 13  apron bib
+        '..oWWHDPmmPDHWWo....', // 14  the little whale mark on the apron
+        '..oWWHDPmmPDHWWo....',
+        '..oWWDDPPPPDDWWo....', // 16  apron hem, dress either side
+        '.oWWDDDDDDDDDDWWo...', // 17  the skirt, flaring out past her hair
+        '.oWWDDDDDDDDDDWWo...',
+        '.oWWDDDDDDDDDDWWo...',
+        '..oWDDDDDDDDDDWo....', // 20  hem
+        '...ooooooooooo......', // 21  the row she stands on
+        '....oKKo..oKKo......', // 22  the other foot forward
+        '....oooo..oooo......',
     ],
 };
 
 const FRAME_PASS_STAGGER: RunnerFrame = {
     bob: 1,
     rows: [
-        '....................',
-        '.....o.o.o.o.o......',
-        '....oHHHHHHHHHHo....',
-        '....oHhhHHHHhhHo....',
-        '...oHHHHHHHHHHHHo...',
-        '...oHhhHHHHHHHHho...',
-        '...oSSSSSSSSSSsSo...',
-        '...oSGGGGGGGGGGSo...',
-        '...oSGLLLGGLLLGSo...',
-        '...oSGGGGGGGGGGSo...',
-        '...oSSSSSooSSSSso...',
-        '....oSSSSSSSSSSo....',
-        '....oTTTTTTTTTTo....',
-        '..osoTtTTTTTTtToso..',
-        '..osoSSSSSSSSSSoso..',
-        '..osoSSSSoSSSSSoso..',
-        '...oosSSSSSSSSsoo...',
-        '....oCCCCCCCCCCo....',
-        '....oCcCCCCCCcCo....',
-        '....oCCo..oCCo......', // 19  legs scissored across each other
-        '....oCCo..oCCo......', // 20
-        '...oWWWo...oWWWo....', // 21
-        '...oWWWo...oWWWo....', // 22
-        '...oxxxo...oxxxo....', // 23
+        '....................', //  0  empty margin, so the bob on the pass frames has room
+        '.......o.o..........', //  1  the ahoge - one stray hair, the only thing above the frill
+        '....oAAAAAAAAo......', //  2  frilled headdress: a single scalloped row, white
+        '...oHHHHHHHHHHo.....', //  3  her hair, wide and low - the head is over half the sprite
+        '..oHHlllllllHHo.....',
+        '..oHlllllllllHo.....',
+        '..oHHSSSSSSSHHo.....', //  6  forehead
+        '..oHSEESSSEESHo.....', //  7  two big anime eyes, split by a narrow bridge
+        '..oHSEeSSSEeSHo.....', //  8  catchlights, one in each eye
+        '..oHHSSSBBSSHHo.....', //  9  cheeks and an open mouth
+        '..oWHHSSSSSHHWo.....', // 10  chin: the hair already paling to white at the temples
+        '..oWWHHsSSsHHWWo....', // 11  neck, where the jaw shade meets the pale tips
+        '..oWWHHDDDDHHWWo....', // 12  shoulders - maid dress, her hair falling past them either side
+        '..oWWHDPPPPDHWWo....', // 13  apron bib
+        '..oWWHDPmmPDHWWo....', // 14  the little whale mark on the apron
+        '..oWWHDPmmPDHWWo....',
+        '..oWWDDPPPPDDWWo....', // 16  apron hem, dress either side
+        '.oWWDDDDDDDDDDWWo...', // 17  the skirt, flaring out past her hair
+        '.oWWDDDDDDDDDDWWo...',
+        '.oWWDDDDDDDDDDWWo...',
+        '..oWDDDDDDDDDDWo....', // 20  hem
+        '...ooooooooooo......', // 21  the row she stands on
+        '...oKKo.....oKKo....', // 22  scissored across each other
+        '....oooo....oooo....',
     ],
 };
 

@@ -25,20 +25,9 @@ function runLength(row: string, ch: string): number {
     return n;
 }
 
-/** Width of the belly: the widest run of skin flanked by tank top on both sides. */
-function bellyWidth(frame: (typeof RUNNER_FRAMES)[number]): number {
-    let best = 0;
-    for (const row of frame.rows) {
-        for (let i = 1; i < row.length; i++) {
-            if (row[i] !== 'S') continue;
-            const n = runLength(row.slice(i), 'S');
-            const tank = row[i - 1] === 'T' && row[i + n] === 'T';
-            // Crop top: below the chest (row 13) the bare belly runs outline to outline.
-            const crop = frame.rows.indexOf(row) > 13 && row[i - 1] === 'o';
-            if (tank || crop) best = Math.max(best, n);
-        }
-    }
-    return best;
+/** Row index of the first row matching `re`. */
+function firstRow(re: RegExp): number {
+    return RUNNER_FRAMES[0].rows.findIndex((r) => re.test(r));
 }
 
 describe('runner sprite data', () => {
@@ -64,136 +53,114 @@ describe('runner sprite data', () => {
         }
     });
 
-    it('has a warm, dark, earthy palette — nothing neon', () => {
+    it('paints every palette colour in every frame, so no entry is dead weight', () => {
+        const all = Object.keys(RUNNER_PALETTE) as PaletteKey[];
+        for (const frame of RUNNER_FRAMES) {
+            const keys = new Set(runnerPixels(frame).map((p) => p.key));
+            for (const key of all) expect(keys.has(key)).toBe(true);
+        }
+    });
+
+    it('paints her in the key art blues — hair blue, dress a darker navy, outline near-black', () => {
         for (const hex of Object.values(RUNNER_PALETTE)) {
             expect(hex).toMatch(/^#[0-9a-f]{6}$/);
         }
-        // skin is warm (r > b), hair is dark brown (all channels low), shoes and top are white
+        // hair is blue, and the lit streak is lighter than it
+        expect(channel(RUNNER_PALETTE.H, 'b')).toBeGreaterThan(channel(RUNNER_PALETTE.H, 'r'));
+        expect(channel(RUNNER_PALETTE.l, 'b')).toBeGreaterThan(channel(RUNNER_PALETTE.H, 'b'));
+        // the dress is navy and clearly darker than the hair it falls over
+        expect(channel(RUNNER_PALETTE.D, 'b')).toBeLessThan(channel(RUNNER_PALETTE.H, 'b'));
+        // the whites of the headdress, the tips and the apron are all near-white
+        for (const k of ['A', 'W', 'P'] as const) {
+            expect(Math.min(...channelList(RUNNER_PALETTE[k]))).toBeGreaterThan(0xd0);
+        }
+        // skin stays warm, and the outline is the darkest thing on the sprite
         expect(channel(RUNNER_PALETTE.S, 'r')).toBeGreaterThan(channel(RUNNER_PALETTE.S, 'b'));
-        expect(channel(RUNNER_PALETTE.H, 'r')).toBeGreaterThan(channel(RUNNER_PALETTE.H, 'b'));
-        expect(channel(RUNNER_PALETTE.H, 'g')).toBeGreaterThan(channel(RUNNER_PALETTE.H, 'b'));
-        expect(Math.max(...channelList(RUNNER_PALETTE.H))).toBeLessThan(0x80);
-        expect(Math.min(...channelList(RUNNER_PALETTE.W))).toBeGreaterThan(0xe0);
-        expect(Math.min(...channelList(RUNNER_PALETTE.T))).toBeGreaterThan(0xe0);
-        expect(channel(RUNNER_PALETTE.G, 'r')).toBeLessThan(0x30);
-        // army green cargo: green leads, blue trails
-        expect(channel(RUNNER_PALETTE.C, 'g')).toBeGreaterThan(channel(RUNNER_PALETTE.C, 'b'));
-        expect(channel(RUNNER_PALETTE.C, 'g')).toBeGreaterThan(channel(RUNNER_PALETTE.C, 'r'));
+        expect(Math.max(...channelList(RUNNER_PALETTE.o))).toBeLessThan(0x40);
     });
 
-    it('gives every material one tone variation plus a dark outline', () => {
-        // shaded materials: the shade is strictly darker on every channel
-        for (const [base, shade] of [
-            ['S', 's'],
-            ['T', 't'],
-            ['C', 'c'],
-            ['W', 'x'],
-        ] as const) {
-            for (const ch of ['r', 'g', 'b'] as const) {
-                expect(channel(RUNNER_PALETTE[shade], ch)).toBeLessThan(
-                    channel(RUNNER_PALETTE[base], ch),
-                );
-            }
+    it('gives the skin a jaw shade, the hair a lit streak, and keeps the whale mark distinct', () => {
+        for (const ch of ['r', 'g', 'b'] as const) {
+            expect(channel(RUNNER_PALETTE.s, ch)).toBeLessThan(channel(RUNNER_PALETTE.S, ch));
         }
-        // the hair's variation is a lit side, not a shade — but it is still dark brown
-        expect(Math.max(...channelList(RUNNER_PALETTE.h))).toBeLessThan(0x80);
-        expect(RUNNER_PALETTE.h).not.toBe(RUNNER_PALETTE.H);
-        // the outline is darker than every material it is drawn around
-        expect(Math.max(...channelList(RUNNER_PALETTE.o))).toBeLessThan(0x30);
+        expect(RUNNER_PALETTE.l).not.toBe(RUNNER_PALETTE.H);
+        // the apron mark has to read against both the white apron and the blue hair
+        expect(RUNNER_PALETTE.m).not.toBe(RUNNER_PALETTE.P);
+        expect(RUNNER_PALETTE.m).not.toBe(RUNNER_PALETTE.H);
+        expect(RUNNER_PALETTE.K).not.toBe(RUNNER_PALETTE.o);
     });
 
-    it('paints hair, glasses, tank top, belly, cargo, pockets and sneakers in every frame', () => {
-        const needed = [
-            'o',
-            'H',
-            'h',
-            'S',
-            's',
-            'G',
-            'L',
-            'T',
-            't',
-            'C',
-            'c',
-            'W',
-            'x',
-        ] as PaletteKey[];
-        for (const frame of RUNNER_FRAMES) {
-            const keys = new Set(runnerPixels(frame).map((p) => p.key));
-            for (const key of needed) expect(keys.has(key)).toBe(true);
-        }
-    });
-
-    it('gives him messy hair with spiky tips above a head that is over half the sprite', () => {
-        const head = RUNNER_FRAMES[0].rows.join('\n');
-        const hair = head.match(/H+/g) ?? [];
+    it('gives her long blue hair that falls past the shoulders and pales to white at the tips', () => {
+        const rows = RUNNER_FRAMES[0].rows;
+        // the widest hair row spans at least 10 px — a big head on a short body
+        const hair = rows.join('\n').match(/[Hl]+/g) ?? [];
         expect(hair.length).toBeGreaterThanOrEqual(3);
-        // the widest hair row spans at least 12 px — a big head on a short body
-        expect(Math.max(...(head.match(/H+/g) ?? []).map((r) => r.length))).toBeGreaterThanOrEqual(
-            12,
-        );
-        // spikes: a hair row whose top edge is separated into loose tips, not one solid line
-        const tips = RUNNER_FRAMES[0].rows.findIndex((r) => /(^|\.)o\.o\.o/.test(r));
-        expect(tips).toBeGreaterThan(-1);
-        expect(tips).toBeLessThan(3);
-        expect(hair[0]?.length ?? 0).toBeLessThan(RUNNER_W); // the spiky row is mostly gaps
+        expect(Math.max(...hair.map((r) => r.length))).toBeGreaterThanOrEqual(10);
+        // the pale tips appear at the temples, below the eyes but still on the face
+        expect(firstRow(/oWHH/)).toBeGreaterThan(firstRow(/oHSE/));
+        // and the hair is still there below the waist, either side of the skirt
+        expect(rows[11]).toContain('WWHHsSSsHHWW');
+        expect(rows[17]).toContain('WWDDDDDDDDDDWW');
     });
 
-    it('draws two square glasses frames with a bridge, rimmed above and below', () => {
+    it('wears a white frilled headdress above the hair, with one stray hair on top', () => {
         const rows = RUNNER_FRAMES[0].rows;
-        const lens = rows.findIndex((r) => r.includes('L'));
-        expect(lens).toBeGreaterThan(-1);
-        const row = rows[lens];
-        // two lens runs of at least 3 px, split by a 2 px bridge
-        expect(row).toMatch(/GLLLGG LLLG|GLLLGGLLLG/);
-        const lensRuns = [...row.matchAll(/L+/g)].map((m) => m[0]);
-        expect(lensRuns).toHaveLength(2);
-        for (const run of lensRuns) expect(run.length).toBeGreaterThanOrEqual(3);
-        // the rims above and below are solid black across both frames
-        for (const r of [rows[lens - 1], rows[lens + 1]]) {
-            expect(runLength(r.slice(r.indexOf('G')), 'G')).toBeGreaterThanOrEqual(8);
-        }
+        // the ahoge: a single loose tip, and the widest gap in the sprite
+        expect(rows[1]).toMatch(/(^|\.)o\.o/);
+        expect(runLength(rows[1].slice(rows[1].indexOf('o')), 'o')).toBe(1);
+        // the frill is one scalloped white row, and it sits above every hair pixel
+        expect(rows[2]).toContain('oAAAAAAAAo');
+        expect(firstRow(/AAAA/)).toBeLessThan(firstRow(/HHHH/));
     });
 
-    it('crops the tank top above a bare belly, with a navel', () => {
-        for (const frame of RUNNER_FRAMES) {
-            // shoulders and chest are tank top
-            expect(frame.rows[12]).toMatch(/oT{10}o/);
-            expect(frame.rows[13]).toContain('TT');
-            // the belly below is bare skin, no tank top pixel left on it
-            for (const y of [14, 15, 16]) expect(frame.rows[y].slice(5, 15)).not.toContain('T');
-            expect(bellyWidth(frame)).toBeGreaterThanOrEqual(8);
-            // the navel: a dark pixel with skin either side, in the middle belly row
-            expect(frame.rows[15]).toMatch(/SoS/);
-        }
-    });
-
-    it('puts the cargo shorts with side pockets below the tank top, sneakers below those', () => {
+    it('draws two big eyes with a catchlight in each, and no glasses around them', () => {
         const rows = RUNNER_FRAMES[0].rows;
-        const top = rows.findIndex((r) => r.includes('TT'));
-        const shorts = rows.findIndex((r) => r.includes('CCCC'));
-        const shoes = rows.findIndex((r) => r.includes('WWW'));
-        expect(top).toBeGreaterThan(-1);
-        expect(shorts).toBeGreaterThan(top);
-        expect(shoes).toBeGreaterThan(shorts);
-        // one shaded pocket at each hip
-        expect(rows[shorts + 1]).toMatch(/oCc+C+cCo/);
-        // the soles are the very bottom row, so the figure stands on the bar
-        expect(rows[RUNNER_H - 1]).toContain('xxx');
+        const eye = firstRow(/EESSSEES/);
+        expect(eye).toBeGreaterThan(-1);
+        // exactly two irises, two pixels wide each, split by the bridge
+        expect([...rows[eye].matchAll(/E+/g)].map((m) => m[0])).toEqual(['EE', 'EE']);
+        // one catchlight inside each iris on the row below
+        expect(rows[eye + 1]).toMatch(/EeSSSEeS/);
+        // no rim: nothing darker than the skin wraps the eyes on either side of them
+        expect(rows[eye][rows[eye].indexOf('EE') - 1]).toBe('S');
+        expect(rows[eye][rows[eye].lastIndexOf('EE') + 2]).toBe('S');
     });
 
-    it('carries the walk in the legs: the head never moves, every frame differs below it', () => {
+    it('ties a white apron on, with the little whale mark on the bib', () => {
+        const rows = RUNNER_FRAMES[0].rows;
+        const apron = firstRow(/DPPPPD/);
+        const face = firstRow(/SSSSSSSHH/);
+        expect(apron).toBeGreaterThan(face); // the apron is below the face
+        expect(rows[apron]).toContain('DPPPPD');
+        // the mark: two rows of it, on the apron, with the apron either side
+        expect(rows[apron + 1]).toContain('PmmP');
+        expect(rows[apron + 2]).toContain('PmmP');
+        // and the apron is white all the way down to its hem
+        expect(rows[apron + 3]).toContain('PPPP');
+    });
+
+    it('puts the navy dress below the apron, and her shoes on the bottom row', () => {
+        const rows = RUNNER_FRAMES[0].rows;
+        const dress = firstRow(/DDDDDDDDDD/);
+        expect(dress).toBeGreaterThan(firstRow(/DPPPPD/));
+        // the skirt flares wider than any row above it
+        const widths = rows.map((r) => r.length - r.replace(/[^D]/g, '').length);
+        expect(Math.max(...widths)).toBeGreaterThanOrEqual(10);
+        // shoes near the bottom, and the very last row is the outline she stands on
+        expect(rows[RUNNER_H - 2]).toContain('KK');
+        expect(rows[RUNNER_H - 1]).toMatch(/^\.+o+\.+o+\.+$/);
+    });
+
+    it('carries the walk in the legs: nothing above them moves, every frame differs below', () => {
         const [a, b, c, d] = RUNNER_FRAMES;
-        const belly = 12; // everything above the tank top
+        const legs = 22; // the first row that is only legs
         for (const other of [b, c, d]) {
-            const head = a.rows.slice(0, belly);
-            const differingHead = head.filter((row, i) => row !== other.rows[i]);
-            expect(differingHead).toHaveLength(0);
+            const same = a.rows.slice(0, legs).filter((row, i) => row !== other.rows[i]);
+            expect(same).toHaveLength(0);
         }
         // the legs themselves do differ, frame to frame
-        const legs = a.rows.findIndex((r) => /oCCo/.test(r));
-        expect(a.rows[legs]).not.toBe(b.rows[legs]);
-        expect(c.rows[legs]).not.toBe(d.rows[legs]);
+        const feet = new Set(RUNNER_FRAMES.map((f) => f.rows[legs]));
+        expect(feet.size).toBe(4);
     });
 
     it('bobs the two pass frames up by exactly one pixel so the step reads as a stride', () => {
@@ -231,7 +198,9 @@ describe('runnerFrameAt', () => {
         const steps = 2000;
         for (let i = 1; i <= steps; i++) {
             const t = (i / steps) * period;
-            if (runnerFrameAt(t - 1e-4, w) !== runnerFrameAt(t, w)) flips.push(t / period);
+            if (runnerFrameAt(t, w) !== runnerFrameAt(t - period / steps, w)) {
+                flips.push(t / period);
+            }
         }
         expect(flips).toHaveLength(RUNNER_STEPS_PER_BREATH);
         flips.forEach((at, i) => expect(at).toBeCloseTo((i + 1) / RUNNER_STEPS_PER_BREATH, 2));
