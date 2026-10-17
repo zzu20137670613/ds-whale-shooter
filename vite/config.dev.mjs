@@ -20,5 +20,14 @@ export default defineConfig({
     },
     server: {
         port: 8080,
+        watch: {
+            // Prettier (via the pre-commit hook) and vitest write atomic temp files next to the
+            // file they replace: `.<name>.<pid>.<uuid>.tmpdir/<name>.tmp`. Vite's watcher tried to
+            // watch those, hit `EBUSY: resource busy or locked` on Windows, and the watcher's
+            // unhandled `error` event took the whole dev server down with it. Nothing under a
+            // `.tmpdir` is ever worth reloading, so ignore them outright — with and without the
+            // trailing `/**`, so the directory itself is skipped as well as its contents.
+            ignored: ['**/.*.tmpdir', '**/.*.tmpdir/**'],
+        },
     },
 });

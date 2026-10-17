@@ -55,7 +55,9 @@ describe('runner sprite data', () => {
         const hexes = Object.values(RUNNER_PALETTE);
         for (const hex of hexes) expect(hex).toMatch(/^#[0-9a-f]{6}$/);
         // most of the palette is blue: her hair, her dress and her tail are nearly all of her
-        expect(hexes.filter((h) => channel(h, 'b') > channel(h, 'r') + 30).length).toBeGreaterThan(7);
+        expect(hexes.filter((h) => channel(h, 'b') > channel(h, 'r') + 30).length).toBeGreaterThan(
+            7,
+        );
         // a near-white for the headdress, the apron and the pale hair tips
         expect(hexes.some((h) => Math.min(...channelList(h)) > 0xd0)).toBe(true);
         // warm skin, and a near-black holding the silhouette together
