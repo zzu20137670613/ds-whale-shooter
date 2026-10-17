@@ -18,6 +18,13 @@
 > [!IMPORTANT]
 > **Notice**: This repository is an **AI Game Development Research Project & Experimental Prototype**. It explores AI-driven workflows, data-driven engine architecture, and generative asset pipelines. **It is not recommended for direct commercial production deployment.**
 
+> [!NOTE]
+> **Based on**: this repository is **whale-shooter**, a game built on top of
+> [FireTable/the-11th-forest](https://github.com/FireTable/the-11th-forest) — the engine shell, the
+> data-driven architecture, the in-browser level editor and the asset pipeline are upstream work,
+> MIT licensed (© 2025 Phaser Studio Inc). Game content built here: whale-girl, the tavern shop,
+> character/weapon upgrade ladders, the money economy and the bilingual (EN / 中文) UI.
+
 ---
 
 ## 📖 Overview
