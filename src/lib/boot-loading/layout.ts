@@ -8,7 +8,11 @@ export const LAYER_RECT = {
     bg: { x: 0, y: 0, w: 1920, h: 1072 },
     chars: { x: 487, y: 481, w: 970, h: 495 },
     fg: { x: 0, y: 739, w: 1920, h: 333 },
-    title: { x: 618, y: 100, w: 688, h: 269 }, // 0.85× of the 809×317 asset, same centre x, raised
+    // The wordmark, extracted from the key art itself (its alpha was unmixed
+    // against a title-free plate of the same illustration), so bg + title
+    // re-stack to the key art. Spans the whole wordmark, unlike the upstream
+    // 809x317 pixel-title asset that used to live here.
+    title: { x: 235, y: 168, w: 1536, h: 190 },
 } as const satisfies Record<string, Rect>;
 
 export const LOADING_ASSET_BASE = '/assets/image/ui/loading/';
