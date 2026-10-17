@@ -1,6 +1,8 @@
-# PLACEHOLDER ASSET — `sprite.texture` is a copy of the retired upstream
-# bunny-girl sheet (same 4x4 layout) so the character is playable before her real
-# art lands. Swap the texture, then drop this comment — YAML-only, no code.
+# Real art. Generated from her single front-view reference and processed with
+# tools/split-sheet-pale.py rather than scripts/split-sheet.ts: the house
+# splitter's Lch key eats a white/pale character on magenta, and its blob-based
+# frame extraction splits a run row drawn with detached hair. The AI output is
+# archived in raws/.
 id: claude
 name: Claude
 nameZh: "克劳德"
@@ -84,6 +86,13 @@ sprite:
     offset:
         left: -2
         bottom: -4
+    # Provenance for `texture`: the 1536x1536 sheet in raws/ (magenta field, 4x4,
+    # Doubao watermark) was de-watermarked, keyed at RGB distance 50, shrunk 2px,
+    # downsampled 3x and quantised to 32 colours, cropping each cell by the grid.
+    script:
+        downsample: 3
+        colors: 32
+        pad: 2
 anims:
     idle:
         frames:
