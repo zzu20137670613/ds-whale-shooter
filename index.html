@@ -278,10 +278,11 @@
                 height: 48px;
             }
 
-            /* Moving Pixel Character. The canvas inside is a 20×24 sprite drawn by
-               src/lib/boot-loading/runner.ts. Both sizes below are WHOLE multiples of that backing
-               store — 2× on desktop, 1× on a phone — because `image-rendering: pixelated` is only
-               crisp at an integer scale; anything else gives uneven 1px/2px blocks. */
+            /* Moving Pixel Character. The canvas inside is a 40×48 sprite drawn by
+               src/lib/boot-loading/runner.ts — the whale-girl 立绘, quantised to sixteen colours.
+               The sizes below are 1× on desktop and ½× on a phone, so the sprite is never
+               upscaled: `pixelated` only has to hold up on a high-DPI desktop (where the 40px
+               element covers 80+ device pixels), and the phone downscale opts out of it below. */
             #boot .pixel-runner {
                 position: absolute;
                 bottom: 0;
@@ -294,7 +295,7 @@
                 /* First paint, before any JS: frame 0 of the runner sprite inlined as a 20×24 PNG,
                    so he is on screen with the bar. The canvas runner.ts mounts covers it exactly.
                    tests/lib/boot-loading/runner-inline.test.ts fails if it drifts. */
-                background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAYCAYAAAD6S912AAAAwElEQVR42mNgoCcQljL+j0yTbcjv3z/wYqItACm0i51LFCZoKLJhSbOO4sQkG4jPMGRDSXLhj5sHcGKSXQjSJG+UBMbIBiGLkWUgCKAbCBOjyMtPuxaAMVlevvPuK95whMmB1BFtILKhj7dMgRsGYiMbSNBQbAYqGcSgYIoMBBnw7ftXFAwzlCIDvdpOgPHgMhAWZti8DMIEDcRmGCGM19DBbyCyoaQYSFRuIRYTXQVIqbiAMbomfHJEu5BYOWQAAFpLvMgi/SvNAAAAAElFTkSuQmCC')
+                background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAwCAYAAABjezibAAADBklEQVR42u2YP0sdQRTFjeSLhLQ2SW0aqxS25jV+ARGxCNjERixExF4CNrESrNRaMBARLExjayHY+R2ee4Y9w9n7Ztx9Otd9xVu47Lr73PvbM3P/zMzMTI/pMT18jqeH++HhwZ9o+Bs2EWBt1gvY/7Pj4PzfxVVQbLB6GNXT615A6ZAwn78uB/uy9LtxDSPsu0ISjhCfvm3Ha1pvkBauq63vHEVIALsBnpzfBIcLv647wwGIZ3cV6Qw2//NvhF3cvx1+mP0YwXnPwrqrmFMJsARuU7MXQAuhSqdUfBdAgqSMEC+BwlwBNTFbOA6jmjugVY0RqYrZ6mE/AO+Y+74WE7obIBzvbW0OdzfWG00CDGVw8GMlGJ4juhWQcACFFYHjS+koOK0Awr3qrLX38fI0QvB3OQWLKKkvisNVOWXS1uHWYccz/MYGDM6N+7XarwbEi/BClCtbFXD/5OpuBBD3eF8B+aE6V3FdbB6yCYAzzDUMZ64PxLMwH2s4O7SueRDObMSmLKhXDZ92OdrpuOZBDlVKRSiHKaEwtg1zVVDnk6YUAOMcI7z6HZsGV/VsBYBTDDNTDBTjMoBguA8VteXCM21wXSHhDMla859d3TEwqKhbqUvB0THnHGBjHqyHXaPWrWFITXCtEnFlV8Pims9zgFC2GKS+xCqYMguWG1rtcNQf4cceWn1pDigFx1qswYJ3IdDa/I21FuELeM6VLZuCbC3G/7Ns2oqiwz8WIL5WHeR2D+xuAz+A6SakJtO8suUqmiO7lDmAwjn7Qc4vnWcafMVqdBc4bbs4L9u6lmINBNNJJ0DJhfw/V0AbFI0esOoNU93MSERnmtNigCkFAYcay245BaeWWou8OTi0fHVRUdONqpcKBgZJEfXoIDWkVA5pJShaQzUWWXVO1K6GTcWbtt0YkTaXMR9yi02XBfaj4qK+ukfAYulFE7CWrZf2ZmwEw4ovO3N5MLXtYbdARsqgqOna+tv9anbTvW2ctymqVQLzlGpNBCB3BxrpqA6oiQC0k9xtUV4dz+juv5sJL2YKAAAAAElFTkSuQmCC')
                     center / 100% 100% no-repeat;
                 image-rendering: pixelated;
                 animation: boot-runner-move 10s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
@@ -506,7 +507,8 @@
 
             /* The art is never scaled to make room for the panel, so on a short or narrow screen
                the panel gives up height — a smaller runner, tighter gaps — and never the runner.
-               1× the sprite on a phone, still a whole multiple, so the pixels stay square. */
+               That draws the 40×48 sprite at 20×24, a HALF scale: `pixelated` would drop every
+               other row and column, so the phone opts into a smooth downscale instead. */
             @media (max-width: 560px), (max-height: 520px) {
                 #boot .runner-track,
                 #boot .pixel-runner {
@@ -514,6 +516,11 @@
                 }
                 #boot .pixel-runner {
                     width: 20px;
+                    /* Half scale from the 40×48 backing: downscaling wants smooth, not nearest. */
+                    image-rendering: auto;
+                }
+                #boot .runner-canvas {
+                    image-rendering: auto;
                 }
                 #boot .boot-content {
                     gap: 6px;
