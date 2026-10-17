@@ -84,6 +84,13 @@ sprite:
     offset:
         left: -2
         bottom: -4
+    # Provenance: the sheet in raws/ went through tools/split-sheet-pale.py -
+    # RGB-distance key, 2px shrink, 3x downsample, hole fill, hard alpha,
+    # 32-colour quantise, cropping by grid cell.
+    script:
+        downsample: 3
+        colors: 32
+        pad: 2
 anims:
     idle:
         frames:
