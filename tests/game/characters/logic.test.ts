@@ -6,6 +6,7 @@ import {
     dodgeIntent,
     moveIntent,
     pickNearestMonster,
+    resolveActorScaleMultiplier,
     resolveHurtSfx,
     resolveLocomotion,
     resolveMoveSpeed,
@@ -25,6 +26,23 @@ describe('characters/logic — resolveLocomotion', () => {
 
     it('runs when moving and sprinting', () => {
         expect(resolveLocomotion(true, true)).toBe('run');
+    });
+});
+
+describe('characters/logic — resolveActorScaleMultiplier', () => {
+    it('defaults to 1 when the scene does not ask for a scale', () => {
+        expect(resolveActorScaleMultiplier(undefined)).toBe(1);
+    });
+
+    it('passes a positive scene scale straight through', () => {
+        expect(resolveActorScaleMultiplier(1)).toBe(1);
+        expect(resolveActorScaleMultiplier(1.8)).toBe(1.8);
+        expect(resolveActorScaleMultiplier(0.5)).toBe(0.5);
+    });
+
+    it('refuses a zero or negative scale — that would hide or mirror the sprite', () => {
+        expect(resolveActorScaleMultiplier(0)).toBe(1);
+        expect(resolveActorScaleMultiplier(-2)).toBe(1);
     });
 });
 

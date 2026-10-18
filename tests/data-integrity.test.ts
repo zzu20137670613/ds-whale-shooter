@@ -26,6 +26,7 @@ import { describe, expect, it } from 'vitest';
 
 import { parseAudioIndex, parseAudioYaml } from '@/lib/audios/parser';
 import { parseCharacterIndex, parseCharacterYaml } from '@/lib/characters/parser';
+import { TAVERN_ACTOR_SCALE } from '@/lib/constants';
 import { parseDropIndex, parseDropYaml } from '@/lib/drops/parser';
 import { parseLevelIndex, parseLevelYaml } from '@/lib/levels/parser';
 import { parseMonsterIndex, parseMonsterYaml } from '@/lib/monsters/parser';
@@ -257,5 +258,44 @@ describe('public/data integrity', () => {
         }
 
         expect(bad, `entities authored inside a wall:\n${bad.join('\n')}`).toEqual([]);
+    });
+
+    it('tavern: the five seats do not overlap at the tavern actor scale', () => {
+        // The tavern draws its actors at TAVERN_ACTOR_SCALE (the pavilion art
+        // implies a human several times taller than the sheets), so a seat row
+        // spaced for 1:1 silently produces five characters standing inside each
+        // other. Arithmetic, not taste: adjacent seats must be at least half of
+        // each actor's drawn width apart.
+        const SHEET_CELL = 128; // 512px sheet / 4 columns, every roster sheet
+        const tavern = parseLevelYaml(
+            read(join(DATA, 'levels', 'tavern.yaml')),
+            'tavern',
+        );
+        const seats = tavern.npcSpawns ?? [];
+        expect(seats.length).toBeGreaterThan(1);
+
+        const widthOf = (characterId: string): number => {
+            const spec = parseCharacterYaml(
+                read(join(DATA, 'characters', `${characterId}.yaml`)),
+                characterId,
+            );
+            return SHEET_CELL * (spec.sprite?.scale ?? 1) * TAVERN_ACTOR_SCALE;
+        };
+
+        const clashes: string[] = [];
+        for (let i = 1; i < seats.length; i++) {
+            const prev = seats[i - 1];
+            const cur = seats[i];
+            const minGap = (widthOf(prev.characterId) + widthOf(cur.characterId)) / 2;
+            const gap = Math.abs(cur.x - prev.x);
+            if (gap < minGap) {
+                clashes.push(
+                    `tavern: ${prev.characterId} (x ${prev.x}) and ${cur.characterId} ` +
+                        `(x ${cur.x}) are ${Math.round(gap)}px apart, need ${Math.round(minGap)}px`,
+                );
+            }
+        }
+
+        expect(clashes, `overlapping tavern seats:\n${clashes.join('\n')}`).toEqual([]);
     });
 });

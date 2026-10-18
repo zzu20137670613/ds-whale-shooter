@@ -120,6 +120,26 @@ export function absorbHit(hitsLeft: number): { hitsLeft: number; absorbed: boole
 export type Locomotion = 'idle' | 'walk' | 'run';
 
 /**
+ * Which visual scale multiplier applies to a spawned character.
+ *
+ * A multiplier of 1 is the rule — sheets are authored at the scale their
+ * level's art implies. A scene may pass one (`LoadCharacterOptions.
+ * spriteScaleMultiplier`) when its background is drawn at a different
+ * architectural scale; the tavern does, because a deck plank there is
+ * ~50px wide, which implies a human several times taller than the
+ * sheets. Zero or negative would make the character invisible or
+ * mirrored, so those fall back to 1 rather than being obeyed.
+ *
+ * VISUAL ONLY, and deliberately separate from the physics: the body and
+ * the hitbox sensor must stay on `spec.sprite.scale` (the compound
+ * body's position is the average of its parts, so a bigger sensor would
+ * move the character).
+ */
+export function resolveActorScaleMultiplier(multiplier: number | undefined): number {
+    return multiplier !== undefined && multiplier > 0 ? multiplier : 1;
+}
+
+/**
  * Which locomotion state this frame is in: `idle` when standing still (sprint
  * key or not), `run` while moving with the sprint key held, `walk` otherwise.
  * Pure, so the choice is testable without a scene.

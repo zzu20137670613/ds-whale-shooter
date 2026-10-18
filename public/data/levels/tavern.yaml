@@ -72,21 +72,28 @@ airWalls:
 music: forest-ambient
 tavern: true
 npcSpawns:
+    # The five seats sit in the LOWER half of the deck on purpose. The
+    # selection card is pinned above the character's head, and it is
+    # ~400px tall (HUD art space) — with the head near the top of this
+    # 2752x1536 frame the card ran off the top of the screen. Feet at
+    # y 1150-1250 leave room for the whole card at every window shape
+    # the game is played at. x is spaced 365 apart because the actors
+    # are drawn at TAVERN_ACTOR_SCALE (1.8), so claude is ~357px wide.
     - characterId: claude
-      x: 800
-      'y': 800
+      x: 900
+      'y': 1150
     - characterId: gpt
-      x: 1000
-      'y': 870
+      x: 1265
+      'y': 1210
     - characterId: qwen
-      x: 1200
-      'y': 930
+      x: 1630
+      'y': 1250
     - characterId: seed
-      x: 1400
-      'y': 900
+      x: 1995
+      'y': 1220
     - characterId: whale-girl
-      x: 2250
-      'y': 900
+      x: 2360
+      'y': 1180
 materials: []
 teleporters:
     - id: tavern-exit

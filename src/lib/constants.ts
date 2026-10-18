@@ -266,6 +266,26 @@ export const COMBAT_SCREEN_SHAKE_EXPLOSION = { duration: 100, intensity: 0.005 }
 /** Max trail positions kept per bullet for the bullet trail. */
 export const RENDER_BULLET_TRAIL_LENGTH = 6;
 
+// ─── Tavern: actor visual scale ────────────────────────────────────────
+
+/**
+ * Visual scale multiplier for every actor standing in the tavern.
+ *
+ * The seaside-pavilion background is drawn at a much larger architectural
+ * scale than the character sheets: a deck plank measures ~50px and a sake
+ * bottle ~30px, which implies a human roughly 500px tall. At 1:1 the
+ * sheets' 130-200px characters fit four planks and read as dolls on a
+ * stage. 1.8 closes most of the gap. The beach keeps 1:1, because *its*
+ * palms imply the sheets' own scale, and the level transition is a 400ms
+ * camera fade, so the change in apparent size is never seen.
+ *
+ * Applies to both the selection NPCs and the player (see scene.ts) — a
+ * player who snapped back to 1:1 the moment she was picked would be
+ * jarring. Purely visual: bodies, hitboxes and gameplay stay on the
+ * sheet's authored scale.
+ */
+export const TAVERN_ACTOR_SCALE = 1.8;
+
 // ─── Audio: EventBus event-name helpers ─────────────────────────────────
 //
 // AudioController subscribes to these. Other modules emit them; nobody

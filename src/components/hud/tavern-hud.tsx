@@ -328,6 +328,34 @@ function isSameFocusContent(a: TavernFocusPayload | null, b: TavernFocusPayload 
 
 // ─── DOM Direct Translation (0 Reflow / GPU acceleration) ───────────────
 
+/** Smallest gap kept between the top of the screen and the card, in HUD
+ *  art pixels (the wrapper lives inside a `scale(s)` container). */
+export const TAVERN_CARD_TOP_MARGIN = 8;
+
+/**
+ * Where the selection card's anchor point (its bottom-centre) may sit,
+ * in HUD art space.
+ *
+ * The card is pinned ABOVE the character's head (`translate(-50%, -100%)`)
+ * and grows upward, but the anchor comes from a world position that knows
+ * nothing about the card's own height — so a character whose head sits
+ * high on screen pushes the card off the top of the viewport. That is
+ * what happened on the pavilion map: the deck is high in a 2752x1536
+ * frame, and the card's top frame was cut off. Clamping the anchor to
+ * `cardH + margin` guarantees the whole card stays on screen. The cost is
+ * that the card then overlaps the character, which beats a card the
+ * player cannot read.
+ *
+ * `cardH` is 0 before the card has been laid out (and stays 0 in a test
+ * environment that never measures), so 0 means "height unknown — do not
+ * clamp" rather than "zero-height card".
+ */
+export function clampCardAnchorY(artY: number, cardH: number, scale: number): number {
+    if (!(cardH > 0)) return artY;
+    const s = scale || 1;
+    return Math.max(artY, cardH + TAVERN_CARD_TOP_MARGIN / s);
+}
+
 function applyWrapPosition(
     wrap: HTMLDivElement,
     payload: TavernFocusPayload | null,
@@ -341,7 +369,7 @@ function applyWrapPosition(
         payload.viewportY !== undefined
     ) {
         const lx = payload.viewportX / s;
-        const ly = payload.viewportY / s;
+        const ly = clampCardAnchorY(payload.viewportY / s, wrap.offsetHeight, s);
         wrap.style.transform = `translate3d(${lx}px, ${ly}px, 0px) translate(-50%, -100%)`;
     } else if (payload) {
         const rx = 24 / s;

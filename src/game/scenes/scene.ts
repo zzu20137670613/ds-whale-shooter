@@ -41,7 +41,14 @@ import {
     createPathDebugOverlay,
     type PathDebugOverlayHandles,
 } from '@/game/monsters/path-debug-overlay';
-import { DEPTH, MUSIC_EVENT, MUSIC_STOP, PIXEL_LIGHTING_CONFIG, SFX_EVENT } from '@/lib/constants';
+import {
+    DEPTH,
+    MUSIC_EVENT,
+    MUSIC_STOP,
+    PIXEL_LIGHTING_CONFIG,
+    SFX_EVENT,
+    TAVERN_ACTOR_SCALE,
+} from '@/lib/constants';
 import { EventBus } from '@/lib/events/bus';
 import { setBootProgress } from '@/lib/boot-loading/progress';
 import { setCurrentLevel } from '@/lib/levels/current-level';
@@ -582,6 +589,7 @@ export class LoadScene extends Phaser.Scene {
                 });
                 this.character = loadCharacter(this, this.level, pickedSpec, this.assets.weapons, {
                     weaponsById: this.assets.weaponsById,
+                    spriteScaleMultiplier: TAVERN_ACTOR_SCALE,
                 });
                 this.monsterSystem.setPlayerBody(this.character.body);
                 this.monsterSystem.setPlayerLuck(pickedSpec.luck ?? 1);
@@ -625,7 +633,11 @@ export class LoadScene extends Phaser.Scene {
                             this.level,
                             selectedSpec,
                             this.assets.weapons,
-                            { weaponsById: this.assets.weaponsById, spawnOverride: spawnPos },
+                            {
+                                weaponsById: this.assets.weaponsById,
+                                spawnOverride: spawnPos,
+                                spriteScaleMultiplier: TAVERN_ACTOR_SCALE,
+                            },
                         );
                         // Rewire subsystems to the freshly-spawned
                         // character's body / runtime. monsterSystem

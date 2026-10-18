@@ -20,7 +20,7 @@ import * as Phaser from 'phaser';
 import { pickText } from '@/locales';
 
 import { EventBus } from '@/lib/events/bus';
-import { SFX_EVENT, SFX_STOP } from '@/lib/constants';
+import { SFX_EVENT, SFX_STOP, TAVERN_ACTOR_SCALE } from '@/lib/constants';
 import { isMobileLike, appRect, toAppPoint } from '@/lib/mobile';
 import type { CharacterSpec } from '@/lib/characters';
 import type { Level } from '@/lib/levels/types';
@@ -267,8 +267,8 @@ export class TavernController {
             const shadow = this.scene.add.ellipse(
                 x,
                 y,
-                spec.body.halfW * 2.4,
-                spec.body.halfH * 0.7,
+                spec.body.halfW * 2.4 * TAVERN_ACTOR_SCALE,
+                spec.body.halfH * 0.7 * TAVERN_ACTOR_SCALE,
                 0x000000,
                 0.25,
             );
@@ -285,7 +285,7 @@ export class TavernController {
             const key = textureKey(spec);
             const sprite = this.scene.add.sprite(x + offX, y + offY, key);
             sprite.setOrigin(0.5, 1.0);
-            if (spec.sprite?.scale) sprite.setScale(spec.sprite.scale);
+            if (spec.sprite?.scale) sprite.setScale(spec.sprite.scale * TAVERN_ACTOR_SCALE);
 
             // Default to the idle animation so the NPC looks alive — the
             // standard `<id>-idle` key was registered in scene.ts create().

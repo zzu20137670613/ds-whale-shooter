@@ -26,7 +26,7 @@ import { StatusHud } from '@/game/hubs/status-hud';
 import { WeaponHud } from '@/game/hubs/weapon-hud';
 import { WeaponController } from '@/game/weapons/logic';
 
-import { CharacterController } from './logic';
+import { CharacterController, resolveActorScaleMultiplier } from './logic';
 import { animKey, textureKey } from './keys';
 
 // ─── Public API ──────────────────────────────────────────────────────────
@@ -230,6 +230,14 @@ export interface LoadCharacterOptions {
      *  the scene; safe to leave undefined for non-tavern scenes
      *  whose starting hotbar already covers persistence. */
     weaponsById?: ReadonlyMap<string, WeaponSpec>;
+    /** Scene-local multiplier on the character's own `sprite.scale`.
+     *  VISUAL ONLY — the body, the hitbox sensor and every gameplay
+     *  quantity stay on the sheet's authored scale, so the physics is
+     *  identical to a multiplier of 1. The tavern needs it because the
+     *  pavilion art is drawn at a much larger architectural scale than
+     *  the character sheets (a deck plank is ~50px there), which makes
+     *  1:1 actors read as dolls on a stage. */
+    spriteScaleMultiplier?: number;
 }
 
 /**
@@ -375,12 +383,17 @@ export function loadCharacter(
     debugHitboxRect.setStrokeStyle(1.5, 0xef4444, 0.9);
     debugHitboxRect.setVisible(false);
 
-    // Visual: shadow under feet based on spec.body halfW / halfH
+    // Visual: shadow under feet based on spec.body halfW / halfH.
+    // A scene-local visual scale grows the shadow with the sprite — a
+    // full-size character standing on a pebble-sized shadow reads as
+    // floating, which is the artefact the tavern scale would otherwise
+    // introduce.
+    const visualMult = resolveActorScaleMultiplier(opts.spriteScaleMultiplier);
     const shadow = scene.add.ellipse(
         spawnX,
         spawnY,
-        spec.body.halfW * 2,
-        spec.body.halfH * 0.8,
+        spec.body.halfW * 2 * visualMult,
+        spec.body.halfH * 0.8 * visualMult,
         0x000000,
         0.35,
     );
@@ -391,13 +404,17 @@ export function loadCharacter(
     // matching the body's bottom edge.
     const sprite = scene.add.sprite(spawnX, spawnY, textureKey(spec));
     sprite.setOrigin(0.5, 1.0);
-    if (spec.sprite) sprite.setScale(spec.sprite.scale);
+    if (spec.sprite) sprite.setScale((spec.sprite.scale ?? 1) * visualMult);
     // Seed initial facing from the level's spawn config (default right).
     sprite.setFlipX((level.characterSpawn?.facing ?? 'right') === 'left');
 
     if (spec.sprite) {
-        const spriteW = sprite.displayWidth;
-        const spriteH = sprite.displayHeight;
+        // The hitbox sensor stays on the sheet's own scale: `visualMult`
+        // is a scene-local art choice, and letting it enlarge the sensor
+        // would also shift the compound body's centre of mass (the
+        // parent body's position is the average of its parts).
+        const spriteW = sprite.displayWidth / visualMult;
+        const spriteH = sprite.displayHeight / visualMult;
         debugHitboxRect.setSize(spriteW, spriteH);
 
         // Attach sensor Hitbox covering full Character Sprite
