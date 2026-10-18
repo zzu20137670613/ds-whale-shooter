@@ -25,6 +25,8 @@ export function planDropEffect(
     sinks: {
         heal: (hpDelta: number, spDelta: number) => void;
         refillAmmo: (fraction: number) => void;
+        /** Refill HP and SP to their maxima (drop type=full-restore). */
+        fullRestore: () => void;
         onWeaponPickup: (weaponId: string) => void;
     },
 ): DropEffectResult {
@@ -35,6 +37,9 @@ export function planDropEffect(
             return {};
         case 'refill-ammo':
             sinks.refillAmmo(e.ammoFraction);
+            return {};
+        case 'full-restore':
+            sinks.fullRestore();
             return {};
         case 'weapon':
             sinks.onWeaponPickup(e.weaponId);

@@ -1,0 +1,22 @@
+# PLACEHOLDER ART - borrows hp-shard's atlas cell and the pickup-hp sound until a
+# drink sprite exists. The effect and the placement are final.
+name: Beach Drink
+kind: static
+sfx: pickup-hp
+visual:
+    size: 20
+    tint: 0x38bdf8
+effect:
+    type: full-restore
+
+sprite:
+    texture: assets/image/drops/drops.png
+    grid: { rows: 4, cols: 4 }
+    scale: 1
+    offset: { left: 0, bottom: 0 }
+
+anims:
+    idle:
+        frames: [0, 3]
+        frameRate: 6
+        repeat: -1

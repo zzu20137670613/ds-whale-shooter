@@ -44,6 +44,12 @@ const RefillAmmoEffectSchema = z
     })
     .strict();
 
+const FullRestoreEffectSchema = z
+    .object({
+        type: z.literal('full-restore'),
+    })
+    .strict();
+
 const WeaponEffectSchema = z
     .object({
         type: z.literal('weapon'),
@@ -54,6 +60,7 @@ const WeaponEffectSchema = z
 export const DropEffectSchema = z.discriminatedUnion('type', [
     InstantEffectSchema,
     RefillAmmoEffectSchema,
+    FullRestoreEffectSchema,
     WeaponEffectSchema,
 ]);
 

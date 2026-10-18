@@ -373,7 +373,12 @@ monsters:
           kind: clear
           delayMs: 500
           waveId: wave-3
-dropSpawns: []
+dropSpawns:
+    # One drink beside the spawn, handed out once per run - the level's opening
+    # gift. It never respawns; there is no periodic refill.
+    - type: beach-drink
+      x: 1240
+      'y': 250
 materials: []
 teleporters:
     - id: tavern-return

@@ -191,6 +191,13 @@ export const HUD_WEAPON_AMMO_BAR_INSET = 24;
 /** Status bar: bar-local vertical offset for the "Reloading…/Full" caption. */
 export const HUD_STATUS_LABEL_OFFSET_Y = -2;
 
+// ─── Drops: full restore ───────────────────────────────────────────────────
+/** Delta handed to `heal()` for a `full-restore` drop. `heal` clamps to
+ *  [0, max] (character.ts), so any value above the largest possible pool is a
+ *  complete refill - the drop logic never needs to read the character's maxima.
+ *  Only has to exceed the biggest HP/SP any character has (currently 115/95). */
+export const DROP_FULL_RESTORE_AMOUNT = 9999;
+
 // ─── Skill: headgear (Seed) ────────────────────────────────────────────
 
 /** Additive tint that shows the mascot headgear is worn. A warm mascot gold,

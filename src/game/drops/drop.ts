@@ -13,6 +13,7 @@ import * as Phaser from 'phaser';
 
 import type { CharacterRuntime } from '@/game/characters/character';
 import { CAT, DROP_CONFIG, SFX_EVENT, WALL_PLAYER_MASK } from '@/lib/constants';
+import { DROP_FULL_RESTORE_AMOUNT } from '@/lib/constants';
 import { EventBus } from '@/lib/events/bus';
 import type { DropSpec } from '@/lib/drops';
 import type { DropSpawn } from '@/lib/levels/types';
@@ -598,6 +599,10 @@ export class DropController {
         planDropEffect(effectiveSpec, {
             heal: (hp, sp) => this.character.heal(hp, sp),
             refillAmmo: (f) => this.character.refillAmmo(f),
+            // `heal` clamps to [0, max] (character.ts), so an overkill delta is a
+            // complete refill without the drop logic reading the character's maxima.
+            fullRestore: () =>
+                this.character.heal(DROP_FULL_RESTORE_AMOUNT, DROP_FULL_RESTORE_AMOUNT),
             onWeaponPickup: (id) => {
                 consumed = this.cb.onWeaponPickup(id);
             },

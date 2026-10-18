@@ -7,6 +7,7 @@ import { planDropEffect } from '@/game/drops/logic';
 const mkSinks = () => ({
     heal: vi.fn(),
     refillAmmo: vi.fn(),
+    fullRestore: vi.fn(),
     onWeaponPickup: vi.fn(),
 });
 
@@ -25,6 +26,33 @@ describe('drops/logic — planDropEffect', () => {
         expect(sinks.refillAmmo).not.toHaveBeenCalled();
         expect(sinks.onWeaponPickup).not.toHaveBeenCalled();
     });
+
+    it('full-restore -> fullRestore()', () => {
+
+        const sinks = mkSinks();
+
+        const spec: DropSpec = {
+
+            id: 'beach-drink',
+
+            name: 'Beach Drink',
+
+            kind: 'static',
+
+            visual: { size: 20, tint: 0x38bdf8 },
+
+            effect: { type: 'full-restore' },
+
+        };
+
+        planDropEffect(spec, sinks);
+
+        expect(sinks.fullRestore).toHaveBeenCalledTimes(1);
+
+        expect(sinks.heal).not.toHaveBeenCalled();
+
+    });
+
 
     it('instant with sp only', () => {
         const sinks = mkSinks();

@@ -5,6 +5,7 @@
  *
  *   type = 'instant'     — apply effect immediately: { hp?: number, sp?: number }
  *   type = 'refill-ammo' — add N bullets to current weapon's clip: { ammoFraction: 0..1 }
+ *   type = 'full-restore' — refill HP and SP completely: {} (the beach drink)
  *   type = 'weapon'      — switch active weapon: { weaponId: string }
  *
  *   kind = 'static'      — placed on the map from level.dropSpawns
@@ -18,7 +19,7 @@ import type { z } from 'zod';
 
 import type { DropEffectSchema, DropIndexSchema, DropSpecSchema, DropVisualSchema } from './schema';
 
-export type DropType = 'instant' | 'refill-ammo' | 'weapon';
+export type DropType = 'instant' | 'refill-ammo' | 'full-restore' | 'weapon';
 
 export type DropKind = 'static' | 'monster';
 
