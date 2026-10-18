@@ -1,5 +1,7 @@
-title: Forest Path
-titleZh: "林间小径"
+title: Beach Holiday
+titleZh: "海滩假日"
+# Art pending: the beach background replaces this one; the path keeps the forest
+# image until then so the level still loads.
 background: assets/image/scenes/forest-path.png
 imageSize: 2752x1536
 airWalls:

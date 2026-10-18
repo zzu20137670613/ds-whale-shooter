@@ -48,7 +48,7 @@ import { CornerPixels, RETRO_BOX } from './retro-box';
  *   300 px/s ÷ 150 px/m                    =    2 m/s  (brisk walk)
  *   moveSpeed 4  →  240 px/s ÷ 150         =  1.6 m/s (normal walk)
  *
- * 150 px ≈ 1 m gives real-world walking pace. forest-path map is
+ * 150 px ≈ 1 m gives real-world walking pace. beach-holiday map is
  * 2752 px wide → ~18 m, traversable in ~14–17 s at the slower chars.
  */
 const PX_PER_METER = 150;

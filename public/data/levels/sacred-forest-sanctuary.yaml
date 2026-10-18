@@ -526,5 +526,5 @@ teleporters:
     - id: teleporter-msckzhf5
       x: 1406
       'y': 1428
-      targetScene: forest-path
+      targetScene: beach-holiday
       radius: 60

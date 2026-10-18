@@ -36,7 +36,7 @@ public/data/
 ├── levels/
 │   ├── index.yaml
 │   └── <id>.yaml            # tavern / sacred-forest-sanctuary /
-│                            # forest-path / sunlit-henge
+│                            # beach-holiday / sunlit-henge
 ├── monsters/<id>.yaml       # drone / gunner / stalker / sniper /
 │                            # warden / keeper
 └── weapons/<id>.yaml        # player + monster weapons
