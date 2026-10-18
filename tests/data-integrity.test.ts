@@ -154,4 +154,52 @@ describe('public/data integrity', () => {
             }
         }
     });
+
+    it('every cross-module id resolves', () => {
+        // Schema validation looks at one file at a time. These are the
+        // references BETWEEN modules, where a stale id is silent: retiring the
+        // four upstream characters left the tavern's npcSpawns naming them, the
+        // schema was satisfied, and the seats simply had nobody in them.
+        const chars = parseCharacterIndex(read(join(DATA, 'characters', 'index.yaml')));
+        const weapons = parseWeaponIndex(read(join(DATA, 'weapons', 'index.yaml')));
+        const characterIds = new Set(chars.characters);
+        const weaponIds = new Set(weapons.weapons);
+
+        const badNpc: string[] = [];
+        const badWeapon: string[] = [];
+
+        for (const id of parseLevelIndex(read(join(DATA, 'levels', 'index.yaml'))).levels) {
+            const level = parseLevelYaml(read(join(DATA, 'levels', `${id}.yaml`)), id);
+            for (const npc of level.npcSpawns ?? []) {
+                if (!characterIds.has(npc.characterId)) {
+                    badNpc.push(`levels/${id}: npcSpawn ${npc.characterId}`);
+                }
+            }
+            for (const drop of level.dropSpawns ?? []) {
+                if (drop.weaponId && !weaponIds.has(drop.weaponId)) {
+                    badWeapon.push(`levels/${id}: dropSpawn ${drop.weaponId}`);
+                }
+            }
+        }
+        for (const id of chars.characters) {
+            const spec = parseCharacterYaml(read(join(DATA, 'characters', `${id}.yaml`)), id);
+            for (const weapon of spec.hotbar ?? []) {
+                if (!weaponIds.has(weapon)) {
+                    badWeapon.push(`characters/${id}: hotbar ${weapon}`);
+                }
+            }
+        }
+        for (const id of parseMonsterIndex(read(join(DATA, 'monsters', 'index.yaml'))).monsters) {
+            const spec = parseMonsterYaml(read(join(DATA, 'monsters', `${id}.yaml`)), id);
+            if (spec.weaponId && !weaponIds.has(spec.weaponId)) {
+                badWeapon.push(`monsters/${id}: weaponId ${spec.weaponId}`);
+            }
+        }
+
+        expect(badNpc, `npcSpawn characterIds with no character YAML:\n${badNpc.join('\n')}`).toEqual([]);
+        expect(
+            badWeapon,
+            `weapon ids with no weapon YAML:\n${badWeapon.join('\n')}`,
+        ).toEqual([]);
+    });
 });

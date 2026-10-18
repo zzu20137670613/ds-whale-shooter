@@ -279,16 +279,16 @@ airWalls:
 music: forest-ambient
 tavern: true
 npcSpawns:
-    - characterId: otaku
+    - characterId: claude
       x: 800
       'y': 800
-    - characterId: bunny-girl
+    - characterId: gpt
       x: 1000
       'y': 870
-    - characterId: kitty
+    - characterId: qwen
       x: 1200
       'y': 930
-    - characterId: wanderer
+    - characterId: seed
       x: 1400
       'y': 900
     - characterId: whale-girl
