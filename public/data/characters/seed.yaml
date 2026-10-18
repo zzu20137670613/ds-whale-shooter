@@ -1,6 +1,6 @@
-# PLACEHOLDER ASSET — `sprite.texture` is a copy of the retired upstream
-# wanderer sheet (same 4x4 layout) so the character is playable before her real
-# art lands. Swap the texture, then drop this comment — YAML-only, no code.
+# Real art. She arrived as a proper 4x4, so the plate worked as intended; see the
+# provenance note on `sprite.script`. Ready to regenerate? The plate is
+# 底板F_Seed_4x4结构底_2048_品红底.png.
 id: seed
 name: Seed
 nameZh: "豆包 Seed"
@@ -91,6 +91,14 @@ sprite:
     offset:
         left: -2
         bottom: -4
+    # Provenance for `texture`: raws/seed.png is the 1536x1536 4x4 sheet the model
+    # returned. It was de-watermarked, keyed at RGB distance 50, shrunk 2px, hole-
+    # filled and quantised to 32 colours by tools/split-sheet-pale.py, with frames
+    # bottom-aligned (sprite origin is (0.5, 1.0)).
+    script:
+        downsample: 3
+        colors: 32
+        pad: 2
 anims:
     idle:
         frames:
