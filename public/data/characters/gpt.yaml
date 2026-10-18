@@ -1,6 +1,11 @@
 # Real art (generated from her own three-view reference, keyed with the
 # conservative RGB pass — magenta keying eats pale characters, see
 # project_memory.md). The AI output is archived in raws/.
+# NOTE: her sheet came from an earlier pass that used a THREE-VIEW reference. The
+# house rule since is a SINGLE FRONT VIEW: a side or back view in the reference
+# teaches the model those facings, and the engine flips the sprite horizontally
+# for movement, so she ends up facing away from the direction she walks. Claude,
+# Qwen and Seed were all built from one front view.
 id: gpt
 name: GPT
 nameZh: "GPT 小龙娘"
