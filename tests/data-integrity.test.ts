@@ -202,4 +202,60 @@ describe('public/data integrity', () => {
             `weapon ids with no weapon YAML:\n${badWeapon.join('\n')}`,
         ).toEqual([]);
     });
+
+    it('levels: no spawn or prop sits inside an air wall', () => {
+        // An entity authored inside a wall is silent: the schema is happy, the
+        // scene loads, and the thing is either unreachable (a drink behind the
+        // railing) or stuck (a monster welded into a rock). Walls are traced
+        // against the art by hand, so this is the check that keeps the two in
+        // sync — it is why the tavern's five seats can be declared safe.
+        const inside = (
+            px: number,
+            py: number,
+            poly: ReadonlyArray<readonly [number, number]>,
+        ): boolean => {
+            let hit = false;
+            for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+                const [xi, yi] = poly[i];
+                const [xj, yj] = poly[j];
+                if (yi > py !== yj > py && px < ((xj - xi) * (py - yi)) / (yj - yi) + xi) {
+                    hit = !hit;
+                }
+            }
+            return hit;
+        };
+
+        const bad: string[] = [];
+        for (const id of parseLevelIndex(read(join(DATA, 'levels', 'index.yaml'))).levels) {
+            const level = parseLevelYaml(read(join(DATA, 'levels', `${id}.yaml`)), id);
+
+            const entities: Array<{ label: string; x: number; y: number }> = [];
+            if (level.characterSpawn) {
+                entities.push({ label: 'characterSpawn', ...level.characterSpawn });
+            }
+            for (const [key, list] of [
+                ['monsters', level.monsters ?? []],
+                ['dropSpawns', level.dropSpawns ?? []],
+                ['npcSpawns', level.npcSpawns ?? []],
+                ['teleporters', level.teleporters ?? []],
+                ['materials', level.materials ?? []],
+            ] as const) {
+                list.forEach((entry, i) => {
+                    entities.push({ label: `${key}[${i}]`, x: entry.x, y: entry.y });
+                });
+            }
+
+            for (const entity of entities) {
+                for (const wall of level.airWalls) {
+                    if (inside(entity.x, entity.y, wall.points)) {
+                        bad.push(
+                            `${id}: ${entity.label} at (${entity.x},${entity.y}) is inside ${wall.id}`,
+                        );
+                    }
+                }
+            }
+        }
+
+        expect(bad, `entities authored inside a wall:\n${bad.join('\n')}`).toEqual([]);
+    });
 });
