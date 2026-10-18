@@ -1,6 +1,7 @@
-# PLACEHOLDER ASSET — `sprite.texture` is a copy of the retired upstream
-# kitty sheet (same 4x4 layout) so the character is playable before her real
-# art lands. Swap the texture, then drop this comment — YAML-only, no code.
+# Real art. The model returned a 6x4 sheet (24 frames) instead of 4x4, and the
+# row heights were uneven, so the grid was measured from the background gaps
+# rather than assumed - see the provenance note on `sprite.script` below. Ready
+# to regenerate? The plate is 底板E_千问_4x4结构底_2048_品红底.png.
 id: qwen
 name: Qwen
 nameZh: "千问"
@@ -84,6 +85,18 @@ sprite:
     offset:
         left: -2
         bottom: -4
+    # Provenance for `texture`: raws/qwen.png is the 1536x1536 six-by-four sheet
+    # the model returned. It was de-watermarked, keyed at RGB distance 50, shrunk
+    # 2px and hole-filled, then cut by measured column bands and row bands. Four of
+    # each row's six frames were kept - row 4 skips column 5, the watermark cell,
+    # whose de-watermarking clipped her legs - placed bottom-aligned at one uniform
+    # scale, then quantised to 32 colours. Not a split-sheet-pale.py pass.
+    # Kept frames per row were 0,2,3,5 / 0,2,3,5 / 0,2,3,5 / 0,2,3,4; the schema
+    # only carries downsample/colors/pad, so the rest lives here.
+    script:
+        downsample: 3
+        colors: 32
+        pad: 2
 anims:
     idle:
         frames:
