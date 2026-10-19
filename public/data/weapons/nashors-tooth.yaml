@@ -1,8 +1,9 @@
 # GPT — Nashor's Tooth, borrowed from a certain MOBA on purpose. Melee: no
 # bullet count (see docs/WEAPONS.md). Behaviour and numbers are unchanged from
-# the twin-tail set; only the name and the placeholder sprite moved.
-# PLACEHOLDER ART — reuses the thorn-scythe-claws.png claw until the LoL sprite
-# is dropped in; the swing arc is the house melee arc.
+# the twin-tail set; the name, the sprite and the swing sound are what moved.
+# ART IS REAL — nashors-tooth.png is the item icon with its glow-keyed
+# background removed and the blade rotated flat by tools/prep-weapon-sprite.py.
+# `rotationOffset: 180` flips the blade end-for-end if the tip reads backwards.
 name: Nashor's Tooth
 nameZh: "纳什之牙"
 damage: 11
@@ -15,8 +16,8 @@ upgrades:
 hitWidth: 130
 hitHeight: 110
 visual:
-    texture: assets/image/weapons/thorn-scythe-claws.png
-    scale: 0.15
+    texture: assets/image/weapons/nashors-tooth.png
+    scale: 0.2
     orbitRadius: 12
     anchor: [0.1, 0.5]
     swingAngle: 170
@@ -27,3 +28,5 @@ bullet:
     scale: 0.32
     anchor: [0.5, 0.5]
     rotationOffset: 0
+sfx:
+    shoot: plasma-sword-shoot

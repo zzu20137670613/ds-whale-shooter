@@ -15,14 +15,13 @@ weapons:
     - bramble-knuckles
     - thorn-bolt
     # Five AI girls' signature kit. Every character starts with exactly one
-    # melee and one ranged weapon (guarded by tests/data-integrity.test.ts);
-    # the melee column is the roster's close game. Slot 1 is whoever was there
-    # before, so do not read a ranged-first convention into the pairs below.
-    # Placeholder art throughout — see each YAML.
+    # melee and one ranged weapon, melee in slot 1 (both guarded by
+    # tests/data-integrity.test.ts); the melee column is the roster's close
+    # game. Placeholder art throughout except nashors-tooth — see each YAML.
     - scripture         # claude   melee  — the book, swung shut
     - inkwell-mortar    # claude   ranged
+    - nashors-tooth     # gpt      melee  — easter egg, real art
     - white-dragon-fangs # gpt     ranged
-    - nashors-tooth     # gpt      melee  — easter egg
     - crane-fan         # qwen     melee  — the spread, now an arc
     - sealing-talisman  # qwen     ranged
     - frostmourne       # seed     melee  — easter egg

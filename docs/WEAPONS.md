@@ -28,18 +28,26 @@ The shipped roster is 19 weapons:
 | Group              | Ids                                                                                                                   |
 | ------------------ | --------------------------------------------------------------------------------------------------------------------- |
 | Reserved rewards   | `arcana-staff` (hidden level 1), `rocket-launcher` (galgame level)                                                      |
-| DeepSeek           | `whale-cannon` (ranged), `whale-tail-slam` (melee)                                                                      |
+| DeepSeek           | `whale-tail-slam` (melee), `whale-cannon` (ranged)                                                                      |
 | Monster weapons    | `thorn-scythe-claws`, `moss-bark-rifle`, `vine-lash`, `rune-shield`, `branch-sweep`, `bramble-knuckles`, `thorn-bolt`     |
 | The roster's kit   | claude `scripture` (melee) + `inkwell-mortar` (ranged) · gpt `nashors-tooth` (melee) + `white-dragon-fangs` (ranged) · qwen `crane-fan` (melee) + `sealing-talisman` (ranged) · seed `frostmourne` (melee) + `supply-crate` (ranged) |
 
 Every character's starting `hotbar` holds exactly one melee and one ranged
-weapon. `tests/data-integrity.test.ts` fails otherwise — as it does on a melee
-weapon carrying ammo fields, or a hotbar longer than the character's
-`weaponMax`.
+weapon, and the melee is slot 1 — a run starts in close quarters and the ranged
+weapon is the deliberate second pick. `tests/data-integrity.test.ts` fails
+otherwise, as it does on a melee weapon carrying ammo fields or a hotbar longer
+than the character's `weaponMax`.
 
 Most player-facing weapon sprites are still borrowed from upstream art; each
 borrowed file says `# PLACEHOLDER ART` at the top. Swapping one in is a data
-edit (`visual.texture` + `bullet.texture`), never a code change.
+edit (`visual.texture` + `bullet.texture`), never a code change. Art that
+arrives as a square icon with a glow rather than a flat field goes through the
+workspace art tooling (`prep-weapon-sprite.py`, kept beside the project next to
+`split-sheet-pale.py`): it keys the gradient with a local-tolerance flood fill,
+erodes the surviving halo, rotates the blade flat — searching the four axis
+rotations and measuring which one lands right — and prints the
+`visual.anchor` / `visual.scale` to paste. `nashors-tooth.png` is the worked
+example.
 
 ## YAML schema — `public/data/weapons/<id>.yaml`
 
