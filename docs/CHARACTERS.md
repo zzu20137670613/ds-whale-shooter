@@ -215,6 +215,38 @@ interface TavernFocusPayload {
 
 The controller updates the cursor (pixel crosshair + `aim-crosshair-update` events) while phase 1 is alive, and clears it on destroy.
 
+## Skills
+
+One skill per character, on key **E**, resolved by
+`src/lib/characters/skill.ts` — pure, so the whole state machine is tested
+without a scene (`tests/lib/characters/skill.test.ts`). The controller only
+wires it: ask for a press, pay the SP, route incoming hits through it. One
+runtime serves every kind, and `SkillSchema` is a discriminated union:
+
+| kind            | Character | Effect                                                         | Cooldown starts          |
+| --------------- | --------- | -------------------------------------------------------------- | ------------------------ |
+| `headgear`      | seed      | Soaks `absorbHits` hits instead of HP                           | on the hit that breaks it |
+| `darkening`     | claude    | `damageMul` on every attack, for `buffMs`                       | on use                   |
+| `critical-next` | deepseek  | `damageMul` on the NEXT attack; firing spends it, miss or hit   | on use                   |
+| `divine-guest`  | qwen      | `shieldHits` hits cost no HP, then `damageMul` for `buffMs`     | on use                   |
+| `dragon-roar`   | gpt       | Every monster the camera sees loses `hpFraction` of its MAX HP  | on use                   |
+
+`headgear` is deliberately the odd one out: it cannot be re-worn while it is
+on, and its cooldown is measured from the hit that broke it.
+
+Costs come in two shapes: `spCost` is a flat price, `spCostFraction` scales
+with the character's own pool — a flat cost would be trivial for a big pool
+and brutal for a small one, which is the wrong knob for an ultimate.
+
+The weapon controller asks for the attack multiplier **once per attack, not
+once per bullet**, so a two-bullet weapon spends a one-shot crit exactly
+once. It arrives as the optional sixth argument to `WeaponController` and
+defaults to 1, so no other call site has to know skills exist.
+
+`dragon-roar`'s effect belongs to the monsters, which own their own HP: the
+character pays for the roar and announces `skill:dragon-roar`, and
+`game/monsters` decides who was on screen to feel it.
+
 ## Events emitted
 
 | Event                                          | When                                                      |
@@ -226,6 +258,8 @@ The controller updates the cursor (pixel crosshair + `aim-crosshair-update` even
 | `aim-crosshair-update`                         | every frame the aim moves (cursor + crosshair sync)       |
 | `tavern-focus`                                 | tavern selection / phase change (from `TavernController`) |
 | `player-died`                                  | HP reached 0                                              |
+| `combat:headgear-broke`                        | the worn headgear took its last hit                       |
+| `skill:dragon-roar`                            | GPT's roar was paid for (`{ hpFraction }`); the monster module applies it |
 
 ## Events subscribed
 

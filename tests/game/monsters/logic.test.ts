@@ -12,7 +12,25 @@ import {
     getSurroundOffset,
     getPathLookAheadPoint,
     calcKnockbackVelocity,
+    roarDamage,
 } from '@/game/monsters/logic';
+
+describe('monsters/logic — roarDamage', () => {
+    it('takes its share of MAX HP, whatever the monster has left', () => {
+        expect(roarDamage(160, 0.5)).toBe(80);
+        expect(roarDamage(340, 0.5)).toBe(170);
+    });
+
+    it('rounds to a whole number of HP', () => {
+        expect(roarDamage(75, 0.5)).toBe(38);
+        expect(roarDamage(45, 0.5)).toBe(23);
+    });
+
+    it('is never a no-op, however small the monster', () => {
+        expect(roarDamage(1, 0.5)).toBe(1);
+        expect(roarDamage(0, 0.5)).toBe(1);
+    });
+});
 
 describe('monsters/logic — decideAIState', () => {
     it('switches from chase to attack only after crossing range minus hysteresis', () => {

@@ -61,6 +61,7 @@ import {
     calcSeparationForce,
     getSurroundOffset,
     calcKnockbackVelocity,
+    roarDamage,
 } from './logic';
 
 // ─── Entity ──────────────────────────────────────────────────────────────
@@ -383,6 +384,8 @@ export interface MonsterProjectile {
 export class MonsterController {
     private readonly scene: Phaser.Scene;
     private readonly monsters: Monster[] = [];
+    /** Unsubscribes the dragon-roar listener. */
+    private roarCleanup?: () => void;
     private readonly projectiles: MonsterProjectile[] = [];
     private readonly cb: MonsterControllerCallbacks;
     /** Cached for fast lookup in attack tests. */
@@ -426,6 +429,15 @@ export class MonsterController {
         this.cb = cb;
         this.matter = (Phaser as any).Physics.Matter.Matter;
         this.pathfinder = pathfinder;
+
+        // GPT's dragon roar: the effect belongs to the monsters, which own
+        // their own HP, so the character pays for the roar and announces it,
+        // and this module decides who was on screen to feel it.
+        const roarHandler = (payload?: { hpFraction?: number }) => {
+            this.applyRoarDamage(payload?.hpFraction ?? 0.5);
+        };
+        EventBus.on('skill:dragon-roar', roarHandler);
+        this.roarCleanup = () => EventBus.removeListener('skill:dragon-roar', roarHandler);
         const monsterSnapshot = useGameStore.getState().activeMonstersSnapshot;
         const activeMonsters = Array.isArray(monsterSnapshot?.activeMonsters)
             ? monsterSnapshot!.activeMonsters
@@ -1129,6 +1141,44 @@ export class MonsterController {
         }
     }
 
+    /**
+     * GPT's dragon roar: every monster the camera can currently see loses a
+     * share of its MAX HP, right now. Deliberately a share of MAX rather than
+     * of what is left, so the roar is always the same halving — and anything
+     * already below that line dies outright.
+     *
+     * Reached by event, not by a direct call: the character pays for the roar
+     * and announces it, the monsters own their own HP.
+     */
+    applyRoarDamage(hpFraction: number): void {
+        const view = this.scene.cameras.main.worldView;
+        for (const m of this.monsters) {
+            if (m.dead || m.state === 'dying') continue;
+            const { x, y } = m.body.position;
+            if (!view.contains(x, y)) continue;
+
+            const amount = roarDamage(m.spec.hp, hpFraction);
+            m.hp -= amount;
+            m.lastHitAt = this.scene.time.now;
+            m.hitFlashUntil = this.scene.time.now + COMBAT_HIT_FLASH_MS;
+            if (m.sprite) {
+                m.sprite.setTint(0x808080);
+                (m.sprite as any).setTintMode?.(2);
+            }
+            m.weaponVisual?.setHitFlash(true);
+            m.statusHud.showFloatingNumber(amount, 'damage');
+            if (m.hp <= 0) this.kill(m);
+        }
+
+        // One hit for the whole room, throttled under a single key so a screen
+        // full of monsters does not stack a chorus of them.
+        this.scene.cameras.main.shake(
+            COMBAT_SCREEN_SHAKE_EXPLOSION.duration,
+            COMBAT_SCREEN_SHAKE_EXPLOSION.intensity,
+        );
+        EventBus.emit(SFX_EVENT('monster-hit'), { key: 'skill:dragon-roar', throttleMs: 120 });
+    }
+
     setDebugVisible(visible: boolean): void {
         for (const m of this.monsters) {
             m.debugBodyRect.setVisible(visible);
@@ -1137,6 +1187,8 @@ export class MonsterController {
     }
 
     destroy(): void {
+        this.roarCleanup?.();
+        this.roarCleanup = undefined;
         for (const m of this.monsters) m.destroy(this.scene);
         for (const p of this.projectiles) {
             this.scene.matter.world.remove(p.body);

@@ -140,6 +140,16 @@ export function chaseVelocity(
 }
 
 /**
+ * How much HP one dragon roar takes off a monster. It is a share of the
+ * monster's MAX HP, not of what it has left, so the roar is always the same
+ * halving — and a monster already below that line dies outright. Never less
+ * than 1, so a roar is never a no-op.
+ */
+export function roarDamage(maxHp: number, hpFraction: number): number {
+    return Math.max(1, Math.round(maxHp * hpFraction));
+}
+
+/**
  * Grid-based Pathfinding Service using pure TypeScript A* (Zero extra npm dependencies).
  * Rasterizes polygon air-walls into a low-resolution grid for fast A* queries.
  */

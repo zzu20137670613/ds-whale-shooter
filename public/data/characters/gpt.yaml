@@ -41,6 +41,15 @@ hotbar:
     - nashors-tooth
     - white-dragon-fangs
 
+skill:
+    # Dragon Roar (龙吟) — every monster the camera can see loses half of its
+    # MAX HP at once, so anything already below half dies outright. Costs 80%
+    # of the SP pool; the cooldown starts the moment it fires. The monsters
+    # take the hit themselves (game/monsters listens for `skill:dragon-roar`).
+    kind: dragon-roar
+    spCostFraction: 0.8
+    cooldownMs: 60000
+    hpFraction: 0.5
 weaponMax: 4
 upgrades:
     # Tavern upgrade ladders. `costs.length` IS the max level. The cheapest
