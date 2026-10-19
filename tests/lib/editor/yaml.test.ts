@@ -111,5 +111,48 @@ describe('serializeLevelYaml', () => {
         expect(text).not.toContain('characterSpawn:');
         expect(text).not.toContain('monsters:');
         expect(text).not.toContain('dropSpawns:');
+        expect(text).not.toContain('music:');
+        expect(text).not.toContain('pixelLighting:');
+    });
+
+    // The next three are all "an editor save silently changed the level"
+    // regressions — the shape this suite exists to catch.
+    it('round-trips music and pixelLighting (regression: save used to drop them)', () => {
+        const level: Level = {
+            ...minimal,
+            music: 'forest-ambient',
+            pixelLighting: false,
+        };
+        const text = serializeLevelYaml(level);
+        expect(text).toContain('music: forest-ambient');
+        expect(text).toContain('pixelLighting: false');
+        expect(parseLevelYaml(text, 'test')).toEqual(level);
+    });
+
+    it('round-trips monster waveId and trigger (regression: save flattened the waves)', () => {
+        const level: Level = {
+            ...minimal,
+            monsters: [
+                { type: 'drone', x: 100, y: 200, waveId: 'wave-1' },
+                {
+                    type: 'gunner',
+                    x: 300,
+                    y: 400,
+                    waveId: 'wave-2',
+                    trigger: { kind: 'clear', delayMs: 500, waveId: 'wave-1' },
+                },
+            ],
+        };
+        const text = serializeLevelYaml(level);
+        expect(parseLevelYaml(text, 'test')).toEqual(level);
+    });
+
+    it('round-trips a weapon dropSpawn weaponId (regression: save lost the weapon)', () => {
+        const level: Level = {
+            ...minimal,
+            dropSpawns: [{ type: 'weapon', x: 900, y: 1500, weaponId: 'arcana-staff' }],
+        };
+        const text = serializeLevelYaml(level);
+        expect(parseLevelYaml(text, 'test')).toEqual(level);
     });
 });

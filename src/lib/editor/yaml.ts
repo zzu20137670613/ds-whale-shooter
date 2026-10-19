@@ -35,6 +35,11 @@ export function serializeLevelYaml(level: Level): string {
     // Localized title: carry it through, or an editor save would silently
     // drop the Chinese title the same way the fields below used to be.
     if (level.titleZh !== undefined) payload.titleZh = level.titleZh;
+    if (level.music !== undefined) payload.music = level.music;
+    // `pixelLighting: false` is how a bright scene opts out of the ambient
+    // twilight tint (scene.ts). Dropping it on save would re-darken the
+    // pavilion and the beach the first time anyone moved a wall.
+    if (level.pixelLighting !== undefined) payload.pixelLighting = level.pixelLighting;
     if (level.tavern !== undefined) payload.tavern = level.tavern;
     if (level.npcSpawns !== undefined) payload.npcSpawns = level.npcSpawns;
     if (level.characterSpawn !== undefined) {
@@ -45,17 +50,25 @@ export function serializeLevelYaml(level: Level): string {
         };
     }
     if (level.monsters !== undefined) {
+        // `waveId` + `trigger` are what make a spawn wait for the previous
+        // wave to clear. Dropping them (as this used to) turns every staged
+        // wave into "all at once" the first time the level is saved from the
+        // editor — a silent difficulty rewrite, not a cosmetic loss.
         payload.monsters = level.monsters.map((m) => ({
             type: m.type,
             x: m.x,
             y: m.y,
+            ...(m.waveId !== undefined ? { waveId: m.waveId } : {}),
+            ...(m.trigger !== undefined ? { trigger: m.trigger } : {}),
         }));
     }
     if (level.dropSpawns !== undefined) {
+        // `weaponId` is how a weapon drop names which weapon it is.
         payload.dropSpawns = level.dropSpawns.map((d) => ({
             type: d.type,
             x: d.x,
             y: d.y,
+            ...(d.weaponId !== undefined ? { weaponId: d.weaponId } : {}),
         }));
     }
     if (level.materials !== undefined) {
