@@ -5,6 +5,7 @@ import {
     candidateCells,
     pointInPolygon,
     rasterizeWalls,
+    subGrid,
     type PolygonWall,
 } from '@/lib/nav/raster';
 
@@ -210,5 +211,41 @@ describe('windowed rasterization', () => {
         // window starts one cell earlier.
         expect(rasterizeWalls(16, 40, 40, [wall])[31][31]).toBe(1);
         expect(rasterizeWalls(16, 40, 40, [wall], 480, 480)[1][1]).toBe(1);
+    });
+});
+
+describe('subGrid', () => {
+    it('cuts the requested region out of a larger grid', () => {
+        const grid = [
+            [0, 1, 2, 3],
+            [4, 5, 6, 7],
+            [8, 9, 10, 11],
+        ];
+        expect(subGrid(grid, 1, 1, 2, 2)).toEqual([
+            [5, 6],
+            [9, 10],
+        ]);
+    });
+
+    it('pads with walkable cells past the source bounds', () => {
+        const grid = [
+            [1, 2],
+            [3, 4],
+        ];
+        expect(subGrid(grid, 1, 1, 2, 2)).toEqual([
+            [4, 0],
+            [0, 0],
+        ]);
+    });
+
+    it('is exactly what rasterizing that window directly produces', () => {
+        // The property the camera-local easystar rests on: slicing a full grid
+        // and rasterizing the same window from scratch must agree. The walls sit
+        // well clear of the window edges, so no buffer cell depends on a wall
+        // the window cannot see.
+        const walls = [square(560, 336, 96), triangle(900, 400, 1000, 620, 860, 660)];
+        const full = rasterizeWalls(16, 200, 120, walls);
+
+        expect(subGrid(full, 30, 15, 60, 40)).toEqual(rasterizeWalls(16, 60, 40, walls, 480, 240));
     });
 });

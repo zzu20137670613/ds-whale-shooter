@@ -178,3 +178,34 @@ function hasWallNeighbour(
     }
     return false;
 }
+
+/**
+ * The cells a windowed easystar instance needs: a copy of `grid` cut to
+ * `[originGx, originGx + cols) x [originGy, originGy + rows)`.
+ *
+ * Easystar only ever sees this slice, so the node table it rebuilds on every
+ * call is window-sized — that rebuild, not the search, is what cost 200-400ms
+ * on a 9x9 map's full grid. The world grid stays whole, which means every
+ * index -> world conversion in the service is left untouched.
+ *
+ * Cells past the source come back as walkable zeros; the caller's window is
+ * clipped to the world, so there is nothing out there to walk into.
+ */
+export function subGrid(
+    grid: WallGrid,
+    originGx: number,
+    originGy: number,
+    cols: number,
+    rows: number,
+): WallGrid {
+    const slice: WallGrid = [];
+    for (let gy = 0; gy < rows; gy++) {
+        const source = grid[originGy + gy];
+        const row: number[] = [];
+        for (let gx = 0; gx < cols; gx++) {
+            row.push(source?.[originGx + gx] ?? 0);
+        }
+        slice.push(row);
+    }
+    return slice;
+}
