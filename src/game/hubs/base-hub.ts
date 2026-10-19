@@ -37,6 +37,12 @@ function makeScreenAnchoredContainer(
     const container = scene.add.container(screenX * invScale, screenY * invScale);
     container.setScale(invScale);
     container.setDepth(depth);
+    // Screen-anchored has to mean screen-anchored: the world may be larger
+    // than the viewport and scroll, so an unpinned HUD would ride the camera
+    // off frame. Phaser multiplies a child's scroll factor by its container's
+    // (ContainerWebGLRenderer), so pinning the container pins every element
+    // the subclasses add to it afterwards.
+    container.setScrollFactor(0);
     return container;
 }
 
