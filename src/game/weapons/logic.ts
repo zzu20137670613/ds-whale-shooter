@@ -91,6 +91,10 @@ export class WeaponController {
         body: MatterJS.BodyType,
         weapons: WeaponSpec[],
         maxSlots: number = 3,
+        /** Per-attack damage multiplier from the character's skills (1 = none).
+         *  Asked once per attack, never per bullet, so a one-shot crit is spent
+         *  on the attack even from a two-bullet weapon. */
+        private readonly damageMultiplier: () => number = () => 1,
     ) {
         this.scene = scene;
         this.matter = matter;
@@ -513,6 +517,11 @@ export class WeaponController {
         if (len === 0) return;
         const angle = Math.atan2(dy, dx);
 
+        // Skills can buff a single attack (critical-next) or a window
+        // (darkening). Resolve the multiplier ONCE here — every bullet of this
+        // attack shares it, and a one-shot buff is spent exactly once.
+        const damage = Math.max(1, Math.round(slot.spec.damage * this.damageMultiplier()));
+
         // Trigger procedural animation for active weapon (Recoil for guns, Swing for melee)
         const attackType = slot.spec.bullet?.type;
         const isMelee = attackType === 'melee' || slot.spec.hitWidth !== undefined;
@@ -542,7 +551,7 @@ export class WeaponController {
                 range: slot.spec.range ?? 120,
                 hitWidth: slot.spec.hitWidth ?? 60,
                 hitHeight: slot.spec.hitHeight ?? 80,
-                damage: slot.spec.damage,
+                damage,
                 texture: slot.spec.bullet?.texture,
                 scale: slot.spec.bullet?.scale ?? 0.18,
                 rotationOffset: meleeRotationOffset,
@@ -592,7 +601,7 @@ export class WeaponController {
                     category: CAT.BULLET,
                     mask: PROJECTILE_PLAYER_MASK,
                     speed,
-                    damage: slot.spec.damage,
+                    damage,
                     aoeRadius: slot.spec.aoeRadius ?? slot.spec.bullet?.aoeRadius,
                     size,
                     texture: slot.spec.bullet?.texture,

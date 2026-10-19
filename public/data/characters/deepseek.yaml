@@ -104,6 +104,14 @@ hotbar:
     - whale-tail-slam
     - whale-cannon
 
+skill:
+    # Next attack crits for double damage. Firing spends it whether or not the
+    # shot connects — asked for explicitly. SP cost is a placeholder pending
+    # sign-off.
+    kind: critical-next
+    spCost: 25
+    cooldownMs: 30000
+    damageMul: 2
 weaponMax: 4
 upgrades:
     # Tavern upgrade ladders. `costs.length` IS the max level.

@@ -444,18 +444,24 @@ export function loadCharacter(
         scene.matter.world.add(compoundBody);
     }
 
-    const weaponsSys = new WeaponController(
+    // Annotated: the two are mutually referenced (the weapons sys asks the
+    // controller for a damage multiplier), so inference alone would cycle.
+    const weaponsSys: WeaponController = new WeaponController(
         scene,
         matter,
         body,
         resolveInitialWeapons(weapons, spec, opts.weaponsById),
         spec.weaponMax ?? 3,
+        // Skills can buff an attack (a one-shot crit, or a damage window).
+        // The controller is constructed just below; this closure only runs
+        // once a shot actually fires, long after both exist.
+        () => controller.consumeAttackMultiplier(),
     );
     const hud = new CharacterHud(scene, spec);
     const weaponHud = new WeaponHud(scene, weaponsSys);
     const statusHud = new StatusHud(scene, body);
 
-    const controller = new CharacterController(scene, level, spec, {
+    const controller: CharacterController = new CharacterController(scene, level, spec, {
         body,
         sprite,
         shadow,

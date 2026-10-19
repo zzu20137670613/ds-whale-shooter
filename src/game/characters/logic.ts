@@ -22,6 +22,12 @@ import type * as Phaser from 'phaser';
 import { pickText } from '@/locales';
 
 import {
+    absorbIncomingHit,
+    attackMultiplier,
+    emptySkillRuntime,
+    useSkill,
+} from '@/lib/characters/skill';
+import {
     AIM_ASSIST,
     CHARACTER_HURT_FLASH_MS,
     CHARACTER_SPRINT_MULTIPLIER,
@@ -78,42 +84,6 @@ export function moveIntent(keys: {
     const len = Math.hypot(vx, vy);
     if (len === 0) return { vx: 0, vy: 0 };
     return { vx: vx / len, vy: vy / len };
-}
-
-/** What the skill key does this frame. `hitsLeft` is what is left afterwards. */
-export interface SkillTick {
-    /** True on the frame the headgear is put on. */
-    wear: boolean;
-    /** Hits the headgear can still soak up after this frame. */
-    hitsLeft: number;
-}
-
-/**
- * Seed's headgear: press the key to put the mascot head on, and it soaks up
- * the next `absorbHits` hits before breaking. Pressing it again while worn
- * does nothing, and a broken one cannot be re-worn until `readyAt`.
- *
- * Pure, so the whole state machine is testable without a scene.
- */
-export function resolveSkill(
-    pressed: boolean,
-    hitsLeft: number,
-    readyAt: number,
-    now: number,
-    absorbHits: number,
-): SkillTick {
-    if (hitsLeft > 0) return { wear: false, hitsLeft };
-    if (!pressed || now < readyAt) return { wear: false, hitsLeft: 0 };
-    return { wear: true, hitsLeft: absorbHits };
-}
-
-/**
- * Route one incoming hit through the headgear. While it is worn the hit is
- * absorbed and never reaches HP; the last hit breaks it.
- */
-export function absorbHit(hitsLeft: number): { hitsLeft: number; absorbed: boolean } {
-    if (hitsLeft <= 0) return { hitsLeft: 0, absorbed: false };
-    return { hitsLeft: hitsLeft - 1, absorbed: true };
 }
 
 /** Locomotion state for a frame: standing, walking, or sprinting. */
@@ -367,10 +337,9 @@ export class CharacterController {
     /** Dev cheat: when true, `heal(hpDelta<0, …)` is a no-op so the
      *  character can't die. Toggled via the cheat panel / EventBus. */
     private infiniteHp = false;
-    /** Seed's headgear: hits it can still soak up (0 = not worn). */
-    private headgearHits = 0;
-    /** Earliest time a broken headgear may be worn again. */
-    private headgearReadyAt = 0;
+    /** Skill state — see `lib/characters/skill`. One runtime serves every
+     *  kind; the controller only reads and writes it through the pure API. */
+    private skillRuntime = emptySkillRuntime();
 
     private readonly cleanupFns: Array<() => void> = [];
 
@@ -431,22 +400,37 @@ export class CharacterController {
 
     // ─── Public API ──────────────────────────────────────────────────────
 
+    /** Damage multiplier for ONE attack. A `critical-next` is spent here, so
+     *  firing a shot that misses still uses it up — asked for explicitly. The
+     *  weapon controller calls this once per attack, not once per bullet. */
+    consumeAttackMultiplier(): number {
+        const { mul, runtime } = attackMultiplier(this.skillRuntime, this.scene.time.now);
+        this.skillRuntime = runtime;
+        return mul;
+    }
+
     /** Apply HP/SP healing (clamped to [0, max]). Negative values damage.
      *  Dev cheat: when `infiniteHp` is on, negative HP deltas are
      *  silently ignored so the player can't die. */
     heal(hpDelta: number, spDelta: number): void {
-        // The headgear takes the hit instead of her HP. Counted in hits, and
-        // the last one breaks it — see resolveSkill / absorbHit.
-        if (hpDelta < 0 && this.headgearHits > 0) {
-            const next = absorbHit(this.headgearHits);
-            this.headgearHits = next.hitsLeft;
-            if (this.headgearHits === 0) {
-                this.headgearReadyAt = this.scene.time.now + (this.spec.skill?.cooldownMs ?? 0);
-                this.parts.sprite.clearTint();
-                (this.parts.sprite as any).setTintMode?.(0);
-                EventBus.emit('combat:headgear-broke', {});
+        // A skill may eat the hit instead of her HP: the headgear's soak, or a
+        // divine guest's one free hit. Both count HITS, not HP. The headgear's
+        // cooldown starts on the hit that breaks it, not on the press.
+        if (hpDelta < 0) {
+            const routed = absorbIncomingHit(
+                this.spec.skill,
+                this.skillRuntime,
+                this.scene.time.now,
+            );
+            this.skillRuntime = routed.runtime;
+            if (routed.absorbed) {
+                if (routed.brokeHeadgear) {
+                    this.parts.sprite.clearTint();
+                    (this.parts.sprite as any).setTintMode?.(0);
+                    EventBus.emit('combat:headgear-broke', {});
+                }
+                return;
             }
-            return;
         }
         const hpBlocked = this.infiniteHp && hpDelta < 0;
         if (hpDelta !== 0 && !hpBlocked) {
@@ -546,16 +530,20 @@ export class CharacterController {
 
         // ── Dodge initiation ────────────────────────────────────────
         const spaceDown = kb.addKey(KEY_SPACE).isDown || this.mobileDodge;
-        // ── Skill: headgear (Seed) ──────────────────────────────────
-        if (this.spec.skill) {
-            const tick = resolveSkill(
-                kb.addKey(KEY_E).isDown,
-                this.headgearHits,
-                this.headgearReadyAt,
-                now,
-                this.spec.skill.absorbHits,
-            );
-            if (tick.wear) this.headgearHits = tick.hitsLeft;
+        // ── Skill (E) ───────────────────────────────────────────────
+        // One path for every kind — see lib/characters/skill. The press is
+        // level-triggered; the skill's own cooldown gates repeats. GPT's roar
+        // is the exception: its effect belongs to the monsters, so the
+        // character only pays for it and announces it.
+        if (this.spec.skill && kb.addKey(KEY_E).isDown) {
+            const used = useSkill(this.spec.skill, this.skillRuntime, now, this.sp, this.spec.sp);
+            if (used.used) {
+                this.skillRuntime = used.runtime;
+                this.sp -= used.spCost;
+                if (this.spec.skill.kind === 'dragon-roar') {
+                    EventBus.emit('skill:dragon-roar', { hpFraction: this.spec.skill.hpFraction });
+                }
+            }
         }
         // Edge-triggered: clear the one-frame dodge flag the moment
         // the controller consumes it, so holding the touch button
@@ -621,10 +609,14 @@ export class CharacterController {
         if (now < this.hurtFlashUntil) {
             sprite.setTint(0x992222);
             (sprite as any).setTintMode?.(2);
-        } else if (this.headgearHits > 0) {
+        } else if (this.skillRuntime.hitsLeft > 0) {
             // The headgear stays visibly on until it breaks. The hurt flash
             // wins for its short window, then this takes the tint back.
-            sprite.setTint(this.spec.skill?.tintColor ?? HEADGEAR_DEFAULT_TINT);
+            sprite.setTint(
+                this.spec.skill?.kind === 'headgear'
+                    ? (this.spec.skill.tintColor ?? HEADGEAR_DEFAULT_TINT)
+                    : HEADGEAR_DEFAULT_TINT,
+            );
             (sprite as any).setTintMode?.(2);
         } else if ((sprite as any).tintMode !== 0) {
             sprite.clearTint();

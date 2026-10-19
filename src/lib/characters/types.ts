@@ -27,6 +27,8 @@ import type { CharacterIndexSchema, CharacterSpecSchema, CharacterUpgradeSchema 
 export type CharacterSpec = z.infer<typeof CharacterSpecSchema>;
 export type SpriteSpec = NonNullable<CharacterSpec['sprite']>;
 export type AnimSpec = NonNullable<CharacterSpec['anims']>[string];
+/** One character skill — a discriminated union on `kind`. */
+export type CharacterSkillSpec = NonNullable<CharacterSpec['skill']>;
 /** One tavern upgrade ladder (costs + stat effect). */
 export type CharacterUpgrade = z.infer<typeof CharacterUpgradeSchema>;
 

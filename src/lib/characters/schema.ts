@@ -46,12 +46,20 @@ const SpriteOffsetSchema = z
     .optional();
 
 /**
- * A character skill. Only `headgear` exists so far (Seed): press the key to
- * put the mascot head on, it soaks up the next few hits instead of her HP,
- * then breaks and goes on cooldown. Absorbing counts HITS, not HP, so the
- * value reads as "how many mistakes it forgives".
+ * A character skill — one per character, all driven by `lib/characters/skill`.
+ *
+ *   headgear       Seed: press the key to put the mascot head on; it soaks up
+ *                  the next few HITS (not HP, so the value reads as "how many
+ *                  mistakes it forgives"), then breaks and goes on cooldown —
+ *                  cooldown measured from the break, not the press.
+ *   darkening      Claude: a timed damage multiplier, cooldown on use.
+ *   critical-next  DeepSeek: the next attack crits; firing spends it whether
+ *                  or not it connects.
+ *   divine-guest   Qwen: the next hit is free, plus a timed damage multiplier.
+ *   dragon-roar    GPT: costs a fraction of the SP pool and halves the HP of
+ *                  every monster on screen (monsters own that effect).
  */
-const SkillSchema = z
+const HeadgearSkillSchema = z
     .object({
         kind: z.literal('headgear'),
         /** Hits soaked up before it breaks. */
@@ -62,6 +70,61 @@ const SkillSchema = z
         tintColor: z.number().int().gte(0).optional(),
     })
     .strict();
+
+const DarkeningSkillSchema = z
+    .object({
+        kind: z.literal('darkening'),
+        /** SP paid per use. */
+        spCost: z.number().int().gte(0),
+        /** Cooldown, starting the moment it is used. */
+        cooldownMs: z.number().int().gte(0),
+        /** How long the multiplier lasts. */
+        buffMs: z.number().int().gt(0),
+        /** Attack damage multiplier while the buff runs. */
+        damageMul: z.number().gt(0),
+    })
+    .strict();
+
+const CriticalNextSkillSchema = z
+    .object({
+        kind: z.literal('critical-next'),
+        spCost: z.number().int().gte(0),
+        cooldownMs: z.number().int().gte(0),
+        /** Multiplier applied to the next attack, then spent. */
+        damageMul: z.number().gt(0),
+    })
+    .strict();
+
+const DivineGuestSkillSchema = z
+    .object({
+        kind: z.literal('divine-guest'),
+        spCost: z.number().int().gte(0),
+        cooldownMs: z.number().int().gte(0),
+        buffMs: z.number().int().gt(0),
+        damageMul: z.number().gt(0),
+        /** Hits that deal no damage before the blessing lapses. */
+        shieldHits: z.number().int().gt(0),
+    })
+    .strict();
+
+const DragonRoarSkillSchema = z
+    .object({
+        kind: z.literal('dragon-roar'),
+        /** Share of the SP pool one roar costs, e.g. 0.8. */
+        spCostFraction: z.number().gt(0).lte(1),
+        cooldownMs: z.number().int().gte(0),
+        /** Share of each monster's MAX HP the roar takes, e.g. 0.5. */
+        hpFraction: z.number().gt(0).lte(1),
+    })
+    .strict();
+
+export const SkillSchema = z.discriminatedUnion('kind', [
+    HeadgearSkillSchema,
+    DarkeningSkillSchema,
+    CriticalNextSkillSchema,
+    DivineGuestSkillSchema,
+    DragonRoarSkillSchema,
+]);
 
 const SpriteSchema = z
     .object({

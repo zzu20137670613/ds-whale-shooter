@@ -37,6 +37,16 @@ hotbar:
     - crane-fan
     - exorcism-talisman
 
+skill:
+    # Divine Guest (请神术) — the next hit costs no HP, then twenty seconds at
+    # 1.5x attack damage. SP cost and the cooldown are placeholders pending
+    # sign-off; every other skill's clock starts on use, and so does this one.
+    kind: divine-guest
+    spCost: 30
+    cooldownMs: 45000
+    buffMs: 20000
+    damageMul: 1.5
+    shieldHits: 1
 weaponMax: 4
 upgrades:
     # Tavern upgrade ladders. `costs.length` IS the max level. The cheapest
