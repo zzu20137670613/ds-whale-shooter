@@ -12,7 +12,9 @@
  *   2. every id listed in a module `index.yaml` has a backing spec file,
  *      and no spec file is left unregistered;
  *   3. every audio manifest id has a spec file, and every `sfx` id a weapon
- *      references resolves to one.
+ *      references resolves to one;
+ *   4. the roster's kit rules — one melee + one ranged per character, melee
+ *      weapons carry no ammo, a starting hotbar fits the character's slots.
  *
  * It reads the real data directory rather than fixtures on purpose —
  * fixtures cannot catch the shipped data drifting out of sync.
@@ -30,6 +32,7 @@ import { TAVERN_ACTOR_SCALE } from '@/lib/constants';
 import { parseDropIndex, parseDropYaml } from '@/lib/drops/parser';
 import { parseLevelIndex, parseLevelYaml } from '@/lib/levels/parser';
 import { parseMonsterIndex, parseMonsterYaml } from '@/lib/monsters/parser';
+import { isMeleeWeapon } from '@/lib/weapons/logic';
 import { parseWeaponIndex, parseWeaponYaml } from '@/lib/weapons/parser';
 
 const DATA = join(process.cwd(), 'public', 'data');
@@ -297,5 +300,72 @@ describe('public/data integrity', () => {
         }
 
         expect(clashes, `overlapping tavern seats:\n${clashes.join('\n')}`).toEqual([]);
+    });
+
+    it('characters: start every run with one melee and one ranged weapon', () => {
+        // The roster's kit rule: each of the five carries exactly two weapons
+        // and they must cover both ranges, so nobody is left with two guns
+        // (no close game) or two sticks (cannot answer a sniper). Melee vs
+        // ranged is the schema's own split — see `isMeleeWeapon`.
+        const chars = parseCharacterIndex(read(join(DATA, 'characters', 'index.yaml')));
+        const bad: string[] = [];
+
+        for (const id of chars.characters) {
+            const spec = parseCharacterYaml(read(join(DATA, 'characters', `${id}.yaml`)), id);
+            const hotbar = spec.hotbar ?? [];
+            const weapons = hotbar.map((wid) =>
+                parseWeaponYaml(read(join(DATA, 'weapons', `${wid}.yaml`)), wid),
+            );
+            const melee = weapons.filter(isMeleeWeapon).length;
+            const ranged = weapons.length - melee;
+            if (melee !== 1 || ranged !== 1) {
+                bad.push(
+                    `characters/${id}: ${melee} melee + ${ranged} ranged (${hotbar.join(', ')})`,
+                );
+            }
+        }
+
+        expect(bad, `hotbars that are not one melee + one ranged:\n${bad.join('\n')}`).toEqual([]);
+    });
+
+    it('weapons: a melee weapon carries no ammo fields', () => {
+        // "Melee has no bullet count" is a gameplay rule and the engine
+        // already agrees: a melee slot reports ammo 1 and never reloads. A
+        // `clipSize` on a melee spec is therefore dead data — it reads like a
+        // feature and survives review, which is exactly why it is checked.
+        const dir = join(DATA, 'weapons');
+        const index = parseWeaponIndex(read(join(dir, 'index.yaml')));
+        const bad: string[] = [];
+
+        for (const id of index.weapons) {
+            const spec = parseWeaponYaml(read(join(dir, `${id}.yaml`)), id);
+            if (!isMeleeWeapon(spec)) continue;
+            for (const field of ['clipSize', 'reloadTimeMs', 'bulletsPerShot'] as const) {
+                if (spec[field] !== undefined) {
+                    bad.push(`weapons/${id}: ${field}`);
+                }
+            }
+        }
+
+        expect(bad, `melee weapons carrying ammo fields:\n${bad.join('\n')}`).toEqual([]);
+    });
+
+    it('characters: a starting hotbar fits the character weapon slots', () => {
+        // `weaponMax` is the hotbar cap the HUD draws and the pickup path
+        // enforces. A hotbar longer than the cap means slots the character
+        // owns but the player cannot see: the runtime drops the overflow.
+        const chars = parseCharacterIndex(read(join(DATA, 'characters', 'index.yaml')));
+        const bad: string[] = [];
+
+        for (const id of chars.characters) {
+            const spec = parseCharacterYaml(read(join(DATA, 'characters', `${id}.yaml`)), id);
+            const cap = spec.weaponMax ?? 3; // the runtime's own fallback
+            const held = (spec.hotbar ?? []).length;
+            if (held > cap) {
+                bad.push(`characters/${id}: hotbar ${held} > weaponMax ${cap}`);
+            }
+        }
+
+        expect(bad, `hotbars longer than their slot cap:\n${bad.join('\n')}`).toEqual([]);
     });
 });

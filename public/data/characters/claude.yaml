@@ -35,7 +35,7 @@ dodge:
     durationMs: 240
     cooldownMs: 700
 hotbar:
-    - page-sheaf
+    - scripture
     - inkwell-mortar
 
 weaponMax: 2

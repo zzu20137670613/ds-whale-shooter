@@ -1,0 +1,29 @@
+# GPT — Nashor's Tooth, borrowed from a certain MOBA on purpose. Melee: no
+# bullet count (see docs/WEAPONS.md). Behaviour and numbers are unchanged from
+# the twin-tail set; only the name and the placeholder sprite moved.
+# PLACEHOLDER ART — reuses the thorn-scythe-claws.png claw until the LoL sprite
+# is dropped in; the swing arc is the house melee arc.
+name: Nashor's Tooth
+nameZh: "纳什之牙"
+damage: 11
+cooldownMs: 190
+range: 300
+upgrades:
+    # Tavern weapon ladder. `costs.length` IS the max level.
+    costs: [38, 85, 148, 232, 336]
+    damageMulPerLevel: 1.13
+hitWidth: 130
+hitHeight: 110
+visual:
+    texture: assets/image/weapons/thorn-scythe-claws.png
+    scale: 0.15
+    orbitRadius: 12
+    anchor: [0.1, 0.5]
+    swingAngle: 170
+    rotationOffset: 0
+bullet:
+    texture: assets/image/weapons/plasma-slash-arc.png
+    type: melee
+    scale: 0.32
+    anchor: [0.5, 0.5]
+    rotationOffset: 0

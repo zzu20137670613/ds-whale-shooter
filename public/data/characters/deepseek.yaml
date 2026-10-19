@@ -102,7 +102,7 @@ dodge:
     cooldownMs: 500
 hotbar:
     - whale-cannon
-    - whale-minigun
+    - whale-tail-slam
 
 weaponMax: 3
 upgrades:

@@ -4,8 +4,8 @@ weapons:
     - arcana-staff      # hidden level 1 — ranged single shot
     - rocket-launcher   # galgame level   — ranged AoE
     # DeepSeek's weapons (placeholder art; see each YAML for the swap note)
-    - whale-minigun
-    - whale-cannon
+    - whale-cannon      # ranged — the heavy shot
+    - whale-tail-slam   # melee  — she turns and swings her tail
     # Monster weapons — one per monster in the levels that exist today
     - thorn-scythe-claws
     - moss-bark-rifle
@@ -14,12 +14,16 @@ weapons:
     - branch-sweep
     - bramble-knuckles
     - thorn-bolt
-    # Five AI girls' signature kit (placeholder art; see each YAML)
-    - page-sheaf
-    - inkwell-mortar
-    - white-dragon-fangs
-    - twin-tail-rippers
-    - crane-fan
-    - sealing-talisman
-    - mascot-banner
-    - supply-crate
+    # Five AI girls' signature kit. Every character starts with exactly one
+    # melee and one ranged weapon (guarded by tests/data-integrity.test.ts);
+    # the melee column is the roster's close game. Slot 1 is whoever was there
+    # before, so do not read a ranged-first convention into the pairs below.
+    # Placeholder art throughout — see each YAML.
+    - scripture         # claude   melee  — the book, swung shut
+    - inkwell-mortar    # claude   ranged
+    - white-dragon-fangs # gpt     ranged
+    - nashors-tooth     # gpt      melee  — easter egg
+    - crane-fan         # qwen     melee  — the spread, now an arc
+    - sealing-talisman  # qwen     ranged
+    - frostmourne       # seed     melee  — easter egg
+    - supply-crate      # seed     ranged

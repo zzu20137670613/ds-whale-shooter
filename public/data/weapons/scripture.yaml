@@ -1,0 +1,31 @@
+# Claude — the scholar closes her book on the room. Melee: the arc is a tome
+# swung shut, and a tome has no bullet count (see docs/WEAPONS.md).
+# PLACEHOLDER ART — reuses the rune-shield.png slab for the held object and the
+# house melee arc until a tome sprite exists. Numbers are placeholders too: the
+# whole ladder gets re-tuned in the numeric pass.
+name: Scripture
+nameZh: "教典"
+damage: 34
+cooldownMs: 900
+range: 190
+upgrades:
+    # Tavern weapon ladder. `costs.length` IS the max level.
+    costs: [45, 100, 175, 270, 390]
+    damageMulPerLevel: 1.15
+hitWidth: 130
+hitHeight: 120
+visual:
+    texture: assets/image/weapons/rune-shield.png
+    scale: 0.16
+    orbitRadius: 14
+    anchor: [0.2, 0.5]
+    swingAngle: 200
+    rotationOffset: 0
+bullet:
+    texture: assets/image/weapons/plasma-slash-arc.png
+    type: melee
+    scale: 0.32
+    anchor: [0.5, 0.5]
+    rotationOffset: 0
+sfx:
+    shoot: plasma-sword-shoot

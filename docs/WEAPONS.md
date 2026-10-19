@@ -23,16 +23,32 @@ public/data/weapons/
 └── <id>.yaml      # one per weapon (player + monster melee/ranged)
 ```
 
-The shipped set includes the player's six weapons plus the level-1
-(`drone-claws`, `gunner-blast`) and level-2 Rusted Hollow Citadel
-monster weapons (`thorn-scythe-claws`, `moss-bark-rifle`, `vine-lash`,
-`rune-shield`, `branch-sweep`, `bramble-knuckles`, `thorn-bolt`,
-`vine-tip`, `rune-shard`, `sap-drop`, `thorn-orb`). `gunner-blast` is
-kept as a legacy entry that the controller currently never references.
+The shipped roster is 19 weapons:
+
+| Group              | Ids                                                                                                                   |
+| ------------------ | --------------------------------------------------------------------------------------------------------------------- |
+| Reserved rewards   | `arcana-staff` (hidden level 1), `rocket-launcher` (galgame level)                                                      |
+| DeepSeek           | `whale-cannon` (ranged), `whale-tail-slam` (melee)                                                                      |
+| Monster weapons    | `thorn-scythe-claws`, `moss-bark-rifle`, `vine-lash`, `rune-shield`, `branch-sweep`, `bramble-knuckles`, `thorn-bolt`     |
+| The roster's kit   | claude `scripture` (melee) + `inkwell-mortar` (ranged) · gpt `nashors-tooth` (melee) + `white-dragon-fangs` (ranged) · qwen `crane-fan` (melee) + `sealing-talisman` (ranged) · seed `frostmourne` (melee) + `supply-crate` (ranged) |
+
+Every character's starting `hotbar` holds exactly one melee and one ranged
+weapon. `tests/data-integrity.test.ts` fails otherwise — as it does on a melee
+weapon carrying ammo fields, or a hotbar longer than the character's
+`weaponMax`.
+
+Most player-facing weapon sprites are still borrowed from upstream art; each
+borrowed file says `# PLACEHOLDER ART` at the top. Swapping one in is a data
+edit (`visual.texture` + `bullet.texture`), never a code change.
 
 ## YAML schema — `public/data/weapons/<id>.yaml`
 
-Ranged vs melee is decided by whether `projectile` is set. Exactly one of them is required (`superRefine` enforces). `clipSize` / `reloadTimeMs` / `bulletsPerShot` are player-only; monster weapons omit them (cooldown alone gates monster fire).
+Ranged vs melee is decided by the spec's shape, and `superRefine` enforces
+exactly one of the two: ranged sets `projectile`, melee sets `hitWidth` +
+`hitHeight`. A melee weapon carries **no ammo** — `clipSize`, `reloadTimeMs`
+and `bulletsPerShot` are ranged-only, and the runtime already reports a single,
+never-reloading round for a melee slot. Both halves are guarded by
+`tests/data-integrity.test.ts`.
 
 ```yaml
 id: assault-rifle # optional; loader overwrites with filename
@@ -72,7 +88,7 @@ projectile: # REQUIRED for ranged (defines speed + collision shape)
         height: 2
         color: 0x23C9D0
 
-# ─── Player-only (omit on monster weapons) ─────────────────────
+# ─── Ranged-only (omit on melee weapons and on monster weapons) ─
 clipSize: 30
 reloadTimeMs: 1500
 bulletsPerShot: 1
@@ -171,6 +187,10 @@ None — weapons are pure emitters.
 
 - **One yaml per weapon id.** No sub-types in shared yaml files.
 - **No `id` field** in yaml; the loader overwrites `spec.id` with the filename basename.
+- **Names are split by audience.** `id` and `name` are English, and `name` is
+  what the English build displays; `nameZh` is the Chinese build's display name
+  and every weapon must carry one. Keep Chinese out of ids and keys — a
+  non-ASCII key is a bug, not a label.
 - **`bullet.texture` wins over `projectile.visual`** for rendered bullets. The legacy `projectile` block is kept for collision-shape data; new weapons should fill `bullet.texture` for visible projectiles.
 - **Player ammo** lives in `WeaponController` (per-slot). Monster ammo is infinite — `cooldownMs` is the only gate.
 - **Aim assist** is in `WeaponController.update` (constants in `src/lib/constants.ts → AIM_ASSIST`). It pulls the cursor toward monsters inside `INITIAL_SNAP_RADIUS`, then sticks to one within `STICKY_TETHER_RADIUS`.

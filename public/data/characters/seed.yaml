@@ -33,7 +33,7 @@ dodge:
     durationMs: 220
     cooldownMs: 560
 hotbar:
-    - mascot-banner
+    - frostmourne
     - supply-crate
 
 weaponMax: 3

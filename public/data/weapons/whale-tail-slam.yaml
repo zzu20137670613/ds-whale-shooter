@@ -1,0 +1,33 @@
+# DeepSeek — the whale-girl turns her back and swings her tail. Melee: no
+# bullet count (see docs/WEAPONS.md).
+# The back-facing pose needs new sheet frames — every roster sheet only faces
+# right, so today the tail lands with her facing the camera. The hitbox and the
+# swing are live; the pose is an art task.
+# PLACEHOLDER ART — reuses the vine-lash.png tendril as the tail until tail art
+# exists. Numbers are placeholders: the whole ladder gets re-tuned.
+name: Whale Tail Slam
+nameZh: "鲸娘尾击"
+damage: 24
+cooldownMs: 520
+range: 210
+upgrades:
+    # Tavern weapon ladder. `costs.length` IS the max level.
+    costs: [40, 90, 160, 250, 360]
+    damageMulPerLevel: 1.15
+hitWidth: 150
+hitHeight: 130
+visual:
+    texture: assets/image/weapons/vine-lash.png
+    scale: 0.16
+    orbitRadius: 12
+    anchor: [0.2, 0.5]
+    swingAngle: 220
+    rotationOffset: 0
+bullet:
+    texture: assets/image/weapons/plasma-slash-arc.png
+    type: melee
+    scale: 0.34
+    anchor: [0.5, 0.5]
+    rotationOffset: 0
+sfx:
+    shoot: plasma-sword-shoot
