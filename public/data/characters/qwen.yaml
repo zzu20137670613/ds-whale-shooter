@@ -37,7 +37,7 @@ hotbar:
     - crane-fan
     - sealing-talisman
 
-weaponMax: 3
+weaponMax: 4
 upgrades:
     # Tavern upgrade ladders. `costs.length` IS the max level. The cheapest
     # column is the character's own growth axis — that is what separates the

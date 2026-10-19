@@ -38,7 +38,7 @@ hotbar:
     - scripture
     - inkwell-mortar
 
-weaponMax: 2
+weaponMax: 3
 upgrades:
     # Tavern upgrade ladders. `costs.length` IS the max level. The cheapest
     # column is the character's own growth axis — that is what separates the
