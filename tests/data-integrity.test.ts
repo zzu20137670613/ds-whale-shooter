@@ -21,7 +21,7 @@
  *
  * Deliberately not mirroring a single `src/` module: it spans all of them.
  */
-import { readFileSync, readdirSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { describe, expect, it } from 'vitest';
@@ -322,6 +322,10 @@ describe('public/data integrity', () => {
                 bad.push(
                     `characters/${id}: ${melee} melee + ${ranged} ranged (${hotbar.join(', ')})`,
                 );
+            } else if (!isMeleeWeapon(weapons[0])) {
+                // Slot 1 is the melee by roster decision: a run starts in close
+                // quarters, and the ranged weapon is the deliberate second pick.
+                bad.push(`characters/${id}: slot 1 is the ranged weapon (${hotbar.join(', ')})`);
             }
         }
 
@@ -367,5 +371,64 @@ describe('public/data integrity', () => {
         }
 
         expect(bad, `hotbars longer than their slot cap:\n${bad.join('\n')}`).toEqual([]);
+    });
+
+    it('every asset path a spec names resolves under public/', () => {
+        // An asset path is a plain string the schema happily accepts, so a typo
+        // is silent: no sprite in the hand, no error in the console, nothing in
+        // any log. Walk what each module actually parsed and require every
+        // path-shaped string to exist on disk.
+        const root = join(process.cwd(), 'public');
+        const ASSET = /\.(png|jpe?g|webp|gif|ogg|mp3|wav|json|xml)$/i;
+
+        const pathsIn = (node: unknown, out: string[] = []): string[] => {
+            if (typeof node === 'string') {
+                if (ASSET.test(node)) out.push(node);
+            } else if (Array.isArray(node)) {
+                for (const item of node) pathsIn(item, out);
+            } else if (node !== null && typeof node === 'object') {
+                for (const value of Object.values(node)) pathsIn(value, out);
+            }
+            return out;
+        };
+
+        const missing: string[] = [];
+        const check = (label: string, spec: unknown): void => {
+            for (const ref of pathsIn(spec)) {
+                if (!existsSync(join(root, ref))) missing.push(`${label}: ${ref}`);
+            }
+        };
+
+        for (const id of parseWeaponIndex(read(join(DATA, 'weapons', 'index.yaml'))).weapons) {
+            check(`weapons/${id}`, parseWeaponYaml(read(join(DATA, 'weapons', `${id}.yaml`)), id));
+        }
+        for (const id of parseCharacterIndex(read(join(DATA, 'characters', 'index.yaml')))
+            .characters) {
+            check(
+                `characters/${id}`,
+                parseCharacterYaml(read(join(DATA, 'characters', `${id}.yaml`)), id),
+            );
+        }
+        for (const id of parseMonsterIndex(read(join(DATA, 'monsters', 'index.yaml'))).monsters) {
+            check(`monsters/${id}`, parseMonsterYaml(read(join(DATA, 'monsters', `${id}.yaml`)), id));
+        }
+        for (const id of parseDropIndex(read(join(DATA, 'drops', 'index.yaml'))).drops) {
+            check(`drops/${id}`, parseDropYaml(read(join(DATA, 'drops', `${id}.yaml`)), id));
+        }
+        for (const id of parseLevelIndex(read(join(DATA, 'levels', 'index.yaml'))).levels) {
+            check(`levels/${id}`, parseLevelYaml(read(join(DATA, 'levels', `${id}.yaml`)), id));
+        }
+        for (const kind of ['sfx', 'music'] as const) {
+            for (const id of parseAudioIndex(read(join(DATA, 'audios', 'index.yaml')))[kind]) {
+                check(
+                    `audios/${kind}/${id}`,
+                    parseAudioYaml(read(join(DATA, 'audios', kind, `${id}.yaml`))),
+                );
+            }
+        }
+
+        expect(missing, `asset paths with no file under public/:\n${missing.join('\n')}`).toEqual(
+            [],
+        );
     });
 });

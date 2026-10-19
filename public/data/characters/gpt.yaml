@@ -38,8 +38,8 @@ dodge:
     durationMs: 180
     cooldownMs: 420
 hotbar:
-    - white-dragon-fangs
     - nashors-tooth
+    - white-dragon-fangs
 
 weaponMax: 4
 upgrades:
