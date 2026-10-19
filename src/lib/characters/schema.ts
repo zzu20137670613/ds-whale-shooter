@@ -48,6 +48,11 @@ const SpriteOffsetSchema = z
 /**
  * A character skill — one per character, all driven by `lib/characters/skill`.
  *
+ * Every kind must carry a display name pair (`name` / `nameZh`), same rule as
+ * weapons: the id and the English name are English, `nameZh` is what the
+ * Chinese UI shows. Names are required, not optional — a skill with no name
+ * would have nothing to show the player.
+ *
  *   headgear       Seed: press the key to put the mascot head on; it soaks up
  *                  the next few HITS (not HP, so the value reads as "how many
  *                  mistakes it forgives"), then breaks and goes on cooldown —
@@ -59,8 +64,16 @@ const SpriteOffsetSchema = z
  *   dragon-roar    GPT: costs a fraction of the SP pool and halves the HP of
  *                  every monster on screen (monsters own that effect).
  */
+const SkillNameFields = {
+    /** English display name — the English UI shows this. */
+    name: z.string().min(1),
+    /** Chinese display name — the Chinese UI shows this. */
+    nameZh: z.string().min(1),
+};
+
 const HeadgearSkillSchema = z
     .object({
+        ...SkillNameFields,
         kind: z.literal('headgear'),
         /** Hits soaked up before it breaks. */
         absorbHits: z.number().int().gt(0),
@@ -73,6 +86,7 @@ const HeadgearSkillSchema = z
 
 const DarkeningSkillSchema = z
     .object({
+        ...SkillNameFields,
         kind: z.literal('darkening'),
         /** SP paid per use. */
         spCost: z.number().int().gte(0),
@@ -87,6 +101,7 @@ const DarkeningSkillSchema = z
 
 const CriticalNextSkillSchema = z
     .object({
+        ...SkillNameFields,
         kind: z.literal('critical-next'),
         spCost: z.number().int().gte(0),
         cooldownMs: z.number().int().gte(0),
@@ -97,6 +112,7 @@ const CriticalNextSkillSchema = z
 
 const DivineGuestSkillSchema = z
     .object({
+        ...SkillNameFields,
         kind: z.literal('divine-guest'),
         spCost: z.number().int().gte(0),
         cooldownMs: z.number().int().gte(0),
@@ -109,6 +125,7 @@ const DivineGuestSkillSchema = z
 
 const DragonRoarSkillSchema = z
     .object({
+        ...SkillNameFields,
         kind: z.literal('dragon-roar'),
         /** Share of the SP pool one roar costs, e.g. 0.8. */
         spCostFraction: z.number().gt(0).lte(1),

@@ -46,6 +46,8 @@ skill:
     # MAX HP at once, so anything already below half dies outright. Costs 80%
     # of the SP pool; the cooldown starts the moment it fires. The monsters
     # take the hit themselves (game/monsters listens for `skill:dragon-roar`).
+    name: Dragon Roar
+    nameZh: "龙吟"
     kind: dragon-roar
     spCostFraction: 0.8
     cooldownMs: 60000

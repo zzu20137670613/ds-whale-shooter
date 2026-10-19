@@ -41,7 +41,9 @@ hotbar:
 skill:
     # Darkening (黑化) — twenty seconds of doubled attack damage, once a
     # minute. The cooldown starts the moment it is used. SP cost is a
-    # placeholder pending sign-off.
+    # placeholder until the owner's balance pass.
+    name: Darkening
+    nameZh: "黑化"
     kind: darkening
     spCost: 40
     cooldownMs: 60000

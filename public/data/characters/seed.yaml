@@ -65,8 +65,11 @@ stats:
     vitality: 7
     spirit: 8
 skill:
-    # 头套: press E to put the official mascot head on. It soaks up the next
-    # few hits instead of her HP, then breaks and goes on cooldown.
+    # Mascot Head (头套): press E to put the official mascot head on. It soaks
+    # up the next few hits instead of her HP, then breaks and goes on cooldown
+    # — measured from the break, not from the press.
+    name: Mascot Head
+    nameZh: "头套"
     kind: headgear
     absorbHits: 2
     cooldownMs: 30000

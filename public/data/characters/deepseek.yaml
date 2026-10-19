@@ -105,9 +105,11 @@ hotbar:
     - whale-cannon
 
 skill:
-    # Next attack crits for double damage. Firing spends it whether or not the
-    # shot connects — asked for explicitly. SP cost is a placeholder pending
-    # sign-off.
+    # Devour (鲸吞) — next attack crits for double damage. Firing spends it
+    # whether or not the shot connects: one gulp, no second chance. SP cost is
+    # a placeholder until the owner's balance pass.
+    name: Devour
+    nameZh: "鲸吞"
     kind: critical-next
     spCost: 25
     cooldownMs: 30000

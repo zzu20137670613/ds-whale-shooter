@@ -25,12 +25,16 @@ import {
 import type { CharacterSkillSpec } from '@/lib/characters/types';
 
 const HEADGEAR: CharacterSkillSpec = {
+    name: 'Mascot Head',
+    nameZh: '头套',
     kind: 'headgear',
     absorbHits: 2,
     cooldownMs: 30000,
     tintColor: 0xffe9a8,
 };
 const DARKENING: CharacterSkillSpec = {
+    name: 'Darkening',
+    nameZh: '黑化',
     kind: 'darkening',
     spCost: 40,
     cooldownMs: 60000,
@@ -38,12 +42,16 @@ const DARKENING: CharacterSkillSpec = {
     damageMul: 2,
 };
 const CRIT: CharacterSkillSpec = {
+    name: 'Devour',
+    nameZh: '鲸吞',
     kind: 'critical-next',
     spCost: 25,
     cooldownMs: 30000,
     damageMul: 2,
 };
 const DIVINE: CharacterSkillSpec = {
+    name: 'Divine Guest',
+    nameZh: '请神术',
     kind: 'divine-guest',
     spCost: 30,
     cooldownMs: 45000,
@@ -52,6 +60,8 @@ const DIVINE: CharacterSkillSpec = {
     shieldHits: 1,
 };
 const ROAR: CharacterSkillSpec = {
+    name: 'Dragon Roar',
+    nameZh: '龙吟',
     kind: 'dragon-roar',
     spCostFraction: 0.8,
     cooldownMs: 60000,
