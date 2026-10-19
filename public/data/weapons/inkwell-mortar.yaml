@@ -11,7 +11,7 @@ upgrades:
     # Tavern weapon ladder. `costs.length` IS the max level.
     costs: [55, 120, 205, 315, 455]
     damageMulPerLevel: 1.18
-clipSize: 1
+clipSize: 3
 reloadTimeMs: 3200
 visual:
     texture: assets/image/weapons/rocket-launcher.png

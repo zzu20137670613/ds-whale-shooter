@@ -30,7 +30,7 @@ The shipped roster is 19 weapons:
 | Reserved rewards   | `arcana-staff` (hidden level 1), `rocket-launcher` (galgame level)                                                      |
 | DeepSeek           | `whale-tail-slam` (melee), `whale-cannon` (ranged)                                                                      |
 | Monster weapons    | `thorn-scythe-claws`, `moss-bark-rifle`, `vine-lash`, `rune-shield`, `branch-sweep`, `bramble-knuckles`, `thorn-bolt`     |
-| The roster's kit   | claude `scripture` (melee) + `inkwell-mortar` (ranged) · gpt `nashors-tooth` (melee) + `white-dragon-fangs` (ranged) · qwen `crane-fan` (melee) + `sealing-talisman` (ranged) · seed `frostmourne` (melee) + `supply-crate` (ranged) |
+| The roster's kit   | claude `scripture` (melee) + `inkwell-mortar` (ranged) · gpt `nashors-tooth` (melee) + `white-dragon-fangs` (ranged) · qwen `crane-fan` (melee) + `exorcism-talisman` (ranged, fires arcana-staff's shot) · seed `frostmourne` (melee) + `assault-rifle` (ranged, the restored upstream machine gun) |
 
 Every character's starting `hotbar` holds exactly one melee and one ranged
 weapon, and the melee is slot 1 — a run starts in close quarters and the ranged

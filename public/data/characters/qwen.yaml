@@ -35,7 +35,7 @@ dodge:
     cooldownMs: 480
 hotbar:
     - crane-fan
-    - sealing-talisman
+    - exorcism-talisman
 
 weaponMax: 4
 upgrades:

@@ -34,7 +34,7 @@ dodge:
     cooldownMs: 560
 hotbar:
     - frostmourne
-    - supply-crate
+    - assault-rifle
 
 weaponMax: 4
 upgrades:
@@ -68,8 +68,8 @@ skill:
     # 头套: press E to put the official mascot head on. It soaks up the next
     # few hits instead of her HP, then breaks and goes on cooldown.
     kind: headgear
-    absorbHits: 3
-    cooldownMs: 9000
+    absorbHits: 2
+    cooldownMs: 30000
     tintColor: 0xFFE9A8
 sfx:
     dodge: dodge

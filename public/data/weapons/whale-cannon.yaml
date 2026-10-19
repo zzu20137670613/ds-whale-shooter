@@ -8,7 +8,7 @@ upgrades:
     # Tavern weapon ladder. `costs.length` IS the max level.
     costs: [40, 90, 160, 250, 360]
     damageMulPerLevel: 1.15
-clipSize: 3
+clipSize: 2
 reloadTimeMs: 2600
 bulletsPerShot: 1
 # PLACEHOLDER ASSET — reuses the rocket-launcher / rocket-missile

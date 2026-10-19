@@ -23,6 +23,6 @@ weapons:
     - nashors-tooth     # gpt      melee  — easter egg, real art
     - white-dragon-fangs # gpt     ranged
     - crane-fan         # qwen     melee  — the spread, now an arc
-    - sealing-talisman  # qwen     ranged
+    - exorcism-talisman # qwen     ranged — 灭妖符; fires arcana-staff's shot
     - frostmourne       # seed     melee  — easter egg
-    - supply-crate      # seed     ranged
+    - assault-rifle     # seed     ranged — the upstream machine gun
