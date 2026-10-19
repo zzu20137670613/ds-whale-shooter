@@ -177,3 +177,38 @@ describe('pointInPolygon', () => {
         expect(pointInPolygon(0, 0, [])).toBe(false);
     });
 });
+
+describe('windowed rasterization', () => {
+    it('marks exactly what the full grid marks in the same region', () => {
+        // The guarantee the camera-local grid rests on: a grid windowed at a
+        // whole number of cells must produce the cells the full grid produces
+        // there. Compared over the interior only — a buffer cell on the window's
+        // very border can belong to a wall just outside the window, which the
+        // window cannot see. That border is off camera by the margin, and the
+        // next rebuild covers it.
+        const walls = [
+            square(320, 320, 96),
+            triangle(900, 200, 1000, 420, 860, 460),
+            square(1400, 1200, 160),
+        ];
+        const full = rasterizeWalls(16, 200, 120, walls);
+
+        const originX = 480; // cell 30
+        const originY = 240; // cell 15
+        const window = rasterizeWalls(16, 60, 40, walls, originX, originY);
+
+        for (let gy = 1; gy < 39; gy++) {
+            for (let gx = 1; gx < 59; gx++) {
+                expect(window[gy][gx]).toBe(full[originY / 16 + gy][originX / 16 + gx]);
+            }
+        }
+    });
+
+    it('shifts which cells a wall lands on when the origin moves', () => {
+        const wall = square(500, 500, 48);
+        // The same wall sits at cell 31 with no origin, and at cell 1 once the
+        // window starts one cell earlier.
+        expect(rasterizeWalls(16, 40, 40, [wall])[31][31]).toBe(1);
+        expect(rasterizeWalls(16, 40, 40, [wall], 480, 480)[1][1]).toBe(1);
+    });
+});

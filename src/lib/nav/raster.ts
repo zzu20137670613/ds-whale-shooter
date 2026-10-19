@@ -58,6 +58,8 @@ export function candidateCells(
     cellSize: number,
     gridWidth: number,
     gridHeight: number,
+    originX = 0,
+    originY = 0,
 ): CellRange | null {
     if (points.length < 3) return null;
 
@@ -72,13 +74,15 @@ export function candidateCells(
         if (y > maxY) maxY = y;
     }
 
-    // A cell is sampled at worldX = gx * cellSize + half, plus up to `reach`.
+    // A cell is sampled at worldX = originX + gx * cellSize + half, plus up to
+    // `reach`. The origin is a whole number of cells for a windowed grid, so
+    // subtracting it leaves plain floor(x / cellSize) indexing over the world.
     const half = cellSize / 2;
     const reach = half * SAMPLE_REACH;
-    const minGx = Math.max(0, Math.floor((minX - reach - half) / cellSize));
-    const maxGx = Math.min(gridWidth - 1, Math.floor((maxX + reach - half) / cellSize));
-    const minGy = Math.max(0, Math.floor((minY - reach - half) / cellSize));
-    const maxGy = Math.min(gridHeight - 1, Math.floor((maxY + reach - half) / cellSize));
+    const minGx = Math.max(0, Math.floor((minX - reach - half - originX) / cellSize));
+    const maxGx = Math.min(gridWidth - 1, Math.floor((maxX + reach - half - originX) / cellSize));
+    const minGy = Math.max(0, Math.floor((minY - reach - half - originY) / cellSize));
+    const maxGy = Math.min(gridHeight - 1, Math.floor((maxY + reach - half - originY) / cellSize));
 
     if (minGx > maxGx || minGy > maxGy) return null;
     return { minGx, maxGx, minGy, maxGy };
@@ -105,12 +109,14 @@ export function rasterizeWalls(
     gridWidth: number,
     gridHeight: number,
     walls: readonly PolygonWall[],
+    originX = 0,
+    originY = 0,
 ): WallGrid {
     const half = cellSize / 2;
     const offsets = sampleOffsets(half);
     const grid: WallGrid = Array.from({ length: gridHeight }, () => Array(gridWidth).fill(0));
     const boxes: (CellRange | null)[] = walls.map((wall) =>
-        candidateCells(wall.points, cellSize, gridWidth, gridHeight),
+        candidateCells(wall.points, cellSize, gridWidth, gridHeight, originX, originY),
     );
 
     // 1. Solid walls (value 1).
@@ -118,9 +124,9 @@ export function rasterizeWalls(
         const box = boxes[index];
         if (!box) return;
         for (let gy = box.minGy; gy <= box.maxGy; gy++) {
-            const worldY = gy * cellSize + half;
+            const worldY = originY + gy * cellSize + half;
             for (let gx = box.minGx; gx <= box.maxGx; gx++) {
-                const worldX = gx * cellSize + half;
+                const worldX = originX + gx * cellSize + half;
                 for (const off of offsets) {
                     if (pointInPolygon(worldX + off.x, worldY + off.y, wall.points)) {
                         grid[gy][gx] = 1;
