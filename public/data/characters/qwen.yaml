@@ -4,7 +4,7 @@
 # to regenerate? The plate is 底板E_千问_4x4结构底_2048_品红底.png.
 id: qwen
 name: Qwen
-nameZh: "千问"
+nameZh: "Qwen"
 description: |
     A technician who fights like she is drawing a diagram: a fan here, a talisman there, and the room arranged the way she wants it before anyone notices she has started.
 descriptionZh: |
@@ -16,7 +16,7 @@ prompt: |
     Qwen — technique type, fan and talisman crowd control. (Needs a new portrait.)
 
     Layout and hard negatives follow the house format documented in
-    `whale-girl.yaml`: 2048x2048, 4x4 grid, one flat continuous magenta field,
+    `deepseek.yaml`: 2048x2048, 4x4 grid, one flat continuous magenta field,
     no grid lines, no text, no watermark, and the same character in all 16
     cells — idle (row 1), walk (row 2), run (row 3), dodge (row 4).
 hp: 88
@@ -79,7 +79,7 @@ sprite:
     grid:
         rows: 4
         cols: 4
-    # Visual scale tracks `body` against whale-girl's 26x26 → 1.35, so the
+    # Visual scale tracks `body` against deepseek's 26x26 → 1.35, so the
     # sprite and the physics box stay in proportion across the roster.
     scale: 1.35
     offset:

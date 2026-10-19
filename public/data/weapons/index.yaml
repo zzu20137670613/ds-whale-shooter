@@ -3,7 +3,7 @@ weapons:
     # their upstream placeholder values until those levels are designed.
     - arcana-staff      # hidden level 1 — ranged single shot
     - rocket-launcher   # galgame level   — ranged AoE
-    # Whale-girl weapons (placeholder art; see each YAML for the swap note)
+    # DeepSeek's weapons (placeholder art; see each YAML for the swap note)
     - whale-minigun
     - whale-cannon
     # Monster weapons — one per monster in the levels that exist today

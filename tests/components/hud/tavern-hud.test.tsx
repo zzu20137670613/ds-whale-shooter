@@ -199,7 +199,7 @@ describe('TavernHud', () => {
 
         act(() => {
             EventBus.emit('tavern-focus', {
-                name: '鲸娘',
+                name: 'DeepSeek',
                 hp: 95,
                 sp: 75,
                 moveSpeed: 2,

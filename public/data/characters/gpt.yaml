@@ -8,7 +8,7 @@
 # Qwen and Seed were all built from one front view.
 id: gpt
 name: GPT
-nameZh: "GPT 小龙娘"
+nameZh: "GPT"
 description: |
     A small white dragon-girl who has never once been the last one standing and does not intend to start now. Everything about her is fast — the run, the reload, the apology she offers after ricocheting off three walls.
 descriptionZh: |
@@ -20,7 +20,7 @@ prompt: |
     GPT — fast and fragile, rapid fire, white dragon / twin-tail sets.
 
     Layout and hard negatives follow the house format documented in
-    `whale-girl.yaml`: 2048x2048, 4x4 grid, one flat continuous magenta field,
+    `deepseek.yaml`: 2048x2048, 4x4 grid, one flat continuous magenta field,
     no grid lines, no text, no watermark, and the same character in all 16
     cells — idle (row 1), walk (row 2), run (row 3), dodge (row 4).
 hp: 72
@@ -83,7 +83,7 @@ sprite:
     grid:
         rows: 4
         cols: 4
-    # Visual scale tracks `body` against whale-girl's 26x26 → 1.35, so the
+    # Visual scale tracks `body` against deepseek's 26x26 → 1.35, so the
     # sprite and the physics box stay in proportion across the roster.
     scale: 1.15
     offset:

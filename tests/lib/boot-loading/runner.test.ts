@@ -51,7 +51,7 @@ describe('runner sprite data', () => {
         for (const key of all) expect(keys.has(key)).toBe(true);
     });
 
-    it('is the whale-girl quantised — her blue leads, with whites and warm skin under it', () => {
+    it('is DeepSeek quantised — her blue leads, with whites and warm skin under it', () => {
         const hexes = Object.values(RUNNER_PALETTE);
         for (const hex of hexes) expect(hex).toMatch(/^#[0-9a-f]{6}$/);
         // most of the palette is blue: her hair, her dress and her tail are nearly all of her

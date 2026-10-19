@@ -3,7 +3,7 @@
 # 底板F_Seed_4x4结构底_2048_品红底.png.
 id: seed
 name: Seed
-nameZh: "豆包 Seed"
+nameZh: "Seed"
 description: |
     The one who keeps everyone else supplied. She wears the official mascot head as a helmet: on, and she is the brand; off, and she is herself, already handing you something you did not know you needed.
 descriptionZh: |
@@ -15,7 +15,7 @@ prompt: |
     Seed — support. The official mascot look becomes a wearable headgear (skill).
 
     Layout and hard negatives follow the house format documented in
-    `whale-girl.yaml`: 2048x2048, 4x4 grid, one flat continuous magenta field,
+    `deepseek.yaml`: 2048x2048, 4x4 grid, one flat continuous magenta field,
     no grid lines, no text, no watermark, and the same character in all 16
     cells — idle (row 1), walk (row 2), run (row 3), dodge (row 4).
 hp: 105
@@ -85,7 +85,7 @@ sprite:
     grid:
         rows: 4
         cols: 4
-    # Visual scale tracks `body` against whale-girl's 26x26 → 1.35, so the
+    # Visual scale tracks `body` against deepseek's 26x26 → 1.35, so the
     # sprite and the physics box stay in proportion across the roster.
     scale: 1.45
     offset:

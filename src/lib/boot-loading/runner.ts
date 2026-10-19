@@ -1,7 +1,7 @@
 import { BOOT_LOADING } from '@/lib/boot-loading/config';
 
 /**
- * The runner that walks the progress bar: the whale-girl herself, taken from the very same
+ * The runner that walks the progress bar: DeepSeek herself, taken from the very same
  * 立绘 the desktop-pet side of the project draws her from (a 512x512 transparent PNG), cropped
  * to her silhouette, scaled to 40x48 and quantised to sixteen colours so she reads as pixel art
  * instead of a shrunk illustration.

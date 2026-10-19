@@ -97,7 +97,7 @@ npcSpawns:
     - characterId: seed
       x: 1995
       'y': 1220
-    - characterId: whale-girl
+    - characterId: deepseek
       x: 2360
       'y': 1180
 materials: []

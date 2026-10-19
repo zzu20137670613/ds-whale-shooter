@@ -1,6 +1,6 @@
-id: whale-girl
-name: Whale
-nameZh: "鲸娘"
+id: deepseek
+name: DeepSeek
+nameZh: "DeepSeek"
 description: |
     A small whale-girl who drifted in with the tide and stayed for the
     tavern's cooking. She keeps a round whale plush tucked under one arm
@@ -14,7 +14,7 @@ descriptionZh: |
 # split-sheet pass that turned one into the other, so the pair stays reproducible.
 imageSize: 2048x2048
 prompt: |
-    The 11th Forest — Whale Girl sprite sheet
+    The 11th Forest — DeepSeek sprite sheet
 
     HARD NEGATIVE PROMPTS (must NOT appear in the image):
       - No visible grid, no dividers, no borders, no ground, no scene,
@@ -135,7 +135,7 @@ sfx:
     lowHpThreshold: 0.3
     lowHpPulseMs: 900
 sprite:
-    texture: assets/image/characters/whale-girl.png
+    texture: assets/image/characters/deepseek.png
     grid:
         rows: 4
         cols: 4
