@@ -11,6 +11,7 @@ import {
 import { PixelLightPostFX } from '@/game/pipelines/pixel-light';
 import { installCanvasFit } from '@/lib/canvas-fit';
 import { initBackgroundPreloader } from '@/lib/background-preloader';
+import { RENDER_VIEW_HEIGHT, RENDER_VIEW_WIDTH } from '@/lib/constants';
 
 import { useGameStore } from '@/store/game-store';
 
@@ -48,10 +49,12 @@ const StartGame = async (parent: string): Promise<Phaser.Game> => {
     // Cache so the death overlay's Restart can replay without a second
     // YAML round-trip.
     cacheResolvedScene(scene);
-    // World size matches the level's native image dimensions so air-wall
-    // coords (defined in image pixel space) align 1:1. The canvas is
-    // scaled to the viewport by `installCanvasFit` — Scale.NONE because
-    // Phaser's own FIT/CENTER can't measure the rotated mobile layout.
+    // The canvas is the camera's viewport (RENDER_VIEW_*), NOT the level.
+    // World coords stay in image pixel space so air-wall coords still align
+    // 1:1, but the world is free to be bigger than one screen and the camera
+    // scrolls across it. The canvas is scaled to the viewport by
+    // `installCanvasFit` — Scale.NONE because Phaser's own FIT/CENTER can't
+    // measure the rotated mobile layout.
     const game = new Game({
         type: AUTO,
         parent,
@@ -62,8 +65,8 @@ const StartGame = async (parent: string): Promise<Phaser.Game> => {
         scale: {
             mode: Scale.NONE,
             autoCenter: Scale.NO_CENTER,
-            width: scene.level.imageSize.width,
-            height: scene.level.imageSize.height,
+            width: RENDER_VIEW_WIDTH,
+            height: RENDER_VIEW_HEIGHT,
         },
         // Top-down shooter — no gravity, walls are static obstacles.
         // Debug rendering off in prod; flip on for level design.

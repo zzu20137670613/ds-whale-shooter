@@ -266,6 +266,21 @@ export const COMBAT_SCREEN_SHAKE_EXPLOSION = { duration: 100, intensity: 0.005 }
 /** Max trail positions kept per bullet for the bullet trail. */
 export const RENDER_BULLET_TRAIL_LENGTH = 6;
 
+/**
+ * The camera's viewport, in world pixels — the game's native resolution.
+ *
+ * Deliberately NOT the level's `imageSize`. The canvas stays this size while
+ * the world is free to be larger, so the camera scrolls across a big map
+ * instead of trying to squeeze the whole thing onto one screen. A level that
+ * is exactly this size (every level so far) behaves as it always has: the
+ * camera bounds equal the view, so it holds a single centered shot.
+ */
+export const RENDER_VIEW_WIDTH = 2752;
+export const RENDER_VIEW_HEIGHT = 1536;
+
+/** Camera follow smoothing per axis: 0 snaps, higher is looser. */
+export const RENDER_CAMERA_LERP = 0.12;
+
 // ─── Tavern: actor visual scale ────────────────────────────────────────
 
 /**

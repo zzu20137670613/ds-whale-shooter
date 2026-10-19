@@ -46,6 +46,7 @@ import {
     MUSIC_EVENT,
     MUSIC_STOP,
     PIXEL_LIGHTING_CONFIG,
+    RENDER_CAMERA_LERP,
     SFX_EVENT,
     TAVERN_ACTOR_SCALE,
 } from '@/lib/constants';
@@ -53,6 +54,7 @@ import { EventBus } from '@/lib/events/bus';
 import { setBootProgress } from '@/lib/boot-loading/progress';
 import { setCurrentLevel } from '@/lib/levels/current-level';
 import { fetchLevelIndex } from '@/lib/levels/loader';
+import { releasableTextureKeys } from '@/lib/textures/release';
 import { useGameStore } from '@/store/game-store';
 import type { MusicSpec, SfxSpec, SoundSpec } from '@/lib/audios';
 import type { CharacterSpec } from '@/lib/characters';
@@ -139,6 +141,10 @@ export class LoadScene extends Phaser.Scene {
     preload(): void {
         // Real asset progress into the #boot loading bar (no-op once the splash is gone).
         this.load.on('progress', (v: number) => setBootProgress(v));
+
+        // Remember every key this scene loads so shutdown() can hand the
+        // textures back — see `releaseLoadedTextures`.
+        this.load.on('filecomplete', (key: string) => this.loadedTextureKeys.add(key));
 
         // Per-scene texture key — `background` alone collides with the
         // texture cache: Phaser reuses the first loaded image under
@@ -456,9 +462,23 @@ export class LoadScene extends Phaser.Scene {
             EventBus.emit(MUSIC_STOP);
         }
 
-        // Center camera on world so the viewport shows the middle of the
-        // level when the browser window is smaller than the image.
-        this.cameras.main.centerOn(this.level.imageSize.width / 2, this.level.imageSize.height / 2);
+        // The canvas is a fixed RENDER_VIEW_* window onto a level-sized world,
+        // so the camera scrolls with the player instead of trying to fit the
+        // whole level on screen. Bounds come from the level; for today's
+        // 2752x1536 levels the world equals the view, so the clamp holds the
+        // camera at 0,0 — the same centered shot the old `centerOn` gave.
+        const camera = this.cameras.main;
+        const { width, height } = this.level.imageSize;
+        camera.setBounds(0, 0, width, height);
+        const player = this.character.sprite;
+        if (player) {
+            camera.startFollow(player, true, RENDER_CAMERA_LERP, RENDER_CAMERA_LERP);
+        } else {
+            // Nothing to follow (shouldn't happen by create(), the runtime
+            // hands us a sprite): keep the old one-shot framing instead of
+            // leaving the camera loose.
+            camera.centerOn(width / 2, height / 2);
+        }
 
         // Per-frame monster tick & material Y-sorting & drop update.
         this.materialManager = new MaterialManager(this, this.level);
@@ -670,6 +690,9 @@ export class LoadScene extends Phaser.Scene {
         }
     }
 
+    /** Texture keys this scene's preload registered — released on shutdown. */
+    private readonly loadedTextureKeys = new Set<string>();
+
     private isShutdown = false;
 
     shutdown(): void {
@@ -680,10 +703,28 @@ export class LoadScene extends Phaser.Scene {
         // torn down exactly once.
         if (this.isShutdown) return;
         this.isShutdown = true;
+        this.releaseLoadedTextures();
         this.tavernController?.destroy();
         this.teleporterSystem?.destroy();
         this.audio?.destroy();
         this.pathDebugOverlay?.destroy();
+    }
+
+    /**
+     * Hand back every texture this scene loaded.
+     *
+     * Phaser's TextureManager is game-wide, so what a scene loads outlives
+     * the scene. That is why background keys are namespaced per level (see
+     * preload): without releasing them the next level's `background` key
+     * would still resolve to the old image. It also means every level swap
+     * leaves its background and sprite sheets resident — ~17 MB a scene
+     * today, 145 MB for the maps the camera now scrolls across.
+     */
+    private releaseLoadedTextures(): void {
+        for (const key of releasableTextureKeys(this.loadedTextureKeys)) {
+            if (this.textures.exists(key)) this.textures.remove(key);
+        }
+        this.loadedTextureKeys.clear();
     }
 
     private isCheckingVictory = false;
