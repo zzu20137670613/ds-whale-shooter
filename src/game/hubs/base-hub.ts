@@ -1,16 +1,21 @@
 /**
  * src/game/hubs/base-hub.ts
  * --------------------------------------------------------------------------
- * Base class for any HUD drawn on the Phaser canvas.
+ * Base class for a HUD group drawn on the Phaser canvas.
  *
- * Scale.FIT shrinks the game world to fit the viewport — but HUDs want to
- * look the same on every screen size. The trick: anchor the HUD container
- * in world coords (= screen_pos / fitScale) and apply setScale(1/fitScale).
- * Children can then be drawn at literal screen-pixel sizes and they appear
- * at the intended size regardless of the world-vs-display ratio.
+ * Scale.FIT shrinks the game world to fit the viewport, but a HUD authored in
+ * screen pixels should look the same at any window size. The trick: place the
+ * container in world coords and apply setScale(1/fitScale) — children can then
+ * be drawn at literal screen-pixel sizes and still come out the intended size.
  *
- * Subclasses inherit the container + destroy plumbing and only need to
- * focus on their specific elements (bars, slots, hotbar, etc.).
+ * Only the *sizes* are screen-space. The container's position is ordinary
+ * world space, because the one HUD built on this today is the floating name
+ * and HP/SP bar above an entity, anchored to that entity's body and required
+ * to move with it. The screen-fixed HUDs — bars, hotbar, ammo, reload — are
+ * React overlays fed through the store, so the camera cannot move them at all.
+ *
+ * Subclasses inherit the container + destroy plumbing and only need to focus
+ * on their specific elements.
  */
 
 /** FIT scale ratio the engine applies between gameSize and displaySize. */
@@ -22,27 +27,24 @@ function hudFitScale(scene: Phaser.Scene): number {
 }
 
 /**
- * Anchor a HUD container at a screen-space position with the
- * scale-compensated transform. Returns the container; the invScale is
- * exposed for callers that need to place children at literal screen
- * pixel sizes inside it.
+ * Create a HUD container at `x, y` in world coordinates, scaled so that
+ * children drawn in screen pixels keep their intended size.
+ *
+ * Deliberately NOT scroll-locked: the callers position this from world
+ * coordinates (see `StatusHud.update`, which writes the entity's body position
+ * into it every frame). Pinning it to the camera makes the camera's scroll
+ * drag the container away from whatever it is attached to.
  */
-function makeScreenAnchoredContainer(
+function makeHudContainer(
     scene: Phaser.Scene,
-    screenX: number,
-    screenY: number,
+    x: number,
+    y: number,
     depth: number,
 ): Phaser.GameObjects.Container {
     const invScale = 1 / hudFitScale(scene);
-    const container = scene.add.container(screenX * invScale, screenY * invScale);
+    const container = scene.add.container(x * invScale, y * invScale);
     container.setScale(invScale);
     container.setDepth(depth);
-    // Screen-anchored has to mean screen-anchored: the world may be larger
-    // than the viewport and scroll, so an unpinned HUD would ride the camera
-    // off frame. Phaser multiplies a child's scroll factor by its container's
-    // (ContainerWebGLRenderer), so pinning the container pins every element
-    // the subclasses add to it afterwards.
-    container.setScrollFactor(0);
     return container;
 }
 
@@ -50,9 +52,9 @@ export class BaseHud {
     protected readonly root: Phaser.GameObjects.Container;
     protected readonly scene: Phaser.Scene;
 
-    constructor(scene: Phaser.Scene, screenX: number, screenY: number, depth = 800) {
+    constructor(scene: Phaser.Scene, x: number, y: number, depth = 800) {
         this.scene = scene;
-        this.root = makeScreenAnchoredContainer(scene, screenX, screenY, depth);
+        this.root = makeHudContainer(scene, x, y, depth);
     }
 
     destroy(): void {

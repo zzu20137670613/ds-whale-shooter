@@ -71,21 +71,23 @@ function fakeScene(displayScale = 1): { scene: Phaser.Scene; containers: FakeCon
 }
 
 describe('BaseHud', () => {
-    it('pins the HUD to the camera so it cannot scroll off screen', () => {
-        // The world can be larger than the viewport, so a HUD drawn in world
-        // space would ride the camera out of frame. Phaser multiplies a child's
-        // scroll factor by its container's, so pinning the container pins every
-        // element the subclasses add later.
+    it('stays in world space so an entity-anchored HUD follows its body', () => {
+        // Regression guard. This container is positioned from *body* world
+        // coordinates — StatusHud.update writes the entity's position into it
+        // every frame — so scroll-locking it makes the camera's scroll drag
+        // the nameplate off its entity: hundreds of pixels away as soon as the
+        // camera starts following. The screen-fixed HUDs (bars, hotbar, ammo,
+        // reload) are React overlays fed through the store, and DOM cannot be
+        // scrolled by the camera, so they need no lock either.
         const { scene, containers } = fakeScene();
         new BaseHud(scene, 100, 50);
-        expect(containers[0].scrollFactorX).toBe(0);
-        expect(containers[0].scrollFactorY).toBe(0);
+        expect(containers[0].scrollFactorX).toBe(1);
+        expect(containers[0].scrollFactorY).toBe(1);
     });
 
-    it('anchors at the screen position scaled into game pixels', () => {
-        // Viewport is half the canvas, so to land at screen (100, 50) the
-        // container sits at double the coordinates and is scaled up by the
-        // same factor.
+    it('scales children authored in screen pixels to the fit ratio', () => {
+        // Viewport is half the canvas, so a child drawn 100px wide lands at
+        // 200 game pixels and is scaled up 2x — 100 screen pixels, as drawn.
         const { scene, containers } = fakeScene(0.5);
         new BaseHud(scene, 100, 50);
         expect(containers[0].x).toBe(200);
