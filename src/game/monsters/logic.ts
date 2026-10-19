@@ -14,8 +14,9 @@ import EasyStarPkg from 'easystarjs';
 const EasyStarCtor = (EasyStarPkg as unknown as { js: new () => EasyStarInstance }).js;
 
 import { COMBAT_KNOCKBACK_BASE_MULT, COMBAT_KNOCKBACK_MAX_SPEED } from '@/lib/constants';
-import { rasterizeWalls } from '@/lib/nav/raster';
-import { isWithinView } from '@/lib/props/activation';
+import { rasterizeWalls, subGrid } from '@/lib/nav/raster';
+import { windowFor } from '@/lib/nav/window';
+import { DEFAULT_ACTIVATION_MARGIN, isWithinView } from '@/lib/props/activation';
 
 export type MonsterAIState = 'chase' | 'attack';
 
@@ -178,20 +179,53 @@ export class PathfindingService {
     /** World rect treated as "on camera". Outside it findPath returns a straight
      *  line instead of running A*. Null = no focus, so path anywhere. */
     private focusRect: { left: number; top: number; right: number; bottom: number } | null = null;
+    /** The window easystar sees, in whole cells. Follows setFocus. */
+    private windowGx = 0;
+    private windowGy = 0;
+    private windowCols = 0;
+    private windowRows = 0;
+    /** Inflated walkable grids by inflation radius. They depend only on the
+     *  walls, never on the camera, so a window change must not rebuild them. */
+    private readonly inflatedGrids: Map<number, number[][]> = new Map();
 
     /**
      * Restrict real A* to a camera-sized world rect.
      *
      * Off-camera monsters are never visible, so their route quality cannot be
-     * observed — but on a 9x9 map one A* call on the full-size grid measured
-     * 200-400ms, and each monster asks up to about seven times a second. Outside
-     * the rect findPath returns the same two-point line it already falls back to
-     * when A* fails, which is exactly a straight approach, and Matter keeps that
-     * body sliding along whatever it hits. Callers that never set a focus keep
-     * the previous behaviour verbatim.
+     * observed — but on a 9x9 map one A* call measured 200-400ms, and each
+     * monster asks up to about seven times a second. Outside the rect findPath
+     * returns the same two-point line it already falls back to when A* fails,
+     * which is exactly a straight approach, and Matter keeps that body sliding
+     * along whatever it hits. Callers that never set a focus keep the previous
+     * behaviour verbatim.
+     *
+     * The whole world grid is left alone. Only the slice easystar is handed gets
+     * smaller, because easystar's per-call node table — not the search, and not
+     * our grid — is what cost those hundreds of milliseconds. Keeping the world
+     * grid whole is what keeps every index -> world conversion unchanged.
      */
     setFocus(view: { left: number; top: number; right: number; bottom: number } | null): void {
         this.focusRect = view;
+
+        if (!view) {
+            this.windowGx = 0;
+            this.windowGy = 0;
+            this.windowCols = this.gridWidth;
+            this.windowRows = this.gridHeight;
+        } else {
+            const window = windowFor(view, this.cellSize, DEFAULT_ACTIVATION_MARGIN, {
+                width: this.gridWidth * this.cellSize,
+                height: this.gridHeight * this.cellSize,
+            });
+            this.windowGx = window.originX / this.cellSize;
+            this.windowGy = window.originY / this.cellSize;
+            this.windowCols = window.cols;
+            this.windowRows = window.rows;
+        }
+
+        // Easystar instances hold a slice, so they follow the window. The
+        // inflated grids themselves do not and stay cached.
+        this.inflatedEasystars.clear();
     }
 
     constructor(
@@ -202,6 +236,11 @@ export class PathfindingService {
         this.cellSize = cellSize;
         this.gridWidth = Math.ceil(levelSize.width / cellSize);
         this.gridHeight = Math.ceil(levelSize.height / cellSize);
+
+        // No focus set yet, so easystar must see the whole grid — the size the
+        // service used before windows existed. setFocus narrows it from here.
+        this.windowCols = this.gridWidth;
+        this.windowRows = this.gridHeight;
 
         // Rasterize air-wall polygons onto the grid: walls = 1, one-cell
         // buffers = 2. Body-aware inflation stays per-monster, applied at
@@ -223,7 +262,16 @@ export class PathfindingService {
     private getEasystarForInflation(inflation: number): EasyStarInstance {
         const cached = this.inflatedEasystars.get(inflation);
         if (cached) return cached;
-        const derived = this.inflateGrid(inflation);
+        // Easystar rebuilds its node table over whatever grid it is handed, and
+        // that rebuild is the 200-400ms a 9x9 map's full grid cost. Give it the
+        // window only; the world grid and its inflation stay whole.
+        const derived = subGrid(
+            this.getInflatedGrid(inflation),
+            this.windowGx,
+            this.windowGy,
+            this.windowCols,
+            this.windowRows,
+        );
         const es = new EasyStarCtor();
         es.enableSync();
         es.enableDiagonals();
@@ -232,6 +280,26 @@ export class PathfindingService {
         es.setAcceptableTiles([0]);
         this.inflatedEasystars.set(inflation, es);
         return es;
+    }
+
+    /** Inflated walkable grid for `inflation`, memoised. It depends only on the
+     *  walls, so moving the camera must never pay for it again. */
+    private getInflatedGrid(inflation: number): number[][] {
+        const cached = this.inflatedGrids.get(inflation);
+        if (cached) return cached;
+        const derived = this.inflateGrid(inflation);
+        this.inflatedGrids.set(inflation, derived);
+        return derived;
+    }
+
+    /** True when a whole-grid cell is inside the window easystar was given. */
+    private insideWindow(p: PathGridPoint): boolean {
+        return (
+            p.x >= this.windowGx &&
+            p.y >= this.windowGy &&
+            p.x < this.windowGx + this.windowCols &&
+            p.y < this.windowGy + this.windowRows
+        );
     }
 
     /** Return grid where wall cells (1) and 1-cell buffer cells (2) are
@@ -532,21 +600,39 @@ export class PathfindingService {
         const startG = this.snapToWalkable(this.worldToGrid(start), inflation);
         const endG = this.snapToWalkable(this.worldToGrid(end), inflation);
 
+        // snapToWalkable searches the whole grid, so a snapped point can land
+        // outside the window easystar was given. Returning null lets the public
+        // findPath fall back to its straight line, rather than pathing off the
+        // slice into cells the window never saw.
+        if (!this.insideWindow(startG) || !this.insideWindow(endG)) return null;
+
         if (startG.x === endG.x && startG.y === endG.y) {
             return [end];
         }
 
         const es = this.getEasystarForInflation(inflation);
+        const offsetX = this.windowGx;
+        const offsetY = this.windowGy;
         let result: { x: number; y: number }[] | null = null;
         let found = false;
-        es.findPath(startG.x, startG.y, endG.x, endG.y, (path: { x: number; y: number }[]) => {
-            if (!path || path.length === 0) return;
-            const worldPoints = path.map((p) => this.gridToWorldFlush(p, bodyHalfW, bodyHalfH));
-            worldPoints[0] = start;
-            const bodyRadius = Math.max(bodyHalfW, bodyHalfH);
-            result = this.smoothPath(worldPoints, bodyRadius);
-            found = true;
-        });
+        es.findPath(
+            startG.x - offsetX,
+            startG.y - offsetY,
+            endG.x - offsetX,
+            endG.y - offsetY,
+            (path: { x: number; y: number }[]) => {
+                if (!path || path.length === 0) return;
+                // Easystar answers in window cells; shift back to world cells
+                // before the flush conversion, which speaks whole-grid indices.
+                const worldPoints = path.map((p) =>
+                    this.gridToWorldFlush({ x: p.x + offsetX, y: p.y + offsetY }, bodyHalfW, bodyHalfH),
+                );
+                worldPoints[0] = start;
+                const bodyRadius = Math.max(bodyHalfW, bodyHalfH);
+                result = this.smoothPath(worldPoints, bodyRadius);
+                found = true;
+            },
+        );
         es.calculate();
         return found ? result : null;
     }

@@ -77,4 +77,25 @@ describe('PathfindingService focus', () => {
 
         expect(path!.length).toBeGreaterThan(2);
     });
+
+    it('still routes around a wall when easystar only gets the camera window', () => {
+        // With a focus set, easystar is handed a slice rather than the whole
+        // grid, so its coordinates are window-relative and have to be shifted
+        // back. The detour must survive that, and no waypoint may end up inside
+        // the wall.
+        const service = new PathfindingService(
+            { width: 2752, height: 1536 },
+            [square(1400, 400, 200, 600)],
+            16,
+        );
+        service.setFocus(VIEW);
+
+        const path = service.findPath({ x: 1200, y: 700 }, { x: 1800, y: 700 }, 12, 14);
+
+        expect(path!.length).toBeGreaterThan(2);
+        for (const point of path!) {
+            const insideWall = point.x > 1400 && point.x < 1600 && point.y > 400 && point.y < 1000;
+            expect(insideWall).toBe(false);
+        }
+    });
 });
