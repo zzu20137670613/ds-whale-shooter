@@ -15,6 +15,7 @@
 
 import * as Phaser from 'phaser';
 
+import { portalsContaining } from '@/game/scenes/logic';
 import { SFX_EVENT } from '@/lib/constants';
 import { EventBus } from '@/lib/events/bus';
 import { fetchLevelIndex } from '@/lib/levels/loader';
@@ -73,6 +74,18 @@ export class TeleporterController {
      * of the same teleporter (or its reverse).
      */
     private readonly cooldownIds: Set<string> = new Set();
+
+    /**
+     * Whether the "spawn already inside a portal" pass has run yet.
+     *
+     * A portal can be armed on the very first frame: either the level is
+     * already clear, or — as in `sunlit-henge` — the return portal is authored
+     * nine pixels from the spawn point so the player finds it after winning.
+     * Being armed must not teleport someone who never walked into it, so those
+     * portals go on the same cooldown as the arrival one and release when the
+     * player steps out.
+     */
+    private seededSpawnCooldowns = false;
 
     constructor(
         private readonly scene: Phaser.Scene,
@@ -362,6 +375,16 @@ export class TeleporterController {
         const now = this.scene.time.now;
         const playerPos = this.getPlayerPos();
         const cleared = this.isClearedGetter();
+
+        // First frame the player body exists: any portal the spawn already sits
+        // inside is held until the player walks out of its radius.
+        if (!this.seededSpawnCooldowns && playerPos) {
+            this.seededSpawnCooldowns = true;
+            const specs = this.teleporters.map((view) => view.spec);
+            for (const id of portalsContaining(playerPos, specs)) {
+                this.cooldownIds.add(id);
+            }
+        }
 
         for (const view of this.teleporters) {
             // Trigger fade-in animation once level is cleared
