@@ -23,11 +23,10 @@ visual:
 bullet:
     texture: assets/image/weapons/rune-shard.png
     type: projectile
-    speed: 16
     scale: 0.16
     anchor: [0.5, 0.5]
 projectile:
-    speed: 560
+    speed: 16
     visual:
         radius: 8
         width: 24

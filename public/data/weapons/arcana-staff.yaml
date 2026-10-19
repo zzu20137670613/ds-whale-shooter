@@ -23,7 +23,6 @@ visual:
 bullet:
     texture: assets/image/weapons/arcana-orb.png
     type: projectile
-    speed: 450
     scale: 0.08
     anchor: [0.5, 0.5]
 projectile:

@@ -24,7 +24,6 @@ visual:
 bullet:
     texture: assets/image/weapons/rocket-missile.png
     type: projectile
-    speed: 550
     scale: 0.12
     anchor: [0.5, 0.5]
 projectile:

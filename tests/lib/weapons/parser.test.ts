@@ -60,6 +60,24 @@ projectile:
         expect(w.projectile?.speed).toBe(22);
     });
 
+    it('rejects a projectile speed that cannot be px-per-step', () => {
+        // `projectile.speed` reaches Matter as that many pixels per 60Hz
+        // physics step, so 480 is not "fast" — it is a whole screen per
+        // frame, an instantaneous invisible hit. Four weapons shipped that
+        // way, each with the sane value (13-22) stranded in `bullet.speed`.
+        const yamlText = validYaml.replace('speed: 20', 'speed: 480');
+        expect(() => parseWeaponYaml(yamlText, 'pistol')).toThrow(/projectile\.speed/);
+    });
+
+    it('rejects bullet.speed, which nothing reads', () => {
+        // The paired bullet declared its own `speed` and no code ever read
+        // it; what fires the gun is `projectile.speed`. Two same-named
+        // fields is how four weapons ended up carrying 480 in the field that
+        // fires and 13 in the field that does nothing.
+        const yamlText = `${validYaml}\nbullet:\n  speed: 13\n`;
+        expect(() => parseWeaponYaml(yamlText, 'pistol')).toThrow(/Unrecognized key/);
+    });
+
     it('rejects negative or zero damage', () => {
         expect(() =>
             parseWeaponYaml(`${validYaml.replace('damage: 12', 'damage: 0')}`, 'pistol'),

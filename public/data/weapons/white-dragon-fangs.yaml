@@ -23,11 +23,10 @@ visual:
 bullet:
     texture: assets/image/weapons/assault-bullet.png
     type: projectile
-    speed: 22
     scale: 0.13
     anchor: [0.5, 0.5]
 projectile:
-    speed: 760
+    speed: 22
     visual:
         radius: 5
         width: 18

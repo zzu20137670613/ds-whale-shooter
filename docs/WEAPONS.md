@@ -79,7 +79,6 @@ visual: # floating sprite that orbits the holder
 bullet: # sprite / beam / melee-hitbox — one per fire (repeats per bulletsPerShot)
     texture: assets/image/weapons/assault-bullet.png
     type: projectile # 'projectile' | 'beam' | 'melee'
-    speed: 700 # optional for melee (defaults to projectile.speed)
     scale: 0.08 # default 1
     color: 0xE0C071 # fallback tint when no texture (string per schema)
     beamWidth: 8 # beam only
@@ -88,8 +87,12 @@ bullet: # sprite / beam / melee-hitbox — one per fire (repeats per bulletsPerS
     rotationOffset: 0 # optional
     spawnOffset: [10, -10] # extra offset from muzzle
 
+# No `speed` here on purpose — see the note under `projectile`. This block is
+# the visual paired one-to-one with the shot (swing arc for melee, shell sprite
+# for ranged); the number that fires the gun lives in `projectile.speed`.
+
 projectile: # REQUIRED for ranged (defines speed + collision shape)
-    speed: 24
+    speed: 24 # px per 60Hz physics step — Matter's velocity unit (max 60)
     visual: # legacy shape; newer code uses `bullet.texture`
         radius: 4
         width: 2

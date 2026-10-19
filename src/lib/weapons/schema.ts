@@ -28,7 +28,12 @@ const ProjectileVisualSchema = z
 
 const ProjectileSchema = z
     .object({
-        speed: z.number().gt(0),
+        /** Pixels per 60Hz physics step — Matter's velocity unit. 20 is a
+         *  fast bullet; 480 is a whole screen in one frame, i.e. an
+         *  instantaneous hit with no visible shell. Four weapons shipped
+         *  with a per-second number in here, so the ceiling is enforced:
+         *  the fastest intended shot today is 24 (moss-bark-rifle). */
+        speed: z.number().gt(0).lte(60),
         visual: ProjectileVisualSchema,
         /** Hard cap on bullet lifetime in ms. A missed shot that doesn't
          *  hit anything (no wall, no target) gets destroyed after this
@@ -75,7 +80,11 @@ export const WeaponPairedBulletSchema = z
     .object({
         texture: z.string().optional(),
         type: z.enum(['projectile', 'beam', 'melee']).default('projectile'),
-        speed: z.number().gt(0).optional(),
+        // Deliberately no `speed`: this block is the visual paired 1-to-1 with
+        // the shot (a swing arc for melee, a shell sprite for ranged), and
+        // what actually fires the gun is `projectile.speed`. A second
+        // same-named field that no code reads is how four weapons shipped
+        // holding 480 in the live field and their real 13-22 in this one.
         scale: z.number().gt(0).default(1),
         color: z.string().optional(),
         beamWidth: z.number().gt(0).optional(),
