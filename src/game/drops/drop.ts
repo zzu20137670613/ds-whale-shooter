@@ -15,6 +15,8 @@ import type { CharacterRuntime } from '@/game/characters/character';
 import { CAT, DROP_CONFIG, SFX_EVENT, WALL_PLAYER_MASK } from '@/lib/constants';
 import { DROP_FULL_RESTORE_AMOUNT } from '@/lib/constants';
 import { EventBus } from '@/lib/events/bus';
+import { isWithinView } from '@/lib/props/activation';
+import type { Box } from '@/lib/props/activation';
 import type { DropSpec } from '@/lib/drops';
 import type { DropSpawn } from '@/lib/levels/types';
 import type { WeaponSpec } from '@/lib/weapons';
@@ -314,6 +316,20 @@ export interface DropControllerCallbacks {
     onWeaponPickup: (weaponId: string) => boolean;
 }
 
+/**
+ * The drop's box for activation, straight from its Matter bounds — exact and
+ * allocation-free, unlike `getBounds()` which builds a Rectangle per call.
+ */
+function dropBox(drop: DropInstance): Box {
+    const { min, max } = drop.body.bounds;
+    return {
+        x: (min.x + max.x) / 2,
+        y: (min.y + max.y) / 2,
+        halfWidth: (max.x - min.x) / 2,
+        halfHeight: (max.y - min.y) / 2,
+    };
+}
+
 export class DropController {
     private readonly scene: Phaser.Scene;
     private character: CharacterRuntime;
@@ -454,7 +470,20 @@ export class DropController {
 
         const allDrops = [...this.staticDrops, ...this.runtimeDrops];
 
+        // Everything below is player-proximity work: the magnet engages inside
+        // MAGNET.RADIUS and the pickup fires inside MAGNET.PICKUP_DISTANCE,
+        // both far shorter than half a viewport (pinned by
+        // tests/lib/drops/magnet-range.test.ts). The player is always inside
+        // the camera view, so a drop outside it cannot reach either branch —
+        // skipping it, and hiding it, changes nothing observable, while a 9x9
+        // world's drops stop costing anything.
+        const view = this.scene.cameras.main.worldView;
+
         for (const drop of allDrops) {
+            const active = isWithinView(dropBox(drop), view);
+            if (drop.sprite && drop.sprite.visible !== active) drop.sprite.setVisible(active);
+            if (!active) continue;
+
             if (drop.taken || !drop.isLanded) continue;
 
             const dropX = drop.body.position.x;
