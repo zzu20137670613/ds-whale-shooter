@@ -224,6 +224,7 @@ airWalls:
             - 1290
           - - 1110
             - 1308
+pixelLighting: false
 characterSpawn:
     x: 1349
     'y': 200

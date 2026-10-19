@@ -70,6 +70,12 @@ airWalls:
           - - 588
             - 1560
 music: forest-ambient
+# The pavilion is a bright midday scene, and its art is photographic rather
+# than pixel art. The default pixel-lighting pass multiplies the background
+# by a twilight tint (0x6c7c8c, i.e. x0.48) and adds a 32-step quantise
+# filter — on this background that reads as "why is the pretty picture so
+# dark in game". Off, so the art arrives as drawn.
+pixelLighting: false
 tavern: true
 npcSpawns:
     # The five seats sit in the LOWER half of the deck on purpose. The
