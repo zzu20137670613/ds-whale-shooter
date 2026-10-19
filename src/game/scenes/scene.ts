@@ -548,6 +548,8 @@ export class LoadScene extends Phaser.Scene {
             );
             this.dropSystem.update();
             this.materialManager.update();
+            // Monsters only run real A* near the camera — see PathfindingService.setFocus.
+            this.monsterSystem.setPathFocus(this.cameras.main.worldView);
             this.teleporterSystem.update(delta);
             // Publish the character's world position so the React
             // WeaponReplaceHub can anchor next to them. 1 event per

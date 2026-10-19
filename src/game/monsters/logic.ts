@@ -15,6 +15,7 @@ const EasyStarCtor = (EasyStarPkg as unknown as { js: new () => EasyStarInstance
 
 import { COMBAT_KNOCKBACK_BASE_MULT, COMBAT_KNOCKBACK_MAX_SPEED } from '@/lib/constants';
 import { rasterizeWalls } from '@/lib/nav/raster';
+import { isWithinView } from '@/lib/props/activation';
 
 export type MonsterAIState = 'chase' | 'attack';
 
@@ -174,6 +175,24 @@ export class PathfindingService {
      *  Same inflation → same derived grid → reuse. Each entry already
      *  has its grid + acceptableTiles + tileCost configured. */
     private readonly inflatedEasystars: Map<number, EasyStarInstance> = new Map();
+    /** World rect treated as "on camera". Outside it findPath returns a straight
+     *  line instead of running A*. Null = no focus, so path anywhere. */
+    private focusRect: { left: number; top: number; right: number; bottom: number } | null = null;
+
+    /**
+     * Restrict real A* to a camera-sized world rect.
+     *
+     * Off-camera monsters are never visible, so their route quality cannot be
+     * observed — but on a 9x9 map one A* call on the full-size grid measured
+     * 200-400ms, and each monster asks up to about seven times a second. Outside
+     * the rect findPath returns the same two-point line it already falls back to
+     * when A* fails, which is exactly a straight approach, and Matter keeps that
+     * body sliding along whatever it hits. Callers that never set a focus keep
+     * the previous behaviour verbatim.
+     */
+    setFocus(view: { left: number; top: number; right: number; bottom: number } | null): void {
+        this.focusRect = view;
+    }
 
     constructor(
         levelSize: { width: number; height: number },
@@ -483,6 +502,15 @@ export class PathfindingService {
         bodyHalfH = 0,
         _safety = 1.0,
     ): { x: number; y: number }[] | null {
+        if (
+            this.focusRect &&
+            !isWithinView(
+                { x: start.x, y: start.y, halfWidth: bodyHalfW, halfHeight: bodyHalfH },
+                this.focusRect,
+            )
+        ) {
+            return [start, end];
+        }
         // Set inflation = 0 for 100% flush wall alignment (green body box touches wall edge)
         const result = this.findPathWithInflation(start, end, bodyHalfW, bodyHalfH, 0);
         if (result !== null) return result;

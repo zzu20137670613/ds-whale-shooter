@@ -571,6 +571,13 @@ export class MonsterController {
         return Math.round(mp.y + (m.sprite ? m.sprite.displayHeight / 2 - monsterBodyHalfH : 0));
     }
 
+    /** Camera-sized world rect the pathfinder treats as "on camera". Outside it
+     *  monsters walk straight at the player instead of running A* — see
+     *  PathfindingService.setFocus. */
+    setPathFocus(view: { left: number; top: number; right: number; bottom: number }): void {
+        this.pathfinder?.setFocus(view);
+    }
+
     /** Per-frame: AI tick + projectile sync + cleanup. */
     update(time: number): void {
         this.advancePendingSpawns(time);
