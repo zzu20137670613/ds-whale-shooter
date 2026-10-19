@@ -57,6 +57,7 @@ upgrades:
 const WEAPON = parseWeaponYaml(
     `
 name: Shotgun
+nameZh: "霰弹枪"
 damage: 5
 cooldownMs: 800
 range: 400
@@ -220,6 +221,25 @@ describe('ShopPanel', () => {
         await openShop();
 
         expect(q('shop-weapon-row-shotgun')).not.toBeNull();
+    });
+
+    it('names a held weapon in the shop language', async () => {
+        // The weapon's English `name` is the code-side identity; what a player
+        // reads is the language they picked. This row used to render `name`
+        // directly, so the Chinese build showed "Shotgun".
+        useGameStore.setState({
+            slots: [{ id: 'shotgun', name: 'Shotgun', ammo: 5, clipSize: 5 }],
+        });
+
+        await openShop();
+
+        expect(q('shop-weapon-row-shotgun')?.textContent).toContain('Shotgun');
+
+        act(() => {
+            useGameStore.getState().setLocale('zh-CN');
+        });
+
+        expect(q('shop-weapon-row-shotgun')?.textContent).toContain('霰弹枪');
     });
 
     it('says so when the hotbar is empty', async () => {

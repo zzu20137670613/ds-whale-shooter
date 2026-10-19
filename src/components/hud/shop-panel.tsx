@@ -34,7 +34,7 @@ import { upgradeCost } from '@/lib/characters/upgrades';
 import type { WeaponSpec } from '@/lib/weapons';
 import { fetchWeapon } from '@/lib/weapons';
 import { ammoRefillPrice, maxWeaponUpgradeLevel, weaponUpgradeCost } from '@/lib/weapons/upgrades';
-import { t } from '@/locales';
+import { t, pickText } from '@/locales';
 import { useGameStore } from '@/store/game-store';
 
 interface Row {
@@ -141,14 +141,17 @@ export function ShopPanel() {
                 const price = weaponUpgradeCost(weapon, level);
                 return {
                     id,
-                    name: weapon.name,
+                    // `name` is the code-side identity; the player reads the
+                    // name of the language they are playing in.
+                    name: pickText(weapon.name, weapon.nameZh),
                     level,
                     max,
                     price,
                     affordable: price !== null && money >= price,
                 };
             });
-    }, [weaponSpecs, weaponLevels, money]);
+        // `locale` is a real dependency: the names above follow it.
+    }, [weaponSpecs, weaponLevels, money, locale]);
 
     const refillPrice = ammoRefillPrice(slots);
     const canRefill = refillPrice > 0 && money >= refillPrice;
