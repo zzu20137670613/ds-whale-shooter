@@ -690,7 +690,7 @@ export class PathfindingService {
      *  non-wall cell in the same inflation's grid. Prevents null results
      *  when the endpoint or start is on a wall. */
     private snapToWalkable(start: PathGridPoint, inflation: number, maxRadius = 2): PathGridPoint {
-        const inflated = this.inflateGrid(inflation);
+        const inflated = this.getInflatedGrid(inflation);
         const w = inflated[0]?.length ?? 0;
         const h = inflated.length;
         if (start.x >= 0 && start.x < w && start.y >= 0 && start.y < h) {
