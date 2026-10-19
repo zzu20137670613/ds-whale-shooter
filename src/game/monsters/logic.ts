@@ -14,6 +14,7 @@ import EasyStarPkg from 'easystarjs';
 const EasyStarCtor = (EasyStarPkg as unknown as { js: new () => EasyStarInstance }).js;
 
 import { COMBAT_KNOCKBACK_BASE_MULT, COMBAT_KNOCKBACK_MAX_SPEED } from '@/lib/constants';
+import { rasterizeWalls } from '@/lib/nav/raster';
 
 export type MonsterAIState = 'chase' | 'attack';
 
@@ -183,13 +184,11 @@ export class PathfindingService {
         this.gridWidth = Math.ceil(levelSize.width / cellSize);
         this.gridHeight = Math.ceil(levelSize.height / cellSize);
 
-        // Initialize empty walkable grid
-        this.grid = Array.from({ length: this.gridHeight }, () => Array(this.gridWidth).fill(0));
-
-        // Rasterize air-wall polygons onto grid. Only walls (1) are
-        // marked — body-aware inflation is applied per-monster at
-        // findPath() time.
-        this.rasterizeAirWalls(airWalls);
+        // Rasterize air-wall polygons onto the grid: walls = 1, one-cell
+        // buffers = 2. Body-aware inflation stays per-monster, applied at
+        // findPath() time. The scan runs per wall bounding box rather than per
+        // cell — see lib/nav/raster for why that matters at map scale.
+        this.grid = rasterizeWalls(cellSize, this.gridWidth, this.gridHeight, airWalls);
     }
 
     /**
@@ -606,79 +605,8 @@ export class PathfindingService {
         return start;
     }
 
-    /** Simple Point-in-Polygon check (Ray casting). */
-    private pointInPolygon(px: number, py: number, poly: readonly [number, number][]): boolean {
-        let inside = false;
-        for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
-            const xi = poly[i][0],
-                yi = poly[i][1];
-            const xj = poly[j][0],
-                yj = poly[j][1];
-            const intersect = yi > py !== yj > py && px < ((xj - xi) * (py - yi)) / (yj - yi) + xi;
-            if (intersect) inside = !inside;
-        }
-        return inside;
-    }
+    
 
-    private rasterizeAirWalls(airWalls: readonly { points: readonly [number, number][] }[]): void {
-        const half = this.cellSize / 2;
-        const offsets = [
-            { x: 0, y: 0 },
-            { x: -half * 0.7, y: -half * 0.7 },
-            { x: half * 0.7, y: -half * 0.7 },
-            { x: -half * 0.7, y: half * 0.7 },
-            { x: half * 0.7, y: half * 0.7 },
-        ];
-
-        // 1. Mark solid walls (value 1)
-        for (let gy = 0; gy < this.gridHeight; gy++) {
-            const worldY = gy * this.cellSize + half;
-            for (let gx = 0; gx < this.gridWidth; gx++) {
-                const worldX = gx * this.cellSize + half;
-                let isBlocked = false;
-                for (const wall of airWalls) {
-                    if (wall.points.length < 3) continue;
-                    for (const off of offsets) {
-                        if (this.pointInPolygon(worldX + off.x, worldY + off.y, wall.points)) {
-                            isBlocked = true;
-                            break;
-                        }
-                    }
-                    if (isBlocked) break;
-                }
-                if (isBlocked) {
-                    this.grid[gy][gx] = 1;
-                }
-            }
-        }
-
-        // 2. Mark 1-cell safety buffer zone around solid walls (value 2)
-        for (let gy = 0; gy < this.gridHeight; gy++) {
-            for (let gx = 0; gx < this.gridWidth; gx++) {
-                if (this.grid[gy][gx] === 1) continue;
-
-                let isNearWall = false;
-                for (let dy = -1; dy <= 1; dy++) {
-                    for (let dx = -1; dx <= 1; dx++) {
-                        if (dx === 0 && dy === 0) continue;
-                        const ny = gy + dy;
-                        const nx = gx + dx;
-                        if (ny >= 0 && ny < this.gridHeight && nx >= 0 && nx < this.gridWidth) {
-                            if (this.grid[ny][nx] === 1) {
-                                isNearWall = true;
-                                break;
-                            }
-                        }
-                    }
-                    if (isNearWall) break;
-                }
-
-                if (isNearWall) {
-                    this.grid[gy][gx] = 2; // Buffer zone (16px)
-                }
-            }
-        }
-    }
 }
 
 /**
