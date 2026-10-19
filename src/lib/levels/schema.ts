@@ -173,6 +173,22 @@ export const TeleporterSchema = z
 
 // ─── Level ────────────────────────────────────────────────────────────────
 
+/**
+ * A level whose ground is a tilemap instead of one painted background image.
+ *
+ * `background` stays required for now — the editor panel and the YAML
+ * round-trip both still write it — but LoadScene skips loading it when this
+ * block is present, so a tiled level pays nothing for the field it ignores.
+ */
+export const TilemapSchema = z
+    .object({
+        /** Tiled JSON, as produced by `scripts/build-tilemap.ts`. */
+        map: z.string().min(1),
+        /** Atlas PNG that the map's tileset draws from. */
+        tileset: z.string().min(1),
+    })
+    .strict();
+
 export const LevelSchema = z
     .object({
         title: z.string().min(1),
@@ -180,6 +196,7 @@ export const LevelSchema = z
          *  reaches the HUD. Optional. */
         titleZh: z.string().min(1).optional(),
         background: z.string().min(1),
+        tilemap: TilemapSchema.optional(),
         imageSize: z.string().regex(/^\d+x\d+$/, 'expected "WxH"'),
         prompt: z.string().optional(),
         music: z.string().min(1).optional(),
@@ -204,6 +221,7 @@ export const LevelSchema = z
             title: v.title,
             ...(v.titleZh !== undefined ? { titleZh: v.titleZh } : {}),
             background: v.background,
+            ...(v.tilemap !== undefined ? { tilemap: v.tilemap } : {}),
             imageSize: { width: Number(w), height: Number(h) },
             airWalls: v.airWalls,
             ...(v.prompt !== undefined ? { prompt: v.prompt } : {}),

@@ -55,6 +55,7 @@ import { setBootProgress } from '@/lib/boot-loading/progress';
 import { setCurrentLevel } from '@/lib/levels/current-level';
 import { fetchLevelIndex } from '@/lib/levels/loader';
 import { releasableTextureKeys } from '@/lib/textures/release';
+import { tilemapResourcesFor } from '@/lib/tilemaps/resources';
 import { useGameStore } from '@/store/game-store';
 import type { MusicSpec, SfxSpec, SoundSpec } from '@/lib/audios';
 import type { CharacterSpec } from '@/lib/characters';
@@ -150,7 +151,15 @@ export class LoadScene extends Phaser.Scene {
         // texture cache: Phaser reuses the first loaded image under
         // that key, so every subsequent scene would render the first
         // scene's background. Namespace with the scene id.
-        this.load.image(`background:${this.id}`, this.level.background);
+        if (this.level.tilemap) {
+            // A tiled level draws from an atlas, so the painted `background`
+            // is never fetched: no bandwidth, no texture, no release later.
+            const tilemap = tilemapResourcesFor(this.id, this.level.tilemap);
+            this.load.tilemapTiledJSON(tilemap.mapKey, tilemap.mapPath);
+            this.load.image(tilemap.atlasKey, tilemap.atlasPath);
+        } else {
+            this.load.image(`background:${this.id}`, this.level.background);
+        }
 
         // Default player character — same key scheme in both modes; the
         // tavern just spawns additional NPC sheets on top so the player
@@ -202,13 +211,14 @@ export class LoadScene extends Phaser.Scene {
     }
 
     create(): void {
-        // World size === image size, so the background displays at native
-        // dimensions and air-wall coords align 1:1 with image pixel space.
-        const bg = this.add.image(0, 0, `background:${this.id}`).setOrigin(0, 0);
+        // World coords are image pixel space either way — the ground is just
+        // painted one tile at a time when the level carries a tilemap. Air
+        // walls, physics bounds and pathfinding therefore align 1:1 no matter
+        // which of the two drew it.
         const isPixelLightingEnabled = this.level.pixelLighting ?? PIXEL_LIGHTING_CONFIG.ENABLE;
-        if (isPixelLightingEnabled) {
-            bg.setTint(PIXEL_LIGHTING_CONFIG.BACKGROUND_TINT);
-        }
+        this.createGround(
+            isPixelLightingEnabled ? PIXEL_LIGHTING_CONFIG.BACKGROUND_TINT : undefined,
+        );
 
         // Lock the physics world to the level image bounds so the
         // character can't run off-screen. thickness=200 is generous so
@@ -687,6 +697,58 @@ export class LoadScene extends Phaser.Scene {
 
             // (Auto-swap on cap lives in the dropSystem's onWeaponPickup
             // callback above — no separate hub event handler needed.)
+        }
+    }
+
+    /**
+     * Draw the level's ground: a tilemap layer when the level declares a
+     * tilemap, otherwise the painted background image.
+     *
+     * Both cover exactly `imageSize` in the same coordinate space, so the
+     * rest of the scene never has to know which one it got. A declared
+     * tilemap that cannot be drawn warns and leaves the level playable
+     * rather than crashing it.
+     */
+    private createGround(tint?: number): void {
+        const tilemap = this.level.tilemap;
+        if (!tilemap) {
+            const image = this.add.image(0, 0, `background:${this.id}`).setOrigin(0, 0);
+            if (tint !== undefined) image.setTint(tint);
+            return;
+        }
+
+        const resources = tilemapResourcesFor(this.id, tilemap);
+        const map = this.make.tilemap({ key: resources.mapKey });
+        const tilesetName = map.tilesets[0]?.name;
+        const layerName = map.layers[0]?.name;
+        if (!tilesetName || !layerName) {
+            console.warn(`Level ${this.id}: tilemap has no tileset or layer to draw`);
+            return;
+        }
+
+        const tileset = map.addTilesetImage(tilesetName, resources.atlasKey);
+        const layer = tileset ? map.createLayer(layerName, tileset) : null;
+        if (!layer) {
+            console.warn(`Level ${this.id}: could not create tilemap layer "${layerName}"`);
+            return;
+        }
+        // Phaser v4 types createLayer as TilemapLayer | TilemapGPULayer, and
+        // only the CPU layer has a tint API — hence the `in` check rather
+        // than a signature that leaks the union to the caller.
+        if (tint !== undefined && 'setTint' in layer) {
+            layer.setTint(tint);
+        }
+
+        // The map's own pixel size is what the art claims; everything else in
+        // the level (walls, spawns, physics) is authored against imageSize, so
+        // a mismatch means the two would drift apart.
+        const width = map.widthInPixels;
+        const height = map.heightInPixels;
+        if (width !== this.level.imageSize.width || height !== this.level.imageSize.height) {
+            console.warn(
+                `Level ${this.id}: tilemap is ${width}x${height} but imageSize is ` +
+                    `${this.level.imageSize.width}x${this.level.imageSize.height}`,
+            );
         }
     }
 
