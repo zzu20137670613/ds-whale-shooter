@@ -9,8 +9,26 @@ import * as Phaser from 'phaser';
 
 import type { Level, PlacedMaterial } from '@/lib/levels/types';
 import { EventBus } from '@/lib/events/bus';
+import { isWithinView } from '@/lib/props/activation';
+import type { Box } from '@/lib/props/activation';
 
 import { calculateMaterialDepth } from './logic';
+
+/**
+ * The sprite's box for activation, from its display size about its anchor.
+ *
+ * Deliberately not `getBounds()`: that allocates a Rectangle per sprite per
+ * frame, for a check the margin already absorbs — a base-anchored palm's
+ * visual centre sits above its anchor, and the slack covers the difference.
+ */
+function spriteBox(sprite: Phaser.GameObjects.Sprite): Box {
+    return {
+        x: sprite.x,
+        y: sprite.y,
+        halfWidth: Math.abs(sprite.displayWidth) / 2,
+        halfHeight: Math.abs(sprite.displayHeight) / 2,
+    };
+}
 
 export class MaterialManager {
     private readonly scene: Phaser.Scene;
@@ -121,12 +139,25 @@ export class MaterialManager {
     /** Per-frame update loop for Y-sort dynamic depth & selection box position. */
     update(): void {
         if (!this.level.materials) return;
+        // Only what the camera can reach is worth any work. At 9x9 the full
+        // prop list would be re-sorted every frame for objects nobody can see;
+        // Phaser does not cull ordinary sprites, so this is the cull.
+        //
+        // `worldView` is filled in during the camera's preRender, so this reads
+        // the previous frame's rectangle — one frame of lag that the margin
+        // swallows whole. The editor is the exception to all of it: a hidden
+        // prop cannot be clicked.
+        const view = this.scene.cameras.main.worldView;
         for (const mat of this.level.materials) {
+            const sprite = this.sprites.get(mat.id);
+            if (!sprite) continue;
+
+            const active = this.activeEditor || isWithinView(spriteBox(sprite), view);
+            if (sprite.visible !== active) sprite.setVisible(active);
+            if (!active) continue;
+
             if ((mat.mode ?? 'y-sort') === 'y-sort') {
-                const sprite = this.sprites.get(mat.id);
-                if (sprite) {
-                    sprite.setDepth(calculateMaterialDepth('y-sort', mat.y, mat.depthOffset));
-                }
+                sprite.setDepth(calculateMaterialDepth('y-sort', mat.y, mat.depthOffset));
             }
         }
         this.drawSelectionBox();
