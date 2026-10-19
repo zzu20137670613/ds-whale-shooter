@@ -10,6 +10,7 @@
 export type { AnimSpec, CharacterIndex, CharacterSpec, CharacterUpgrade, SpriteSpec } from './types';
 export { parseCharacterIndex, parseCharacterYaml } from './parser';
 export { fetchCharacter, fetchCharacterIndex } from './loader';
+export { resolveRosterCharacterId } from './logic';
 export {
     applyUpgrades,
     clampUpgradeLevel,

@@ -16,7 +16,7 @@
 import type { MusicSpec, SfxSpec } from '@/lib/audios';
 import { fetchAudioIndex, fetchAudioMusic, fetchAudioSfx } from '@/lib/audios';
 import type { CharacterSpec } from '@/lib/characters';
-import { applyUpgrades, fetchCharacter, fetchCharacterIndex } from '@/lib/characters';
+import { applyUpgrades, fetchCharacter, fetchCharacterIndex, resolveRosterCharacterId } from '@/lib/characters';
 import type { SceneAssets } from '@/game/scenes/scene';
 import { fetchDrop } from '@/lib/drops';
 import type { DropSpec } from '@/lib/drops';
@@ -82,9 +82,11 @@ export async function resolveScene(
     deps: {
         fetchLevelId: (id: string) => ReturnType<typeof fetchLevel>;
         fetchFirstCharacterId: () => Promise<string>;
+        characterIds: () => Promise<string[]>;
     } = {
         fetchLevelId: fetchLevel,
         fetchFirstCharacterId: async () => (await fetchCharacterIndex()).characters[0],
+        characterIds: async () => (await fetchCharacterIndex()).characters,
     },
 ): Promise<ResolvedScene> {
     const id = sceneId;
@@ -96,7 +98,20 @@ export async function resolveScene(
     //   2. The level's `character:` field — author override per level.
     //   3. First character in index.yaml — fall-back for fresh starts
     //      before the player has picked anyone.
-    const selectedCharacterId = useGameStore.getState().selectedCharacterId;
+    //
+    // The persisted selection is an id in the save file, so it can outlive
+    // the roster entry it names (a rename leaves `whale-girl` behind after
+    // `deepseek` replaces it). An id no YAML answers to is dropped — and the
+    // player is asked to pick again — rather than fetched and 404'd, which
+    // would leave the scene unbootable.
+    const storedCharacterId = useGameStore.getState().selectedCharacterId;
+    const selectedCharacterId = resolveRosterCharacterId(
+        storedCharacterId,
+        storedCharacterId ? await deps.characterIds() : [],
+    );
+    if (storedCharacterId && !selectedCharacterId) {
+        useGameStore.getState().setSelectedCharacterId(null);
+    }
     const characterId =
         selectedCharacterId ?? level.character ?? (await deps.fetchFirstCharacterId());
     if (!characterId) {
