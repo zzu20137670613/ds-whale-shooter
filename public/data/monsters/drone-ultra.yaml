@@ -1,6 +1,6 @@
 name: Thorn Drone Ultra
 nameZh: "荆棘无人机·改"
-hp: 320
+hp: 1
 money: 30
 moveSpeed: 3
 body:

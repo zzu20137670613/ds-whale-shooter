@@ -1,6 +1,6 @@
 name: Rune Shield Bash
 nameZh: "符文盾"
-damage: 28
+damage: 1
 cooldownMs: 750
 range: 480
 upgrades:

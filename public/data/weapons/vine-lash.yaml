@@ -1,6 +1,6 @@
 name: Vine Lash
 nameZh: "藤鞭"
-damage: 9
+damage: 1
 cooldownMs: 600
 range: 450
 upgrades:

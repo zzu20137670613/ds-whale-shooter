@@ -1,6 +1,6 @@
 name: Thorn Bolt
 nameZh: "荆棘弩矢"
-damage: 6
+damage: 1
 cooldownMs: 550
 range: 520
 upgrades:

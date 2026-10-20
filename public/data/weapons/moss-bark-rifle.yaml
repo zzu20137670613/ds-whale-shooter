@@ -1,6 +1,6 @@
 name: Moss Bark Rifle
 nameZh: "苔皮步枪"
-damage: 12
+damage: 1
 cooldownMs: 1400
 range: 700
 upgrades:

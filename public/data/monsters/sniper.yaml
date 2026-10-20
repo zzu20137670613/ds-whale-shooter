@@ -3,7 +3,7 @@ nameZh: "孢子狙击手"
 # NOTE: spec pairs this monster with spore-shot, which was removed from
 # the AI sheet and replaced by bramble-knuckles. Reuses thorn-bolt
 # (ranged) for now — moss-bark-rifle moved to the gunner-only slot.
-hp: 90
+hp: 1
 money: 10
 moveSpeed: 2.5
 body:

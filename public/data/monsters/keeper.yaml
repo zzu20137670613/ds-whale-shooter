@@ -1,6 +1,6 @@
 name: Forest Keeper
 nameZh: "森林守望者"
-hp: 400
+hp: 1
 money: 40
 moveSpeed: 3
 body:

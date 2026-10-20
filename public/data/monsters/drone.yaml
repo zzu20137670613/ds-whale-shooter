@@ -1,6 +1,6 @@
 name: Thorn Drone
 nameZh: "荆棘无人机"
-hp: 160
+hp: 1
 money: 16
 moveSpeed: 4
 body:

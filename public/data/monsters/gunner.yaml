@@ -82,7 +82,7 @@ prompt: |
     - Hard clean pixel edges, no anti-aliasing on the silhouette.
     - Limited muted color palette: ~32 colors total per character.
     - No purple, magenta, or pink in the monster body itself.
-hp: 120
+hp: 1
 money: 12
 moveSpeed: 3
 body:

@@ -1,6 +1,6 @@
 name: Thorn Scythe Claws
 nameZh: "棘镰爪"
-damage: 14
+damage: 1
 cooldownMs: 600
 range: 100
 upgrades:

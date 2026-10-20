@@ -1,6 +1,6 @@
 name: Branch Sweep
 nameZh: "横扫枝击"
-damage: 18
+damage: 1
 cooldownMs: 650
 range: 480
 upgrades:
