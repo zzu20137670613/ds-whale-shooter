@@ -1,0 +1,32 @@
+Top-down orthographic view, camera looking straight down, flat perspective, no horizon.
+Soft semi-realistic anime background painting, painterly, clean readable shapes, night scene.
+
+PALETTE (measured from the reference sheets): deep indigo void #101a2e to #1e2e4d; cool ivory
+marble #f0ece7 highlight / #c7c1cf mid / #9e9fb8 shadow; warm lamp glow #e9d8bf; warm wood
+#48312c dark / #865340 mid / #bc8b6c lit; pale sky blue #78aad5; paper white #f2eee9.
+
+A cool, austere bookshelf maze seen from directly above, on the north-east side of a night-time
+magical library floating in a starfield. There is NO warm light anywhere in this image.
+
+THE MAZE: rows of tall dark bookshelves in a regular grid, forming narrow straight aisles that
+run in two perpendicular directions. Cold pale blue moonlight (#78aad5) rakes between the
+shelves and lays long hard shadows across the aisles. Scattered fallen books, a few toppled
+shelves, thin drifting paper sheets. Brass rails and shelf ladders, unlit and cold.
+
+LANDMARK (keep it well inside the image, never touching an edge): in one part of the image the
+shelf rows break off and the plank floor splits into several floating slabs adrift in open
+starfield — a wide bright opening of stars where the maze simply ends (the starlight gap). The
+broken edge is ragged: torn planks, dangling boards, books resting on the brink.
+
+LIGHTING: cold and empty. Deep indigo shadow between the shelves, cold moonlight on their tops,
+and the starlight gap as the single bright area of the image.
+
+RULES
+- Top-down only. No horizon line, no perspective, no side view, no ceiling.
+- Every material, wall, floor and light source must run straight off the image edge. Nothing
+  may stop at the edge, fade out at the edge, or be centred on the edge.
+- No characters, no people, no creatures, no text, no letters, no numbers, no legible writing,
+  no UI, no watermark, no frame, no border, no vignette, no signature.
+- Keep the composition generic and continuous; the one landmark above is the only focal point.
+- All four edges must be plain continuing terrain: a neighbouring image continues the same
+  bookshelf grid and the same wooden floor on every side.

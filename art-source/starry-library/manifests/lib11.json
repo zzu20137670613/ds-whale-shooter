@@ -1,0 +1,42 @@
+{
+  "source": "D:\\\u7f51\u9875\u4e0b\u8f7d\\Top-Down Game Level Background (4).png",
+  "sourceWidth": 2048,
+  "sourceHeight": 1152,
+  "grid": 2,
+  "tileWidth": 1125,
+  "tileHeight": 633,
+  "overlapX": 202,
+  "overlapY": 114,
+  "stepX": 923,
+  "stepY": 519,
+  "tiles": [
+    {
+      "file": "lib11_r0c0.png",
+      "row": 0,
+      "col": 0,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "file": "lib11_r0c1.png",
+      "row": 0,
+      "col": 1,
+      "x": 923,
+      "y": 0
+    },
+    {
+      "file": "lib11_r1c0.png",
+      "row": 1,
+      "col": 0,
+      "x": 0,
+      "y": 519
+    },
+    {
+      "file": "lib11_r1c1.png",
+      "row": 1,
+      "col": 1,
+      "x": 923,
+      "y": 519
+    }
+  ]
+}

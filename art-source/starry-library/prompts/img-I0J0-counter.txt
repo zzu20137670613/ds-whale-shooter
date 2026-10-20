@@ -1,0 +1,39 @@
+Top-down orthographic view, camera looking straight down, flat perspective, no horizon.
+Soft semi-realistic anime background painting, painterly, clean readable shapes, night scene.
+
+PALETTE (measured from the reference sheets): deep indigo void #101a2e to #1e2e4d; cool ivory
+marble #f0ece7 highlight / #c7c1cf mid / #9e9fb8 shadow; warm lamp glow #e9d8bf; warm wood
+#48312c dark / #865340 mid / #bc8b6c lit; pale sky blue #78aad5; paper white #f2eee9.
+
+A night-time magical library lending-counter room seen from directly above, on a floating slab
+of floor adrift in a starry void. This is the warm, welcoming entrance room of the library —
+the only warm area in the whole level.
+
+FLOOR AND SHELVES: dark walnut plank floor with worn lighter grain (#48312c with #865340
+highlights), bounded by tall dark bookshelves full of warm-lit leather book spines, brass rails
+and a rolling ladder. Scattered reading benches and small stacks of books. Warm amber pools of
+lamplight from brass table lamps and hanging lanterns fall on the floor; the shelves furthest
+from the lamps sink into deep indigo shadow.
+
+LANDMARK (keep it well inside the image, never touching an edge): a long L-shaped dark wood
+lending counter stands in the middle of the room. On the counter: an open ledger book with blank
+pages and no legible writing, a brass table lamp casting a warm amber pool (#e9d8bf), a white
+teapot and two teacups, a clipboard holding a blank form, a small blank library card, and a few
+stacked books.
+
+One side of the room opens onto a low stone balustrade, beyond which there is only starry
+darkness and a faint dark sea horizon; the other three sides are tall bookshelves.
+
+LIGHTING: warm lamp pools cover roughly one quarter of the floor; everything else falls into
+deep indigo shadow, with faint pale blue moonlight (#78aad5) coming from the open balustrade
+side.
+
+RULES
+- Top-down only. No horizon line, no perspective, no side view, no ceiling.
+- Every material, wall, floor and light source must run straight off the image edge. Nothing
+  may stop at the edge, fade out at the edge, or be centred on the edge.
+- No characters, no people, no creatures, no text, no letters, no numbers, no legible writing,
+  no UI, no watermark, no frame, no border, no vignette, no signature.
+- Keep the composition generic and continuous; the one landmark above is the only focal point.
+- All four edges must be plain continuing terrain: a neighbouring image continues the same
+  bookshelves and the same wooden floor on every side.

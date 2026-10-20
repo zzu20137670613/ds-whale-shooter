@@ -1,0 +1,98 @@
+OUTPUT — a technical requirement for the tool, not part of the picture:
+- Produce this image at 2720 x 1520 pixels or LARGER. Do not return a 2048 x 1152 image.
+- Keep the aspect ratio near 16:9 (2720 x 1520 is 1.79:1).
+- Render at high resolution with sharp fine detail: crisp plank grain, thin inlaid lines, clean
+  carved patterns. A smaller image has to be enlarged for the game and loses that sharpness.
+
+CAMERA — this is a game level background seen from directly above.
+- Camera high overhead, almost straight down: a top-down game-map view, like a floor plan.
+- ORTHOGRAPHIC: no perspective at all. Parallel lines stay parallel; the plank lines, the marble
+  joint lines, the shelf runs and the stone kerb stay straight and evenly spaced from one edge of
+  the image to the other; no vanishing point, no converging lines, no foreshortening.
+- EVERY VISIBLE SURFACE IS HORIZONTAL. No vertical surface may be visible anywhere: a bookshelf is
+  only its flat TOP, never the row of book spines on a vertical face; no side of a bench, no
+  thickness of a slab, no elevation of the stone kerb. If you can see the height of anything, the
+  view is wrong.
+- NO ARCHITECTURE WITH HEIGHT: no railings, no vertical posts, no balusters, no steps, no arches,
+  no columns, no pedestals, no raised platforms. Nothing to climb, nothing to look up at.
+- NOTHING IS DIAGONAL: every plank line, every joint line, the room boundary and the stone kerb
+  run exactly parallel to the image edges and meet at clean right angles. This is a floor plan.
+- No horizon line, no ceiling, no cast shadows anywhere.
+
+SPACE BUDGET — the most important requirement. An earlier attempt failed because the furniture ate
+the playable area.
+- OPEN AREA: at least 75% of the image is open ground the player can cross in any direction.
+- Bookshelves (upper half only): LOW flat shelves seen from above as thin pale rectangles, in a
+  LOOSE grid with wide aisles. All shelves together: at most 20% of the image. Never a solid wall
+  of shelves, never a cluster, never one shelf longer than about a sixth of the image.
+- The marble (lower half) is furniture: keep it almost entirely bare open floor — at most one
+  small table and two flat slabs.
+- The stone kerb on the right is a THIN narrow band, about 6% of the image, and nothing else stands
+  on the right border.
+- Leave wide open lanes everywhere: the player must be able to cross the whole image without
+  squeezing between two objects.
+- No large dark masses anywhere.
+
+EXPOSURE — this background is played on, so it must be clearly readable.
+- Mid-tones dominate. Overall image brightness around 105 to 135 of 255: a cool night scene that is
+  still CLEARLY LIT, never a dark painting.
+- The two halves have different natural brightness and that is intended: the marble half is the
+  brighter one, the shelf half is cooler and a little darker. Both must be evenly lit WITHIN
+  themselves — no bright pool and no dark corner inside either half. Do not darken the marble or
+  brighten the shelves to match each other.
+- No more than about 15% of the image may be darker than #3a4258, and none of it may be pure
+  black.
+- At least half of the image sits in the mid-tone range.
+- NO CAST SHADOWS: no directional shadow on the floor or on the marble from any shelf, bench,
+  table or kerb.
+
+PALETTE, measured from the reference sheets:
+- Upper half, the shelf maze: the plank floor in cool blue-grey, #4a5a78 mid to #6b7c9c highlight;
+  pale beige shelf tops #c8b48f with thin brass edging; a few paper white #f2eee9 details.
+- Lower half, the marble terrace: cool ivory marble #f0ece7 highlight, #c7c1cf mid, #9e9fb8
+  shadow, with faint inlaid star-map circles and long straight etched lines; pale blue moonlight
+  fill #8fb0d8.
+- Right border: pale stone kerb #c7c1cf, then starfield #273559 to #3b4a74 with clearly visible
+  stars, then a flat dark sea surface far away.
+- Both halves share the same cool moonlight fill so the two materials meet softly.
+
+STYLE: soft semi-realistic anime background painting, painterly, clean readable shapes.
+
+One image, two rooms, one soft boundary, seen from directly above.
+
+THE UPPER HALF (the shelf maze): the plank floor in cool blue-grey, crossed by LOW flat bookshelves
+in a loose grid with wide aisles, plus two or three flat stacks of books. This is the lower part of
+a vast shelf maze; keep it open, with the shelves reading as pale rectangles on the floor.
+
+THE LOWER HALF (the marble terrace): a wide bright unobstructed marble floor with faint inlaid
+star-map circles and long straight etched lines, plus one small round table seen from directly
+above as a flat disc, and two flat slabs. This is the upper part of an open marble terrace.
+
+THE BOUNDARY: the two rooms meet along a SOFT HORIZONTAL BAND running straight across the MIDDLE of
+the image, from the left edge to the right edge, parallel to the top and bottom edges. It is a
+gentle transition roughly a quarter of the image tall — cool planks fading into pale marble. Not a
+hard line, not a wall, not a step, not a doorway, not an arch. Nothing is built on the boundary.
+
+THE RIGHT EDGE, the only outer edge: running straight down the right border, parallel to it, a THIN
+flat band about 6% of the image of pale stone kerb, seen from directly above as a flat strip with a
+line of small FLAT carved squares — NEVER a railing, NEVER a row of vertical posts or balusters,
+nothing whose height you could see. Beyond it a strip of deep blue starfield (#273559 to #3b4a74)
+with clearly visible stars, and far away a flat dark sea surface, both seen from directly above with
+no horizon line. This band runs the full height of the image, through both halves: beside the maze
+it reads as low broken shelf edges, beside the marble as a clean carved kerb. The TOP border, the
+LEFT border and the BOTTOM border carry NOTHING at all: plain continuing floor to the very edge,
+because neighbouring images continue both rooms there. In particular the BOTTOM border must be
+plain bare marble, with no kerb, no starfield and nothing built on it.
+
+LANDMARK: none. This is a passage image, so keep it open. One small flat round table, two flat
+slabs and two or three flat stacks of books only, each a couple of percent of the image at most.
+
+RULES
+- Top-down only. No horizon line, no perspective, no side view, no ceiling, no walls with height.
+- Check that at least three quarters of the image is unobstructed open floor before finishing.
+- Every material and every line runs straight off the image edge; nothing may stop at the edge,
+  fade out at the edge, or be centred on the edge.
+- No characters, no people, no creatures, no text, no letters, no numbers, no legible writing, no
+  UI, no watermark, no frame, no border, no vignette, no signature.
+- The composition stays generic and continuous: no focal point, no hero object.
+- Produce the image at 2720 x 1520 pixels or larger.

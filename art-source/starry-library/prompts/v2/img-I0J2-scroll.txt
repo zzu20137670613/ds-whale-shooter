@@ -1,0 +1,96 @@
+CAMERA — this is a game level background seen from directly above.
+- Camera high overhead, almost straight down: a top-down game-map view, like a floor plan.
+- ORTHOGRAPHIC: no perspective at all. Parallel lines stay parallel; the walkway bands stay the
+  same width from one edge of the image to the other; no vanishing point, no converging lines, no
+  foreshortening.
+- EVERY VISIBLE SURFACE IS HORIZONTAL. The water surface, the walkways and the paper are all
+  seen as flat tops. No side of a walkway, no visible thickness of the paper. If you can see the
+  height of any object, the view is wrong.
+- NO ARCHITECTURE WITH HEIGHT ANYWHERE: no arches, no columns, no doorways, no steps, no raised
+  walls, no bookshelves, no balustrades, no platforms. This room is a flat floor with flat
+  patterns inlaid in it — nothing to climb.
+- No horizon line anywhere.
+
+SPACE BUDGET — THIS IS THE MOST IMPORTANT REQUIREMENT. An earlier attempt failed because the
+furniture ate the playable area.
+- THE WATER IS WALKABLE FLOOR. This is the key point: the mirror water is only ankle-deep over a
+  stone floor — the player walks straight across it. It is a reflective FLOOR, not a hazard, not
+  a pit, not a wall. It must be open and continuous across at least 80% of the image.
+- The stone walkways are FLUSH with the water — barely raised kerbs a few centimetres high, so
+  they are walkable decoration, never obstacles you have to climb.
+- Everything that blocks movement (the great scroll, the void rim) together: at most 20%.
+- The great scroll: the one large obstacle, a long straight VERTICAL wall, about 10% of the image,
+  placed toward one side. It must NOT cut the image into two disconnected halves — leave wide
+  walkable lanes of open water on BOTH sides of it — and it must never span the image
+  horizontally or diagonally. Everything else stays open.
+- A player must be able to walk between any two objects: leave wide open lanes everywhere.
+- No large dark masses anywhere.
+
+EXPOSURE — this background is played on, so it must be clearly readable. Hard requirements:
+- This is the darkest area of the level, but it must still be CLEARLY READABLE — deep blue, never
+  murky, muddy or dim. Overall brightness around 75-95/255.
+- At least half of the image sits in the mid-tone range (roughly #4a5a7c to #c8d0e0).
+- No more than about 20% of the image may be darker than #2a3a58, and none of it may be pure
+  black. Near-black only in small contact shadows.
+- Every edge — where water meets stone, where a walkway ends, where the paper lies on the water —
+  must be crisp and easy to read. No soft murky falloff.
+- NO CAST SHADOWS: do not paint any directional shadow across the water from the scroll, the
+  walkways or the kerbs — no long dark bands at all.
+- EVEN LIGHTING — a hard requirement: the water and the walkways are lit uniformly across the
+  entire image, with no bright pool and no dark corner. Any two patches of open water anywhere
+  should read within about 2x of each other, and the image's MEDIAN brightness should land close
+  to its average (a median far below the mean means one spotlight in a dark room, which is wrong
+  here).
+- The water must stay readable everywhere: never below about #1e2e4d, with clearly visible star
+  reflections; the stone walkways never below #9e9fb8.
+
+PALETTE (measured from the reference sheets, brightened for readability):
+readable deep blue shallow water #1e2e4d to #33456b with clearly visible star reflections; pale
+lit stone walkways #b9c2d6 tops / #9e9fb8 sides; bright ivory paper #f2eee9; the single warm beam
+#f0c98a.
+
+STYLE: soft semi-realistic anime background painting, painterly, clean readable shapes.
+
+A flooded stone vault seen from directly above, on the south-west side of a magical library
+floating in a starfield. This is the coldest, deepest-blue area of the level — but still clearly
+readable and wide open.
+
+THE WATER — the subject of this image: ankle-deep, mirror-calm water lying over a pale stone
+floor, reflecting the stars — #1e2e4d to #33456b with clearly visible star reflections and crisp
+readable edges. It runs open across almost the whole image. Through the shallow water the stone
+floor beneath is faintly visible.
+
+THE WALKWAYS: pale stone walkways (#b9c2d6) laid out in a loose grid as flat MOSAIC PATTERNS
+INLAID in the floor at exactly the same level as the water — water and stone are two flat
+surfaces side by side, like tiles in one floor. No steps, no kerbs with height, no raised edges,
+no platforms, nothing to climb. They are walkable decoration, not obstacles.
+
+LANDMARK (well inside the image, never touching an edge): one colossal unfurled scroll of bright
+ivory paper (#f2eee9, clearly lit) lying on the water. ITS LONG AXIS RUNS VERTICALLY — straight
+up and down the frame, parallel to the left and right edges of the image — about 10% of the image
+wide and roughly centred vertically. It must NOT run left-to-right across the image, and it must
+NOT run diagonally. Both ends are rolled: seen from directly above they are flat spirals, not
+cylinders. The paper carries blank, illegible rows of marks — no readable letters — and a single
+empty signature line across it, with a fountain pen resting beside it on the paper.
+
+A thin strip of deep blue starfield with clearly visible stars runs along the LOWER border and the
+LEFT border only, where the vault edge falls away into the void — those two sides are the outer
+rim of the whole map. The UPPER border and the RIGHT border must be plain continuing water and
+walkways: a neighbouring image continues the same floor there.
+
+LIGHTING: everything is blue and cool, but never dark or muddy: the water, kerbs, walkways and
+the paper are all clearly readable, lit evenly across the whole image. A faint warm tint on the
+empty signature line is the one warm accent — a colour change on the paper, not a spotlight on
+the floor.
+
+RULES
+- Top-down only. No horizon line, no perspective, no side view, no ceiling.
+- Keep the water open and shallow: at least four fifths of the image must be walkable water or
+  walkway, not obstacle.
+- Every material, wall, floor and light source must run straight off the image edge. Nothing
+  may stop at the edge, fade out at the edge, or be centred on the edge.
+- No characters, no people, no creatures, no text, no letters, no numbers, no legible writing,
+  no UI, no watermark, no frame, no border, no vignette, no signature.
+- Keep the composition generic and continuous; the one landmark above is the only focal point.
+- On the two sides NOT marked as the map rim, a neighbouring image must be able to continue the
+  same water, walkways and kerbs seamlessly.

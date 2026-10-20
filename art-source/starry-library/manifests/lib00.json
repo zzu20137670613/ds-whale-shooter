@@ -1,0 +1,42 @@
+{
+  "source": "D:\\\u7f51\u9875\u4e0b\u8f7d\\Top-Down Magical Library Background.png",
+  "sourceWidth": 2720,
+  "sourceHeight": 1520,
+  "grid": 2,
+  "tileWidth": 1495,
+  "tileHeight": 835,
+  "overlapX": 270,
+  "overlapY": 150,
+  "stepX": 1225,
+  "stepY": 685,
+  "tiles": [
+    {
+      "file": "lib00_r0c0.png",
+      "row": 0,
+      "col": 0,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "file": "lib00_r0c1.png",
+      "row": 0,
+      "col": 1,
+      "x": 1225,
+      "y": 0
+    },
+    {
+      "file": "lib00_r1c0.png",
+      "row": 1,
+      "col": 0,
+      "x": 0,
+      "y": 685
+    },
+    {
+      "file": "lib00_r1c1.png",
+      "row": 1,
+      "col": 1,
+      "x": 1225,
+      "y": 685
+    }
+  ]
+}
