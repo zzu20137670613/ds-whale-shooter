@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 
-import { groundLayers, isPortalArmed } from '@/lib/levels/logic';
+import { groundLayers, isPortalArmed, propKey, spawnsWithoutBrokenProps } from '@/lib/levels/logic';
 
 describe('isPortalArmed', () => {
     it('arms a gated portal only once the monsters are cleared', () => {
@@ -49,5 +49,34 @@ describe('groundLayers', () => {
         expect(groundLayers('tavern', { background: 'bg.png', backgroundBlocks: [] })).toEqual([
             { key: 'background:tavern', path: 'bg.png', x: 0, y: 0 },
         ]);
+    });
+});
+
+describe('propKey / spawnsWithoutBrokenProps', () => {
+    it('keys a prop by its level and monster type', () => {
+        expect(propKey('tavern', 'hollow-emblem')).toBe('tavern:hollow-emblem');
+    });
+
+    it('drops the prop spawns the player has already opened', () => {
+        const spawns = [
+            { type: 'hollow-emblem', x: 2642, y: 896 },
+            { type: 'drone', x: 900, y: 600 },
+        ];
+        expect(spawnsWithoutBrokenProps('tavern', spawns, ['tavern:hollow-emblem'])).toEqual([
+            { type: 'drone', x: 900, y: 600 },
+        ]);
+    });
+
+    it('keeps every spawn while nothing has been opened', () => {
+        const spawns = [{ type: 'hollow-emblem', x: 2642, y: 896 }];
+        expect(spawnsWithoutBrokenProps('tavern', spawns, [])).toEqual(spawns);
+        expect(spawnsWithoutBrokenProps('tavern', undefined, [])).toBeUndefined();
+    });
+
+    it('only drops the key belonging to that level', () => {
+        const spawns = [{ type: 'hollow-emblem', x: 2642, y: 896 }];
+        expect(spawnsWithoutBrokenProps('beach-holiday', spawns, ['tavern:hollow-emblem'])).toEqual(
+            spawns,
+        );
     });
 });

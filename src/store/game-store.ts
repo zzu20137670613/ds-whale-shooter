@@ -120,6 +120,11 @@ export interface GameUIState {
     /** How many weapons the player has picked up in the current tavern
      *  session. Not persisted — resets each time the tavern scene loads. */
     tavernWeaponCount: number;
+    /** Props the player has shot open, keyed `level:monsterType`. Unlike the
+     *  rest of the save this is world state, so `clearSaveData` keeps it: the
+     *  tavern ornament must not grow back and re-hide the hidden entrance
+     *  after a death or a restart. */
+    brokenProps: string[];
 
     // Setters
     setLevelTitle: (title: string) => void;
@@ -190,6 +195,8 @@ export interface GameUIState {
     setSelectedCharacterId: (id: string | null) => void;
     setTavernCleared: (cleared: boolean) => void;
     setTavernWeaponCount: (n: number) => void;
+    /** Remember a prop as opened, so the scene stops spawning it. */
+    markPropBroken: (key: string) => void;
 }
 
 /**
@@ -223,6 +230,8 @@ export const initialGameState = {
     levelElapsedMs: 0,
 
     money: 0,
+    // World state, not run state — `clearSaveData` deliberately keeps it.
+    brokenProps: [] as string[],
 
     upgradeLevels: {} as Record<string, number>,
     weaponLevels: {} as Record<string, number>,
@@ -401,10 +410,16 @@ export const useGameStore = create<GameUIState>()(
                 } catch {
                     // Fallback
                 }
+                // The world outlives the run: everything else reset here is run
+                // state (money, weapons, the picked character), but a prop the
+                // player shot open is level furniture. Re-locking the tavern
+                // ornament would mean re-shooting it after every death.
+                const { brokenProps } = useGameStore.getState();
                 set(() => ({
                     ...initialGameState,
                     tavernCleared: false,
                     selectedCharacterId: null,
+                    brokenProps,
                 }));
                 setLocaleRuntime(initialGameState.locale);
             },
@@ -412,6 +427,12 @@ export const useGameStore = create<GameUIState>()(
             setSelectedCharacterId: (id) => set({ selectedCharacterId: id }),
             setTavernCleared: (cleared) => set({ tavernCleared: cleared }),
             setTavernWeaponCount: (n) => set({ tavernWeaponCount: n }),
+            markPropBroken: (key) =>
+                set((state) =>
+                    state.brokenProps.includes(key)
+                        ? {}
+                        : { brokenProps: [...state.brokenProps, key] },
+                ),
         }),
         {
             name: '11th_forest_save_v2',
@@ -432,6 +453,8 @@ export const useGameStore = create<GameUIState>()(
                 // Tavern
                 selectedCharacterId: state.selectedCharacterId,
                 tavernCleared: state.tavernCleared,
+                // World state — survives a death restart.
+                brokenProps: state.brokenProps,
                 // Economy + upgrades
                 money: state.money,
                 upgradeLevels: state.upgradeLevels,

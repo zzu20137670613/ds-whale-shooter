@@ -54,7 +54,7 @@ import { EventBus } from '@/lib/events/bus';
 import { setBootProgress } from '@/lib/boot-loading/progress';
 import { setCurrentLevel } from '@/lib/levels/current-level';
 import { fetchLevelIndex } from '@/lib/levels/loader';
-import { groundLayers, isPortalArmed } from '@/lib/levels/logic';
+import { groundLayers, isPortalArmed, propKey, spawnsWithoutBrokenProps } from '@/lib/levels/logic';
 import { releasableTextureKeys } from '@/lib/textures/release';
 import { tilemapResourcesFor } from '@/lib/tilemaps/resources';
 import { useGameStore } from '@/store/game-store';
@@ -333,9 +333,15 @@ export class LoadScene extends Phaser.Scene {
         this.pathDebugOverlay = createPathDebugOverlay(this, pathfinder);
 
         // Wire monster controller — self-spawns from level.monsters.
+        // Props the player has already shot open are not spawned again: the
+        // world remembers them, see `spawnsWithoutBrokenProps`.
         this.monsterSystem = new MonsterController(
             this,
-            this.level.monsters?.map((m) => ({
+            spawnsWithoutBrokenProps(
+                this.id,
+                this.level.monsters,
+                useGameStore.getState().brokenProps,
+            )?.map((m) => ({
                 spec: this.assets.monsterSpecs.get(m.type)!,
                 weapon: this.assets.weaponsById.get(
                     this.assets.monsterSpecs.get(m.type)!.weaponId,
@@ -348,6 +354,12 @@ export class LoadScene extends Phaser.Scene {
             this.character.body,
             {
                 onMonsterDied: (monster) => {
+                    // Scenery, not a creature: an opened prop stays open, which
+                    // is what keeps the tavern ornament's black hole and the
+                    // portal it hides revealed for good.
+                    if (monster.spec.prop && monster.spec.id) {
+                        useGameStore.getState().markPropBroken(propKey(this.id, monster.spec.id));
+                    }
                     const mp = monster.body.position;
                     const rolled = rollDrops(monster.spec.drops, (dropId) => {
                         const spec = this.assets.dropSpecs.get(dropId);

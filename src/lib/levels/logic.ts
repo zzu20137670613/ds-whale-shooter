@@ -56,3 +56,26 @@ export function groundLayers(
     }
     return [{ key: `background:${levelId}`, path: level.background, x: 0, y: 0 }];
 }
+
+/** Key a prop is remembered by: the level it stands in plus its type. */
+export function propKey(levelId: string, type: string): string {
+    return `${levelId}:${type}`;
+}
+
+/**
+ * Drop the prop spawns the player has already shot open.
+ *
+ * A prop is scenery rather than a creature, so opening one is world state and
+ * not run state: the tavern ornament that hides the hidden level 1 entrance
+ * must not grow back every time the player walks in. Only prop keys are ever
+ * recorded (the scene records one when a monster with `prop: true` dies), so a
+ * spawn whose type matches a recorded key is that prop.
+ */
+export function spawnsWithoutBrokenProps<T extends { type: string }>(
+    levelId: string,
+    spawns: readonly T[] | undefined,
+    brokenProps: readonly string[],
+): T[] | undefined {
+    if (!spawns) return spawns;
+    return spawns.filter((spawn) => !brokenProps.includes(propKey(levelId, spawn.type)));
+}
