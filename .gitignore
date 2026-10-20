@@ -43,3 +43,7 @@ grok
 # sprites, not these. They are source material, not runtime assets, and
 # make up ~73 of the ~110 MB in public/. Excluded on the owner's call.
 raws/
+
+# Byte-cache from the python tools under scripts/
+__pycache__/
+*.pyc
