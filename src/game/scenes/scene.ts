@@ -54,7 +54,7 @@ import { EventBus } from '@/lib/events/bus';
 import { setBootProgress } from '@/lib/boot-loading/progress';
 import { setCurrentLevel } from '@/lib/levels/current-level';
 import { fetchLevelIndex } from '@/lib/levels/loader';
-import { isPortalArmed } from '@/lib/levels/logic';
+import { groundLayers, isPortalArmed } from '@/lib/levels/logic';
 import { releasableTextureKeys } from '@/lib/textures/release';
 import { tilemapResourcesFor } from '@/lib/tilemaps/resources';
 import { useGameStore } from '@/store/game-store';
@@ -159,7 +159,11 @@ export class LoadScene extends Phaser.Scene {
             this.load.tilemapTiledJSON(tilemap.mapKey, tilemap.mapPath);
             this.load.image(tilemap.atlasKey, tilemap.atlasPath);
         } else {
-            this.load.image(`background:${this.id}`, this.level.background);
+            // One image, or one image per painted block when the world is
+            // wider than a single block — see `groundLayers`.
+            for (const layer of groundLayers(this.id, this.level)) {
+                this.load.image(layer.key, layer.path);
+            }
         }
 
         // Default player character — same key scheme in both modes; the
@@ -724,8 +728,10 @@ export class LoadScene extends Phaser.Scene {
     private createGround(tint?: number): void {
         const tilemap = this.level.tilemap;
         if (!tilemap) {
-            const image = this.add.image(0, 0, `background:${this.id}`).setOrigin(0, 0);
-            if (tint !== undefined) image.setTint(tint);
+            for (const layer of groundLayers(this.id, this.level)) {
+                const image = this.add.image(layer.x, layer.y, layer.key).setOrigin(0, 0);
+                if (tint !== undefined) image.setTint(tint);
+            }
             return;
         }
 

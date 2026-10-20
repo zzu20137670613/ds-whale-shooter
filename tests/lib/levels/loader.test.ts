@@ -37,6 +37,23 @@ airWalls: []
         expect(level.airWalls).toEqual([]);
     });
 
+    it('parses background blocks for a world wider than one image', () => {
+        const level = parseLevelYaml(
+            validYaml +
+                'backgroundBlocks:\n    - texture: assets/image/scenes/a.png\n      x: 5504\n      y: 3072\n',
+            'starry-library',
+        );
+        expect(level.backgroundBlocks).toEqual([
+            { texture: 'assets/image/scenes/a.png', x: 5504, y: 3072 },
+        ]);
+    });
+
+    it('rejects a background block without a texture', () => {
+        expect(() =>
+            parseLevelYaml(validYaml + 'backgroundBlocks:\n    - x: 0\n      y: 0\n', 't'),
+        ).toThrow(/texture/);
+    });
+
     it('parses polygon air walls of both kinds', () => {
         const yamlText = `
 title: test

@@ -26,8 +26,11 @@ monsters:
 dropSpawns: []
 materials: []
 teleporters:
-    - id: tavern-return
+    # The way back to sky city. The finale has no shortcut to the tavern: that
+    # is reached through the paired chain now, one step at a time.
+    - id: to-sky-city
       x: 1376
       'y': 768
-      targetScene: tavern
+      targetScene: gpt-sky-city
+      targetPortalId: to-atlantis
       radius: 60

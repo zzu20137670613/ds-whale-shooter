@@ -103,7 +103,9 @@ stitcher trims it back off (`scripts/stitch-upscaled.py`).
 ```
 prompt → plates/ → (cut 2×2, 18% overlap) → tiles/ → owner 2× upscale + watermark erase
        → stitch + normalise 5504×3072 → blocks/ → place 2×2 → frosted glass over the seams
-       → the level's background, one block = one room = one screen
+       → the level's background: all four blocks in one 11008×6144 level
+          (`backgroundBlocks`), so the camera crosses from room to room with no
+          load, no door and no portal in between
 ```
 
 `strips/` are the 40-px-wide strips the frosted-glass pass lifted out of each

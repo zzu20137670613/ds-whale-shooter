@@ -4,7 +4,7 @@
  * Pure level decisions shared by the scene glue and the data tests.
  */
 
-import type { Teleporter } from './types';
+import type { Level, Teleporter } from './types';
 
 /**
  * Is a teleporter usable yet?
@@ -21,4 +21,38 @@ export function isPortalArmed(
     monstersCleared: boolean,
 ): boolean {
     return spec.requiresClear === false || monstersCleared;
+}
+
+/** One image of the ground, positioned in level coordinates. */
+export interface GroundLayer {
+    /** Phaser texture key — namespaced per level, see LoadScene.preload. */
+    key: string;
+    /** Path under public/ to fetch. */
+    path: string;
+    x: number;
+    y: number;
+}
+
+/**
+ * The ground images a level draws, in draw order.
+ *
+ * A level whose world is wider than the art it was painted at lists one block
+ * per painted tile in `backgroundBlocks`; every texture upload then stays at
+ * the block size while `imageSize` still describes the whole world, so the
+ * camera, the world bounds and the walls all see one big level.
+ */
+export function groundLayers(
+    levelId: string,
+    level: Pick<Level, 'background' | 'backgroundBlocks'>,
+): GroundLayer[] {
+    const blocks = level.backgroundBlocks;
+    if (blocks && blocks.length > 0) {
+        return blocks.map((block, index) => ({
+            key: `background:${levelId}:${index}`,
+            path: block.texture,
+            x: block.x,
+            y: block.y,
+        }));
+    }
+    return [{ key: `background:${levelId}`, path: level.background, x: 0, y: 0 }];
 }

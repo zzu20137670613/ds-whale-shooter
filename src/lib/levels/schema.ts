@@ -196,6 +196,33 @@ export const TilemapSchema = z
     })
     .strict();
 
+/**
+ * One art block of a level whose world is wider than a single painted
+ * background: four 5504x3072 blocks side by side make an 11008x6144 world out
+ * of exactly the images the art was painted at. One 11008-wide texture would
+ * be 258 MiB resident and can exceed the driver's maximum texture size, which
+ * is the reason a big world is assembled from blocks instead.
+ *
+ * `background` stays required for the same reason as `tilemap` above — the
+ * editor panel and the YAML round-trip still write it — but LoadScene skips
+ * loading it when this list is present. The editor's wall canvas still draws
+ * `background` alone, so it shows the first block of such a level.
+ */
+export const BackgroundBlockSchema = z
+    .object({
+        /** PNG under public/, one painted block of the world. */
+        texture: z.string().min(1),
+        /** Top-left corner of this block in level coordinates. */
+        x: z.number(),
+        y: z.number(),
+    })
+    .strict()
+    .transform((v) => ({
+        ...v,
+        x: Math.round(v.x),
+        y: Math.round(v.y),
+    }));
+
 export const LevelSchema = z
     .object({
         title: z.string().min(1),
@@ -204,6 +231,7 @@ export const LevelSchema = z
         titleZh: z.string().min(1).optional(),
         background: z.string().min(1),
         tilemap: TilemapSchema.optional(),
+        backgroundBlocks: z.array(BackgroundBlockSchema).optional(),
         imageSize: z.string().regex(/^\d+x\d+$/, 'expected "WxH"'),
         prompt: z.string().optional(),
         music: z.string().min(1).optional(),
@@ -229,6 +257,7 @@ export const LevelSchema = z
             ...(v.titleZh !== undefined ? { titleZh: v.titleZh } : {}),
             background: v.background,
             ...(v.tilemap !== undefined ? { tilemap: v.tilemap } : {}),
+            ...(v.backgroundBlocks !== undefined ? { backgroundBlocks: v.backgroundBlocks } : {}),
             imageSize: { width: Number(w), height: Number(h) },
             airWalls: v.airWalls,
             ...(v.prompt !== undefined ? { prompt: v.prompt } : {}),

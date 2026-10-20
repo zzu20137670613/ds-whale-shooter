@@ -325,6 +325,6 @@ teleporters:
     - id: teleporter-msfmft58
       x: 1396
       'y': 1433
-      targetScene: starry-library-1-counter
+      targetScene: starry-library
       targetPortalId: to-beach
       radius: 60

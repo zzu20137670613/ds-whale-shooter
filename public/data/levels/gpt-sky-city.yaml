@@ -522,13 +522,17 @@ materials:
       mode: foreground
       depthOffset: 0
 teleporters:
-    - id: tavern-return
-      x: 2200
+    # Back to the library only. The tavern is two paired hops away now
+    # (library, then beach), so this level no longer jumps straight home.
+    - id: to-library
+      x: 2600
       'y': 800
-      targetScene: tavern
+      targetScene: starry-library
+      targetPortalId: to-sky-city
       radius: 60
     - id: to-atlantis
       x: 1406
       'y': 1428
       targetScene: dsh-atlantis
+      targetPortalId: to-sky-city
       radius: 60
