@@ -25,7 +25,13 @@ airWalls:
             - 440
           - - 652
             - 440
-    - id: wall-3
+    # wall-3 is split around the hidden level 1 doorway. The ornament at
+    # x 2614..2720, y 838..952 covers a real opening, so the player can walk into
+    # the black hole it leaves behind and stand where the portal is. wall-3c is
+    # the back of that alcove. A dynamic body ought to seal the opening until the
+    # ornament breaks — that belongs to the breakable feature, not to this file,
+    # so for now the doorway is walkable and the portal inside it is live.
+    - id: wall-3a
       kind: short
       points:
           - - 2556
@@ -33,9 +39,31 @@ airWalls:
           - - 2760
             - 440
           - - 2760
+            - 838
+          - - 2556
+            - 838
+    - id: wall-3b
+      kind: short
+      points:
+          - - 2556
+            - 952
+          - - 2760
+            - 952
+          - - 2760
             - 1560
           - - 2556
             - 1560
+    - id: wall-3c
+      kind: short
+      points:
+          - - 2680
+            - 838
+          - - 2760
+            - 838
+          - - 2760
+            - 952
+          - - 2680
+            - 952
     - id: wall-4
       kind: short
       points:
@@ -108,15 +136,14 @@ teleporters:
       targetScene: beach-holiday
       radius: 60
     # Hidden level 1 (sunlit-henge). The ornament at x 2614..2720, y 838..952 is
-    # meant to be shot open, after which a black hole covers it and this portal
-    # sits in the hole. Two things are not built yet: breakables, and a way to
-    # keep a portal dark until something reveals it — until then this portal is
-    # live and its magic circle is drawn at the full 180 px radius.
-    # The circle has to be this wide because the hole is inside wall-3 (x >= 2556)
-    # and teleporter.ts:450-463 triggers on distance from the *player centre*,
-    # which can get no closer than x 2526 — 147 px short of the hole.
+    # meant to be shot open; a black hole then covers it and this portal sits in
+    # the hole, with wall-3a/3b/3c forming the doorway around it. Two things are
+    # not built yet: breakables, and a way to keep a portal dark until something
+    # reveals it — until then the doorway is walkable and this portal is live.
+    # Radius 90 keeps the trigger inside the alcove: the player has to step into
+    # the hole rather than brush past the wall from the deck.
     - id: hidden-1-entrance
       x: 2667
       'y': 895
       targetScene: sunlit-henge
-      radius: 180
+      radius: 90
