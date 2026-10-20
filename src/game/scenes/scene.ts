@@ -54,6 +54,7 @@ import { EventBus } from '@/lib/events/bus';
 import { setBootProgress } from '@/lib/boot-loading/progress';
 import { setCurrentLevel } from '@/lib/levels/current-level';
 import { fetchLevelIndex } from '@/lib/levels/loader';
+import { isPortalArmed } from '@/lib/levels/logic';
 import { releasableTextureKeys } from '@/lib/textures/release';
 import { tilemapResourcesFor } from '@/lib/tilemaps/resources';
 import { useGameStore } from '@/store/game-store';
@@ -111,7 +112,7 @@ export interface SceneAssets {
  * editor's drawing tools live in the editor panel (Konva overlay), not
  * here. Keeps the scene focused on what gameplay needs.
  */
-import { TeleporterController } from '@/game/scenes/teleporter';
+import { consumeTeleportArrival, TeleporterController } from '@/game/scenes/teleporter';
 import { TavernController } from '@/game/scenes/tavern-controller';
 import { loadWeaponAssets } from '@/game/weapons/weapon';
 
@@ -269,6 +270,9 @@ export class LoadScene extends Phaser.Scene {
             {
                 placeholder: this.level.tavern === true,
                 weaponsById: this.assets.weaponsById,
+                // 1-to-1 pairing: arriving through a portal puts the player
+                // next to the partner portal instead of the level's own spawn.
+                spawnOverride: consumeTeleportArrival(this.id) ?? undefined,
             },
         );
 
@@ -531,13 +535,14 @@ export class LoadScene extends Phaser.Scene {
         // Wire TeleporterController (code-drawn magic circle & scene transition).
         // Position callback reads `this.character` lazily so a tavern
         // character swap on confirm picks up the new body automatically.
-        // Tavern exit is always unblocked; other scenes block on monster clear.
+        // Tavern exit is always unblocked; every other portal is gated on the
+        // level's monsters unless it opts out with `requiresClear: false`.
         this.teleporterSystem = new TeleporterController(
             this,
             this.level.teleporters,
             this.id,
             () => (this.character?.body?.position ? this.character.body.position : null),
-            () => (this.level.tavern ? true : this.monsterSystem.isAllCleared()),
+            (spec) => isPortalArmed(spec, this.monsterSystem.isAllCleared()),
         );
 
         this.events.on('update', (_time: number, delta: number) => {
@@ -575,7 +580,9 @@ export class LoadScene extends Phaser.Scene {
         const payload = { id: this.id, level: this.level };
         setCurrentLevel(payload);
         useGameStore.getState().setCurrentLevelId(this.id);
-        useGameStore.getState().setLevelTitle(pickText(this.level.title, this.level.titleZh) || this.id);
+        useGameStore
+            .getState()
+            .setLevelTitle(pickText(this.level.title, this.level.titleZh) || this.id);
         const savedElapsedMs = useGameStore.getState().levelElapsedMs || 0;
         this.levelStartAt = this.time.now - savedElapsedMs;
         this.lastSavePushAt = this.time.now;
@@ -622,6 +629,9 @@ export class LoadScene extends Phaser.Scene {
                 this.character = loadCharacter(this, this.level, pickedSpec, this.assets.weapons, {
                     weaponsById: this.assets.weaponsById,
                     spriteScaleMultiplier: TAVERN_ACTOR_SCALE,
+                    // Walking back into the tavern through its paired portal
+                    // keeps the character and lands by that portal.
+                    spawnOverride: consumeTeleportArrival(this.id) ?? undefined,
                 });
                 this.monsterSystem.setPlayerBody(this.character.body);
                 this.monsterSystem.setPlayerLuck(pickedSpec.luck ?? 1);

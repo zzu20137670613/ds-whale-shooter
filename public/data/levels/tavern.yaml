@@ -145,16 +145,24 @@ teleporters:
       x: 1355
       'y': 1425
       targetScene: beach-holiday
+        # The one tavern portal that must never be gated: the player has to
+      # be able to leave. Every other portal here defaults to gated, which
+      # is what makes the ornament's hole and its portal appear together.
+      targetPortalId: tavern-return
+      requiresClear: false
       radius: 60
-    # Hidden level 1 (sunlit-henge). The ornament at x 2614..2720, y 838..952 is
-    # meant to be shot open; a black hole then covers it and this portal sits in
-    # the hole, with wall-3a/3b/3c forming the doorway around it. Two things are
-    # not built yet: breakables, and a way to keep a portal dark until something
-    # reveals it — until then the doorway is walkable and this portal is live.
-    # Radius 90 keeps the trigger inside the alcove: the player has to step into
-    # the hole rather than brush past the wall from the deck.
+    # Hidden level 1 (sunlit-henge). The wall ornament at x 2614..2720, y 838..952
+    # is a prop monster: shoot it and its sprite vanishes, revealing the black
+    # hole baked into tavern.png. This portal stays dark until then, because the
+    # tavern's only monster is that ornament and the portal is gated on the
+    # monster clear, so the hole and the portal appear together. wall-3a/3b/3c
+    # form the doorway around it; radius 90 keeps the trigger inside the alcove,
+    # so the player has to step into the hole rather than brush past the wall
+    # from the deck.
     - id: hidden-1-entrance
       x: 2667
       'y': 895
       targetScene: sunlit-henge
+      targetPortalId: teleporter-msfpy6pw
+      requiresClear: true
       radius: 90

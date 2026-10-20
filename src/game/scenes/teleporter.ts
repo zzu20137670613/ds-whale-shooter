@@ -18,9 +18,9 @@ import * as Phaser from 'phaser';
 import { portalsContaining } from '@/game/scenes/logic';
 import { SFX_EVENT } from '@/lib/constants';
 import { EventBus } from '@/lib/events/bus';
-import { fetchLevelIndex } from '@/lib/levels/loader';
+import { fetchLevel, fetchLevelIndex } from '@/lib/levels/loader';
 import type { Teleporter } from '@/lib/levels/types';
-import { resolveAndRestart, restartAtTavern } from '@/lib/phaser-game';
+import { resolveAndRestart } from '@/lib/phaser-game';
 import { useGameStore } from '@/store/game-store';
 
 interface SingleTeleporterView {
@@ -57,6 +57,21 @@ interface SingleTeleporterView {
  * practice) but the value is intentionally not on the game store — it
  * would persist across page reloads and block teleporters forever.
  */
+/**
+ * Paired-arrival handoff. Module-level, like the cooldown id below, so that a
+ * page reload can never leave a stale spawn override behind: the value is set
+ * just before the scene swap and read once by the arriving scene.
+ */
+let pendingArrival: { sceneId: string; x: number; y: number } | null = null;
+
+/** Read and clear the arrival point for `sceneId`, if one was handed over. */
+export function consumeTeleportArrival(sceneId: string): { x: number; y: number } | null {
+    if (!pendingArrival || pendingArrival.sceneId !== sceneId) return null;
+    const arrival = { x: pendingArrival.x, y: pendingArrival.y };
+    pendingArrival = null;
+    return arrival;
+}
+
 let lastTriggeredFromId: string | null = null;
 export function setLastTriggeredFromId(id: string | null): void {
     lastTriggeredFromId = id;
@@ -92,16 +107,15 @@ export class TeleporterController {
         teleporterSpecs: Teleporter[] | undefined,
         private readonly currentSceneId: string,
         private readonly getPlayerPos: () => { x: number; y: number } | null,
-        private readonly isClearedGetter: () => boolean = () => true,
+        private readonly isClearedGetter: (spec: Teleporter) => boolean = () => true,
     ) {
         if (lastTriggeredFromId !== null) {
             this.cooldownIds.add(lastTriggeredFromId);
             lastTriggeredFromId = null;
         }
-        const initiallyCleared = this.isClearedGetter();
         if (teleporterSpecs && teleporterSpecs.length > 0) {
             for (const spec of teleporterSpecs) {
-                this.createTeleporterView(spec, initiallyCleared);
+                this.createTeleporterView(spec, this.isClearedGetter(spec));
                 // Disabled flag is set async after the index resolves —
                 // until then the view defaults to enabled (false), which
                 // matches the no-end-of-list case and is what we want
@@ -374,7 +388,6 @@ export class TeleporterController {
     public update(deltaMs: number): void {
         const now = this.scene.time.now;
         const playerPos = this.getPlayerPos();
-        const cleared = this.isClearedGetter();
 
         // First frame the player body exists: any portal the spawn already sits
         // inside is held until the player walks out of its radius.
@@ -388,7 +401,7 @@ export class TeleporterController {
 
         for (const view of this.teleporters) {
             // Trigger fade-in animation once level is cleared
-            if (cleared && !view.hasAppeared && !this.activeEditor) {
+            if (this.isClearedGetter(view.spec) && !view.hasAppeared && !this.activeEditor) {
                 view.hasAppeared = true;
                 if (view.particles) {
                     view.particles.start();
@@ -612,10 +625,12 @@ export class TeleporterController {
         this.isTransitioning = true;
 
         // Handoff BEFORE the scene swap — the next TeleporterController's
-        // constructor reads this and adds the id to its cooldown set.
-        // The id is the *source* teleporter's id, not the destination's.
-        if (spec.id) {
-            setLastTriggeredFromId(spec.id);
+        // constructor reads this and adds the id to its cooldown set. With a
+        // 1-to-1 pair the player arrives ON the partner portal, so the id that
+        // has to go on cooldown is the destination's, not the source's.
+        const arrivalPortalId = spec.targetPortalId ?? spec.id;
+        if (arrivalPortalId) {
+            setLastTriggeredFromId(arrivalPortalId);
         }
 
         let nextSceneId = spec.targetScene;
@@ -640,6 +655,20 @@ export class TeleporterController {
             nextSceneId = this.currentSceneId; // Fallback to current scene if none found
         }
 
+        // Paired arrival: land next to the partner portal instead of the target
+        // level's characterSpawn, so a 1-to-1 link comes out where it went in.
+        if (spec.targetPortalId) {
+            try {
+                const targetLevel = await fetchLevel(nextSceneId);
+                const partner = targetLevel.teleporters?.find((t) => t.id === spec.targetPortalId);
+                if (partner) {
+                    pendingArrival = { sceneId: nextSceneId, x: partner.x, y: partner.y };
+                }
+            } catch (e) {
+                console.error('Failed to resolve the paired teleporter:', e);
+            }
+        }
+
         // Update persistent level store to next scene ID and reset level entity snapshots
         useGameStore.getState().setCurrentLevelId(nextSceneId);
         useGameStore
@@ -657,15 +686,12 @@ export class TeleporterController {
         this.scene.cameras.main.fadeOut(400, 0, 0, 0);
 
         this.scene.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
-            // Teleporter into the tavern = full reset (clears save data,
-            // returns selectedCharacterId to null so the NPC phase-1
-            // selection screen appears). Anywhere else just resolves
-            // and swaps scenes, preserving picked-up weapons + HP.
-            if (nextSceneId === 'tavern') {
-                void restartAtTavern();
-            } else {
-                void resolveAndRestart(nextSceneId!);
-            }
+            // Entering the tavern through a paired portal keeps the chosen
+            // character and simply walks in (the owner's rule). The old
+            // full-reset branch existed only because every return portal was a
+            // "back to the character select" shortcut, which 1-to-1 pairing
+            // replaces with a plain paired walk.
+            void resolveAndRestart(nextSceneId!);
         });
     }
 

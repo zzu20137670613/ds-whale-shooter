@@ -297,10 +297,11 @@ monsters: []
 dropSpawns: []
 materials: []
 teleporters:
-    - id: tavern-return
+    - id: to-beach
       x: 2800
       'y': 1500
-      targetScene: tavern
+      targetScene: beach-holiday
+      targetPortalId: teleporter-msfmft58
       radius: 60
     - id: to-maze
       x: 5344

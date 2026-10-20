@@ -162,6 +162,13 @@ export const TeleporterSchema = z
         x: z.number(),
         y: z.number(),
         targetScene: z.string().optional(),
+        /** 1-to-1 pairing: the id of the portal in `targetScene` that is this
+         *  portal's only way back. Both sides of a pair name each other. */
+        targetPortalId: z.string().min(1).optional(),
+        /** Whether this portal stays dark until the level's monsters are
+         *  cleared. Omitted means gated (the safe default); an always-usable
+         *  portal such as the tavern exit says `false` explicitly. */
+        requiresClear: z.boolean().optional(),
         radius: z.number().positive().default(40),
     })
     .strict()

@@ -320,9 +320,11 @@ teleporters:
       x: 1350
       'y': 400
       targetScene: tavern
+      targetPortalId: tavern-exit
       radius: 60
     - id: teleporter-msfmft58
       x: 1396
       'y': 1433
       targetScene: starry-library-1-counter
+      targetPortalId: to-beach
       radius: 60

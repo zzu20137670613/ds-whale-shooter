@@ -200,11 +200,54 @@ describe('public/data integrity', () => {
             }
         }
 
-        expect(badNpc, `npcSpawn characterIds with no character YAML:\n${badNpc.join('\n')}`).toEqual([]);
         expect(
-            badWeapon,
-            `weapon ids with no weapon YAML:\n${badWeapon.join('\n')}`,
+            badNpc,
+            `npcSpawn characterIds with no character YAML:\n${badNpc.join('\n')}`,
         ).toEqual([]);
+        expect(badWeapon, `weapon ids with no weapon YAML:\n${badWeapon.join('\n')}`).toEqual([]);
+    });
+
+    it('teleporter pairs name each other', () => {
+        // A 1-to-1 pair is only a pair if both sides agree. A one-sided link
+        // reads as working while quietly sending the player to the target
+        // level's spawn point instead of the partner portal, and nothing else
+        // in the suite looks at teleporters at all.
+        const levels = new Map(
+            parseLevelIndex(read(join(DATA, 'levels', 'index.yaml'))).levels.map((id) => [
+                id,
+                parseLevelYaml(read(join(DATA, 'levels', `${id}.yaml`)), id),
+            ]),
+        );
+        const bad: string[] = [];
+
+        for (const [id, level] of levels) {
+            for (const tp of level.teleporters ?? []) {
+                if (!tp.targetPortalId) continue;
+                const partner = tp.targetScene
+                    ? levels
+                          .get(tp.targetScene)
+                          ?.teleporters?.find((t) => t.id === tp.targetPortalId)
+                    : undefined;
+                if (!partner) {
+                    bad.push(
+                        `levels/${id}: ${tp.id} -> ${tp.targetScene ?? '(next in index)'}.${tp.targetPortalId} names no portal`,
+                    );
+                    continue;
+                }
+                if (partner.targetPortalId !== tp.id) {
+                    bad.push(
+                        `levels/${id}: ${tp.id} -> ${tp.targetPortalId}, but ${partner.id} points at ${partner.targetPortalId ?? '(nothing)'}`,
+                    );
+                }
+                if (partner.targetScene !== id) {
+                    bad.push(
+                        `levels/${id}: ${tp.id} <-> ${partner.id} disagree on scenes (${partner.targetScene} vs ${id})`,
+                    );
+                }
+            }
+        }
+
+        expect(bad, `one-sided teleporter pairs:\n${bad.join('\n')}`).toEqual([]);
     });
 
     it('levels: no spawn or prop sits inside an air wall', () => {
@@ -270,10 +313,7 @@ describe('public/data integrity', () => {
         // other. Arithmetic, not taste: adjacent seats must be at least half of
         // each actor's drawn width apart.
         const SHEET_CELL = 128; // 512px sheet / 4 columns, every roster sheet
-        const tavern = parseLevelYaml(
-            read(join(DATA, 'levels', 'tavern.yaml')),
-            'tavern',
-        );
+        const tavern = parseLevelYaml(read(join(DATA, 'levels', 'tavern.yaml')), 'tavern');
         const seats = tavern.npcSpawns ?? [];
         expect(seats.length).toBeGreaterThan(1);
 
@@ -410,7 +450,10 @@ describe('public/data integrity', () => {
             );
         }
         for (const id of parseMonsterIndex(read(join(DATA, 'monsters', 'index.yaml'))).monsters) {
-            check(`monsters/${id}`, parseMonsterYaml(read(join(DATA, 'monsters', `${id}.yaml`)), id));
+            check(
+                `monsters/${id}`,
+                parseMonsterYaml(read(join(DATA, 'monsters', `${id}.yaml`)), id),
+            );
         }
         for (const id of parseDropIndex(read(join(DATA, 'drops', 'index.yaml'))).drops) {
             check(`drops/${id}`, parseDropYaml(read(join(DATA, 'drops', `${id}.yaml`)), id));
