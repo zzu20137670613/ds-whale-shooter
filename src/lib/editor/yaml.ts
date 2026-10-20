@@ -31,6 +31,13 @@ export function serializeLevelYaml(level: Level): string {
         prompt: level.prompt,
         airWalls: level.airWalls,
     };
+    // A level whose ground is not one painted image has to keep the field that
+    // says so: dropping these would leave the merged library drawing only its
+    // first block over an 11008x6144 world — art missing, no error anywhere.
+    if (level.tilemap !== undefined) payload.tilemap = level.tilemap;
+    if (level.backgroundBlocks !== undefined) {
+        payload.backgroundBlocks = level.backgroundBlocks;
+    }
     if (level.character !== undefined) payload.character = level.character;
     // Localized title: carry it through, or an editor save would silently
     // drop the Chinese title the same way the fields below used to be.

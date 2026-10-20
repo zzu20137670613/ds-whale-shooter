@@ -18,6 +18,25 @@ describe('serializeLevelYaml', () => {
         expect(parseLevelYaml(text, 'sacred-forest-sanctuary')).toEqual(minimal);
     });
 
+    it('round-trips backgroundBlocks (regression: a save dropped the world)', () => {
+        const level: Level = {
+            ...minimal,
+            backgroundBlocks: [
+                { texture: 'assets/image/scenes/a.png', x: 0, y: 0 },
+                { texture: 'assets/image/scenes/b.png', x: 5504, y: 0 },
+            ],
+        };
+        expect(parseLevelYaml(serializeLevelYaml(level), 'starry-library')).toEqual(level);
+    });
+
+    it('round-trips tilemap (regression: a tiled level lost its map)', () => {
+        const level: Level = {
+            ...minimal,
+            tilemap: { map: 'assets/maps/x.json', tileset: 'assets/image/scenes/atlas.png' },
+        };
+        expect(parseLevelYaml(serializeLevelYaml(level), 'tiled')).toEqual(level);
+    });
+
     it('round-trips with polygon air walls', () => {
         const level: Level = {
             ...minimal,
