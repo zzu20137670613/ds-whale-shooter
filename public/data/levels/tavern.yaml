@@ -107,3 +107,16 @@ teleporters:
       'y': 1425
       targetScene: beach-holiday
       radius: 60
+    # Hidden level 1 (sunlit-henge). The ornament at x 2614..2720, y 838..952 is
+    # meant to be shot open, after which a black hole covers it and this portal
+    # sits in the hole. Two things are not built yet: breakables, and a way to
+    # keep a portal dark until something reveals it — until then this portal is
+    # live and its magic circle is drawn at the full 180 px radius.
+    # The circle has to be this wide because the hole is inside wall-3 (x >= 2556)
+    # and teleporter.ts:450-463 triggers on distance from the *player centre*,
+    # which can get no closer than x 2526 — 147 px short of the hole.
+    - id: hidden-1-entrance
+      x: 2667
+      'y': 895
+      targetScene: sunlit-henge
+      radius: 180
