@@ -138,7 +138,7 @@ npcSpawns:
 monsters:
     - type: hollow-emblem
       x: 2642
-      'y': 912
+      'y': 896
 materials: []
 teleporters:
     - id: tavern-exit

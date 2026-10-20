@@ -228,7 +228,9 @@ export class Monster {
         });
 
         // Hitbox Sensor (Red Box): full sprite dimensions for bullet hits & attacks
-        const hitCenterY = y - hh / 2;
+        // A prop's art *is* what the player aims at, so its hitbox sits centred
+        // on the body instead of one frame-height above it.
+        const hitCenterY = spec.prop ? y : y - hh / 2;
         this.hitboxBody = scene.matter.add.rectangle(x, hitCenterY, hw, hh, {
             label: 'monster-hitbox',
             isSensor: true,
@@ -241,7 +243,12 @@ export class Monster {
         (this.hitboxBody as any).monsterRef = this;
 
         const matter = (Phaser as any).Physics.Matter.Matter;
-        matter.Body.setInertia(this.body, Infinity);
+        // A prop is shootable scenery, not a creature: a static body ignores
+        // both the AI's setVelocity and knockback impulses, so nothing can
+        // push it out of place.
+        if (spec.prop) {
+            matter.Body.setStatic(this.body, true);
+        }
 
         // Foot shadow based on hit box size
         this.shadow = scene.add.ellipse(
@@ -253,8 +260,19 @@ export class Monster {
             0.3,
         );
 
+        // A prop has no foot shadow (it would land on top of the black hole).
+        if (spec.prop) {
+            this.shadow.setVisible(false);
+        }
+
         // Status HUD above monster hitbox
         this.statusHud = new StatusHud(scene, this.body);
+
+        // A prop shows no name, no HP bar and no floating damage numbers —
+        // hiding the whole HUD container covers all three at once.
+        if (spec.prop) {
+            this.statusHud.setVisible(false);
+        }
 
         // Weapon visual attachment — mirrors how the player carries weapons.
         // Always created so melee (swing) and ranged (recoil) share the same
@@ -696,7 +714,9 @@ export class MonsterController {
             // chase ↔ attack every frame and the idle/move animation
             // strobes with it.
             const prevAiState: 'chase' | 'attack' = prevState === 'attack' ? 'attack' : 'chase';
-            m.state = decideAIState(dist, m.weapon.range, prevAiState);
+            // A prop stays idle: no chase, no attack, no aggro growl, and the
+            // stuck detector (which pathfinds every 60ms) never fires.
+            m.state = m.spec.prop ? 'idle' : decideAIState(dist, m.weapon.range, prevAiState);
             // One-shot aggro growl on the first idle → chase transition.
             if (!m.hasAggroed && prevState === 'idle' && m.state === 'chase') {
                 m.hasAggroed = true;
@@ -933,7 +953,9 @@ export class MonsterController {
                 }
 
                 // Flip sprite horizontally based on move direction / facing player
-                if (dist > 1) {
+                // A prop never turns to face the player — its art is anchored to
+                // the scenery, so flipping it would break the alignment.
+                if (!m.spec.prop && dist > 1) {
                     m.sprite.setFlipX(dirToPlayer.x < 0);
                 }
             } else {

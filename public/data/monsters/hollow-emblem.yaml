@@ -2,6 +2,7 @@ name: Hollow Emblem
 nameZh: "空心徽记"
 hp: 1
 moveSpeed: 0.01
+prop: true
 body:
     halfW: 24
     halfH: 24

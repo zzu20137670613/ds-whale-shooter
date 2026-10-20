@@ -103,6 +103,12 @@ export const MonsterSpecSchema = z
         money: z.number().gte(0).default(0),
         moveSpeed: z.number().gt(0),
         body: BodySchema,
+        /** Shootable scenery rather than a creature: the controller keeps it
+         *  static, idle and HUD-less (no name, HP bar or damage numbers), and
+         *  it never flips to face the player. Used by the tavern wall ornament
+         *  that conceals the hidden level 1 entrance. Optional, so every
+         *  existing monster spec keeps its creature behaviour. */
+        prop: z.boolean().optional(),
         weaponId: z.string().min(1),
         drops: z.array(DropRefSchema).default([]),
         /** SFX ids to play on hit / death / aggro. Each field optional;

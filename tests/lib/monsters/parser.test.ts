@@ -70,6 +70,28 @@ weaponId: drone-claws
     });
 });
 
+describe('parseMonsterYaml — prop', () => {
+    const creatureYaml = `
+name: Drone
+hp: 30
+moveSpeed: 4
+weaponId: drone-claws
+`;
+
+    it('leaves prop undefined for a normal monster', () => {
+        expect(parseMonsterYaml(creatureYaml, 'drone').prop).toBeUndefined();
+    });
+
+    it('accepts prop: true, the shootable-scenery flag', () => {
+        const m = parseMonsterYaml(`${creatureYaml}prop: true\n`, 'hollow-emblem');
+        expect(m.prop).toBe(true);
+    });
+
+    it('rejects a non-boolean prop', () => {
+        expect(() => parseMonsterYaml(`${creatureYaml}prop: 3\n`, 'drone')).toThrow(/prop/);
+    });
+});
+
 describe('parseMonsterYaml — sfx', () => {
     it('accepts optional sfx block', () => {
         const m = parseMonsterYaml(
