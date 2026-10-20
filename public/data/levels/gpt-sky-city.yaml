@@ -1,6 +1,10 @@
-title: Sacred Forest Sanctuary
-titleZh: "圣林庇护所"
-background: assets/image/scenes/sacred-forest-sanctuary.png
+# PLACEHOLDER: this is GPT’s sky city, but its 4x4 painted map does not
+# exist yet, so the level still runs on the sacred forest sanctuary art.
+# When the big map lands, replace gpt-sky-city.png (plus the walls, spawns
+# and materials) — the file name already matches, nothing else has to move.
+title: GPT's Sky City
+titleZh: "GPT的天空之城"
+background: assets/image/scenes/gpt-sky-city.png
 imageSize: 2752x1536
 airWalls:
     - id: wall-1
@@ -523,8 +527,8 @@ teleporters:
       'y': 800
       targetScene: tavern
       radius: 60
-    - id: teleporter-msckzhf5
+    - id: to-atlantis
       x: 1406
       'y': 1428
-      targetScene: beach-holiday
+      targetScene: dsh-atlantis
       radius: 60

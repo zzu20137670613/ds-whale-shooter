@@ -1,0 +1,33 @@
+# PLACEHOLDER: the final level. Its 4x4 painted map does not exist yet, so it
+# runs on the orphan forest-path scene art picked up as a stand-in (the level
+# that used to load that image was deleted long ago). Walls are empty on
+# purpose — the real art will bring its own collision, drawn the same way as
+# the starry library's rooms. The three monsters only exist so that walking in
+# does not count as clearing the final level on the spot.
+title: DSH's Atlantis
+titleZh: 'DSH的亚特兰蒂斯'
+background: assets/image/scenes/dsh-atlantis.png
+imageSize: 2752x1536
+airWalls: []
+characterSpawn:
+    x: 1376
+    'y': 768
+    facing: right
+monsters:
+    - type: drone
+      x: 900
+      'y': 600
+    - type: drone
+      x: 1850
+      'y': 700
+    - type: gunner
+      x: 1300
+      'y': 1100
+dropSpawns: []
+materials: []
+teleporters:
+    - id: tavern-return
+      x: 1376
+      'y': 768
+      targetScene: tavern
+      radius: 60

@@ -159,10 +159,10 @@ teleporters:
       'y': 1536
       targetScene: tavern
       radius: 60
-    - id: to-henge
+    - id: to-sky-city
       x: 2800
       'y': 256
-      targetScene: sunlit-henge
+      targetScene: gpt-sky-city
       radius: 180
     - id: pool-warp
       x: 597
