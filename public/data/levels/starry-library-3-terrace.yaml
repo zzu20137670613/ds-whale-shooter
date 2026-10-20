@@ -1,0 +1,210 @@
+title: Starry Library - Marble Terrace
+titleZh: 'Claude的星空图书馆·星空浮台'
+background: assets/image/scenes/starry-library-3-terrace.png
+imageSize: 5504x3072
+airWalls:
+    - id: wall-br-1
+      kind: tall
+      points:
+          - - 5024
+            - 0
+          - - 5344
+            - 0
+          - - 5344
+            - 1280
+          - - 5024
+            - 1280
+    - id: wall-br-2
+      kind: tall
+      points:
+          - - 5344
+            - 192
+          - - 5504
+            - 192
+          - - 5504
+            - 2784
+          - - 5344
+            - 2784
+    - id: wall-br-3
+      kind: tall
+      points:
+          - - 5184
+            - 1280
+          - - 5344
+            - 1280
+          - - 5344
+            - 2304
+          - - 5184
+            - 2304
+    - id: wall-br-4
+      kind: tall
+      points:
+          - - 4992
+            - 0
+          - - 5024
+            - 0
+          - - 5024
+            - 832
+          - - 4992
+            - 832
+    - id: wall-br-5
+      kind: tall
+      points:
+          - - 4896
+            - 0
+          - - 4992
+            - 0
+          - - 4992
+            - 352
+          - - 4896
+            - 352
+    - id: wall-br-6
+      kind: tall
+      points:
+          - - 5088
+            - 1280
+          - - 5184
+            - 1280
+          - - 5184
+            - 1664
+          - - 5088
+            - 1664
+    - id: wall-br-7
+      kind: tall
+      points:
+          - - 5280
+            - 2304
+          - - 5344
+            - 2304
+          - - 5344
+            - 2656
+          - - 5280
+            - 2656
+    - id: wall-br-8
+      kind: tall
+      points:
+          - - 4928
+            - 352
+          - - 4992
+            - 352
+          - - 4992
+            - 480
+          - - 4928
+            - 480
+    - id: wall-br-9
+      kind: tall
+      points:
+          - - 5152
+            - 1664
+          - - 5184
+            - 1664
+          - - 5184
+            - 1920
+          - - 5152
+            - 1920
+    - id: wall-br-10
+      kind: tall
+      points:
+          - - 5216
+            - 2304
+          - - 5280
+            - 2304
+          - - 5280
+            - 2432
+          - - 5216
+            - 2432
+    - id: wall-br-11
+      kind: tall
+      points:
+          - - 2528
+            - 1280
+          - - 3040
+            - 1280
+          - - 3040
+            - 1760
+          - - 2528
+            - 1760
+    - id: wall-br-12
+      kind: tall
+      points:
+          - - 3040
+            - 1376
+          - - 3136
+            - 1376
+          - - 3136
+            - 1664
+          - - 3040
+            - 1664
+    - id: wall-br-13
+      kind: tall
+      points:
+          - - 2624
+            - 1216
+          - - 2976
+            - 1216
+          - - 2976
+            - 1280
+          - - 2624
+            - 1280
+    - id: wall-br-14
+      kind: tall
+      points:
+          - - 2624
+            - 1760
+          - - 2976
+            - 1760
+          - - 2976
+            - 1824
+          - - 2624
+            - 1824
+    - id: wall-br-15
+      kind: tall
+      points:
+          - - 2464
+            - 1376
+          - - 2528
+            - 1376
+          - - 2528
+            - 1664
+          - - 2464
+            - 1664
+    - id: wall-br-16
+      kind: tall
+      points:
+          - - 2688
+            - 1824
+          - - 2912
+            - 1824
+          - - 2912
+            - 1856
+          - - 2688
+            - 1856
+    - id: wall-br-17
+      kind: tall
+      points:
+          - - 2688
+            - 1184
+          - - 2880
+            - 1184
+          - - 2880
+            - 1216
+          - - 2688
+            - 1216
+characterSpawn:
+    x: 2752
+    'y': 128
+    facing: left
+monsters: []
+dropSpawns: []
+materials: []
+teleporters:
+    - id: tavern-return
+      x: 2752
+      'y': 128
+      targetScene: tavern
+      radius: 60
+    - id: to-scroll
+      x: 160
+      'y': 1536
+      targetScene: starry-library-4-scroll
+      radius: 180
