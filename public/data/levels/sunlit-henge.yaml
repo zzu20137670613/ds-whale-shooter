@@ -1,3 +1,8 @@
+# HIDDEN LEVEL 1. Deliberately off the portal chain: its entrance is meant to be
+# a breakable ornament on the seaside pavilion deck, and the owner has marked the
+# spot he wants (see whale-shooter/art-maps/tavern-hidden-entry/). Nothing in the
+# engine can be broken yet, so until that feature lands this level is reachable
+# only via ?scene=sunlit-henge or the editor.
 title: Sunlit Henge
 titleZh: "日耀石环"
 background: assets/image/scenes/sunlit-henge.png
