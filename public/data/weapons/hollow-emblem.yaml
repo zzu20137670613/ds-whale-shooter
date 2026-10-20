@@ -1,0 +1,12 @@
+name: Hollow Emblem
+nameZh: "空心徽记"
+damage: 1
+cooldownMs: 60000
+range: 1
+projectile:
+    speed: 1
+    visual:
+        radius: 1
+        width: 1
+        height: 1
+        color: 0

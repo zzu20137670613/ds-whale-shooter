@@ -128,6 +128,17 @@ npcSpawns:
     - characterId: deepseek
       x: 2360
       'y': 1180
+# The wall ornament is a monster, not a breakable material: it carries the sprite cut
+# from the original art, so killing it makes the sprite vanish and the black cover
+# baked into tavern.png appear. Its weapon is ranged with range 1, which keeps it from
+# ever entering the attack state and exempts it from contact damage. While the "dummy
+# prop" flag does not exist yet this thing still shows an HP bar, floats damage numbers
+# and creeps toward the player at moveSpeed, and the engine mirrors its sprite by
+# facing — the sprite art is pre-mirrored to compensate.
+monsters:
+    - type: hollow-emblem
+      x: 2642
+      'y': 912
 materials: []
 teleporters:
     - id: tavern-exit

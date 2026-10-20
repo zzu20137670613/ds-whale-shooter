@@ -1,0 +1,14 @@
+name: Hollow Emblem
+nameZh: "空心徽记"
+hp: 1
+moveSpeed: 0.01
+body:
+    halfW: 24
+    halfH: 24
+weaponId: hollow-emblem
+sprite:
+    texture: assets/image/monsters/hollow-emblem.png
+    grid: { rows: 1, cols: 1 }
+    scale: 1.0
+    offset: { left: 0, bottom: 0 }
+drops: []

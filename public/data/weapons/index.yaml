@@ -14,6 +14,7 @@ weapons:
     - branch-sweep
     - bramble-knuckles
     - thorn-bolt
+    - hollow-emblem    # the tavern ornament: ranged at range 1 so it never attacks
     # Five AI girls' signature kit. Every character starts with exactly one
     # melee and one ranged weapon, melee in slot 1 (both guarded by
     # tests/data-integrity.test.ts); the melee column is the roster's close
