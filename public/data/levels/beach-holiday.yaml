@@ -324,5 +324,5 @@ teleporters:
     - id: teleporter-msfmft58
       x: 1396
       'y': 1433
-      targetScene: sunlit-henge
+      targetScene: starry-library-1-counter
       radius: 60
