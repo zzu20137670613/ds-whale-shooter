@@ -1,24 +1,24 @@
-# 块 C · 精简版（2000 字符内）
+# 块 C · 精简版（2000 字符内，留足余量）
 
-> 重出一张 C。上次的问题：地面够但整体偏暗（155，A/B 是 187/198）——所以加了亮度条款。
-> 不要台阶：C 的底边是接 D 的接缝，硬边台阶会被毛玻璃糊掉；石阶的戏份在 B 那块。
+> 重出一张 C。上次问题：地面够但整体偏暗（155，A/B 是 187/198）——已加亮度条款。
+> 不要台阶：C 的底边是接 D 的接缝，硬边台阶会被毛玻璃糊掉；石阶戏份在 B 那块。
 > 接邻块：左边接 B（云门石台），下边接 D（王座）——这两条边做渐变；
 > 上边屋脊带、右边矮栏都是地图外缘。
 
 ```
-Anime-style 2D game art, top-down orthographic plan view: no horizon, no sky band, no side faces, nothing in elevation. Playable combat field, not an illustration. Paper lies flat, never upright. Matte painted, soft cel shading.
+Anime-style 2D game art, top-down orthographic plan view: no horizon, no sky band, no side faces, no elevation. Playable combat field, not an illustration. Paper lies flat, never upright. Matte painted, soft cel shading.
 
-OCCUPANCY: >=65% of frame is clear slate floor; open book <=20% of frame, <=40% of frame width, centred; roof tile band along the TOP edge <=10% of frame height; four small round pillar drums ~4% of frame width near the corners; cloud only within the outer 8%; nothing else stands on the floor.
+OCCUPANCY: >=65% clear slate floor; open book <=20% of frame and <=40% of its width, centred; roof tile band along TOP edge <=10% of height; four small round pillar drums ~4% of width near the corners; cloud only within outer 8%; nothing else stands on it.
 
 BRIGHTNESS: light and airy like a bright stone terrace; do not let the floor fall to mid grey.
 
 Palette: #F4F8FC cloud white, #B9B6AE slate, #F2E9D2 paper cream, #E0C98F pale gold, #8E8A7E paper shadow, #C3D2E2 cold grey.
 
-Subject: an open-air book pavilion terrace, mostly empty slate paving in neat courses. A thin roof tile band along the TOP edge, eave shadow under it. Four small round stone pillar drums near the corners, short shadows. Loose pages hang in the air, flat, casting soft grey shadows on the paving; they do not block the floor. Centre: one open book lying flat, cream pages with pale gold edging and a dark spine, rows of abstract carved glyph marks on the left page (never legible characters). Three torn pages near the bottom.
+Subject: an open-air pavilion terrace, mostly empty slate paving in neat courses. A thin roof tile band along TOP edge, eave shadow under it. Four small round stone pillar drums near the corners, short shadows. Loose pages hang in the air, flat, casting soft grey shadows on the paving; they do not block the floor. Centre: one open book lying flat, cream pages with pale gold edging and a dark spine, rows of abstract carved glyph marks on the left page (never legible characters). Three torn pages near the bottom.
 
-Edges: LEFT 140px ramp to #F0F4F0; BOTTOM 140px ramp to #EAF0F6; smooth, not banded. TOP and RIGHT are map boundaries: roof tile band with cloud beyond, low slate parapet with cloud beyond. No border, frame or vignette; keep the outer 140px free of landmarks.
+Edges: LEFT 140px ramp to #F0F4F0; BOTTOM 140px ramp to #EAF0F6; smooth, not banded. TOP and RIGHT are map boundaries (roof band with cloud, low slate parapet with cloud). No border, frame or vignette; outer 140px free of landmarks.
 
 Size: 3:2, largest available, full bleed. Compose for a 16:9 centre crop (outer 8% top/bottom cut, keep landmarks in the central 84%); left/right uncropped.
 
-Negative: side view, elevation, isometric, tilted camera, horizon, sky, bookshelf, giant book filling the frame, oversized furniture, walls on the floor, characters, person, girl, creature, hands, text, lettering, watermark, logo, UI, frame, vignette, photorealistic, glossy 3D, neon, high saturation.
+Negative: side view, elevation, isometric, tilted camera, horizon, sky, bookshelf, giant book, oversized furniture, walls on the floor, characters, person, girl, creature, hands, text, lettering, watermark, logo, UI, frame, vignette, photorealistic, neon, high saturation.
 ```
