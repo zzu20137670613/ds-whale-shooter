@@ -1,109 +1,133 @@
-# S3 亚特兰蒂斯 · 四块底图提示词
+# S3 亚特兰蒂斯 · 四块底图提示词（v2：加风格圣经 + 渐变边）
 
-> 用法同 S2：一次一张 2752×1536，我切 4 张 → 你高清 2× → 我拼成 5504×3072，
-> 四块合成 4×4 屏。**CAMERA / STYLE / SEAM 三节逐字保留。**
+> 流程同 S2：一张 2752×1536 → 我切 4 → 你高清 2× → 我拼 5504×3072（一块）→
+> 四块合成 4×4 屏 → 接缝盖毛玻璃（半径 16 px / 带宽 ±48 px）。
 >
-> 一条重要取舍：第七世写的「潮涨一层，城露一间」是**运行时机制**，
-> 一张图配潮位遮罩/换皮才能做到，**不是靠多画几张图**。所以这里每块画的是
-> **"退潮露出、涨潮会淹"的那种半淹状态**——水线、湿痕、露出半截的门都在图里，
-> 潮位由我在代码里做（遮罩 + 通行区切换）。先按静态可玩做，潮汐后加。
+> **风格圣经**取自 `art-experiment/dsh6X6/` 三张 galgame 背景（S3-1/2/3）。
+> 那三张是**立绘式仰视**，不能当底图；配色、材质、纹样照它抄，**视角一律换成正俯视**。
+>
+> **潮汐是运行时机制**（一张图 + 潮位遮罩露房间），不是多画几张图。所以四块画的都是
+> **"退潮刚露出来"的半淹状态**：水线、湿痕、露出半截的门都在画里，潮位留给我做。
 
-## 布局（四块 2×2，流程 SW → NW → NE → SE，越走越深）
+## 布局（2×2 块；Z 字流程 A → B → C → D，越走越深）
 
-| 块 | 位置 | 内容 | 深度 |
-| --- | --- | --- | --- |
-| A | 左下 SW | 海门 + 折断沉船（深海之忆外） | 最暗 |
-| B | 左上 NW | 深海之忆：半开青石门 + 水影浮名 | 更暗，只有门缝一线蓝 |
-| C | 右上 NE | 摄政之谏：穹顶裂缝天光 + 镜面水 + 黑鲸石像 | 冷银，最静 |
-| D | 右下 SE | 加冕：潮退露阶 + 石座 | 暖色收尾，冷银转浅金 |
+| 块 | 位置 | 内容 | 渐变边 | 外缘边（硬边） |
+| --- | --- | --- | --- | --- |
+| A | 左下 SW | 海门 + 折断沉船 | **上**（接 B）、**右**（接 D） | 左、下 |
+| B | 左上 NW | 深海之忆（半开青石门 + 水影浮名） | **下**（接 A）、**右**（接 C） | 上、左 |
+| C | 右上 NE | 摄政之谏（穹顶裂缝 + 镜面水 + 鲸像） | **左**（接 B）、**下**（接 D） | 上、右 |
+| D | 右下 SE | 加冕（潮退露阶 + 石座） | **左**（接 A）、**上**（接 C） | 右、下 |
 
----
+## STYLE BIBLE（从 dsh6X6 三张提出来，逐字保留）
+
+Palette — 深蓝绿 `#0B2E3A`、近黑礁 `#0A1519`、冷灰石 `#7E8C93`、青蓝高光
+`#6FD3E8`、暗金 `#8A6B33`、水面反光 `#BFE9F0`、湿石 `#3E6B6E`。
+整体低明度、冷色压全场，**靠一线冷青高光提亮**；暖色只有暗金，且只出现在王座/冠/印上。
+
+Motif vocabulary — **鲸形石像**（俯视＝细长纺锤形石脊 + 尾鳍分叉，全部朝王座方向）、
+铁链与辔链（俯视＝一串小亮点连成线，末端垂进水里）、石阶与台基（顶面平、边缘一圈湿痕）、
+苔藓与珊瑚（低饱和的青灰团块，压在石缝里）、气泡与浮尘（细小白点，稀疏）、
+裂纹穹顶（俯视＝不规则裂口，光从裂口以**落在地上的楔形光斑**出现）。
+
+材质 — 石面湿、有均匀柔光反射（不是镜面高光）；水是**一层薄水**，下面的石板透出来、
+被蓝色压一层；黑礁哑光、几乎没有反射。
 
 ## CAMERA（逐字保留）
 
-True orthographic **plan view**, straight down. No horizon, no water surface
-seen edge-on, no visible walls in elevation, no vanishing point. Water is read
-as **a flat sheet with what lies beneath it faintly visible** — never as a
-vertical wall of water. A light shaft from a ceiling crack is read as **a hard
-wedge of light lying on the floor**, not as a beam standing up. Stone steps are
-read as **treads from above**.
+True orthographic **plan view**, straight down. No horizon, no water surface seen
+edge-on, no visible walls in elevation, no vanishing point. Water reads as **a
+flat sheet with what lies beneath faintly visible**, never as a vertical wall of
+water. A light shaft from a ceiling crack reads as **a hard wedge of light lying
+on the floor**, never as a beam standing up. Steps read as **treads from above**.
+Everything that stands (statues, throne, pillars) is drawn as its **top surface
+plus a short shadow**, no side faces.
 
-## STYLE（逐字保留）
+## EDGES（逐字保留）
 
-Anime-inspired hand-painted 2D top-down game art, soft cel shading, clean 1–2 px
-line work on landmarks, matte finish, wide flat colour areas so characters and
-props stay readable. Wet surfaces get a soft even sheen, not mirror-gloss.
+Each image is one panel of a larger map. **The listed gradient edges must carry a
+progressive colour transition over their outer 140 px**, ramping toward the
+neighbour panel's dominant colour (given per panel), so the two panels meet in the
+same colour family; the stitch pass lays a frosted-glass band over the seam, so the
+ramp must be smooth, not banded.
 
-## SEAM（逐字保留）
+The listed **hard edges are the map's outer boundary** and must terminate
+naturally and readably — a wall of black reef, a stone parapet, open water falling
+away — **not** fade to fog, and **not** be graded.
 
-This image is one of four panels. Keep the **outer 120 px of every edge free of
-unique landmarks, text, and hard shadow edges** — continuous ground or water
-texture only, and let structures that must continue (floor slabs, water line,
-stairs) run straight off the edge perpendicular to it. No border, frame,
-vignette, or corner darkening.
+Keep the outer 140 px of every edge free of unique landmarks and readable detail.
 
 ---
 
-## A · 海门 + 沉船（左下 SW）
+## A · 海门 + 折断沉船（左下 SW）
 
-The drowned outskirts. Fine pale seabed sand in soft ripples, drifting silt,
-a scatter of broken coral and rubble. At the top-left of the panel a **broken
-shipwreck** lies on its side, half sunk into sand: ribbed hull timbers, a
-snapped mast, tattered sail fabric laid flat by water. To the right, the first
-**stone gate architecture** appears — a massive square doorway of pale cyan
-stone, **half-open**, one door slab pushed inward at an angle, the gap reading
-as pure deep blue. Barnacle crust and a tide mark ring the gate's base.
-Palette: seabed sand #C9BFA8, silt #8E8B7E, cyan stone #6F9C9C, deep blue
-#10222E (in the doorway only), rust #6E5A38.
+Gradient: **top edge** ramps toward `#0A1822` (B is the darkest panel); **right
+edge** ramps toward `#3A5A62` (D warms toward gold). Hard edges: left and bottom
+terminate as a **black reef shelf** with open water beyond.
+
+Content — drowned outskirts: fine pale seabed sand in soft ripples, drifting silt,
+broken coral and rubble. Upper left, a **broken shipwreck** lies half-sunk: ribbed
+hull timbers, a snapped mast, tattered sail fabric laid flat by water. To the
+right the first **stone gate architecture**: a massive square doorway of pale cyan
+stone, **half-open**, one door slab pushed inward at an angle, the gap reading as
+pure deep blue `#10222E`. Barnacle crust and a drying tide line ring the gate's
+base. Six or seven small bubbles drift near the sand.
 
 ## B · 深海之忆（左上 NW）
 
-Inside the gate, the darkest panel of the map. The seabed continues, but a
-**thin sheet of still water** now covers the floor, so stone slabs and rubble
-show through it, slightly blue-shifted. At the centre a **second stone door
-stands half-open**, and from its gap a **single narrow blade of cold blue light**
-falls across the floor — the brightest thing here, and the only strong light.
-Faint **crossed-out name marks** float on the water surface as pale scratches
-(abstract glyph strokes, **not legible characters**), arranged in loose rows
-like a drowned list. Two broken sail-ribs and a coil of rotted rope lie near
-the door (collectables). Palette: #0C1A24 ground, wet stone #2E4B52, water sheen
-#3E6B6E, the light blade #9FD8E8, silt #5C5A4E.
+Gradient: **bottom edge** ramps toward `#16262E` (A's silt); **right edge** ramps
+toward `#8FA3AC` (C's cold silver). Hard edges: top and left terminate against a
+**wall of black reef**, no gradient.
+
+Content — darkest panel. Seabed continues, now under a **thin sheet of still
+water**, so stone slabs and rubble show through it, blue-shifted. At the centre a
+**second stone door stands half-open**, and from its gap a **single narrow blade of
+cold blue light** lies across the floor — the brightest thing here and the only
+strong light. On the water surface, faint **crossed-out name marks** float as pale
+scratches in loose rows like a drowned list — abstract glyph strokes, **no legible
+characters**. Two broken sail-ribs and a coil of rotted rope lie near the door.
 
 ## C · 摄政之谏（右上 NE）
 
-A drowned hall, cold and still. Above, a **crack in the dome** — in plan view
-an irregular jagged opening — lets a **wedge of pale sky light** lie across the
-floor at an angle. The floor is **thin water like a mirror**: the hall's
-pillars and the throne are reflected in it, soft and dim. At the hall's centre
-an **empty throne embedded in black reef** — pale stone seat sunk in dark
-branching coral. Around it, **whale-shaped stone statues** stand in a ring,
-seen from above as long tapering slabs with whale flukes, **all oriented toward
-the throne**. Three small rings of carved glyph marks mark three question
-points on the floor (abstract marks, no real characters). Palette: reef black
-#16222A, cold silver #C9D6DC, wet stone #7E8C93, sky light #EAF4F2, faint gold
-#6E5A38.
+Gradient: **left edge** ramps toward `#2A424C` (B's deep water); **bottom edge**
+ramps toward `#B9AD86` (D's pale gold light). Hard edges: top and right terminate
+as a **stone parapet with black reef beyond**.
+
+Content — a drowned hall, cold and still. Above, a **crack in the dome** — in plan
+view an irregular jagged opening — lays a **wedge of pale sky light** across the
+floor at an angle. The floor is **thin water like a mirror**: pillars and the
+throne are reflected in it, soft and dim, with fine ripple rings where something
+touched it. At the centre an **empty throne embedded in black reef**: pale stone
+seat sunk in dark branching coral, with one line of dark-gold inlay on the back
+seen from above. Around it, **whale-shaped stone statues** stand in a ring — long
+tapered slabs with flukes, mossy, **all oriented toward the throne**, each casting
+a short shadow inward. Three rings of abstract carved glyph marks mark three
+question points on the floor (no real characters).
 
 ## D · 加冕（右下 SE）
 
-The tide has pulled back: **wet stone steps rise toward the top of the panel**,
-each tread ringed with a drying tide line, puddles left in the low corners.
-Above them a broad platform of pale stone with an **empty stone seat at its
-centre**, flanked by two low blocks (crown and seal), and the whale statues
-again — but here they are **lower, half-submerged in the platform's edge**, all
-bowing toward the seat. Warm light now: the cold silver of the previous panels
-gives way to pale gold, with the strongest highlights on the seat and the wet
-steps. Palette: wet stone #B9C4C6, pale gold #E8C87A, warm light #FFF3D6, silver
-#C9CED8 (in the outermost corners only, to keep the transition from C).
+Gradient: **left edge** ramps toward `#35505A` (A's cold water); **top edge** ramps
+toward `#6E7F86` (C's wet stone). Hard edges: right and bottom terminate as a
+**stone parapet over open water**.
+
+Content — the tide has pulled back: **wet stone steps rise toward the top of the
+panel**, each tread ringed with a drying tide line, shallow puddles left in the low
+corners holding a little sky. Above them a broad platform of pale stone with an
+**empty stone seat at its centre**, flanked by two low blocks (crown and seal),
+each with the same dark-gold inlay line. The whale statues appear again, now
+**lower, half-submerged at the platform edge**, all facing the seat. Warm light
+takes over: cold silver gives way to pale gold on the wet steps and the seat, the
+strongest highlights in the whole map.
 
 ---
 
 ## NEGATIVE（逐字保留）
 
-side view, elevation, isometric, three-quarter view, tilted camera, horizon,
-visible water wall, waves seen from the side, rising beam of light, readable
+side view, elevation, three-quarter view, isometric, tilted camera, horizon,
+visible water wall, waves seen from the side, beam of light standing up, moon in
+the sky, characters, person, girl, whale girl, mermaid, creature, hands, readable
 Chinese or Latin text, lettering, watermark, logo, UI, frame, vignette,
-photorealistic, glossy 3D, neon, high saturation, character, creature, person
+photorealistic, glossy 3D, neon, high saturation
 
 ## 尺寸
 
-2752×1536（1 屏），整幅无边框。四块拼起来是 11008×6144。
+2752×1536（1 屏），无边框。四块拼起来 11008×6144。
