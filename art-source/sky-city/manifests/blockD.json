@@ -1,0 +1,72 @@
+{
+  "level": "sky-city",
+  "block": "D",
+  "source": "D:\\网页下载\\jimeng-2026-10-21-5952-Anime-style 2D game art, strict top-down....png",
+  "source_size": [
+    2560,
+    1440
+  ],
+  "plate": "plates/blockD-raw.png",
+  "ramped": "plates/blockD-ramped.png",
+  "ramps": [
+    {
+      "edge": "left",
+      "target": "#E7F1F9"
+    },
+    {
+      "edge": "top",
+      "target": "#EAF0F6"
+    }
+  ],
+  "hard_edges": [
+    "right",
+    "bottom"
+  ],
+  "tiles": [
+    {
+      "name": "blockD-tl",
+      "file": "tiles/blockD-tl.png",
+      "size": [
+        1280,
+        720
+      ]
+    },
+    {
+      "name": "blockD-tr",
+      "file": "tiles/blockD-tr.png",
+      "size": [
+        1280,
+        720
+      ]
+    },
+    {
+      "name": "blockD-bl",
+      "file": "tiles/blockD-bl.png",
+      "size": [
+        1280,
+        720
+      ]
+    },
+    {
+      "name": "blockD-br",
+      "file": "tiles/blockD-br.png",
+      "size": [
+        1280,
+        720
+      ]
+    }
+  ],
+  "tile_grid": [
+    2,
+    2
+  ],
+  "watermark_note": "即梦AI 水印在右下分块 br 内，超清后擦除",
+  "compromise": "王座仍为正面/3-4 视角（第三次尝试，模型画不了正上方俯视的椅子）。接受：它是本关唯一竖立主物件，3/4 更可读；若要严格一致，需单独出一张正俯视王座道具图，擦掉原王座后贴上去。",
+  "good": [
+    "无地平线/无海",
+    "大圆为正圆",
+    "八角链牌三块齐全",
+    "无人物",
+    "破边云圈漂亮"
+  ]
+}
