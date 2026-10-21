@@ -1,0 +1,20 @@
+# The beach lounger's easter egg: an apple hollowed out into a cup, filled
+# with iced juice, with the sliced-off top leaning against it. Replaces the
+# placeholder art (a tinted hp-shard cell) the egg shipped with first.
+#
+# Single 64x64 frame: `loadDropAssets` slices every drop texture at 64x64,
+# which is exactly this image's size, so frame 0 is the whole cup and no
+# anim table is needed - DropInstance falls back to `setFrame(0)`.
+name: Iced Juice
+kind: static
+sfx: pickup-hp
+visual:
+    size: 44
+    tint: 0xfb7185
+effect:
+    type: full-restore
+sprite:
+    texture: assets/image/drops/iced-juice.png
+    grid: { rows: 1, cols: 1 }
+    scale: 1
+    offset: { left: 0, bottom: 0 }

@@ -343,7 +343,7 @@ triggers:
       # tavern must not spend the egg before they walk onto the seat.
       zone: { x: 2600, y: 880, width: 200, height: 220 }
       spawn:
-          type: beach-drink
+          type: iced-juice
           from: { x: 2699, y: 993 }
           # The table top, measured at world (2755..2827, 874..950). The old
           # (2946,903) was 155px east of it, on sand beside the parasol pole.

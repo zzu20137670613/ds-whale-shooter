@@ -32,7 +32,7 @@ const level = parseLevelYaml(
 const trigger = level.triggers![0];
 
 /** The drop spec is only an identity token here — the fake controller ignores it. */
-const spec = { id: 'beach-drink' } as DropSpec;
+const spec = { id: 'iced-juice' } as DropSpec;
 
 function harness() {
     const sprite = { setPosition: vi.fn(), setDepth: vi.fn() };
@@ -80,7 +80,7 @@ describe('TriggerController (the lounger juice)', () => {
 
     it('reads a lounger trigger out of the shipped level', () => {
         expect(trigger.id).toBe('lounger-juice');
-        expect(trigger.spawn.type).toBe('beach-drink');
+        expect(trigger.spawn.type).toBe('iced-juice');
         expect(trigger.zone.width).toBeGreaterThan(0);
         expect(trigger.zone.height).toBeGreaterThan(0);
     });
