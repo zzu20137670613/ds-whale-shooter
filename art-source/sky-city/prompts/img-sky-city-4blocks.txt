@@ -1,0 +1,112 @@
+# S2 天空之城 · 四块底图提示词
+
+> 用法：一次生成**一张**（2752×1536，1 屏）。出图后我切成 4 张 1376×768，
+> 你每张高清 2×，我再拼成 5504×3072 的一块；四块合成 4×4 屏的世界。
+> **每张都必须带上文"CAMERA / STYLE / SEAM"三节，一字不改**——
+> 沙滩关 v1 就是漏了这段，出成斜俯视，整张报废。
+
+## 布局（四块 2×2 排布，流程 SW → NW → NE → SE）
+
+| 块 | 位置 | 内容 | 与相邻块的接缝 |
+| --- | --- | --- | --- |
+| A | 左下 SW | 月桥垂落点 + 云阶下段 | 东侧接 B：石阶继续 |
+| B | 左上 NW | 云阶上段 + 云门 | 东侧接 C：云门后的平台边缘 |
+| C | 右上 NE | 城南老书阁（坠落之名） | 南侧接 D：阁外地砖 |
+| D | 右下 SE | 王座之前 | 北侧接 C：地砖延续 |
+
+---
+
+## CAMERA（逐字保留）
+
+True orthographic **plan view**, as if a drone pointed straight down at the
+ground. No horizon, no sky band, no vanishing point, no visible sides of any
+object taller than the ground plane. Stairs are read as **treads seen from
+above** (parallel bands of lit edge + shadow gap), not as a staircase seen in
+elevation. Clouds are **ground fog seen from above** — soft white cover that
+hides whatever is under it, with the ground substance showing through gaps.
+"Up" in the fiction is expressed by the scene rising toward the top of the
+frame, never by a side elevation.
+
+## STYLE（逐字保留）
+
+Anime-inspired hand-painted 2D top-down game art, soft cel shading, clean
+1–2 px line work on landmarks, matte texture (no glossy 3D render look), wide
+flat areas of colour so characters and props remain readable on top. Palette
+sampled from this block only, no foreign hues.
+
+## SEAM（逐字保留）
+
+This image is one of four panels of a larger map. Keep the **outer 120 px of
+every edge free of unique landmarks, text, and hard shadow edges** — only
+continuous ground texture, and let any structure that must continue (stairs,
+floor tiles, cloud banks) run straight off the edge perpendicular to it. No
+border, no frame, no vignette, no corner darkening.
+
+---
+
+## A · 月桥垂落点 + 云阶下段（左下）
+
+Cloud city at its lowest: a pale stone landing where a great arch of moonlit
+bridge comes down out of the upper left, its far half swallowed by cloud. From
+the landing a **broad flight of pale stone stairs climbs toward the top of the
+frame**, every tread lit along its upper edge and shadowed under its lip.
+Cloud banks drift across the stairs and part in lanes. Through two gaps in the
+cloud, far below, the sea is visible as a **thin deep-blue slit** — the only
+cold colour in the panel. Scattered pale-gold cloud wisps and three small
+broken pieces of the moon bridge rest on the steps (collectables, small, near
+the stair edges). Palette: cloud white #F5F2EA, pale gold #E8C87A, stone
+#DED6C6, shadow #8B8CA6, the sea slit #1B3A57 only.
+
+## B · 云阶上段 + 云门（左上）
+
+The top of the stair flight continues off the left edge and ends at a **cloud
+gate**: two squared pillars of pale stone half-dissolved into cloud, a lintel
+across them, and beyond the gate a flat terrace of stone. Here the wind is
+strongest — cloud streams are long horizontal streaks, and small loose debris
+sits pinned against the pillars. Three circular **stepping stones** are set
+into the terrace at irregular spacing ("the three questions"), each with a
+carved ring of unreadable glyph marks (abstract carved lines, **not legible
+characters**). Brightest panel of the four: highlights blown out to near-white
+at the top, ground still readable. Palette: white #F7F4EC dominating, pale gold
+#EFD79B, stone #E3DCCE, cool shadow #9A9BB2.
+
+## C · 城南老书阁（右上）
+
+An old open-air book pavilion on a stone terrace, seen from above: a square
+slate floor, four corner pillars, no roof (or a roof only over the far edge,
+seen as flat tile). The wind stops here — **hundreds of loose pages hang
+suspended in the air**, held flat and parallel to the ground, drifting in slow
+lanes, casting soft grey shadows on the slate. At the centre an **enormous open
+book lies flat on the floor**, its two pages readable as flat coloured fields
+(cream paper, faint pale-gold edging), big enough to stand on; the left page
+carries rows of **carved unreadable glyph marks** (abstract, no real
+characters). Three torn pages lie apart from the swarm (collectables). Palette:
+slate #B9B6AE, paper cream #F2E9D2, page shadow #8E8A7E, pale gold #E0C98F.
+
+## D · 王座之前（右下）
+
+No walls, no floor edge — the ground simply ends into cloud on three sides. A
+**cloud-patterned empty throne** floats in a pool of light at the centre: a
+blocky seat and back seen from above, its surface carved with swirling cloud
+motifs (flat, painted, no relief). From each armrest a **chain of silver links
+hangs down** and disappears into the light. Directly beneath the seat a
+**vertical shaft of light** breaks through the cloud — in plan view this reads
+as a hard-edged bright disc with a soft halo, the brightest thing in the whole
+map, with a ring of cloud torn open around it. Palette: near-white #FBFAF6,
+pale gold #F0D9A4, silver #C9CED8, shaft halo #FFF6DE; the outer corners may
+fall to a deep prussian blue #16324A (this panel turns dark at its south edge,
+setting up S3).
+
+---
+
+## NEGATIVE（逐字保留）
+
+side view, elevation, isometric, three-quarter view, tilted camera, horizon,
+sky gradient band, visible walls in elevation, staircase seen from the side,
+readable Chinese or Latin text, lettering, watermark, logo, UI, frame border,
+vignette, photorealistic, glossy 3D render, neon, high saturation, character,
+creature, person, hands
+
+## 尺寸
+
+2752×1536（1 屏），整幅无边框。四块拼起来是 11008×6144。
