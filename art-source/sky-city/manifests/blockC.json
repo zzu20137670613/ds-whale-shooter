@@ -1,0 +1,68 @@
+{
+  "level": "sky-city",
+  "block": "C",
+  "source": "D:\\网页下载\\kling_20261021_文生图_Anime_insp_4169_0.png",
+  "source_size": [
+    2720,
+    1536
+  ],
+  "plate": "plates/blockC-raw.png",
+  "ramped": "plates/blockC-ramped.png",
+  "ramps": [
+    {
+      "edge": "left",
+      "target": "#F0F4F0"
+    },
+    {
+      "edge": "bottom",
+      "target": "#EAF0F6"
+    }
+  ],
+  "hard_edges": [
+    "top",
+    "right"
+  ],
+  "tiles": [
+    {
+      "name": "blockC-tl",
+      "file": "tiles/blockC-tl.png",
+      "size": [
+        1360,
+        768
+      ]
+    },
+    {
+      "name": "blockC-tr",
+      "file": "tiles/blockC-tr.png",
+      "size": [
+        1360,
+        768
+      ]
+    },
+    {
+      "name": "blockC-bl",
+      "file": "tiles/blockC-bl.png",
+      "size": [
+        1360,
+        768
+      ]
+    },
+    {
+      "name": "blockC-br",
+      "file": "tiles/blockC-br.png",
+      "size": [
+        1360,
+        768
+      ]
+    }
+  ],
+  "tile_grid": [
+    2,
+    2
+  ],
+  "watermark_note": "可灵AI 水印在右下分块 br 内，超清后擦除",
+  "decisions": [
+    "无台阶：前两张的台阶都被画幅切掉，且 C 底边是接 D 的接缝，硬边会被毛玻璃糊掉",
+    "四角圆物实为太鼓鼓身（栗色+金钉），可当鼓凳道具用，若要纯中式可后期改色"
+  ]
+}
