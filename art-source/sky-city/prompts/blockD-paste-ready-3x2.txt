@@ -1,0 +1,73 @@
+﻿# 块 D · 直接粘贴（3:2 版）
+
+> 生成器只出 4:3 / 3:2 → 用 3:2，我裁到 16:9。渐变交给我。
+>
+> **两条硬要求**（都是前面三块换来的教训）：
+> ① 占地预算——王座和光斑加起来不许吃掉地面（这块是最后一关入口，玩家要在这儿打）；
+> ② 整体亮度要跟 B 那块云台齐平（别画暗，暗了后期得单独提亮）。
+>
+> **接邻块**：左边接 A（月桥落点），上边接 C（书阁）。这两条边做渐变；
+> 右边和下边是**地图外缘**——平台直接断在云里，越靠外越暗，收尾接到 S3 的深蓝。
+
+```
+Anime-inspired hand-painted 2D top-down game art, orthographic plan view seen
+straight down, as if a drone pointed straight down at the ground: no horizon, no
+sky band, no vanishing point, no visible sides of anything standing above the
+ground plane. This is a playable combat field, not an illustration. A shaft of light
+is never a beam standing up: it reads as a hard-edged bright disc lying flat on the
+floor with a soft halo around it. Matte painted texture, soft cel shading, clean 1-2
+px line work on landmarks, wide flat colour areas so characters and props stay
+readable on top.
+
+OCCUPANCY BUDGET (hard requirement, check it before drawing anything):
+- at least 65% of the whole frame is CLEAR, UNOBSTRUCTED PALE STONE FLOOR;
+- the empty throne covers no more than 18% of the frame area, its width no more than
+  35% of the frame width, and it stands at the centre of the frame;
+- the bright light disc under the throne is no more than 22% of the frame width across;
+- the silver chains are thin lines, about 3 px wide;
+- cloud only touches the outer 8% of the frame edges;
+- nothing else stands on the floor: no walls, no columns, no furniture, no statues.
+
+BRIGHTNESS: keep the overall value in the same range as a bright cloud terrace
+panel — a light, airy near-white floor. Do not let the floor fall to mid grey; the
+darkening belongs only to the outermost corners.
+
+Palette: near-white #FBFAF6, cloud white #F4F8FC, pale gold #F0D9A4, silver #C9CED8,
+light halo #FFF6DE, deep prussian blue #16324A (outermost corners only).
+
+Motif vocabulary: cloud-patterned carved stone (flat painted swirls, no relief
+modelled); silver chains seen from above as a fine line of small bright beads;
+torn-open cloud ring around the light; a pool of warm light with a hard edge and a
+soft halo.
+
+Subject: the platform before an empty throne, mostly open. A pale stone floor runs
+across the frame, its right and lower edges simply ending into open cloud. At the
+centre stands an EMPTY THRONE seen from above: a blocky pale stone seat and back with
+swirling cloud motifs painted flat on its top surface, armrests at either side; from
+each armrest a thin silver chain runs out and disappears into the light. Directly
+beneath and around the throne lies a POOL OF LIGHT — a hard-edged bright disc with a
+soft halo, the brightest passage in the whole map, its rim marked by a ring of cloud
+torn open. A few small drifting cloud shreds cross the platform. Everything else is
+open floor.
+
+Edges: the outer 140 px of the LEFT edge must ramp smoothly toward #E7F1F9; the
+outer 140 px of the TOP edge must ramp smoothly toward #EAF0F6; both ramps smooth,
+not banded. The RIGHT and BOTTOM edges are the map's outer boundary: the platform
+ends into open cloud there, and the outermost corners fall to deep prussian blue
+#16324A so the panel hands off to the drowned level that follows. No border, no
+frame, no vignette on the inner edges, no corner darkening except those outer
+corners. Keep the outer 140 px of every edge free of unique landmarks.
+
+Size: 3:2, as large as the generator allows (2048 px on the long edge or more),
+full bleed. Compose for a 16:9 center crop: the outer 8% of the TOP and BOTTOM will
+be cut off, so keep every landmark, the throne, the light disc and both edge ramps
+inside the central 84% band, and let the sacrificial top and bottom strips be plain
+floor and cloud texture only. The left and right edges are NOT cropped.
+
+Negative: giant throne filling the frame, oversized furniture, props crowding the
+floor, beam of light standing up, visible light shaft in elevation, side view,
+elevation, three-quarter view, isometric, tilted camera, horizon, sky band, moon in
+the sky, walls standing on the floor, characters, person, girl, creature, hands,
+readable Chinese or Latin text, lettering, watermark, logo, UI, frame border,
+vignette, photorealistic, glossy 3D, neon, high saturation.
+```
