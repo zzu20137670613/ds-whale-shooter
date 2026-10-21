@@ -77,6 +77,14 @@ export class TriggerController {
         this.drops = drops;
         this.getDrop = getDrop;
         this.armed = armedTriggers(levelId, triggers, useGameStore.getState().usedTriggers);
+        // A level that ships triggers whose every one has already fired produces
+        // no effect and no error at all, which reads exactly like a bug. Say so
+        // once at load instead of leaving the player walking in circles.
+        if (triggers && triggers.length > 0 && this.armed.length === 0) {
+            console.info(
+                `[trigger] ${levelId}: every trigger already fired this run - clear the save to earn them again`,
+            );
+        }
     }
 
     /** Advance every glass in the air, then fire armed triggers underfoot. */
@@ -131,9 +139,15 @@ export class TriggerController {
             to.y,
         );
         const sprite = drop.sprite;
-        // Without a sprite (headless, or art missing) the drop is already
-        // resting on the table, which is the part that matters.
-        if (!sprite) return;
+        // Without a sprite (headless, or the art never loaded) the drop still
+        // exists, but it is invisible - and invisible is indistinguishable from
+        // broken, so say it out loud.
+        if (!sprite) {
+            console.warn(
+                `[trigger] ${trigger.spawn.type} has no sprite on the ground; the reward is there but invisible`,
+            );
+            return;
+        }
 
         // The magnet would otherwise yank the glass out of its arc the moment
         // the player is inside its radius. Released the frame the arc lands.

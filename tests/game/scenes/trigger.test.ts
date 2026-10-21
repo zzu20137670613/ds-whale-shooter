@@ -135,6 +135,21 @@ describe('TriggerController (the lounger juice)', () => {
         expect(second.spawnLanded).toHaveBeenCalledTimes(1);
     });
 
+    it('says so at load when every trigger has already fired this run', () => {
+        // Silence is the worst failure mode: no effect, no error, no clue.
+        useGameStore.setState({
+            ...initialGameState,
+            usedTriggers: [`${LEVEL_ID}:lounger-juice`],
+        });
+        const info = vi.spyOn(console, 'info').mockImplementation(() => {});
+        const h = harness();
+        h.character.body.position = { ...ON_THE_CHAIR };
+        h.controller.update(FRAME);
+        expect(h.spawnLanded).not.toHaveBeenCalled();
+        expect(String(info.mock.calls[0]?.[0])).toContain('every trigger already fired');
+        info.mockRestore();
+    });
+
     it('stops flying once the scene tears down', () => {
         const h = harness();
         h.character.body.position = { ...ON_THE_CHAIR };
