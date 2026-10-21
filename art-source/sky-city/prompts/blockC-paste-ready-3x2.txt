@@ -1,43 +1,50 @@
-﻿# 块 C · 直接粘贴（3:2 版）
+﻿# 块 C · 直接粘贴（v2：加了占地预算）
 
-> 生成器只出 4:3 / 3:2 → 用 3:2，我裁到 16:9（上下各裁 8%）。渐变交给我。
+> 上一版的问题是**书和屋脊把可走地面吃光了**。这一版把"可走面积"写成硬指标：
+> 书最多占 22% 画面、屋脊带最多 10% 高度、其余 60% 以上必须是**空着的石板地**。
 >
-> **接块 B 的要点**：B 的右上角是**门楼屋顶的瓦垄**，所以这张的**顶边**要延续一条
-> 屋顶瓦垄带（只沿顶边一条，不占画面主体）；另外 B 右侧是平整的浅色石台面，
-> 这张左边接过来要是同样的浅色石地。这两处对齐，接缝就看不出来。
+> 接块 B：顶边延续一条屋顶瓦垄带（现在限高 10%），左边是同样的浅色石地。
 
 ```
 Anime-inspired hand-painted 2D top-down game art, orthographic plan view seen
 straight down, as if a drone pointed straight down at the ground: no horizon, no
 sky band, no vanishing point, no visible sides of anything standing above the
-ground plane. Cloud is ground fog seen from above, with the ground showing through
-its gaps. Paper is drawn as flat cream sheets lying parallel to the ground, never
-as pages standing upright. Matte painted texture, soft cel shading, clean 1-2 px
-line work on landmarks, wide flat colour areas so characters and props stay
-readable on top.
+ground plane. This is a playable combat field, not an illustration. Paper is drawn
+as flat cream sheets lying parallel to the ground, never as pages standing upright.
+Matte painted texture, soft cel shading, clean 1-2 px line work on landmarks, wide
+flat colour areas so characters and props stay readable on top.
+
+OCCUPANCY BUDGET (hard requirement, check it before drawing anything):
+- at least 60% of the whole frame is CLEAR, UNOBSTRUCTED PAVED FLOOR;
+- the giant open book covers no more than 22% of the frame area, its width no more
+  than 45% of the frame width, and it sits just below the centre of the frame;
+- the roof tile band along the top edge is at most 10% of the frame height;
+- the four round pillar drums are small, about 4% of the frame width across, and sit
+  in a wide square near the four corners;
+- cloud only touches the outer 5% of the frame edges;
+- nothing else stands on the floor: no walls, no shelves, no furniture, no statues.
 
 Palette: cloud white #F4F8FC, moon white #E4EEF7, slate grey #B9B6AE, paper cream
 #F2E9D2, pale gold #E0C98F, paper shadow #8E8A7E, cold grey #C3D2E2. Cooler and
-greyer than the cloud terrace panels: the white stays, but slate and paper take
-over the middle of the frame.
+greyer than the cloud terrace panels: the white stays, but slate and paper take over
+the middle of the frame.
 
-Motif vocabulary: square slate paving laid in neat courses; round stone pillar
-drums seen from above (flat circles with a carved ring near the rim); a band of
-tile courses along the top edge (the edge of a roof, seen from above); abstract
-carved glyph marks on stone and paper (strokes, never legible characters);
-translucent white gauze ribbons lying over the paving.
+Motif vocabulary: square slate paving laid in neat courses; round stone pillar drums
+seen from above (flat circles with a carved ring near the rim); a band of tile
+courses along the top edge (the edge of a roof, seen from above); abstract carved
+glyph marks on paper (strokes, never legible characters); translucent white gauze
+ribbons lying over the paving.
 
-Subject: an old open-air book pavilion on a slate terrace. Along the TOP edge a
-band of roof tiles runs the full width, seen from above as parallel tile courses,
-with a short eave shadow beneath it. The terrace is square slate paving with four
-round stone pillar drums set in a square near the corners, each casting a short
-shadow toward the lower right. Hundreds of loose paper pages hang suspended in the
-air, held flat and parallel to the ground, drifting in slow lanes and casting soft
-grey shadows on the paving, so the floor is crossed by soft moving shade. At the
-centre an enormous open book lies flat on the paving: two cream pages with pale
-gold edging, a dark spine line down the middle, big enough to walk across; the left
-page carries rows of abstract carved glyph marks. Three torn pages lie apart from
-the swarm, near the bottom of the frame.
+Subject: an old open-air book pavilion terrace, mostly empty. A thin band of roof
+tiles runs along the TOP edge. The rest of the frame is square slate paving with
+four small round stone pillar drums near the corners, each casting a short shadow
+toward the lower right. Loose paper pages hang suspended in the air, held flat and
+parallel to the ground, drifting in slow lanes and casting soft grey shadows across
+the paving — the pages are airborne, they do not block the floor. At the centre-lower
+part of the frame an open book lies flat on the paving: two cream pages with pale
+gold edging and a dark spine, with rows of abstract carved glyph marks on the left
+page, modest in size so the floor stays wide open around it. Three torn pages lie
+apart from the swarm near the bottom of the frame.
 
 Edges: the outer 140 px of the LEFT edge must ramp smoothly toward #F0F4F0; the
 outer 140 px of the BOTTOM edge must ramp smoothly toward #EAF0F6; both ramps
@@ -52,9 +59,10 @@ be cut off, so keep every landmark, the giant book, and both edge ramps inside t
 central 84% band, and let the sacrificial top and bottom strips be plain paving and
 cloud texture only. The left and right edges are NOT cropped.
 
-Negative: side view, elevation, three-quarter view, isometric, tilted camera,
-horizon, sky band, standing books, bookshelf in elevation, visible walls in
-elevation, characters, person, girl, creature, hands, readable Chinese or Latin
-text, lettering, watermark, logo, UI, frame border, vignette, photorealistic,
-glossy 3D, neon, high saturation.
+Negative: giant book filling the frame, oversized furniture, props crowding the
+floor, maze of props, building interior, walls standing on the floor, side view,
+elevation, three-quarter view, isometric, tilted camera, horizon, sky band, standing
+books, bookshelf in elevation, characters, person, girl, creature, hands, readable
+Chinese or Latin text, lettering, watermark, logo, UI, frame border, vignette,
+photorealistic, glossy 3D, neon, high saturation.
 ```
