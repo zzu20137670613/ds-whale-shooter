@@ -19,8 +19,9 @@
  * (`beach-drink` is a `full-restore` drop).
  */
 
-import * as Phaser from 'phaser';
+import type * as Phaser from 'phaser';
 
+import { DROP_CONFIG } from '@/lib/constants';
 import { arcPoint, armedTriggers, isInsideZone, triggerKey } from '@/lib/levels/logic';
 import { useGameStore } from '@/store/game-store';
 import type { DropController } from '@/game/drops/drop';
@@ -93,6 +94,25 @@ export class TriggerController {
         sprite.setPosition(from.x, from.y);
         sprite.setDepth(Math.round(from.y));
 
+        // Draw the arc instead of only implying it: the glass is small, the
+        // camp sits in palm shade, and a bare tween reads as "nothing
+        // happened". Same guide line a monster's dropped loot draws.
+        const flightLine = this.scene.add.graphics();
+        flightLine.setDepth(Math.round(Math.min(from.y, to.y)) - 1);
+        const popConfig = DROP_CONFIG.PARABOLA;
+        flightLine.lineStyle(popConfig.LINE_WIDTH, popConfig.LINE_COLOR, popConfig.LINE_ALPHA);
+        // The same `arcPoint` the sprite follows, so the line cannot drift
+        // from the glass. Segments on purpose: Phaser.Curves would pull the
+        // whole engine into any runtime that imports this module.
+        const steps = 24;
+        flightLine.beginPath();
+        flightLine.moveTo(from.x, from.y);
+        for (let step = 1; step <= steps; step++) {
+            const point = arcPoint(from, to, step / steps, lift);
+            flightLine.lineTo(point.x, point.y);
+        }
+        flightLine.strokePath();
+
         const tween = this.scene.tweens.addCounter({
             from: 0,
             to: 1,
@@ -107,6 +127,12 @@ export class TriggerController {
                 sprite.setPosition(to.x, to.y);
                 sprite.setDepth(Math.round(to.y));
                 drop.rejected = false;
+                this.scene.tweens.add({
+                    targets: flightLine,
+                    alpha: 0,
+                    duration: 160,
+                    onComplete: () => flightLine.destroy(),
+                });
             },
         });
         this.flights.push(tween);
