@@ -1,0 +1,54 @@
+# 块 A · 直接粘贴（3:2 版）
+
+> 生成器只能出 4:3 / 3:2 → **用 3:2**（离 16:9 最近，只裁 15.6% 高度）。
+> 下面整段复制即可。出图后**上下的 8% 我会裁掉**，所以画面重点必须落在中间 84% 的安全区里。
+> （`img-sky-city-4blocks.txt` 里那份还是旧的 2752×1536 写法，等你关掉编辑器我再同步。）
+
+```
+Anime-inspired hand-painted 2D top-down game art, orthographic plan view seen
+straight down, as if a drone pointed straight down at the ground: no horizon, no
+sky band, no vanishing point, no visible sides of anything standing above the
+ground plane. Stairs are read as treads seen from above (parallel lit edges with
+shadow gaps), never as a staircase in elevation. Cloud is ground fog seen from
+above, with the ground showing through its gaps. Matte painted texture, soft cel
+shading, clean 1-2 px line work on landmarks, wide flat colour areas so characters
+and props stay readable on top.
+
+Palette: cloud white #F4F8FC, moon white #E4EEF7, pale gold #E8D3A0, sky cyan
+#9EC6E8, cold grey cloud shadow #C3D2E2, deep blue slit #2E4C6B. High key, low
+saturation, the upper part blown out to near-white, layered only by cool grey
+cloud shadows and a few small warm gold accents.
+
+Motif vocabulary: white stone balustrade with square posts, their top faces carved
+with shallow cloud scrolls; abstract carved glyph marks (strokes, never legible
+characters); silver chains seen from above as a fine line of small bright beads;
+translucent white gauze ribbons lying over the stone; the moon expressed only as a
+soft circular pool of light on the ground, never as a moon in the sky.
+
+Subject: a pale stone landing where a great arc of moonlit bridge comes down out of
+the upper left, its far half swallowed by cloud; the bridge deck is flat stone
+slabs with a carved lunar swirl. From the landing a broad flight of pale stone
+stairs climbs toward the top of the frame, every tread lit along its upper edge
+with a shadow under its lip. Cloud banks drift across the stairs and part in lanes.
+Three small broken bridge fragments rest near the stair edges.
+
+Edges: the outer 140 px of the TOP edge must ramp smoothly toward #F6F9FD; the
+outer 140 px of the RIGHT edge must ramp smoothly toward #E7F1F9; both ramps
+smooth, not banded. The LEFT and BOTTOM edges are the map's outer boundary and
+terminate hard and readably as a white stone balustrade with a sheer drop into
+cloud, and through its gaps far below the sea shows as a thin deep-blue slit. No
+border, no frame, no vignette, no corner darkening. Keep the outer 140 px of every
+edge free of unique landmarks.
+
+Size: 3:2, as large as the generator allows (2048 px on the long edge or more),
+full bleed. Compose for a 16:9 center crop: the outer 8% of the TOP and BOTTOM
+will be cut off, so keep every landmark, the whole stair run, and both edge ramps
+inside the central 84% band, and let the sacrificial top and bottom strips be plain
+cloud and ground texture only. The left and right edges are NOT cropped.
+
+Negative: side view, elevation, three-quarter view, isometric, tilted camera,
+horizon, sky band, moon in the sky, visible walls in elevation, staircase seen from
+the side, characters, person, girl, dragon, creature, hands, readable Chinese or
+Latin text, lettering, watermark, logo, UI, frame border, vignette, photorealistic,
+glossy 3D, neon, high saturation.
+```
