@@ -33,4 +33,4 @@ teleporters:
       'y': 768
       targetScene: gpt-sky-city
       targetPortalId: to-atlantis
-      radius: 60
+      radius: 300

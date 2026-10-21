@@ -331,4 +331,4 @@ teleporters:
       'y': 544
       targetScene: tavern
       targetPortalId: hidden-1-entrance
-      radius: 50
+      radius: 300

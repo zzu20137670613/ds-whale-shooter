@@ -1018,10 +1018,10 @@ teleporters:
       'y': 1124
       targetScene: beach-holiday
       targetPortalId: teleporter-msfmft58
-      radius: 329
+      radius: 300
     - id: to-sky-city
       x: 758
       'y': 5552
       targetScene: gpt-sky-city
       targetPortalId: to-library
-      radius: 73
+      radius: 300

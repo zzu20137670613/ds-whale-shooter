@@ -150,7 +150,7 @@ teleporters:
       # is what makes the ornament's hole and its portal appear together.
       targetPortalId: tavern-return
       requiresClear: false
-      radius: 60
+      radius: 300
     # Hidden level 1 (sunlit-henge). The wall ornament at x 2614..2720, y 838..952
     # is a prop monster: shoot it and its sprite vanishes, revealing the black
     # hole baked into tavern.png. This portal stays dark until then, because the
@@ -165,4 +165,4 @@ teleporters:
       targetScene: sunlit-henge
       targetPortalId: teleporter-msfpy6pw
       requiresClear: true
-      radius: 90
+      radius: 300

@@ -125,11 +125,11 @@ teleporters:
       'y': 4700
       targetScene: starry-library
       targetPortalId: to-sky-city
-      radius: 60
+      radius: 300
     # The light disc under the throne: the way down to the drowned level.
     - id: to-atlantis
       x: 8256
       'y': 4600
       targetScene: dsh-atlantis
       targetPortalId: to-sky-city
-      radius: 90
+      radius: 300
