@@ -15,7 +15,7 @@ background: assets/image/scenes/sky-city-1-landing.png
 backgroundBlocks:
     - texture: assets/image/scenes/sky-city-1-landing.png
       x: 0
-      y: 11008
+      y: 3072
     - texture: assets/image/scenes/sky-city-2-gate.png
       x: 0
       y: 0
@@ -24,7 +24,7 @@ backgroundBlocks:
       y: 0
     - texture: assets/image/scenes/sky-city-4-throne.png
       x: 5504
-      y: 11008
+      y: 3072
 imageSize: 11008x6144
 airWalls:
     - id: edge-left
