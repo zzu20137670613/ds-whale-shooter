@@ -1,0 +1,31 @@
+{
+  "grid": 2,
+  "tileWidth": 1360,
+  "tileHeight": 768,
+  "sourceWidth": 2720,
+  "sourceHeight": 1536,
+  "overlapX": 0,
+  "overlapY": 0,
+  "tiles": [
+    {
+      "row": 0,
+      "col": 0,
+      "file": "blockA-tl.jpg"
+    },
+    {
+      "row": 0,
+      "col": 1,
+      "file": "blockA-tr.jpg"
+    },
+    {
+      "row": 1,
+      "col": 0,
+      "file": "blockA-bl.jpg"
+    },
+    {
+      "row": 1,
+      "col": 1,
+      "file": "blockA-br.jpg"
+    }
+  ]
+}

@@ -28,7 +28,7 @@ dist-ssr
 .env.*
 !.env.example
 
-# Local scratch / AI gen outputs (image, music, â€¦)
+# Local scratch / AI gen outputs (image, music, â€?
 /tmp/
 .playground
 
@@ -48,5 +48,3 @@ raws/
 __pycache__/
 *.pyc
 
-# raw generated plates stay local (tiles + blocks are what we commit)
-art-source/*/plates/
