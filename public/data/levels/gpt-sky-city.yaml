@@ -26,6 +26,8 @@ backgroundBlocks:
       x: 5504
       y: 3072
 imageSize: 11008x6144
+# Bright open sky: opt out of the ambient darkening, like the beach and tavern.
+pixelLighting: false
 airWalls:
     - id: edge-left
       kind: short
