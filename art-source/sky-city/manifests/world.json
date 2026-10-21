@@ -1,0 +1,15 @@
+{
+  "seams": {
+    "A|B (y=3072)": 0.42,
+    "B|C (x=5504)": 0.51,
+    "C|D (y=3072)": 0.57,
+    "A|D (x=5504)": 0.18
+  },
+  "grade_targets": {
+    "A": 188,
+    "B": 193,
+    "C": 180,
+    "D": 195
+  },
+  "order": "stitch -> grade -> ramp -> assemble -> wide frosted band (+/-96, r24)"
+}
