@@ -1,0 +1,68 @@
+{
+  "level": "sky-city",
+  "block": "B",
+  "source": "D:\\网页下载\\kling_20261021_文生图_Anime_insp_3959_0.png",
+  "source_size": [
+    2720,
+    1536
+  ],
+  "plate": "plates/blockB-ramped.png",
+  "ramps": [
+    {
+      "edge": "bottom",
+      "target": "#F4F8FC",
+      "band": 140,
+      "strength": 0.65
+    },
+    {
+      "edge": "right",
+      "target": "#F0F4F0",
+      "band": 140,
+      "strength": 0.65
+    }
+  ],
+  "hard_edges": [
+    "top",
+    "left"
+  ],
+  "tiles": [
+    {
+      "name": "blockB-tl",
+      "file": "tiles/blockB-tl.png",
+      "size": [
+        1360,
+        768
+      ]
+    },
+    {
+      "name": "blockB-tr",
+      "file": "tiles/blockB-tr.png",
+      "size": [
+        1360,
+        768
+      ]
+    },
+    {
+      "name": "blockB-bl",
+      "file": "tiles/blockB-bl.png",
+      "size": [
+        1360,
+        768
+      ]
+    },
+    {
+      "name": "blockB-br",
+      "file": "tiles/blockB-br.png",
+      "size": [
+        1360,
+        768
+      ]
+    }
+  ],
+  "tile_grid": [
+    2,
+    2
+  ],
+  "watermark_note": "可灵AI 水印在右下分块 br 内，超清后擦除",
+  "yellow_roof_note": "门楼屋顶偏饱和金黄 + 左下挡土墙彩色鹅卵石，是本图两处色彩偏差，可在调色阶段统一压饱和"
+}
