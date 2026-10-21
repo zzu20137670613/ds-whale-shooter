@@ -90,7 +90,13 @@ export class TriggerController {
             if (!isInsideZone(trigger.zone, x, y)) continue;
             this.armed.splice(i, 1);
             useGameStore.getState().markTriggerUsed(triggerKey(this.levelId, trigger.id));
-            this.fire(trigger);
+            try {
+                this.fire(trigger);
+            } catch (error) {
+                // A trigger whose reward cannot be built must not take the game
+                // loop down with it. It is already spent, so log once and move on.
+                console.error(`[trigger] ${triggerKey(this.levelId, trigger.id)} failed`, error);
+            }
         }
     }
 

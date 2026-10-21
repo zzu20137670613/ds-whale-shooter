@@ -84,6 +84,30 @@ describe('collectDropIds', () => {
         expect(ids.size).toBe(0);
     });
 
+    it('collects the reward of a region trigger (regression: the egg froze the game)', () => {
+        // A trigger spawns its reward at fire time, so nothing else in the
+        // level names the drop. Missing it here meant `iced-juice` was never
+        // loaded and the beach egg died on an uncaught "Unknown drop id".
+        const ids = collectDropIds(
+            level({
+                triggers: [
+                    {
+                        id: 'lounger-juice',
+                        zone: { x: 0, y: 0, width: 10, height: 10 },
+                        spawn: {
+                            type: 'iced-juice',
+                            from: { x: 0, y: 0 },
+                            to: { x: 1, y: 1 },
+                            lift: 90,
+                            durationMs: 700,
+                        },
+                    },
+                ],
+            }),
+            new Map(),
+        );
+        expect(ids).toEqual(new Set(['iced-juice']));
+    });
     it('ignores monsters whose spec has no drops', () => {
         const monsters = new Map<string, MonsterSpec>([
             [
