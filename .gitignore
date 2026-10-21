@@ -47,3 +47,6 @@ raws/
 # Byte-cache from the python tools under scripts/
 __pycache__/
 *.pyc
+
+# raw generated plates stay local (tiles + blocks are what we commit)
+art-source/*/plates/

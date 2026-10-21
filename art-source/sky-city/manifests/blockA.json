@@ -1,0 +1,73 @@
+{
+  "level": "sky-city",
+  "block": "A",
+  "source": "D:\\网页下载\\kling_20261021_文生图_正俯视__看不到楼梯_3878_0.png",
+  "source_size": [
+    2720,
+    1536
+  ],
+  "plate": "plates/blockA-raw.png",
+  "ramped": "plates/blockA-ramped.png",
+  "ramps": [
+    {
+      "edge": "top",
+      "target": "#F6F9FD",
+      "band": 140,
+      "strength": 0.65
+    },
+    {
+      "edge": "right",
+      "target": "#E7F1F9",
+      "band": 140,
+      "strength": 0.65
+    }
+  ],
+  "hard_edges": [
+    "left",
+    "bottom"
+  ],
+  "tiles": [
+    {
+      "name": "blockA-tl",
+      "file": "tiles/blockA-tl.png",
+      "size": [
+        1360,
+        768
+      ],
+      "bytes": 1011973
+    },
+    {
+      "name": "blockA-tr",
+      "file": "tiles/blockA-tr.png",
+      "size": [
+        1360,
+        768
+      ],
+      "bytes": 648289
+    },
+    {
+      "name": "blockA-bl",
+      "file": "tiles/blockA-bl.png",
+      "size": [
+        1360,
+        768
+      ],
+      "bytes": 750612
+    },
+    {
+      "name": "blockA-br",
+      "file": "tiles/blockA-br.png",
+      "size": [
+        1360,
+        768
+      ],
+      "bytes": 689840
+    }
+  ],
+  "tile_grid": [
+    2,
+    2
+  ],
+  "watermark_note": "可灵AI 水印在右下分块 br 内，待主人超清后擦除",
+  "next": "四张 1360x768 各放大 2x -> 2720x1536 -> stitch-upscaled.py 拼成 5504x3072"
+}
