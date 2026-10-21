@@ -56,21 +56,33 @@ they match the magnified scenery — otherwise a prop pasted at its native size 
 The owner marks the final image once; `scripts/collision-from-mask.py` is extended to read all
 three colours in one pass:
 
-| colour | meaning |
-| --- | --- |
-| scribble (any wall colour already used, e.g. red) | air wall — becomes collision rectangles |
-| **green** | the lounger's trigger zone — **must be walkable**, never a wall, or the player cannot step on it |
-| blue | reserved for teleporters, same as the library masks |
+| colour                                            | meaning                                                                                          |
+| ------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| scribble (any wall colour already used, e.g. red) | air wall — becomes collision rectangles                                                          |
+| **green**                                         | the lounger's trigger zone — **must be walkable**, never a wall, or the player cannot step on it |
+| blue                                              | reserved for teleporters, same as the library masks                                              |
 
-The table does not need marking any more: the juice lands beside the lounger, at a point computed
-from the lounger's bounding box and checked for walkability.
+Nothing needs marking any more. Both anchors were measured off the composited art instead:
+
+- **trigger zone** = the lounger's seat, world `(2600,880)` to `(2800,1100)`. The whole bounding
+  box scored only 62% chair pixels, so walking in from the north crossed bare sand and spent the
+  once-per-run egg before the player reached the chair; the seat box scores 94%.
+- **landing point** = the side table's top, world `(2790,908)` (the table disc spans
+  `2755..2827 x 874..950`). The first attempt used `(2946,903)`, 155px east on bare sand.
 
 ## Juice easter egg
 
-Step on the lounger → a glass of iced juice pops out, arcs to the landing point, and is picked up
-by walking into it → HP and SP refill to full. **Once per run** (not once per level entry, so it
-cannot be farmed by leaving and returning); recorded in the store like `brokenProps`, cleared
-only when the save is wiped.
+Step on the lounger → an **Apple Cup** pops out, arcs to the side table, and is picked up by
+walking into it → HP and SP refill to full. **Once per run** (not once per level entry, so it
+cannot be farmed by leaving and returning); `usedTriggers` in the store, cleared only when the
+save is wiped.
+
+The cup is 苹果杯, the Apple Cup from _Don't Starve Together_ — Klei's original 64x64 sprite,
+supplied by the project owner as the easter egg's identity. Its thick dark outline and muted
+red/olive palette are Klei's style; against this level's bright painted sand it reads as a
+deliberate object, the way the game's own pixel-art characters sit on painted backgrounds.
+64x64 is also exactly the drop frame size (`loadDropAssets` slices every drop texture at 64x64),
+so that one image is the whole sprite — no anim table needed.
 
 ## Palette (measured from the current beach art)
 
