@@ -1,308 +1,312 @@
 title: Beach Holiday
 titleZh: "海滩假日"
-# Art pending: the beach background replaces this one; the path keeps the forest
-# image until then so the level still loads.
+# The world is 2x2 screens. The one-screen painting was cut into four tiles,
+# upscaled 2x each, stitched back to 5504x3072, and the beach camp (lounger,
+# parasol, side table) was composited into the north-west palm shade. Every
+# coordinate below is the pre-doubling value times two; radii and timers are
+# player-relative and deliberately unchanged.
 background: assets/image/scenes/beach-holiday.png
-imageSize: 2752x1536
+imageSize: 5504x3072
 airWalls:
-    # Collision authored against the art. The waterline is measured from the
-    # image (x=603); each palm trunk and rock pile gets one small octagon,
+    # Collision authored against the art, then doubled with the world: the
+    # waterline sits at x=1206 in the 5504x3072 image. Each palm trunk and rock
+    # pile gets one small octagon,
     # kind: short like the hand-drawn forest walls. Fronds and their long
     # shadows do NOT collide - walking under a canopy is the point.
     - id: waterline
       kind: short
       points:
-          - - 579
+          - - 1158
             - 0
-          - - 603
+          - - 1206
             - 0
-          - - 603
-            - 1536
-          - - 579
-            - 1536
+          - - 1206
+            - 3072
+          - - 1158
+            - 3072
     - id: top
       kind: short
       points:
-          - - 603
+          - - 1206
             - 0
-          - - 2752
+          - - 5504
             - 0
-          - - 2752
-            - 24
-          - - 603
-            - 24
+          - - 5504
+            - 48
+          - - 1206
+            - 48
     - id: right
       kind: short
       points:
-          - - 2728
+          - - 5456
             - 0
-          - - 2752
+          - - 5504
             - 0
-          - - 2752
-            - 1536
-          - - 2728
-            - 1536
+          - - 5504
+            - 3072
+          - - 5456
+            - 3072
     - id: bottom
       kind: short
       points:
-          - - 603
-            - 1512
-          - - 2752
-            - 1512
-          - - 2752
-            - 1536
-          - - 603
-            - 1536
+          - - 1206
+            - 3024
+          - - 5504
+            - 3024
+          - - 5504
+            - 3072
+          - - 1206
+            - 3072
     - id: palm-nw-a
       kind: short
       points:
-          - - 905
-            - 303
-          - - 887
-            - 347
-          - - 843
-            - 365
-          - - 799
-            - 347
-          - - 781
-            - 303
-          - - 799
-            - 259
-          - - 843
-            - 241
-          - - 887
-            - 259
+          - - 1810
+            - 606
+          - - 1774
+            - 694
+          - - 1686
+            - 730
+          - - 1598
+            - 694
+          - - 1562
+            - 606
+          - - 1598
+            - 518
+          - - 1686
+            - 482
+          - - 1774
+            - 518
     - id: palm-nw-b
       kind: short
       points:
-          - - 1124
-            - 260
-          - - 1107
-            - 301
-          - - 1066
-            - 318
-          - - 1025
-            - 301
-          - - 1008
-            - 260
-          - - 1025
-            - 219
-          - - 1066
-            - 202
-          - - 1107
-            - 219
+          - - 2248
+            - 520
+          - - 2214
+            - 602
+          - - 2132
+            - 636
+          - - 2050
+            - 602
+          - - 2016
+            - 520
+          - - 2050
+            - 438
+          - - 2132
+            - 404
+          - - 2214
+            - 438
     - id: rock-nw
       kind: short
       points:
-          - - 1265
-            - 416
-          - - 1242
-            - 471
-          - - 1187
-            - 494
-          - - 1132
-            - 471
-          - - 1109
-            - 416
-          - - 1132
-            - 361
-          - - 1187
-            - 338
-          - - 1242
-            - 361
+          - - 2530
+            - 832
+          - - 2484
+            - 942
+          - - 2374
+            - 988
+          - - 2264
+            - 942
+          - - 2218
+            - 832
+          - - 2264
+            - 722
+          - - 2374
+            - 676
+          - - 2484
+            - 722
     - id: palm-ne-a
       kind: short
       points:
-          - - 2313
-            - 208
-          - - 2295
-            - 250
-          - - 2253
-            - 268
-          - - 2211
-            - 250
-          - - 2193
-            - 208
-          - - 2211
-            - 166
-          - - 2253
-            - 148
-          - - 2295
-            - 166
+          - - 4626
+            - 416
+          - - 4590
+            - 500
+          - - 4506
+            - 536
+          - - 4422
+            - 500
+          - - 4386
+            - 416
+          - - 4422
+            - 332
+          - - 4506
+            - 296
+          - - 4590
+            - 332
     - id: palm-ne-b
       kind: short
       points:
-          - - 2464
-            - 260
-          - - 2448
-            - 300
-          - - 2408
-            - 316
-          - - 2368
-            - 300
-          - - 2352
-            - 260
-          - - 2368
-            - 220
-          - - 2408
-            - 204
-          - - 2448
-            - 220
+          - - 4928
+            - 520
+          - - 4896
+            - 600
+          - - 4816
+            - 632
+          - - 4736
+            - 600
+          - - 4704
+            - 520
+          - - 4736
+            - 440
+          - - 4816
+            - 408
+          - - 4896
+            - 440
     - id: drift-ne
       kind: short
       points:
-          - - 2182
-            - 381
-          - - 2163
-            - 428
-          - - 2116
-            - 447
-          - - 2069
-            - 428
-          - - 2050
-            - 381
-          - - 2069
-            - 334
-          - - 2116
-            - 315
-          - - 2163
-            - 334
+          - - 4364
+            - 762
+          - - 4326
+            - 856
+          - - 4232
+            - 894
+          - - 4138
+            - 856
+          - - 4100
+            - 762
+          - - 4138
+            - 668
+          - - 4232
+            - 630
+          - - 4326
+            - 668
     - id: palm-e
       kind: short
       points:
-          - - 2621
-            - 763
-          - - 2604
-            - 804
-          - - 2563
-            - 821
-          - - 2522
-            - 804
-          - - 2505
-            - 763
-          - - 2522
-            - 722
-          - - 2563
-            - 705
-          - - 2604
-            - 722
+          - - 5242
+            - 1526
+          - - 5208
+            - 1608
+          - - 5126
+            - 1642
+          - - 5044
+            - 1608
+          - - 5010
+            - 1526
+          - - 5044
+            - 1444
+          - - 5126
+            - 1410
+          - - 5208
+            - 1444
     - id: rock-se
       kind: short
       points:
-          - - 2318
-            - 1214
-          - - 2294
-            - 1272
-          - - 2236
-            - 1296
-          - - 2178
-            - 1272
-          - - 2154
-            - 1214
-          - - 2178
-            - 1156
-          - - 2236
-            - 1132
-          - - 2294
-            - 1156
+          - - 4636
+            - 2428
+          - - 4588
+            - 2544
+          - - 4472
+            - 2592
+          - - 4356
+            - 2544
+          - - 4308
+            - 2428
+          - - 4356
+            - 2312
+          - - 4472
+            - 2264
+          - - 4588
+            - 2312
     - id: drift-s
       kind: short
       points:
-          - - 1128
-            - 1352
-          - - 1110
-            - 1396
-          - - 1066
-            - 1414
-          - - 1022
-            - 1396
-          - - 1004
-            - 1352
-          - - 1022
-            - 1308
-          - - 1066
-            - 1290
-          - - 1110
-            - 1308
+          - - 2256
+            - 2704
+          - - 2220
+            - 2792
+          - - 2132
+            - 2828
+          - - 2044
+            - 2792
+          - - 2008
+            - 2704
+          - - 2044
+            - 2616
+          - - 2132
+            - 2580
+          - - 2220
+            - 2616
 pixelLighting: false
 characterSpawn:
-    x: 1349
-    'y': 200
+    x: 2698
+    'y': 400
     facing: right
 monsters:
     - type: drone
-      x: 1177
-      'y': 278
+      x: 2354
+      'y': 556
       waveId: wave-1
       trigger:
           kind: time
           delayMs: 1500
     - type: drone
-      x: 1562
-      'y': 402
+      x: 3124
+      'y': 804
       waveId: wave-1
       trigger:
           kind: time
           delayMs: 1500
     - type: stalker
-      x: 1050
-      'y': 740
+      x: 2100
+      'y': 1480
       waveId: wave-2
       trigger:
           kind: clear
           delayMs: 500
           waveId: wave-1
     - type: sniper
-      x: 1750
-      'y': 834
+      x: 3500
+      'y': 1668
       waveId: wave-2
       trigger:
           kind: clear
           delayMs: 500
           waveId: wave-1
     - type: keeper
-      x: 1736
-      'y': 563
+      x: 3472
+      'y': 1126
       waveId: wave-3
       trigger:
           kind: clear
           delayMs: 500
           waveId: wave-2
     - type: stalker
-      x: 1302
-      'y': 1135
+      x: 2604
+      'y': 2270
       waveId: wave-3
       trigger:
           kind: clear
           delayMs: 500
           waveId: wave-2
     - type: drone-ultra
-      x: 852
-      'y': 949
+      x: 1704
+      'y': 1898
       waveId: wave-3
       trigger:
           kind: clear
           delayMs: 500
           waveId: wave-2
     - type: gunner
-      x: 1050
-      'y': 1240
+      x: 2100
+      'y': 2480
       waveId: wave-4
       trigger:
           kind: clear
           delayMs: 500
           waveId: wave-3
     - type: sniper
-      x: 1360
-      'y': 536
+      x: 2720
+      'y': 1072
       waveId: wave-4
       trigger:
           kind: clear
           delayMs: 500
           waveId: wave-3
     - type: drone-ultra
-      x: 1800
-      'y': 1260
+      x: 3600
+      'y': 2520
       waveId: wave-4
       trigger:
           kind: clear
@@ -312,19 +316,19 @@ dropSpawns:
     # One drink beside the spawn, handed out once per run - the level's opening
     # gift. It never respawns; there is no periodic refill.
     - type: beach-drink
-      x: 1240
-      'y': 250
+      x: 2480
+      'y': 500
 materials: []
 teleporters:
     - id: tavern-return
-      x: 1350
-      'y': 400
+      x: 2700
+      'y': 800
       targetScene: tavern
       targetPortalId: tavern-exit
       radius: 60
     - id: teleporter-msfmft58
-      x: 1396
-      'y': 1433
+      x: 2792
+      'y': 2866
       targetScene: starry-library
       targetPortalId: to-beach
       radius: 60
