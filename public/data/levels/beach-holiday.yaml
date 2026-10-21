@@ -331,17 +331,25 @@ triggers:
     # Step on the lounger and a glass of iced juice pops out, arcs onto the
     # side table and waits there; walking into it refills HP and SP. Once per
     # run, so a fresh run earns a fresh glass.
+    #
+    # The zone is the lounger's seat, not its bounding box. Measured against
+    # the composited art the old 359x328 box was only 62% chair, so walking in
+    # from the north crossed bare sand and spent the egg before the player
+    # reached the chair. This 200x220 box is 94% chair-and-table and sits on
+    # the seat, and tavern-return's arrival point (2700,800) stays outside it.
     - id: lounger-juice
       # The seat, not the whole lounger: the tavern-return portal drops the
       # player at (2700,800), on the lounger's head end, and arriving from the
       # tavern must not spend the egg before they walk onto the seat.
-      zone: { x: 2520, y: 860, width: 359, height: 328 }
+      zone: { x: 2600, y: 880, width: 200, height: 220 }
       spawn:
           type: beach-drink
           from: { x: 2699, y: 993 }
-          to: { x: 2946, y: 903 }
-          lift: 90
-          durationMs: 700
+          # The table top, measured at world (2755..2827, 874..950). The old
+          # (2946,903) was 155px east of it, on sand beside the parasol pole.
+          to: { x: 2790, y: 908 }
+          lift: 120
+          durationMs: 800
 teleporters:
     - id: tavern-return
       x: 2700
