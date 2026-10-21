@@ -100,6 +100,28 @@ describe('serializeLevelYaml', () => {
         expect(parseLevelYaml(text, 'test')).toEqual(level);
     });
 
+    it('round-trips one-shot triggers (regression: save used to drop them)', () => {
+        const level: Level = {
+            ...minimal,
+            triggers: [
+                {
+                    id: 'lounger-juice',
+                    zone: { x: 2520, y: 798, width: 359, height: 390 },
+                    spawn: {
+                        type: 'beach-drink',
+                        from: { x: 2699, y: 993 },
+                        to: { x: 2946, y: 903 },
+                        lift: 90,
+                        durationMs: 700,
+                    },
+                },
+            ],
+        };
+        const text = serializeLevelYaml(level);
+        expect(text).toContain('triggers:');
+        expect(parseLevelYaml(text, 'test')).toEqual(level);
+    });
+
     it('round-trips monsters with x and y', () => {
         const level: Level = {
             ...minimal,

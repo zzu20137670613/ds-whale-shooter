@@ -79,3 +79,57 @@ export function spawnsWithoutBrokenProps<T extends { type: string }>(
     if (!spawns) return spawns;
     return spawns.filter((spawn) => !brokenProps.includes(propKey(levelId, spawn.type)));
 }
+
+/** Key a one-shot region trigger is remembered by: its level plus its id. */
+export function triggerKey(levelId: string, triggerId: string): string {
+    return `${levelId}:${triggerId}`;
+}
+
+/** A rectangular region of the world, in level coordinates. */
+export interface TriggerZone {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+}
+
+/** Is a point inside a trigger's zone? The edges count as inside. */
+export function isInsideZone(zone: TriggerZone, x: number, y: number): boolean {
+    return x >= zone.x && x <= zone.x + zone.width && y >= zone.y && y <= zone.y + zone.height;
+}
+
+/**
+ * The triggers still armed this run.
+ *
+ * Unlike a broken prop — world state that outlives the run — a trigger is run
+ * state: the beach juice is worth exactly one glass per run, so
+ * `clearSaveData` starts a fresh run and the glass comes back. The key carries
+ * the level id so two levels may each own a trigger called `lounger-juice`.
+ */
+export function armedTriggers<T extends { id: string }>(
+    levelId: string,
+    triggers: readonly T[] | undefined,
+    usedTriggers: readonly string[],
+): T[] {
+    if (!triggers) return [];
+    return triggers.filter((trigger) => !usedTriggers.includes(triggerKey(levelId, trigger.id)));
+}
+
+/** A point in the world. */
+export interface Point {
+    x: number;
+    y: number;
+}
+
+/**
+ * A point on a flown pickup's path: the straight line from `from` to `to`,
+ * lifted by a parabola that peaks at `lift` px in the middle of the flight and
+ * lands exactly on `to`. Screen coordinates, so the lift is negative y.
+ */
+export function arcPoint(from: Point, to: Point, t: number, lift: number): Point {
+    const k = Math.min(Math.max(t, 0), 1);
+    return {
+        x: from.x + (to.x - from.x) * k,
+        y: from.y + (to.y - from.y) * k - lift * 4 * k * (1 - k),
+    };
+}

@@ -443,6 +443,20 @@ export class DropController {
     }
 
     /**
+     * Spawn a drop that is already at rest, exactly at (x, y).
+     *
+     * `spawn` above is the monster-death path: it starts the drop in the air
+     * and pops it to a random nearby landing spot. A region trigger needs the
+     * opposite — the beach juice must land on the side table and nowhere else —
+     * so this skips the pop and leaves the body landed and pickable.
+     */
+    spawnLanded(spec: DropSpec, x: number, y: number): DropInstance {
+        const d = new DropInstance(this.scene, spec, x, y, false);
+        this.runtimeDrops.push(d);
+        return d;
+    }
+
+    /**
      * Spawn a weapon-pickup drop with a parabolic arc — used when
      * the player walks onto a new weapon at cap and the controller
      * auto-swaps the active slot. The replaced weapon launches out

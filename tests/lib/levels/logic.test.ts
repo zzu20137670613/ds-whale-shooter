@@ -1,6 +1,15 @@
 import { describe, it, expect } from 'vitest';
 
-import { groundLayers, isPortalArmed, propKey, spawnsWithoutBrokenProps } from '@/lib/levels/logic';
+import {
+    arcPoint,
+    armedTriggers,
+    groundLayers,
+    isInsideZone,
+    isPortalArmed,
+    propKey,
+    spawnsWithoutBrokenProps,
+    triggerKey,
+} from '@/lib/levels/logic';
 
 describe('isPortalArmed', () => {
     it('arms a gated portal only once the monsters are cleared', () => {
@@ -78,5 +87,49 @@ describe('propKey / spawnsWithoutBrokenProps', () => {
         expect(spawnsWithoutBrokenProps('beach-holiday', spawns, ['tavern:hollow-emblem'])).toEqual(
             spawns,
         );
+    });
+});
+
+describe('triggerKey / isInsideZone / armedTriggers / arcPoint', () => {
+    it('keys a trigger by its level and id', () => {
+        expect(triggerKey('beach-holiday', 'lounger-juice')).toBe('beach-holiday:lounger-juice');
+    });
+
+    it('counts the zone edges as inside', () => {
+        const zone = { x: 100, y: 200, width: 50, height: 40 };
+        expect(isInsideZone(zone, 100, 200)).toBe(true);
+        expect(isInsideZone(zone, 150, 240)).toBe(true);
+        expect(isInsideZone(zone, 125, 220)).toBe(true);
+        expect(isInsideZone(zone, 99, 200)).toBe(false);
+        expect(isInsideZone(zone, 125, 241)).toBe(false);
+    });
+
+    it('drops the triggers that already fired this run', () => {
+        const triggers = [{ id: 'lounger-juice' }, { id: 'other' }];
+        expect(armedTriggers('beach-holiday', triggers, ['beach-holiday:lounger-juice'])).toEqual([
+            { id: 'other' },
+        ]);
+    });
+
+    it('keeps a trigger recorded in another level, and copes with no triggers', () => {
+        const triggers = [{ id: 'lounger-juice' }];
+        expect(armedTriggers('beach-holiday', triggers, ['tavern:lounger-juice'])).toEqual(
+            triggers,
+        );
+        expect(armedTriggers('beach-holiday', undefined, [])).toEqual([]);
+    });
+
+    it('arcs a pickup up and back down exactly onto its target', () => {
+        const from = { x: 0, y: 0 };
+        const to = { x: 200, y: 0 };
+        expect(arcPoint(from, to, 0, 90)).toEqual({ x: 0, y: 0 });
+        expect(arcPoint(from, to, 1, 90)).toEqual({ x: 200, y: 0 });
+        expect(arcPoint(from, to, 0.5, 90)).toEqual({ x: 100, y: -90 });
+        expect(arcPoint(from, to, 0.25, 90).y).toBeLessThan(arcPoint(from, to, 0.125, 90).y);
+    });
+
+    it('clamps an out-of-range t to the endpoints', () => {
+        expect(arcPoint({ x: 0, y: 0 }, { x: 10, y: 10 }, -1, 50)).toEqual({ x: 0, y: 0 });
+        expect(arcPoint({ x: 0, y: 0 }, { x: 10, y: 10 }, 2, 50)).toEqual({ x: 10, y: 10 });
     });
 });

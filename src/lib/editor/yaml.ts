@@ -84,6 +84,11 @@ export function serializeLevelYaml(level: Level): string {
     if (level.teleporters !== undefined) {
         payload.teleporters = level.teleporters;
     }
+    // One-shot region triggers (the beach lounger's juice). Dropping them here
+    // would silently delete the easter egg the first time anyone saves a wall.
+    if (level.triggers !== undefined) {
+        payload.triggers = level.triggers;
+    }
     return stringifyYaml(payload, {
         lineWidth: -1,
         sortKeys: false,

@@ -114,6 +114,7 @@ export interface SceneAssets {
  */
 import { consumeTeleportArrival, TeleporterController } from '@/game/scenes/teleporter';
 import { TavernController } from '@/game/scenes/tavern-controller';
+import { TriggerController } from '@/game/scenes/trigger';
 import { loadWeaponAssets } from '@/game/weapons/weapon';
 
 export class LoadScene extends Phaser.Scene {
@@ -122,6 +123,7 @@ export class LoadScene extends Phaser.Scene {
     private dropSystem!: DropController;
     private materialManager!: MaterialManager;
     private teleporterSystem!: TeleporterController;
+    private triggerSystem!: TriggerController;
     private audio!: AudioController;
     private pathDebugOverlay!: PathDebugOverlayHandles;
     private tavernController?: TavernController;
@@ -475,8 +477,21 @@ export class LoadScene extends Phaser.Scene {
         // the character spec omits luck.
         this.monsterSystem.setPlayerLuck(this.assets.character.luck ?? 1);
 
-        // Wire AudioController (subscribes to EventBus sfx:*/music:* events).
+        // Wire one-shot region triggers — the beach lounger's iced juice.
+        this.triggerSystem = new TriggerController(
+            this,
+            this.character,
+            this.id,
+            this.level.triggers,
+            this.dropSystem,
+            (id) => {
+                const spec = this.assets.dropSpecs.get(id);
+                if (!spec) throw new Error(`Unknown drop id: ${id}`);
+                return spec;
+            },
+        );
 
+        // Wire AudioController (subscribes to EventBus sfx:*/music:* events).
         this.audio = new AudioController(
             this,
             this.assets.sfxSpecs.values(),
@@ -568,6 +583,7 @@ export class LoadScene extends Phaser.Scene {
                 this.character.body,
             );
             this.dropSystem.update();
+            this.triggerSystem.update();
             this.materialManager.update();
             // Monsters only run real A* near the camera — see PathfindingService.setFocus.
             this.monsterSystem.setPathFocus(this.cameras.main.worldView);
@@ -798,6 +814,7 @@ export class LoadScene extends Phaser.Scene {
         this.releaseLoadedTextures();
         this.tavernController?.destroy();
         this.teleporterSystem?.destroy();
+        this.triggerSystem?.destroy();
         this.audio?.destroy();
         this.pathDebugOverlay?.destroy();
     }

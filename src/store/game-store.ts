@@ -125,6 +125,10 @@ export interface GameUIState {
      *  tavern ornament must not grow back and re-hide the hidden entrance
      *  after a death or a restart. */
     brokenProps: string[];
+    /** One-shot region triggers already fired this run, keyed
+     *  `level:triggerId`. Unlike `brokenProps` this is run state, so
+     *  `clearSaveData` wipes it and a fresh run earns the juice again. */
+    usedTriggers: string[];
 
     // Setters
     setLevelTitle: (title: string) => void;
@@ -197,6 +201,8 @@ export interface GameUIState {
     setTavernWeaponCount: (n: number) => void;
     /** Remember a prop as opened, so the scene stops spawning it. */
     markPropBroken: (key: string) => void;
+    /** Remember a one-shot region trigger as fired for this run. */
+    markTriggerUsed: (key: string) => void;
 }
 
 /**
@@ -232,6 +238,8 @@ export const initialGameState = {
     money: 0,
     // World state, not run state — `clearSaveData` deliberately keeps it.
     brokenProps: [] as string[],
+    // Run state, not world state — a new run earns the trigger again.
+    usedTriggers: [] as string[],
 
     upgradeLevels: {} as Record<string, number>,
     weaponLevels: {} as Record<string, number>,
@@ -433,6 +441,12 @@ export const useGameStore = create<GameUIState>()(
                         ? {}
                         : { brokenProps: [...state.brokenProps, key] },
                 ),
+            markTriggerUsed: (key) =>
+                set((state) =>
+                    state.usedTriggers.includes(key)
+                        ? {}
+                        : { usedTriggers: [...state.usedTriggers, key] },
+                ),
         }),
         {
             name: '11th_forest_save_v2',
@@ -455,6 +469,7 @@ export const useGameStore = create<GameUIState>()(
                 tavernCleared: state.tavernCleared,
                 // World state — survives a death restart.
                 brokenProps: state.brokenProps,
+                usedTriggers: state.usedTriggers,
                 // Economy + upgrades
                 money: state.money,
                 upgradeLevels: state.upgradeLevels,

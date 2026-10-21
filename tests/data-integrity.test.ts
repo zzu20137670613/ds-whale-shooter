@@ -250,7 +250,7 @@ describe('public/data integrity', () => {
         expect(bad, `one-sided teleporter pairs:\n${bad.join('\n')}`).toEqual([]);
     });
 
-    it('levels: no spawn or prop sits inside an air wall', () => {
+    it('levels: no spawn, prop or trigger zone sits inside an air wall', () => {
         // An entity authored inside a wall is silent: the schema is happy, the
         // scene loads, and the thing is either unreachable (a drink behind the
         // railing) or stuck (a monster welded into a rock). Walls are traced
@@ -290,6 +290,18 @@ describe('public/data integrity', () => {
                 list.forEach((entry, i) => {
                     entities.push({ label: `${key}[${i}]`, x: entry.x, y: entry.y });
                 });
+            }
+
+            // A trigger only fires where the player can stand, and its pickup
+            // pops out of a point the art says is open sand. A wall over either
+            // turns the reward into scenery nobody can reach.
+            for (const trigger of level.triggers ?? []) {
+                entities.push({
+                    label: `triggers.${trigger.id}.zone`,
+                    x: trigger.zone.x + trigger.zone.width / 2,
+                    y: trigger.zone.y + trigger.zone.height / 2,
+                });
+                entities.push({ label: `triggers.${trigger.id}.from`, ...trigger.spawn.from });
             }
 
             for (const entity of entities) {

@@ -178,6 +178,60 @@ export const TeleporterSchema = z
         y: Math.round(v.y),
     }));
 
+// ─── Trigger ──────────────────────────────────────────────────────────────
+
+/**
+ * A one-shot region trigger: the first time the player walks into `zone` this
+ * run, a drop pops out of `spawn.from`, arcs to `spawn.to` and lands there to
+ * be picked up like any other ground drop. The scene records the trigger as
+ * used (key `level:id`), so it stays spent for the rest of the run and only a
+ * fresh run earns it again. Used by the beach lounger: step on the lounger, a
+ * glass of iced juice pops out and lands on the side table.
+ */
+export const TriggerSchema = z
+    .object({
+        id: z.string().min(1),
+        zone: z
+            .object({
+                x: z.number(),
+                y: z.number(),
+                width: z.number().gt(0),
+                height: z.number().gt(0),
+            })
+            .strict(),
+        spawn: z
+            .object({
+                /** Drop spec id, e.g. `beach-drink`. */
+                type: z.string().min(1),
+                /** Where the pickup pops out - the lounger. */
+                from: z.object({ x: z.number(), y: z.number() }).strict(),
+                /** Where it lands and waits - the side table. */
+                to: z.object({ x: z.number(), y: z.number() }).strict(),
+                /** How high the arc rises above the straight line, in px. */
+                lift: z.number().gte(0).default(90),
+                /** How long the flight takes, in ms. */
+                durationMs: z.number().gt(0).default(700),
+            })
+            .strict(),
+    })
+    .strict()
+    .transform((v) => ({
+        id: v.id,
+        zone: {
+            x: Math.round(v.zone.x),
+            y: Math.round(v.zone.y),
+            width: Math.round(v.zone.width),
+            height: Math.round(v.zone.height),
+        },
+        spawn: {
+            type: v.spawn.type,
+            from: { x: Math.round(v.spawn.from.x), y: Math.round(v.spawn.from.y) },
+            to: { x: Math.round(v.spawn.to.x), y: Math.round(v.spawn.to.y) },
+            lift: v.spawn.lift,
+            durationMs: v.spawn.durationMs,
+        },
+    }));
+
 // ─── Level ────────────────────────────────────────────────────────────────
 
 /**
@@ -232,6 +286,7 @@ export const LevelSchema = z
         background: z.string().min(1),
         tilemap: TilemapSchema.optional(),
         backgroundBlocks: z.array(BackgroundBlockSchema).optional(),
+        triggers: z.array(TriggerSchema).optional(),
         imageSize: z.string().regex(/^\d+x\d+$/, 'expected "WxH"'),
         prompt: z.string().optional(),
         music: z.string().min(1).optional(),
@@ -258,6 +313,7 @@ export const LevelSchema = z
             background: v.background,
             ...(v.tilemap !== undefined ? { tilemap: v.tilemap } : {}),
             ...(v.backgroundBlocks !== undefined ? { backgroundBlocks: v.backgroundBlocks } : {}),
+            ...(v.triggers !== undefined ? { triggers: v.triggers } : {}),
             imageSize: { width: Number(w), height: Number(h) },
             airWalls: v.airWalls,
             ...(v.prompt !== undefined ? { prompt: v.prompt } : {}),
