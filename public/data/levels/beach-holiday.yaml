@@ -9,31 +9,39 @@ background: assets/image/scenes/beach-holiday.png
 imageSize: 5504x3072
 airWalls:
     # Collision authored against the art, then doubled with the world: the
-    # waterline sits at x=1206 in the 5504x3072 image. Each palm trunk and rock
-    # pile gets one small octagon,
+    # water's edge sits at x=1206 in the 5504x3072 image. Each palm trunk and
+    # rock pile gets one small octagon,
     # kind: short like the hand-drawn forest walls. Fronds and their long
     # shadows do NOT collide - walking under a canopy is the point.
-    - id: waterline
+    #
+    # The sea is wadeable for its inner third and solid beyond that: real
+    # shores shoal, so the player may walk out to x=804 and no further. 804 is
+    # two thirds of the 1206px sea, and it lands mid-gradient against the art's
+    # own colours (deep teal 36,152,155 at x=0 lightening to 176,198,180 at the
+    # shore), so the wadeable band reads as shallows rather than open water.
+    # `top` and `bottom` start at the same x, so wading keeps the same 48px
+    # inset from the painting's edge as the dry beach does.
+    - id: deep-water
       kind: short
       points:
-          - - 1158
+          - - 756
             - 0
-          - - 1206
+          - - 804
             - 0
-          - - 1206
+          - - 804
             - 3072
-          - - 1158
+          - - 756
             - 3072
     - id: top
       kind: short
       points:
-          - - 1206
+          - - 804
             - 0
           - - 5504
             - 0
           - - 5504
             - 48
-          - - 1206
+          - - 804
             - 48
     - id: right
       kind: short
@@ -49,13 +57,13 @@ airWalls:
     - id: bottom
       kind: short
       points:
-          - - 1206
+          - - 804
             - 3024
           - - 5504
             - 3024
           - - 5504
             - 3072
-          - - 1206
+          - - 804
             - 3072
     - id: palm-nw-a
       kind: short
