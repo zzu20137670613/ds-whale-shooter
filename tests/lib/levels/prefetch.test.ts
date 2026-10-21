@@ -1,6 +1,10 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+
 import { describe, it, expect } from 'vitest';
 
 import { collectDropIds } from '@/lib/levels/prefetch';
+import { parseLevelYaml } from '@/lib/levels/parser';
 import type { Level } from '@/lib/levels';
 import type { MonsterSpec } from '@/lib/monsters';
 
@@ -126,5 +130,23 @@ describe('collectDropIds', () => {
         ]);
         const ids = collectDropIds(level(), monsters);
         expect(ids.size).toBe(0);
+    });
+});
+
+describe('the shipped beach level', () => {
+    it('prefetches the lounger egg reward so fire time can resolve it', () => {
+        // Regression: `iced-juice` is named only by the trigger, so nothing
+        // loaded it and the egg died on an uncaught "Unknown drop id" in the
+        // middle of a game. Fixtures cannot catch that; the real YAML can.
+        const beach = parseLevelYaml(
+            readFileSync(
+                join(process.cwd(), 'public', 'data', 'levels', 'beach-holiday.yaml'),
+                'utf8',
+            ),
+            'beach-holiday',
+        );
+        const reward = beach.triggers?.[0]?.spawn.type;
+        expect(reward).toBe('iced-juice');
+        expect(collectDropIds(beach, new Map())).toContain(reward);
     });
 });
