@@ -48,3 +48,6 @@ raws/
 __pycache__/
 *.pyc
 
+
+# assembled world plates are derived from blocks/ and too large for git
+art-source/*/world/
