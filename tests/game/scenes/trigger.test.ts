@@ -7,11 +7,11 @@
  * `arcPoint`) are tested next to their source, which proves the arithmetic but
  * not the thing the player cares about — that standing on the painted lounger
  * in `beach-holiday.yaml` makes a glass appear on the side table, once per run.
- * A zone that has drifted off the art still passes every unit test, so this
- * one reads the shipped YAML and asserts against those numbers.
+ * A zone that has drifted off the art still passes every unit test, so this one
+ * reads the shipped YAML and asserts against those numbers.
  *
- * The scene, the character and the drop controller are fakes: this is the
- * controller's logic, not Phaser's renderer.
+ * The flight is stepped by hand through `update(delta)`: no tweens, no Phaser
+ * scene, so the whole ceremony is testable in plain node.
  */
 
 import { readFileSync } from 'node:fs';
@@ -34,37 +34,22 @@ const trigger = level.triggers![0];
 /** The drop spec is only an identity token here — the fake controller ignores it. */
 const spec = { id: 'iced-juice' } as DropSpec;
 
+/** One 60Hz frame. */
+const FRAME = 16;
+
 function harness() {
     const sprite = { setPosition: vi.fn(), setDepth: vi.fn() };
     const drop = { sprite, rejected: false };
     const spawnLanded = vi.fn(() => drop);
-    const line = {
-        setDepth: vi.fn(),
-        lineStyle: vi.fn(),
-        beginPath: vi.fn(),
-        moveTo: vi.fn(),
-        lineTo: vi.fn(),
-        strokePath: vi.fn(),
-        destroy: vi.fn(),
-        alpha: 1,
-    };
-    const scene = {
-        add: { graphics: vi.fn(() => line) },
-        tweens: {
-            addCounter: vi.fn((config: unknown) => ({ stop: vi.fn(), config })),
-            add: vi.fn((config: unknown) => ({ stop: vi.fn(), config })),
-        },
-    };
     const character = { body: { position: { x: 0, y: 0 } } };
     const controller = new TriggerController(
-        scene as never,
         character,
         LEVEL_ID,
         level.triggers,
         { spawnLanded } as never,
         () => spec,
     );
-    return { controller, character, spawnLanded, sprite, drop, scene, line };
+    return { controller, character, spawnLanded, sprite, drop };
 }
 
 /** Where the player stands to set the egg off: the middle of the authored zone. */
@@ -88,7 +73,7 @@ describe('TriggerController (the lounger juice)', () => {
     it('does nothing while the player is away from the lounger', () => {
         const h = harness();
         h.character.body.position = { x: 1000, y: 1000 };
-        h.controller.update();
+        h.controller.update(FRAME);
         expect(h.spawnLanded).not.toHaveBeenCalled();
         expect(useGameStore.getState().usedTriggers).toEqual([]);
     });
@@ -96,7 +81,7 @@ describe('TriggerController (the lounger juice)', () => {
     it('lands the glass on the table and remembers the egg once the player steps on the chair', () => {
         const h = harness();
         h.character.body.position = { ...ON_THE_CHAIR };
-        h.controller.update();
+        h.controller.update(FRAME);
         expect(h.spawnLanded).toHaveBeenCalledWith(spec, trigger.spawn.to.x, trigger.spawn.to.y);
         expect(useGameStore.getState().usedTriggers).toEqual([`${LEVEL_ID}:lounger-juice`]);
     });
@@ -104,29 +89,24 @@ describe('TriggerController (the lounger juice)', () => {
     it('flies the glass from the lounger to the table, then releases it for pickup', () => {
         const h = harness();
         h.character.body.position = { ...ON_THE_CHAIR };
-        h.controller.update();
+        h.controller.update(FRAME);
 
-        // It starts where it pops out, and the magnet is held off in flight.
+        // It starts where it pops out, held clear of the magnet.
         expect(h.sprite.setPosition).toHaveBeenCalledWith(
             trigger.spawn.from.x,
             trigger.spawn.from.y,
         );
         expect(h.drop.rejected).toBe(true);
-        expect(h.scene.add.graphics).toHaveBeenCalledTimes(1);
 
-        const config = h.scene.tweens.addCounter.mock.calls[0][0] as {
-            duration: number;
-            onUpdate: (tween: { getValue: () => number }) => void;
-            onComplete: () => void;
-        };
-        expect(config.duration).toBe(trigger.spawn.durationMs);
-
-        config.onUpdate({ getValue: () => 0.5 });
+        // Halfway it is up in the air, between the two ends.
+        h.controller.update(trigger.spawn.durationMs / 2);
         const mid = h.sprite.setPosition.mock.calls.at(-1)!;
-        expect(mid[0]).toBeCloseTo((trigger.spawn.from.x + trigger.spawn.to.x) / 2);
+        expect(mid[0]).toBeGreaterThan(trigger.spawn.from.x);
+        expect(mid[0]).toBeLessThan(trigger.spawn.to.x);
         expect(mid[1]).toBeLessThan(trigger.spawn.from.y);
 
-        config.onComplete();
+        // One more stretch and it rests on the table, pickable again.
+        h.controller.update(trigger.spawn.durationMs);
         expect(h.sprite.setPosition).toHaveBeenLastCalledWith(
             trigger.spawn.to.x,
             trigger.spawn.to.y,
@@ -137,32 +117,31 @@ describe('TriggerController (the lounger juice)', () => {
     it('never fires twice in the same run', () => {
         const h = harness();
         h.character.body.position = { ...ON_THE_CHAIR };
-        h.controller.update();
-        h.controller.update();
+        h.controller.update(FRAME);
+        h.controller.update(FRAME);
         expect(h.spawnLanded).toHaveBeenCalledTimes(1);
     });
 
     it('fires again once the save is cleared — a fresh run earns a fresh glass', () => {
         const first = harness();
         first.character.body.position = { ...ON_THE_CHAIR };
-        first.controller.update();
+        first.controller.update(FRAME);
 
         useGameStore.getState().clearSaveData();
 
         const second = harness();
         second.character.body.position = { ...ON_THE_CHAIR };
-        second.controller.update();
+        second.controller.update(FRAME);
         expect(second.spawnLanded).toHaveBeenCalledTimes(1);
     });
 
-    it('tears its flights down on shutdown', () => {
+    it('stops flying once the scene tears down', () => {
         const h = harness();
         h.character.body.position = { ...ON_THE_CHAIR };
-        h.controller.update();
-        const config = h.scene.tweens.addCounter.mock.calls[0][0] as never;
-        const flight = h.scene.tweens.addCounter.mock.results[0].value as { stop: () => void };
-        expect(config).toBeTruthy();
+        h.controller.update(FRAME);
+        const before = h.sprite.setPosition.mock.calls.length;
         h.controller.destroy();
-        expect(flight.stop).toHaveBeenCalled();
+        h.controller.update(trigger.spawn.durationMs);
+        expect(h.sprite.setPosition.mock.calls.length).toBe(before);
     });
 });

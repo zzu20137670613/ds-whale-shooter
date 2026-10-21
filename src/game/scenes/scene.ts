@@ -479,7 +479,6 @@ export class LoadScene extends Phaser.Scene {
 
         // Wire one-shot region triggers — the beach lounger's iced juice.
         this.triggerSystem = new TriggerController(
-            this,
             this.character,
             this.id,
             this.level.triggers,
@@ -583,7 +582,7 @@ export class LoadScene extends Phaser.Scene {
                 this.character.body,
             );
             this.dropSystem.update();
-            this.triggerSystem.update();
+            this.triggerSystem.update(delta);
             this.materialManager.update();
             // Monsters only run real A* near the camera — see PathfindingService.setFocus.
             this.monsterSystem.setPathFocus(this.cameras.main.worldView);
