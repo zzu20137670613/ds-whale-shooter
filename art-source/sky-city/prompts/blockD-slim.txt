@@ -1,0 +1,25 @@
+# 块 D · 精简版（额度受限，2000 字符内）
+
+> 只保留会导致重画的条款：正俯视 / 占地预算 / 光斑不是光柱 / 亮度 / 渐变边 / 尺寸。
+> 纹样、材质、气质的形容词全砍了，那些重画一次也换不回来。
+>
+> 接邻块：左边接 A（月桥落点），上边接 C（书阁）——这两条边做渐变；
+> 右边和下边是地图外缘，平台断在云里，最外角往深蓝收，给 S3 留接口。
+
+```
+Anime-style 2D game art, top-down orthographic plan view, straight down: no horizon, no sky band, no side faces, nothing in elevation. Playable combat field, not an illustration. A light shaft is a flat bright disc on the floor with a soft halo, never a beam standing up. Matte painted, soft cel shading, 1-2px landmark lines.
+
+OCCUPANCY: >=65% of the frame is clear pale stone floor; throne <=18% of frame, width <=35% of frame width, centred; light disc <=22% of frame width; chains ~3px; cloud only within the outer 8%; nothing else stands on the floor.
+
+BRIGHTNESS: light airy near-white floor like a bright cloud terrace; darken only the outermost corners.
+
+Palette: #FBFAF6 near-white, #F4F8FC cloud white, #F0D9A4 pale gold, #C9CED8 silver, #FFF6DE halo, #16324A outer corners only.
+
+Subject: pale stone floor across the frame, its right and lower edges ending into open cloud. At centre an EMPTY THRONE from above: blocky pale stone seat and back with flat cloud swirls on top, armrests, a thin silver chain from each into the light. Beneath it a POOL OF LIGHT: hard-edged bright disc, soft halo, the brightest passage in the map, rimmed by cloud torn open.
+
+Edges: LEFT 140px ramp to #E7F1F9; TOP 140px ramp to #EAF0F6; smooth, not banded. RIGHT and BOTTOM are the map boundary: floor ends in cloud, outermost corners to #16324A. No border, frame or vignette; keep the outer 140px free of landmarks.
+
+Size: 3:2, largest available, full bleed. Compose for a 16:9 centre crop (outer 8% top/bottom cut, keep landmarks in the central 84%); left/right uncropped.
+
+Negative: side view, elevation, isometric, three-quarter, tilted camera, horizon, sky, beam of light standing up, giant throne, oversized furniture, props crowding the floor, walls on the floor, characters, person, girl, creature, hands, text, lettering, watermark, logo, UI, frame, vignette, photorealistic, glossy 3D, neon, high saturation.
+```
