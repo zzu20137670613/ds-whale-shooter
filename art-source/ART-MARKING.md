@@ -1,11 +1,11 @@
-# Owner art markings — the convention
+﻿# Owner art markings 鈥?the convention
 
 The owner marks a finished block/world plate so the walls and teleporters can be
 derived from it. Detection is automated, so the marks must be unambiguous.
 
 ## Colour
 
-**Orange `#FF8C00`** — one opaque pen, straight from the palette, no opacity, no
+**Orange `#FF8C00`** 鈥?one opaque pen, straight from the palette, no opacity, no
 blur, no anti-aliased brush. It is deliberately far more saturated than anything in
 the art (the palest warm tone we paint with is `#E8C87A`), so it can be told apart
 from gold roofs and wooden floors by saturation alone.
@@ -26,7 +26,7 @@ what the detector keys on, not the colour.
 
 ## Rules the owner asked for
 
-- A teleporter circle may be drawn **straddling a wall on purpose** — half the arc
+- A teleporter circle may be drawn **straddling a wall on purpose** 鈥?half the arc
   over unreachable floor, half over walkable floor. The teleporter's trigger radius
   is then clamped to the largest radius that stays on reachable ground, so the
   coverage always equals "where the player can actually stand".
@@ -51,3 +51,15 @@ are retired by this pass.
 | --- | --- | --- |
 | bottom-left teleporter | pending re-mark | starry-library |
 | bottom-right teleporter | pending re-mark | dsh-atlantis |
+## Atlantis pass (2026-10-22)
+
+Two separate mask exports, which is the cleanest form this pipeline can take:
+
+- `world/atlantis-walls.png` - solid red `#F30D0D` on black, red = unreachable.
+- `world/atlantis-teleporters.png` - solid yellow `#DCF410` on black, yellow = portal discs.
+
+Read straight from the colours, no base-image diff needed. Walls regenerated with
+`scripts/walls-from-art.py --from-mask` (240 rects + the 4 world edges); the two
+portal discs are carved 340 px wide so no 32 px cell rect can cover them.
+
+Lesson: two separate mask files beat one annotated plate every time. Ask for them.
