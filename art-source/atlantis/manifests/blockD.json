@@ -1,0 +1,71 @@
+{
+  "level": "atlantis",
+  "block": "D",
+  "source": "D:\\网页下载\\jimeng-2026-10-22-2810-Hand-painted anime game art, strict top-....png",
+  "source_size": [
+    2560,
+    1440
+  ],
+  "plate": "plates/blockD-raw.png",
+  "ramped": "plates/blockD-ramped.png",
+  "ramps": [
+    {
+      "edge": "left",
+      "target": "#35505A"
+    },
+    {
+      "edge": "top",
+      "target": "#6E7F86"
+    }
+  ],
+  "hard_edges": [
+    "right",
+    "bottom"
+  ],
+  "tiles": [
+    {
+      "name": "blockD-tl",
+      "file": "tiles/blockD-tl.png",
+      "size": [
+        1280,
+        720
+      ]
+    },
+    {
+      "name": "blockD-tr",
+      "file": "tiles/blockD-tr.png",
+      "size": [
+        1280,
+        720
+      ]
+    },
+    {
+      "name": "blockD-bl",
+      "file": "tiles/blockD-bl.png",
+      "size": [
+        1280,
+        720
+      ]
+    },
+    {
+      "name": "blockD-br",
+      "file": "tiles/blockD-br.png",
+      "size": [
+        1280,
+        720
+      ]
+    }
+  ],
+  "tile_grid": [
+    2,
+    2
+  ],
+  "watermark_note": "即梦AI 水印在右下分块 br 内，超清后擦除",
+  "good": [
+    "低矮石台+台面浅座+金环",
+    "石阶为横带踏步（俯视正确）",
+    "暖金斜射光",
+    "两个金冠柱"
+  ],
+  "deviation": "鲸画成了活鲸而非平躺石板：保留，俯视里天然是平的，且比石雕更有生气"
+}
