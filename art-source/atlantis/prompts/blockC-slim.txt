@@ -1,0 +1,26 @@
+# 块 C · 摄政之谏（右上 NE）
+
+> 两个"立着的东西"必须压平，否则又是 A/B 那种翻车：
+> ① **王座** → "半埋在黑礁里的石座，只有座面和一只扶手露出地面"（低矮，不是一把椅子）；
+> ② **鲸像**（梗概"黑鲸石像环立垂首"）→ "**平躺在地上的鲸形石板**，全朝王座"。
+>    立着的雕像必被画成 3/4，平躺的石板它画得了。
+>
+> 接邻块：左边接 B（深海之忆），下边接 D（加冕）；上边和右边是地图外缘（黑礁）。
+
+```
+Hand-painted anime game art, strict top-down plan view: no isometric, no three-quarter, no horizon, no vertical structure. Nothing is taller than the ground; everything reads as flat shapes on the floor. No arch, gate, doorway, pillar or standing wall. The throne is a HALF-BURIED seat: only its flat top and one armrest rise above the floor. Smooth painted cel shading, NOT pixel art. Playable combat field, not an illustration.
+
+OCCUPANCY: >=65% open stone floor; throne <=18%; whale slabs <=15%; haze in the outer 8%.
+
+LIGHT: cold silver, quiet: one irregular patch of pale sky light lying flat on the floor; the rest dim but readable.
+
+Palette: reef black #16222A, cold silver #C9D6DC, wet stone #7E8C93, sky light #EAF4F2, faint gold #6E5A38.
+
+Subject: a drowned hall, stone floor under a thin still sheet of water holding faint reflections. At the centre a stone THRONE half-buried in black branching reef, only the flat seat and one armrest above the floor, one line of dark gold inlay. Around it, WHALE-SHAPED STONE SLABS lie flat - long tapering slabs with flukes, all oriented toward the throne. Three shallow carved rings mark three spots. An irregular patch of pale sky light lies across part of the floor.
+
+Edges: TOP and RIGHT are the map boundary: dark reef. LEFT 140px ramp to #2A424C (toward the deep); BOTTOM ramp to #B9AD86 (toward the warm hall); smooth, not banded. No border, frame or vignette; outer 140px free.
+
+Size: 3:2, largest available, full bleed. Compose for a 16:9 centre crop: outer 8% top/bottom cut, landmarks inside the central 84%; left/right uncropped.
+
+Negative: isometric, iso, three-quarter, side view, elevation, vertical wall, arch, door standing up, statues standing upright, camera tilt, horizon, sky, pixel art, characters, person, girl, hands, text, lettering, watermark, logo, UI, frame, vignette.
+```
