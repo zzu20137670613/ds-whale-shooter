@@ -1,0 +1,66 @@
+{
+  "level": "atlantis",
+  "block": "B",
+  "source": "D:\\网页下载\\jimeng-2026-10-22-7996-Hand-painted anime game art, strict top-....png",
+  "source_size": [
+    2560,
+    1440
+  ],
+  "cropped_bottom_px": 0,
+  "plate": "plates/blockB-raw.png",
+  "ramped": "plates/blockB-ramped.png",
+  "ramps": [
+    {
+      "edge": "bottom",
+      "target": "#16262E"
+    },
+    {
+      "edge": "right",
+      "target": "#8FA3AC"
+    }
+  ],
+  "hard_edges": [
+    "top",
+    "left"
+  ],
+  "tiles": [
+    {
+      "name": "blockB-tl",
+      "file": "tiles/blockB-tl.png",
+      "size": [
+        1280,
+        720
+      ]
+    },
+    {
+      "name": "blockB-tr",
+      "file": "tiles/blockB-tr.png",
+      "size": [
+        1280,
+        720
+      ]
+    },
+    {
+      "name": "blockB-bl",
+      "file": "tiles/blockB-bl.png",
+      "size": [
+        1280,
+        720
+      ]
+    },
+    {
+      "name": "blockB-br",
+      "file": "tiles/blockB-br.png",
+      "size": [
+        1280,
+        720
+      ]
+    }
+  ],
+  "tile_grid": [
+    2,
+    2
+  ],
+  "watermark_note": "即梦AI 水印在右下分块 br 内，超清后擦除",
+  "hero": "槽口溢出的冷光刃是这块的视觉锚点"
+}
