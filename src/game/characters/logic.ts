@@ -341,8 +341,8 @@ export class CharacterController {
     /** Skill state — see `lib/characters/skill`. One runtime serves every
      *  kind; the controller only reads and writes it through the pure API. */
     private skillRuntime = emptySkillRuntime();
-    /** Last scene-ms tick the E badge received a status update. */
-    private lastSkillStatusAt = -Infinity;
+    /** Coarse fingerprint of what the badge last drew — see publishSkillStatus. */
+    private lastSkillStatusSignature = '';
 
     private readonly cleanupFns: Array<() => void> = [];
 
@@ -522,18 +522,28 @@ export class CharacterController {
 
     /**
      * Announce the skill's state for the HUD's E badge: how much cooldown is
-     * left and whether the SP pool covers the cost. Throttled to ~10Hz — the
-     * badge is not worth one event per frame.
+     * left and whether the SP pool covers the cost.
+     *
+     * Pushed only when the badge would actually look different — a cooldown
+     * countdown changes in whole seconds of "still cooling", so re-rendering
+     * the HUD ten times a second bought nothing. Three coarse signals are
+     * enough: the tone bucket, whether SP covers the cost, and the headgear's
+     * worn flag.
      */
     private publishSkillStatus(now: number): void {
         const skill = this.spec.skill;
         if (!skill) return;
-        if (now - this.lastSkillStatusAt < 100) return;
-        this.lastSkillStatusAt = now;
+        const readyInMs = Math.max(0, this.skillRuntime.readyAt - now);
+        const spCost = skillSpCost(skill, this.spec.sp);
+        const signature = `${readyInMs > 0 ? 'cooling' : 'ready'}|${this.sp >= spCost}|${
+            this.skillRuntime.hitsLeft > 0
+        }`;
+        if (signature === this.lastSkillStatusSignature) return;
+        this.lastSkillStatusSignature = signature;
         EventBus.emit('skill:status', {
-            readyInMs: Math.max(0, this.skillRuntime.readyAt - now),
+            readyInMs,
             sp: this.sp,
-            spCost: skillSpCost(skill, this.spec.sp),
+            spCost,
             wornHits: this.skillRuntime.hitsLeft,
         });
     }
