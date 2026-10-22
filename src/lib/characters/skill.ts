@@ -106,6 +106,28 @@ export function useSkill(
 }
 
 /**
+ * Which colour the HUD's E badge should show.
+ *
+ * `cooling` wins over `no-sp`: while the skill is still on cooldown the SP
+ * readout is not the reason the press did nothing, so a grey badge is the
+ * honest answer. A headgear that is still worn cannot be re-worn either, so
+ * it counts as cooling.
+ */
+export type SkillBadgeTone = 'ready' | 'cooling' | 'no-sp';
+
+export function skillBadgeTone(state: {
+    readyInMs: number;
+    sp: number;
+    spCost: number;
+    wornHits?: number;
+}): SkillBadgeTone {
+    if (state.readyInMs > 0) return 'cooling';
+    if ((state.wornHits ?? 0) > 0) return 'cooling';
+    if (state.sp < state.spCost) return 'no-sp';
+    return 'ready';
+}
+
+/**
  * The multiplier to stamp on ONE attack. A `critical-next` is spent here, so
  * a shot that misses still consumes it — the owner asked for exactly that.
  */

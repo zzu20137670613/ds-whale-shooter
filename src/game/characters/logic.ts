@@ -25,6 +25,7 @@ import {
     absorbIncomingHit,
     attackMultiplier,
     emptySkillRuntime,
+    skillSpCost,
     useSkill,
 } from '@/lib/characters/skill';
 import {
@@ -340,6 +341,8 @@ export class CharacterController {
     /** Skill state — see `lib/characters/skill`. One runtime serves every
      *  kind; the controller only reads and writes it through the pure API. */
     private skillRuntime = emptySkillRuntime();
+    /** Last scene-ms tick the E badge received a status update. */
+    private lastSkillStatusAt = -Infinity;
 
     private readonly cleanupFns: Array<() => void> = [];
 
@@ -517,6 +520,24 @@ export class CharacterController {
         this.scene.matter.world.remove(this.parts.body);
     }
 
+    /**
+     * Announce the skill's state for the HUD's E badge: how much cooldown is
+     * left and whether the SP pool covers the cost. Throttled to ~10Hz — the
+     * badge is not worth one event per frame.
+     */
+    private publishSkillStatus(now: number): void {
+        const skill = this.spec.skill;
+        if (!skill) return;
+        if (now - this.lastSkillStatusAt < 100) return;
+        this.lastSkillStatusAt = now;
+        EventBus.emit('skill:status', {
+            readyInMs: Math.max(0, this.skillRuntime.readyAt - now),
+            sp: this.sp,
+            spCost: skillSpCost(skill, this.spec.sp),
+            wornHits: this.skillRuntime.hitsLeft,
+        });
+    }
+
     /** Drive one tick manually — useful for tests; normally scene events do it. */
     update(now: number): void {
         const kb = this.scene.input.keyboard!;
@@ -540,11 +561,15 @@ export class CharacterController {
             if (used.used) {
                 this.skillRuntime = used.runtime;
                 this.sp -= used.spCost;
+                EventBus.emit('skill:used', { kind: this.spec.skill.kind });
                 if (this.spec.skill.kind === 'dragon-roar') {
                     EventBus.emit('skill:dragon-roar', { hpFraction: this.spec.skill.hpFraction });
                 }
             }
         }
+        // Feed the HUD's E badge: cooldown left and whether SP covers the
+        // cost. Throttled inside — the badge is not worth 60 events a second.
+        this.publishSkillStatus(now);
         // Edge-triggered: clear the one-frame dodge flag the moment
         // the controller consumes it, so holding the touch button
         // doesn't queue a chain of dodges.

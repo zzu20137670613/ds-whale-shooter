@@ -22,6 +22,7 @@ const en: CatalogSource = {
         weapons: 'Weapons',
         empty: 'No weapons yet.',
         ammo: 'Refill Ammo',
+        returnHome: 'Return to Pavilion',
         upgrade: {
             armor: 'Armor',
             agility: 'Agility',
@@ -29,7 +30,10 @@ const en: CatalogSource = {
             luck: 'Luck',
         },
     },
-tavern: {
+    merchant: {
+        name: 'Mysterious Merchant',
+    },
+    tavern: {
         confirm: 'CONFIRM',
         tapToStart: '(TAP TO START)',
         cycle: 'Cycle',

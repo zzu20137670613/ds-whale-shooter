@@ -33,12 +33,19 @@ export type CatalogSource = {
         weapons: string;
         empty: string;
         ammo: string;
+        /** "Return to Pavilion" — the shop's way home now that the merchant
+         *  carries it, so it has to live outside the tavern. */
+        returnHome: string;
         upgrade: {
             armor: string;
             agility: string;
             spirit: string;
             luck: string;
         };
+    };
+    /** The figure who stands on the junction of a four-block world. */
+    merchant: {
+        name: string;
     };
     /** Tavern character-select card. Longest run of hardcoded English in the
      *  game HUD — the stat abbreviations (HP/SP/LCK/SPD/SLT) and units
@@ -71,6 +78,8 @@ export type CatalogKey =
     | 'shop.weapons'
     | 'shop.empty'
     | 'shop.ammo'
+    | 'shop.returnHome'
+    | 'merchant.name'
     | 'shop.upgrade.armor'
     | 'shop.upgrade.agility'
     | 'shop.upgrade.spirit'

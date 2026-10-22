@@ -18,7 +18,7 @@ import { ShopPanel } from '@/components/hud/shop-panel';
 import { fetchCharacter } from '@/lib/characters';
 import { parseCharacterYaml } from '@/lib/characters/parser';
 import { EventBus } from '@/lib/events/bus';
-import { MERCHANT_SHOP_EVENT } from '@/lib/merchant/logic';
+import { MERCHANT_SHOP_EVENT, RETURN_TO_PAVILION_EVENT } from '@/lib/merchant/logic';
 import { fetchWeapon } from '@/lib/weapons';
 import { parseWeaponYaml } from '@/lib/weapons/parser';
 import { setLocale } from '@/locales';
@@ -180,6 +180,20 @@ describe('ShopPanel', () => {
 
         expect(q('shop-buy-armor')?.textContent).toContain('60');
         expect(q('shop-level-armor')?.textContent).toContain('1/2');
+    });
+
+    it('offers a way home and leaves the navigation to the app', async () => {
+        await openShop();
+
+        const heard: string[] = [];
+        const handler = () => heard.push('return');
+        EventBus.on(RETURN_TO_PAVILION_EVENT, handler);
+        click('shop-return-home');
+        EventBus.off(RETURN_TO_PAVILION_EVENT, handler);
+
+        expect(heard).toEqual(['return']);
+        // The panel must not import the Phaser bootstrap itself; asking the
+        // app is the whole contract.
     });
 
     it('disables a row the player cannot afford and sells nothing', async () => {

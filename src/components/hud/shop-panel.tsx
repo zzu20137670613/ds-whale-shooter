@@ -27,11 +27,11 @@
  * the work" trick the upgrades use.
  */
 import { useEffect, useMemo, useState } from 'react';
-import { Coins, X } from 'lucide-react';
+import { Coins, Home, X } from 'lucide-react';
 
 import { CornerPixels, RETRO_BOX } from './retro-box';
 import { EventBus } from '@/lib/events/bus';
-import { MERCHANT_SHOP_EVENT } from '@/lib/merchant/logic';
+import { MERCHANT_SHOP_EVENT, RETURN_TO_PAVILION_EVENT } from '@/lib/merchant/logic';
 import type { CharacterSpec } from '@/lib/characters';
 import { fetchCharacter } from '@/lib/characters';
 import { upgradeCost } from '@/lib/characters/upgrades';
@@ -348,6 +348,20 @@ export function ShopPanel() {
                             )}
                         </>
                     )}
+
+                    {/* The way home. Deliberately NOT `restartAtTavern`: that
+                        wipes the run and drops the player back into character
+                        select. This only walks them to the pavilion with
+                        everything they are carrying. */}
+                    <button
+                        type="button"
+                        data-testid="shop-return-home"
+                        onClick={() => EventBus.emit(RETURN_TO_PAVILION_EVENT)}
+                        className="mt-3 flex w-full items-center justify-center gap-1.5 border border-amber-700 py-1.5 text-[11px] font-bold uppercase tracking-widest text-amber-300 hover:bg-amber-900/40"
+                    >
+                        <Home className="size-3" />
+                        {t('shop.returnHome')}
+                    </button>
                 </div>
             </div>
         )

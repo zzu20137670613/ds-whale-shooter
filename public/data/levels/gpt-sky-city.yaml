@@ -10,7 +10,7 @@
 # world boundary is authored here. Feature walls will be derived from the new
 # art once its masks are drawn (scripts/walls-from-art.py).
 title: GPT's Sky City
-titleZh: "GPT的云中之城"
+titleZh: "GPT的天空之城"
 background: assets/image/scenes/sky-city-1-landing.png
 backgroundBlocks:
     - texture: assets/image/scenes/sky-city-1-landing.png

@@ -22,12 +22,16 @@ const zhCN: CatalogSource = {
         weapons: '武器',
         empty: '还没有武器。',
         ammo: '补充弹药',
+        returnHome: '一键回城',
         upgrade: {
             armor: '护甲',
             agility: '敏捷',
             spirit: '精神',
             luck: '幸运',
         },
+    },
+    merchant: {
+        name: '神秘商人',
     },
     tavern: {
         confirm: '确认',

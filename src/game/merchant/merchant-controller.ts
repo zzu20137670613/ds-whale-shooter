@@ -18,12 +18,14 @@ import Phaser from 'phaser';
 
 import { MERCHANT_DISPLAY_HEIGHT, MERCHANT_TEXTURE_KEY } from '@/lib/constants';
 import { EventBus } from '@/lib/events/bus';
+import { t } from '@/locales';
 import { MERCHANT_SHOP_EVENT, merchantSpawnPosition } from '@/lib/merchant/logic';
 import { useGameStore } from '@/store/game-store';
 
 export class MerchantController {
     private sprite?: Phaser.GameObjects.Sprite;
     private shadow?: Phaser.GameObjects.Ellipse;
+    private nameLabel?: Phaser.GameObjects.Text;
 
     /**
      * @param imageSize World size; her spot is its centre.
@@ -69,6 +71,28 @@ export class MerchantController {
         sprite.setInteractive();
         sprite.on('pointerdown', () => this.openShop());
 
+        // Her name, floating above her head the same way a character's name
+        // floats above its status bar: monospace, white, hard black stroke.
+        this.nameLabel = this.scene.add
+            .text(x, y - height - 10, t('merchant.name'), {
+                fontFamily: 'monospace',
+                fontSize: '18px',
+                color: '#ffffff',
+                stroke: '#000000',
+                strokeThickness: 4,
+                shadow: {
+                    offsetX: 1,
+                    offsetY: 1,
+                    color: '#000000',
+                    blur: 0,
+                    stroke: true,
+                    fill: true,
+                },
+            })
+            .setResolution(2)
+            .setOrigin(0.5, 1);
+        this.nameLabel.setDepth(y + 1);
+
         this.sprite = sprite;
         useGameStore.getState().setMerchantReady(true);
     }
@@ -82,8 +106,10 @@ export class MerchantController {
         this.scene.events.off('update', this.update, this);
         this.sprite?.destroy();
         this.shadow?.destroy();
+        this.nameLabel?.destroy();
         this.sprite = undefined;
         this.shadow = undefined;
+        this.nameLabel = undefined;
         // The new scene announces her again if it hosts her; until then the
         // shop button must not be on screen.
         useGameStore.getState().setMerchantReady(false);

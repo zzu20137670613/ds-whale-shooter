@@ -4,6 +4,7 @@ import { useGameStore } from '@/store/game-store';
 import { useIsMobile } from '@/lib/use-is-mobile';
 
 import { CornerPixels, RETRO_BOX } from './retro-box';
+import { SkillBadge } from './skill-badge';
 
 export const CharacterHUDOverlay: React.FC = () => {
     const { characterName, hp, maxHp, sp, maxSp, hubsVisible } = useGameStore();
@@ -53,6 +54,7 @@ export const CharacterHUDOverlay: React.FC = () => {
                                 {Math.ceil(sp)}/{maxSp}
                             </span>
                         </div>
+                        <SkillBadge />
                     </div>
                 </div>
             </div>
@@ -103,6 +105,7 @@ export const CharacterHUDOverlay: React.FC = () => {
                                 <span className="ml-1 text-[9px] bg-stone-800 text-sky-300 px-1 py-0.5 border border-stone-600 rounded-[2px] leading-none uppercase tracking-tighter inline-flex items-center">
                                     SPACE
                                 </span>
+                                <SkillBadge />
                             </span>
                             <span className="text-stone-200 font-mono tracking-tighter drop-shadow-[1px_1px_0px_#000] leading-none">
                                 {Math.ceil(sp)} / {maxSp}

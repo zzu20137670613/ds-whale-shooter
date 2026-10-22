@@ -19,6 +19,7 @@ import {
     attackMultiplier,
     canUseSkill,
     emptySkillRuntime,
+    skillBadgeTone,
     skillSpCost,
     useSkill,
 } from '@/lib/characters/skill';
@@ -220,5 +221,29 @@ describe('absorbIncomingHit', () => {
 
     it('never absorbs while no skill is worn', () => {
         expect(absorbIncomingHit(undefined, emptySkillRuntime(), 0).absorbed).toBe(false);
+    });
+});
+
+describe('skillBadgeTone', () => {
+    it('is ready when off cooldown and the SP covers the cost', () => {
+        expect(skillBadgeTone({ readyInMs: 0, sp: 40, spCost: 40 })).toBe('ready');
+    });
+
+    it('cools down while the timer is still running', () => {
+        expect(skillBadgeTone({ readyInMs: 1, sp: 999, spCost: 40 })).toBe('cooling');
+    });
+
+    it('counts a worn headgear as cooling even with no timer', () => {
+        expect(skillBadgeTone({ readyInMs: 0, sp: 999, spCost: 0, wornHits: 2 })).toBe('cooling');
+    });
+
+    it('reports no-sp when the pool cannot pay', () => {
+        expect(skillBadgeTone({ readyInMs: 0, sp: 39, spCost: 40 })).toBe('no-sp');
+    });
+
+    it('lets the cooldown win over the SP readout', () => {
+        // Both conditions are true; grey is the honest answer because the
+        // timer is what the press is waiting on.
+        expect(skillBadgeTone({ readyInMs: 5000, sp: 0, spCost: 40 })).toBe('cooling');
     });
 });

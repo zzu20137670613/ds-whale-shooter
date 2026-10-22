@@ -1,10 +1,13 @@
-import { Suspense, lazy } from 'react';
+import { Suspense, lazy, useEffect } from 'react';
 
 import { PhaserGame } from '@/PhaserGame';
 import { GameHUDLayer } from '@/components/hud/game-hud-layer';
 import { PixelCrosshair } from '@/components/hud/pixel-crosshair';
 import { ShopPanel } from '@/components/hud/shop-panel';
 import { TouchControls } from '@/components/hud/touch-controls';
+import { EventBus } from '@/lib/events/bus';
+import { RETURN_TO_PAVILION_EVENT } from '@/lib/merchant/logic';
+import { resolveAndRestart } from '@/lib/phaser-game';
 import { useGameStore } from '@/store/game-store';
 
 /**
@@ -36,6 +39,15 @@ const TavernHud = lazy(() =>
 function App() {
     const tavernCleared = useGameStore((s) => s.tavernCleared);
     const merchantReady = useGameStore((s) => s.merchantReady);
+
+    // The shop's "return home" button asks for a walk back to the seaside
+    // pavilion. `resolveAndRestart` keeps the run (HP, weapons, money) —
+    // `restartAtTavern` would wipe it back to character select.
+    useEffect(() => {
+        const handler = () => void resolveAndRestart('tavern');
+        EventBus.on(RETURN_TO_PAVILION_EVENT, handler);
+        return () => EventBus.off(RETURN_TO_PAVILION_EVENT, handler);
+    }, []);
 
     return (
         // Layout lives in index.css (#app). No Tailwind utilities here:
