@@ -1025,6 +1025,20 @@ airWalls:
           - - 10784
             - 6168
 
+characterSpawn:
+    x: 2800
+    'y': 1500
+    facing: right
+monsters:
+    # This level shipped with no monsters at all, so `isAllCleared()` was true
+    # on arrival — the mysterious merchant stood on the junction the moment the
+    # player walked in. One drone keeps the level honest while that rule is
+    # being tested.
+    - type: drone
+      x: 7300
+      'y': 1500
+dropSpawns: []
+materials: []
 teleporters:
     # Re-marked by the owner on 2026-10-21. The old pair at x=2800 is retired:
     # both sat within 1828 px of each other and the lower one had radius 180,

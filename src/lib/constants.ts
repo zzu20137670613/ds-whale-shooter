@@ -301,6 +301,24 @@ export const RENDER_CAMERA_LERP = 0.12;
  */
 export const TAVERN_ACTOR_SCALE = 1.8;
 
+// ─── Merchant: the hub keeper at the junction ──────────────────────────
+
+/** Texture key the scene loads the merchant art under. */
+export const MERCHANT_TEXTURE_KEY = 'merchant-portrait';
+
+/** Path under `public/` to the merchant art (a 355x770 vertical sticker). */
+export const MERCHANT_TEXTURE_PATH = 'assets/image/npcs/merchant.png';
+
+/**
+ * On-screen height in world pixels.
+ *
+ * The sheet characters stand ~128-200px; the tavern scales them 1.8x. 300
+ * puts her a head above the player at 1:1, which is what makes her read as
+ * a landmark rather than a dropped item — she is the only thing standing at
+ * the junction of four screens.
+ */
+export const MERCHANT_DISPLAY_HEIGHT = 300;
+
 // ─── Audio: EventBus event-name helpers ─────────────────────────────────
 //
 // AudioController subscribes to these. Other modules emit them; nobody

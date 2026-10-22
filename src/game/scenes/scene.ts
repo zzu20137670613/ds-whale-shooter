@@ -43,6 +43,8 @@ import {
 } from '@/game/monsters/path-debug-overlay';
 import {
     DEPTH,
+    MERCHANT_TEXTURE_KEY,
+    MERCHANT_TEXTURE_PATH,
     MUSIC_EVENT,
     MUSIC_STOP,
     PIXEL_LIGHTING_CONFIG,
@@ -55,6 +57,7 @@ import { setBootProgress } from '@/lib/boot-loading/progress';
 import { setCurrentLevel } from '@/lib/levels/current-level';
 import { fetchLevelIndex } from '@/lib/levels/loader';
 import { groundLayers, isPortalArmed, propKey, spawnsWithoutBrokenProps } from '@/lib/levels/logic';
+import { usesMerchant } from '@/lib/merchant/logic';
 import { releasableTextureKeys } from '@/lib/textures/release';
 import { tilemapResourcesFor } from '@/lib/tilemaps/resources';
 import { useGameStore } from '@/store/game-store';
@@ -66,6 +69,7 @@ import type { MonsterSpec } from '@/lib/monsters';
 import type { WeaponSpec } from '@/lib/weapons';
 
 import { createWallBodies } from '@/game/walls/wall';
+import { MerchantController } from '@/game/merchant/merchant-controller';
 
 /**
  * Payload the Game shell hands to the scene after pre-fetching all data
@@ -120,6 +124,8 @@ import { loadWeaponAssets } from '@/game/weapons/weapon';
 export class LoadScene extends Phaser.Scene {
     private character!: CharacterRuntime;
     private monsterSystem!: MonsterController;
+    /** Present only in the four-block worlds — see `usesMerchant`. */
+    private merchant?: MerchantController;
     private dropSystem!: DropController;
     private materialManager!: MaterialManager;
     private teleporterSystem!: TeleporterController;
@@ -215,6 +221,12 @@ export class LoadScene extends Phaser.Scene {
             ...this.assets.musicSpecs.values(),
         ] as Iterable<SoundSpec>);
         MaterialManager.preloadMaterials(this, this.level.materials);
+
+        // The merchant only exists in the four-block worlds, so only those
+        // pay for her texture.
+        if (usesMerchant(this.level)) {
+            this.load.image(MERCHANT_TEXTURE_KEY, MERCHANT_TEXTURE_PATH);
+        }
     }
 
     create(): void {
@@ -575,6 +587,19 @@ export class LoadScene extends Phaser.Scene {
             (spec) => isPortalArmed(spec, this.monsterSystem.isAllCleared()),
         );
 
+        // The mysterious merchant: shows up on the junction of the four painted
+        // blocks once the level is clean. Clicking her is the level's way out —
+        // she emits `merchant-return-to-tavern` and the React layer hands the
+        // player to the tavern (character select), which is the old tavern
+        // button's job.
+        if (usesMerchant(this.level)) {
+            this.merchant = new MerchantController(
+                this,
+                this.level.imageSize,
+                () => this.monsterSystem.isAllCleared(),
+            );
+        }
+
         this.events.on('update', (_time: number, delta: number) => {
             this.monsterSystem.update(this.time.now);
             this.pathDebugOverlay.refresh(
@@ -813,6 +838,8 @@ export class LoadScene extends Phaser.Scene {
         this.releaseLoadedTextures();
         this.tavernController?.destroy();
         this.teleporterSystem?.destroy();
+        this.merchant?.destroy();
+        this.merchant = undefined;
         this.triggerSystem?.destroy();
         this.audio?.destroy();
         this.pathDebugOverlay?.destroy();
