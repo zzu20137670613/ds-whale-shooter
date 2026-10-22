@@ -1,36 +1,101 @@
-# PLACEHOLDER: the final level. Its 4x4 painted map does not exist yet, so it
-# runs on the orphan forest-path scene art picked up as a stand-in (the level
-# that used to load that image was deleted long ago). Walls are empty on
-# purpose — the real art will bring its own collision, drawn the same way as
-# the starry library's rooms. The three monsters only exist so that walking in
-# does not count as clearing the final level on the spot.
+# dsh's Atlantis - the 4x4 painted map that landed on 2026-10-21/22.
+#
+# Layout (2x2 blocks of 5504x3072, world 11008x6144). The player arrives from
+# sky city at the glowing crack in the wreck plate, and the light climbs block
+# by block: memory (darkest) -> wreck -> regent -> coronation (warmest).
+#   NW = B memory   NE = C regent
+#   SW = A wreck    SE = D coronation
+#
+# Only the world boundary is authored here. Feature collision comes from the
+# owner markings, the same way sky city's did (art-source/ART-MARKING.md).
 title: dsh's Atlantis
 titleZh: 'dsh的亚特兰蒂斯'
-background: assets/image/scenes/dsh-atlantis.png
-imageSize: 2752x1536
-airWalls: []
+background: assets/image/scenes/atlantis-1-wreck.png
+backgroundBlocks:
+    - texture: assets/image/scenes/atlantis-1-wreck.png
+      x: 0
+      y: 11008
+    - texture: assets/image/scenes/atlantis-2-memory.png
+      x: 0
+      y: 0
+    - texture: assets/image/scenes/atlantis-3-regent.png
+      x: 5504
+      y: 0
+    - texture: assets/image/scenes/atlantis-4-coronation.png
+      x: 5504
+      y: 11008
+imageSize: 11008x6144
+# The art is already the darkest thing in the game; do not stack the ambient
+# twilight on top of it (see the sky city note).
+pixelLighting: false
+airWalls:
+    - id: edge-left
+      kind: short
+      points:
+          - - 0
+            - 0
+          - - 40
+            - 0
+          - - 40
+            - 6144
+          - - 0
+            - 6144
+    - id: edge-right
+      kind: short
+      points:
+          - - 10968
+            - 0
+          - - 11008
+            - 0
+          - - 11008
+            - 6144
+          - - 10968
+            - 6144
+    - id: edge-top
+      kind: short
+      points:
+          - - 0
+            - 0
+          - - 11008
+            - 0
+          - - 11008
+            - 40
+          - - 0
+            - 40
+    - id: edge-bottom
+      kind: short
+      points:
+          - - 0
+            - 6104
+          - - 11008
+            - 6104
+          - - 11008
+            - 6144
+          - - 0
+            - 6144
+music: forest-ambient
 characterSpawn:
-    x: 1376
-    'y': 768
+    x: 1600
+    'y': 4700
     facing: right
 monsters:
     - type: drone
       x: 900
-      'y': 600
-    - type: drone
-      x: 1850
-      'y': 700
+      'y': 3900
     - type: gunner
-      x: 1300
-      'y': 1100
+      x: 7000
+      'y': 1200
+    - type: stalker
+      x: 9000
+      'y': 4200
 dropSpawns: []
 materials: []
 teleporters:
-    # The way back to sky city. The finale has no shortcut to the tavern: that
-    # is reached through the paired chain now, one step at a time.
+    # The glow crack in the wreck plate: arrival point from sky city, and the
+    # way back up. Radius comes from the owner's standing rule (300).
     - id: to-sky-city
-      x: 1376
-      'y': 768
+      x: 1600
+      'y': 4700
       targetScene: gpt-sky-city
       targetPortalId: to-atlantis
       radius: 300
