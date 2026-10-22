@@ -1,0 +1,26 @@
+# 块 A · 海门 + 折断沉船（左下 SW）
+
+> 玩家从天空之城落下来看到的第一块。生成参数：3:2，最大尺寸，2000 字符内。
+> 接邻块：上边接 B（深海之忆，最暗），右边接 D（加冕，暖色）；左边和下边是地图外缘
+> （黑礁 + 外海）。渐变交给我脚本做，你只管画面。
+>
+> 参考图：`art-experiment/dsh6X6/` 三张的配色与材质（深海蓝绿、青石、暗金、气泡浮尘），
+> **但视角必须换成正俯视**——那三张是立绘式仰视，直接照抄视角会报废。
+
+```
+Anime-style 2D game art, strict top-down plan view, straight down: no horizon, no sky, no water seen edge-on, no side faces, nothing in elevation. Playable combat field, not an illustration. Water is a flat sheet with the seabed faintly visible through it, never a vertical wall. Matte painted, soft cel shading.
+
+OCCUPANCY: >=65% of frame open seabed; shipwreck <=20%; stone gate <=20%; haze only in the outer 8%; nothing else stands on the floor.
+
+LIGHT: dark and drowned, but every walkable surface still readable; the only bright passage is the blue gap inside the gate.
+
+Palette: seabed sand #C9BFA8, silt #8E8B7E, cyan stone #6F9C9C, deep doorway blue #10222E, rust #6E5A38, faint teal glow #3E6B6E.
+
+Subject: drowned outskirts on pale seabed sand with soft ripples, drifts of silt, broken coral. Upper left: a BROKEN SHIPWRECK half-sunk, ribbed timbers, snapped mast, tattered sail pressed flat by water, rust on iron. Right: the STONE GATE, a massive square doorway of pale cyan stone, half-open, one slab pushed inward at an angle, the gap reading as deep blue, barnacles and a tide ring at its base. A few bubbles drift near the sand.
+
+Edges: LEFT and BOTTOM are the map boundary: black reef shelf and open water. TOP 140px ramp to #0A1822; RIGHT ramp to #3A5A62; smooth, not banded. No border, frame or vignette; outer 140px free of landmarks.
+
+Size: 3:2, largest available, full bleed. Compose for a 16:9 centre crop: outer 8% top/bottom cut, landmarks inside the central 84%; left/right uncropped.
+
+Negative: side view, elevation, three-quarter, isometric, tilted camera, horizon, sky, water wall, beam of light standing up, giant prop, props crowding the floor, characters, person, girl, creature, hands, readable text, lettering, watermark, logo, UI, frame, vignette, photorealistic, neon.
+```
