@@ -4,9 +4,11 @@
  * The tavern shop — spends kill-bounty money on the character's four
  * upgrade ladders, the hotbar weapons' damage ladders, and an ammo refill.
  *
- * Mounted only while `!tavernCleared`, the same gate TavernHud uses: the
- * tavern is the only place the shop exists. Opening it is a React button
- * rather than a Phaser key, so no input plumbing had to change.
+ * Mounted only while the mysterious merchant is standing on the junction of
+ * a four-block world (`merchantReady`): the shop moved out of the seaside
+ * pavilion and onto her. Clicking her in the scene emits
+ * `merchant-open-shop`, which opens this panel — the toggle button below is
+ * the keyboard-free fallback for the same thing.
  *
  * ── Where the prices come from ─────────────────────────────────────────
  * Not from this file and not from the store. Each character's and each
@@ -28,6 +30,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { Coins, ShoppingBag, X } from 'lucide-react';
 
 import { CornerPixels, RETRO_BOX } from './retro-box';
+import { EventBus } from '@/lib/events/bus';
+import { MERCHANT_SHOP_EVENT } from '@/lib/merchant/logic';
 import type { CharacterSpec } from '@/lib/characters';
 import { fetchCharacter } from '@/lib/characters';
 import { upgradeCost } from '@/lib/characters/upgrades';
@@ -64,6 +68,14 @@ export function ShopPanel() {
     // Subscribed (not read) so the labels re-render on a language switch:
     // `t()` reads module state, which React cannot see change on its own.
     const locale = useGameStore((s) => s.locale);
+
+    // Clicking the merchant in the scene opens the shop — that click is what
+    // used to be the tavern's job.
+    useEffect(() => {
+        const handler = () => setOpen(true);
+        EventBus.on(MERCHANT_SHOP_EVENT, handler);
+        return () => EventBus.off(MERCHANT_SHOP_EVENT, handler);
+    }, []);
 
     useEffect(() => {
         if (!characterId) {

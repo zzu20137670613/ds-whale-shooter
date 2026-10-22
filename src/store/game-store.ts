@@ -73,6 +73,11 @@ export interface GameUIState {
      *  the scene's update() loop; HUDs read it to display MM:SS. */
     levelElapsedMs: number;
 
+    /** Transient, never persisted: the mysterious merchant is standing on the
+     *  current level, so her shop is available. The scene sets it when she
+     *  appears (all monsters cleared) and clears it on teardown. */
+    merchantReady: boolean;
+
     // Economy — the tavern shop's currency. Earned as a per-monster
     // bounty (`monsters/monster.ts` → `kill()`) and spent in the tavern.
     // Persisted, so a purchase survives a refresh. Wiped by clearSaveData
@@ -132,6 +137,7 @@ export interface GameUIState {
 
     // Setters
     setLevelTitle: (title: string) => void;
+    setMerchantReady: (ready: boolean) => void;
     setCurrentLevelId: (levelId: string) => void;
     setWaveProgress: (levelId: string, progress: Partial<LevelWaveProgress>) => void;
     setLevelElapsedMs: (ms: number) => void;
@@ -234,6 +240,7 @@ export const initialGameState = {
     currentLevelId: '',
     levelProgressMap: {} as Record<string, LevelWaveProgress>,
     levelElapsedMs: 0,
+    merchantReady: false,
 
     money: 0,
     // World state, not run state — `clearSaveData` deliberately keeps it.
@@ -264,6 +271,7 @@ export const useGameStore = create<GameUIState>()(
             ...initialGameState,
 
             setLevelTitle: (title) => set({ levelTitle: title }),
+            setMerchantReady: (ready) => set({ merchantReady: ready }),
 
             setCurrentLevelId: (levelId) => set({ currentLevelId: levelId }),
 

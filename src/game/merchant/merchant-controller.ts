@@ -4,33 +4,26 @@
  * The mysterious merchant.
  *
  * She stands on the junction of the four painted blocks and only shows up
- * once the level's monsters are cleared. Clicking her is the level's way
- * out: the scene announces the click on the EventBus and the React layer
- * routes it to `restartAtTavern` (character select), which is exactly what
- * the old tavern button used to do.
+ * once the level's monsters are cleared. She carries the **tavern shop**
+ * now: clicking her opens the shop panel in the React layer, and the shop no
+ * longer exists in the seaside pavilion.
  *
  * This module owns *how* she appears — texture, shadow, depth sorting,
- * click wiring, teardown. Callers (LoadScene) only decide *whether* she
+ * click wiring, teardown — and publishes `merchantReady` so the HUD knows
+ * the shop is available. Callers (LoadScene) only decide *whether* she
  * exists in this level.
  */
 
 import Phaser from 'phaser';
 
-import {
-    MERCHANT_DISPLAY_HEIGHT,
-    MERCHANT_TEXTURE_KEY,
-} from '@/lib/constants';
+import { MERCHANT_DISPLAY_HEIGHT, MERCHANT_TEXTURE_KEY } from '@/lib/constants';
 import { EventBus } from '@/lib/events/bus';
-import {
-    MERCHANT_RETURN_EVENT,
-    merchantSpawnPosition,
-} from '@/lib/merchant/logic';
+import { MERCHANT_SHOP_EVENT, merchantSpawnPosition } from '@/lib/merchant/logic';
+import { useGameStore } from '@/store/game-store';
 
 export class MerchantController {
     private sprite?: Phaser.GameObjects.Sprite;
     private shadow?: Phaser.GameObjects.Ellipse;
-    /** Set on first click so a double-tap cannot fire the return twice. */
-    private dismissed = false;
 
     /**
      * @param imageSize World size; her spot is its centre.
@@ -49,7 +42,7 @@ export class MerchantController {
 
     /** Cheap per-frame gate: nothing to do until the level is clean. */
     private update(): void {
-        if (this.sprite || this.dismissed) return;
+        if (this.sprite) return;
         if (!this.isCleared()) return;
         this.spawn();
     }
@@ -74,16 +67,15 @@ export class MerchantController {
         // No `useHandCursor`: the canvas hides the system cursor and the
         // pixel crosshair is the only pointer (same rule as the tavern NPCs).
         sprite.setInteractive();
-        sprite.on('pointerdown', () => this.activate());
+        sprite.on('pointerdown', () => this.openShop());
 
         this.sprite = sprite;
+        useGameStore.getState().setMerchantReady(true);
     }
 
-    /** Hand the player back to the tavern — the old tavern button's job. */
-    private activate(): void {
-        if (this.dismissed) return;
-        this.dismissed = true;
-        EventBus.emit(MERCHANT_RETURN_EVENT);
+    /** The tavern shop's old job, now hers. */
+    private openShop(): void {
+        EventBus.emit(MERCHANT_SHOP_EVENT);
     }
 
     destroy(): void {
@@ -92,5 +84,8 @@ export class MerchantController {
         this.shadow?.destroy();
         this.sprite = undefined;
         this.shadow = undefined;
+        // The new scene announces her again if it hosts her; until then the
+        // shop button must not be on screen.
+        useGameStore.getState().setMerchantReady(false);
     }
 }

@@ -1,13 +1,10 @@
-import { Suspense, lazy, useEffect } from 'react';
+import { Suspense, lazy } from 'react';
 
 import { PhaserGame } from '@/PhaserGame';
 import { GameHUDLayer } from '@/components/hud/game-hud-layer';
 import { PixelCrosshair } from '@/components/hud/pixel-crosshair';
 import { ShopPanel } from '@/components/hud/shop-panel';
 import { TouchControls } from '@/components/hud/touch-controls';
-import { EventBus } from '@/lib/events/bus';
-import { MERCHANT_RETURN_EVENT } from '@/lib/merchant/logic';
-import { restartAtTavern } from '@/lib/phaser-game';
 import { useGameStore } from '@/store/game-store';
 
 /**
@@ -38,15 +35,7 @@ const TavernHud = lazy(() =>
 
 function App() {
     const tavernCleared = useGameStore((s) => s.tavernCleared);
-
-    // Clicking the mysterious merchant on the junction of the four maps is the
-    // level's way out. It does exactly what the old tavern button did: a full
-    // reset back to character select (that is what `restartAtTavern` is).
-    useEffect(() => {
-        const handler = () => void restartAtTavern();
-        EventBus.on(MERCHANT_RETURN_EVENT, handler);
-        return () => EventBus.off(MERCHANT_RETURN_EVENT, handler);
-    }, []);
+    const merchantReady = useGameStore((s) => s.merchantReady);
 
     return (
         // Layout lives in index.css (#app). No Tailwind utilities here:
@@ -59,8 +48,9 @@ function App() {
                     <TavernHud />
                 </Suspense>
             )}
-            {/* Same gate as TavernHud: the shop only exists in the tavern. */}
-            {!tavernCleared && <ShopPanel />}
+            {/* The shop follows the mysterious merchant now: it mounts when she
+                is standing on the junction, not while the tavern is open. */}
+            {merchantReady && <ShopPanel />}
             <Suspense fallback={null}>
                 <EditorPanel />
             </Suspense>

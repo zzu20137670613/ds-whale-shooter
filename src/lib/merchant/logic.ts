@@ -6,11 +6,11 @@
  */
 
 /**
- * Event the merchant fires when clicked. The React layer owns what that
- * means (it hands the player back to the tavern, i.e. character select);
- * the scene only announces the click.
+ * Event the merchant fires when clicked. The tavern shop lives here now
+ * instead of in the seaside pavilion: the React layer opens the shop panel
+ * when it hears this.
  */
-export const MERCHANT_RETURN_EVENT = 'merchant-return-to-tavern';
+export const MERCHANT_SHOP_EVENT = 'merchant-open-shop';
 
 /**
  * Does this level host the merchant?
