@@ -1,0 +1,23 @@
+# 块 A · 海床 + 沉船残骸（左下 SW）· v3
+
+> 教训：**"门/拱/门框"这个词一定把模型拽出俯视**（iso → 像素 iso → 3/4，三次都栽在这一个元素上）。
+> v3 直接把门拿掉：门的引导作用已经由传送阵承担，底图只需要一块能打的平地。
+> 换成一个**平贴在海床上的发光裂缝**——"裂缝"没有高度，模型画不出立面。
+
+```
+Hand-painted anime game art, strict top-down plan view: no isometric, no three-quarter, no horizon, no vertical structure. Nothing is taller than the ground; everything reads as flat shapes on the seabed. No arch, gate, doorway, pillar or standing wall. Smooth painted cel shading, NOT pixel art. Playable combat field, not an illustration.
+
+OCCUPANCY: >=70% open seabed floor; wreck <=20%; rubble <=10%; haze in the outer 8% only.
+
+LIGHT: deep abyss, dim, cold: pale grey-blue sand, no sunlit beach, no bright turquoise. One light source: a thin glowing crack in the seabed.
+
+Palette: sand #8C9AA0, silt #5E6A70, cold foam #C9D6DA, deep water #0E1E2A, rust #5A4A32, glow #2E5B66.
+
+Subject: drowned seabed: pale grey-blue sand in soft ripples with darker silt lanes, a thin sheet of water sliding over it, its edge marked by soft white foam. Upper left: a BROKEN SHIPWRECK COLLAPSED and pressed flat into the sand - ribbed timbers splayed out, snapped mast lying flat, sail spread flat like cloth, rust on iron. Planks, stones and coral fragments scattered flat around it. Near the centre a thin GLOWING CRACK runs across the sand, flat, its light spilling a hand's width either side: the only bright thing in frame.
+
+Edges: LEFT and BOTTOM are the map boundary: dark reef shadow and open water. TOP 140px ramp to #0A1822; RIGHT ramp to #3A5A62; smooth, not banded. No border, frame or vignette; outer 140px free.
+
+Size: 3:2, largest available, full bleed. Compose for a 16:9 centre crop: outer 8% top/bottom cut, landmarks inside the central 84%; left/right uncropped.
+
+Negative: isometric, iso, three-quarter, side view, elevation, vertical wall, arch, gate, doorway, camera tilt, horizon, sky, pixel art, bright turquoise, sunny beach, waves from the side, boat upright, characters, person, girl, hands, text, watermark, logo, UI, frame, vignette.
+```
