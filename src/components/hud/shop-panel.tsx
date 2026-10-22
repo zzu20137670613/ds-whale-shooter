@@ -27,7 +27,7 @@
  * the work" trick the upgrades use.
  */
 import { useEffect, useMemo, useState } from 'react';
-import { Coins, ShoppingBag, X } from 'lucide-react';
+import { Coins, X } from 'lucide-react';
 
 import { CornerPixels, RETRO_BOX } from './retro-box';
 import { EventBus } from '@/lib/events/bus';
@@ -98,10 +98,7 @@ export function ShopPanel() {
     // Slot ids as a stable string so the effect only refires when the set of
     // held weapons actually changes (the slots array is rewritten on the
     // 1Hz save tick, which would otherwise re-fetch every second).
-    const slotKey = useMemo(
-        () => [...new Set(slots.map((s) => s.id))].sort().join(','),
-        [slots],
-    );
+    const slotKey = useMemo(() => [...new Set(slots.map((s) => s.id))].sort().join(','), [slots]);
 
     useEffect(() => {
         const ids = slotKey ? slotKey.split(',') : [];
@@ -201,163 +198,158 @@ export function ShopPanel() {
         }`;
 
     return (
-        <>
-            <button
-                type="button"
-                data-testid="shop-toggle"
-                onClick={() => setOpen((v) => !v)}
-                className={`absolute bottom-4 left-1/2 z-30 flex -translate-x-1/2 items-center gap-1.5 ${RETRO_BOX} px-3 py-1.5 font-['Silkscreen',monospace] text-[12px] font-bold uppercase tracking-widest text-amber-300 pointer-events-auto select-none hover:text-amber-200`}
+        open && (
+            <div
+                data-testid="shop-panel"
+                className="absolute bottom-16 left-1/2 z-30 max-h-[70vh] w-[300px] -translate-x-1/2 overflow-y-auto pointer-events-auto select-none"
             >
-                <ShoppingBag className="size-3" />
-                {t('shop.open')}
-            </button>
+                <div className={`relative ${RETRO_BOX} p-3 font-['Silkscreen',monospace]`}>
+                    <CornerPixels />
 
-            {open && (
-                <div
-                    data-testid="shop-panel"
-                    className="absolute bottom-16 left-1/2 z-30 max-h-[70vh] w-[300px] -translate-x-1/2 overflow-y-auto pointer-events-auto select-none"
-                >
-                    <div className={`relative ${RETRO_BOX} p-3 font-['Silkscreen',monospace]`}>
-                        <CornerPixels />
-
-                        <div className="mb-2 flex items-center justify-between">
-                            <span className="text-[12px] font-bold uppercase tracking-widest text-amber-300">
-                                {t('shop.title')}
+                    <div className="mb-2 flex items-center justify-between">
+                        <span className="text-[12px] font-bold uppercase tracking-widest text-amber-300">
+                            {t('shop.title')}
+                        </span>
+                        <div className="flex items-center gap-2">
+                            <span
+                                data-testid="shop-balance"
+                                className="flex items-center gap-1 text-[11px] tabular-nums text-amber-300"
+                            >
+                                <Coins className="size-3 text-amber-400" />
+                                {money}
                             </span>
-                            <div className="flex items-center gap-2">
-                                <span
-                                    data-testid="shop-balance"
-                                    className="flex items-center gap-1 text-[11px] tabular-nums text-amber-300"
-                                >
-                                    <Coins className="size-3 text-amber-400" />
-                                    {money}
-                                </span>
-                                <button
-                                    type="button"
-                                    data-testid="shop-close"
-                                    onClick={() => setOpen(false)}
-                                    aria-label={t('shop.close')}
-                                    className="text-stone-400 hover:text-stone-200"
-                                >
-                                    <X className="size-3" />
-                                </button>
-                            </div>
+                            <button
+                                type="button"
+                                data-testid="shop-close"
+                                onClick={() => setOpen(false)}
+                                aria-label={t('shop.close')}
+                                className="text-stone-400 hover:text-stone-200"
+                            >
+                                <X className="size-3" />
+                            </button>
                         </div>
-
-                        {!characterId ? (
-                            <p data-testid="shop-hint" className="text-[11px] text-stone-400">
-                                {t('shop.noCharacter')}
-                            </p>
-                        ) : (
-                            rows.map((row) => (
-                                <div key={row.id} data-testid={`shop-row-${row.id}`} className={rowClass}>
-                                    <div className="flex flex-col gap-0.5">
-                                        <span className="text-[12px] text-stone-200">{row.name}</span>
-                                        <span
-                                            data-testid={`shop-level-${row.id}`}
-                                            className="text-[10px] text-stone-500"
-                                        >
-                                            {t('shop.level')} {row.level}/{row.max}
-                                        </span>
-                                    </div>
-
-                                    {row.price === null ? (
-                                        <span
-                                            data-testid={`shop-maxed-${row.id}`}
-                                            className="text-[10px] text-amber-500"
-                                        >
-                                            {t('shop.maxed')}
-                                        </span>
-                                    ) : (
-                                        <button
-                                            type="button"
-                                            data-testid={`shop-buy-${row.id}`}
-                                            disabled={!row.affordable}
-                                            onClick={() => buyUpgrade(row.id)}
-                                            className={buyClass(row.affordable)}
-                                        >
-                                            <Coins className="size-2.5" />
-                                            {row.price}
-                                        </button>
-                                    )}
-                                </div>
-                            ))
-                        )}
-
-                        {characterId && (
-                            <>
-                                <div className="mt-3 mb-1 text-[11px] uppercase tracking-widest text-amber-500/80">
-                                    {t('shop.weapons')}
-                                </div>
-
-                                {weaponRows.length === 0 ? (
-                                    <p data-testid="shop-weapons-empty" className="text-[11px] text-stone-400">
-                                        {t('shop.empty')}
-                                    </p>
-                                ) : (
-                                    weaponRows.map((row) => (
-                                        <div
-                                            key={row.id}
-                                            data-testid={`shop-weapon-row-${row.id}`}
-                                            className={rowClass}
-                                        >
-                                            <div className="flex flex-col gap-0.5">
-                                                <span className="text-[12px] text-stone-200">
-                                                    {row.name}
-                                                </span>
-                                                <span
-                                                    data-testid={`shop-weapon-level-${row.id}`}
-                                                    className="text-[10px] text-stone-500"
-                                                >
-                                                    {t('shop.level')} {row.level}/{row.max}
-                                                </span>
-                                            </div>
-
-                                            {row.price === null ? (
-                                                <span
-                                                    data-testid={`shop-weapon-maxed-${row.id}`}
-                                                    className="text-[10px] text-amber-500"
-                                                >
-                                                    {t('shop.maxed')}
-                                                </span>
-                                            ) : (
-                                                <button
-                                                    type="button"
-                                                    data-testid={`shop-weapon-buy-${row.id}`}
-                                                    disabled={!row.affordable}
-                                                    onClick={() => buyWeapon(row.id)}
-                                                    className={buyClass(row.affordable)}
-                                                >
-                                                    <Coins className="size-2.5" />
-                                                    {row.price}
-                                                </button>
-                                            )}
-                                        </div>
-                                    ))
-                                )}
-
-                                {slots.length > 0 && (
-                                    <div data-testid="shop-refill-row" className={rowClass}>
-                                        <span className="text-[12px] text-stone-200">
-                                            {t('shop.ammo')}
-                                        </span>
-                                        <button
-                                            type="button"
-                                            data-testid="shop-refill"
-                                            disabled={!canRefill}
-                                            onClick={buyRefill}
-                                            className={buyClass(canRefill)}
-                                        >
-                                            <Coins className="size-2.5" />
-                                            {refillPrice}
-                                        </button>
-                                    </div>
-                                )}
-                            </>
-                        )}
                     </div>
+
+                    {!characterId ? (
+                        <p data-testid="shop-hint" className="text-[11px] text-stone-400">
+                            {t('shop.noCharacter')}
+                        </p>
+                    ) : (
+                        rows.map((row) => (
+                            <div
+                                key={row.id}
+                                data-testid={`shop-row-${row.id}`}
+                                className={rowClass}
+                            >
+                                <div className="flex flex-col gap-0.5">
+                                    <span className="text-[12px] text-stone-200">{row.name}</span>
+                                    <span
+                                        data-testid={`shop-level-${row.id}`}
+                                        className="text-[10px] text-stone-500"
+                                    >
+                                        {t('shop.level')} {row.level}/{row.max}
+                                    </span>
+                                </div>
+
+                                {row.price === null ? (
+                                    <span
+                                        data-testid={`shop-maxed-${row.id}`}
+                                        className="text-[10px] text-amber-500"
+                                    >
+                                        {t('shop.maxed')}
+                                    </span>
+                                ) : (
+                                    <button
+                                        type="button"
+                                        data-testid={`shop-buy-${row.id}`}
+                                        disabled={!row.affordable}
+                                        onClick={() => buyUpgrade(row.id)}
+                                        className={buyClass(row.affordable)}
+                                    >
+                                        <Coins className="size-2.5" />
+                                        {row.price}
+                                    </button>
+                                )}
+                            </div>
+                        ))
+                    )}
+
+                    {characterId && (
+                        <>
+                            <div className="mt-3 mb-1 text-[11px] uppercase tracking-widest text-amber-500/80">
+                                {t('shop.weapons')}
+                            </div>
+
+                            {weaponRows.length === 0 ? (
+                                <p
+                                    data-testid="shop-weapons-empty"
+                                    className="text-[11px] text-stone-400"
+                                >
+                                    {t('shop.empty')}
+                                </p>
+                            ) : (
+                                weaponRows.map((row) => (
+                                    <div
+                                        key={row.id}
+                                        data-testid={`shop-weapon-row-${row.id}`}
+                                        className={rowClass}
+                                    >
+                                        <div className="flex flex-col gap-0.5">
+                                            <span className="text-[12px] text-stone-200">
+                                                {row.name}
+                                            </span>
+                                            <span
+                                                data-testid={`shop-weapon-level-${row.id}`}
+                                                className="text-[10px] text-stone-500"
+                                            >
+                                                {t('shop.level')} {row.level}/{row.max}
+                                            </span>
+                                        </div>
+
+                                        {row.price === null ? (
+                                            <span
+                                                data-testid={`shop-weapon-maxed-${row.id}`}
+                                                className="text-[10px] text-amber-500"
+                                            >
+                                                {t('shop.maxed')}
+                                            </span>
+                                        ) : (
+                                            <button
+                                                type="button"
+                                                data-testid={`shop-weapon-buy-${row.id}`}
+                                                disabled={!row.affordable}
+                                                onClick={() => buyWeapon(row.id)}
+                                                className={buyClass(row.affordable)}
+                                            >
+                                                <Coins className="size-2.5" />
+                                                {row.price}
+                                            </button>
+                                        )}
+                                    </div>
+                                ))
+                            )}
+
+                            {slots.length > 0 && (
+                                <div data-testid="shop-refill-row" className={rowClass}>
+                                    <span className="text-[12px] text-stone-200">
+                                        {t('shop.ammo')}
+                                    </span>
+                                    <button
+                                        type="button"
+                                        data-testid="shop-refill"
+                                        disabled={!canRefill}
+                                        onClick={buyRefill}
+                                        className={buyClass(canRefill)}
+                                    >
+                                        <Coins className="size-2.5" />
+                                        {refillPrice}
+                                    </button>
+                                </div>
+                            )}
+                        </>
+                    )}
                 </div>
-            )}
-        </>
+            </div>
+        )
     );
 }

@@ -14,7 +14,7 @@ background: assets/image/scenes/atlantis-1-wreck.png
 backgroundBlocks:
     - texture: assets/image/scenes/atlantis-1-wreck.png
       x: 0
-      y: 11008
+      y: 3072
     - texture: assets/image/scenes/atlantis-2-memory.png
       x: 0
       y: 0
@@ -23,7 +23,7 @@ backgroundBlocks:
       y: 0
     - texture: assets/image/scenes/atlantis-4-coronation.png
       x: 5504
-      y: 11008
+      y: 3072
 imageSize: 11008x6144
 # The art is already the darkest thing in the game; do not stack the ambient
 # twilight on top of it (see the sky city note).

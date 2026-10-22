@@ -17,6 +17,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ShopPanel } from '@/components/hud/shop-panel';
 import { fetchCharacter } from '@/lib/characters';
 import { parseCharacterYaml } from '@/lib/characters/parser';
+import { EventBus } from '@/lib/events/bus';
+import { MERCHANT_SHOP_EVENT } from '@/lib/merchant/logic';
 import { fetchWeapon } from '@/lib/weapons';
 import { parseWeaponYaml } from '@/lib/weapons/parser';
 import { setLocale } from '@/locales';
@@ -85,6 +87,16 @@ describe('ShopPanel', () => {
             (q(id) as HTMLElement).click();
         });
 
+    /**
+     * The panel has no toggle of its own any more: the mysterious merchant
+     * is the button. Her click arrives on the bus, so that is what the tests
+     * fire.
+     */
+    const merchantClick = () =>
+        act(() => {
+            EventBus.emit(MERCHANT_SHOP_EVENT);
+        });
+
     const render = async () => {
         await act(async () => {
             root.render(<ShopPanel />);
@@ -93,7 +105,7 @@ describe('ShopPanel', () => {
 
     const openShop = async () => {
         await render();
-        click('shop-toggle');
+        merchantClick();
     };
 
     beforeEach(() => {
@@ -121,14 +133,14 @@ describe('ShopPanel', () => {
         vi.clearAllMocks();
     });
 
-    it('shows only the toggle until it is opened', async () => {
+    it('renders nothing at all until the merchant is clicked', async () => {
         await render();
 
-        expect(q('shop-toggle')).not.toBeNull();
+        expect(q('shop-toggle')).toBeNull();
         expect(q('shop-panel')).toBeNull();
     });
 
-    it('opens on the toggle and shows the balance', async () => {
+    it('opens when the merchant is clicked and shows the balance', async () => {
         useGameStore.setState({ money: 250 });
 
         await openShop();

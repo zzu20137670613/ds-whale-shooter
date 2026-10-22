@@ -39,6 +39,17 @@ const DATA = join(process.cwd(), 'public', 'data');
 
 const read = (path: string): string => readFileSync(path, 'utf8');
 
+/**
+ * Pixel size straight out of a PNG's IHDR chunk — no decoding, no dependency.
+ */
+const pngSize = (path: string): { width: number; height: number } => {
+    const buf = readFileSync(path);
+    if (buf.subarray(1, 4).toString('ascii') !== 'PNG') {
+        throw new Error(`${path} is not a PNG`);
+    }
+    return { width: buf.readUInt32BE(16), height: buf.readUInt32BE(20) };
+};
+
 /** Spec ids (filename without `.yaml`) in a module directory, sorted. */
 const specIds = (dir: string): string[] =>
     readdirSync(dir)
@@ -97,6 +108,40 @@ describe('public/data integrity', () => {
         for (const id of index.levels) {
             expect(() => parseLevelYaml(read(join(dir, `${id}.yaml`)), id)).not.toThrow();
         }
+    });
+
+    it('levels: every painted block sits inside the world it belongs to', () => {
+        // A block whose offset is written as the block WIDTH instead of the
+        // world HEIGHT (11008 on a 6144-tall world) still validates and still
+        // parses — it just renders nothing, because the camera can never
+        // reach it. That shipped twice, so it is checked against the real PNG
+        // headers here rather than trusted.
+        const dir = join(DATA, 'levels');
+        const index = parseLevelIndex(read(join(dir, 'index.yaml')));
+        const bad: string[] = [];
+
+        for (const id of index.levels) {
+            const level = parseLevelYaml(read(join(dir, `${id}.yaml`)), id);
+            for (const block of level.backgroundBlocks ?? []) {
+                const file = join(process.cwd(), 'public', block.texture);
+                if (!existsSync(file)) {
+                    bad.push(`${id}: ${block.texture} does not exist`);
+                    continue;
+                }
+                const { width, height } = pngSize(file);
+                const overflowsX = block.x < 0 || block.x + width > level.imageSize.width;
+                const overflowsY = block.y < 0 || block.y + height > level.imageSize.height;
+                if (overflowsX || overflowsY) {
+                    bad.push(
+                        `${id}: ${block.texture} at (${block.x},${block.y}) is ` +
+                            `${width}x${height} inside a ` +
+                            `${level.imageSize.width}x${level.imageSize.height} world`,
+                    );
+                }
+            }
+        }
+
+        expect(bad, `painted blocks outside their world:\n${bad.join('\n')}`).toEqual([]);
     });
 
     it('audios: every manifest id has a schema-valid spec file', () => {
