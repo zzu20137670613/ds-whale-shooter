@@ -4,8 +4,8 @@
 # purpose — the real art will bring its own collision, drawn the same way as
 # the starry library's rooms. The three monsters only exist so that walking in
 # does not count as clearing the final level on the spot.
-title: DSH's Atlantis
-titleZh: 'DSH的亚特兰蒂斯'
+title: dsh's Atlantis
+titleZh: 'dsh的亚特兰蒂斯'
 background: assets/image/scenes/dsh-atlantis.png
 imageSize: 2752x1536
 airWalls: []

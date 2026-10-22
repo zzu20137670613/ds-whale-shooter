@@ -352,14 +352,14 @@ triggers:
           durationMs: 800
 teleporters:
     - id: tavern-return
-      x: 2700
-      'y': 800
+      x: 5131
+      'y': 1029
       targetScene: tavern
       targetPortalId: tavern-exit
       radius: 300
     - id: teleporter-msfmft58
-      x: 2792
-      'y': 2866
+      x: 1467
+      'y': 2801
       targetScene: starry-library
       targetPortalId: to-beach
       radius: 300
