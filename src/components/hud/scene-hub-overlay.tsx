@@ -23,10 +23,10 @@ export const SceneHubOverlay: React.FC = () => {
                 <CornerPixels />
 
                 <div className="flex flex-col items-center gap-0.5">
-                    <span className="text-xs font-bold tracking-wider text-amber-500 uppercase drop-shadow-[1px_1px_0px_#000] leading-tight">
+                    <span className="text-xs font-bold tracking-wider text-amber-500 drop-shadow-[1px_1px_0px_#000] leading-tight">
                         {levelTitle}
                     </span>
-                    <span className="text-[10px] text-white uppercase tracking-widest font-semibold leading-none mt-1 drop-shadow-[1px_1px_0px_#000]">
+                    <span className="text-[10px] text-white tracking-widest font-semibold leading-none mt-1 drop-shadow-[1px_1px_0px_#000]">
                         {formatElapsed(levelElapsedMs)}
                     </span>
                 </div>
