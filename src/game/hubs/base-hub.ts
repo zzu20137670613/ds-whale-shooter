@@ -19,7 +19,7 @@
  */
 
 /** FIT scale ratio the engine applies between gameSize and displaySize. */
-function hudFitScale(scene: Phaser.Scene): number {
+export function hudFitScale(scene: Phaser.Scene): number {
     return Math.min(
         scene.scale.displaySize.width / scene.scale.gameSize.width,
         scene.scale.displaySize.height / scene.scale.gameSize.height,

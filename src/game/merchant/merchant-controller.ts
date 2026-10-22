@@ -18,6 +18,7 @@ import Phaser from 'phaser';
 
 import { MERCHANT_DISPLAY_HEIGHT, MERCHANT_TEXTURE_KEY } from '@/lib/constants';
 import { EventBus } from '@/lib/events/bus';
+import { hudFitScale } from '@/game/hubs/base-hub';
 import { t } from '@/locales';
 import { MERCHANT_SHOP_EVENT, merchantSpawnPosition } from '@/lib/merchant/logic';
 import { useGameStore } from '@/store/game-store';
@@ -73,13 +74,18 @@ export class MerchantController {
 
         // Her name, floating above her head the same way a character's name
         // floats above its status bar: monospace, white, hard black stroke.
+        //
+        // The font size is authored in SCREEN pixels, so it is divided by the
+        // camera's FIT scale like the status hubs do — otherwise the world
+        // zoom shrinks the label along with the map and 18px lands as ~10px.
+        const fit = hudFitScale(this.scene) || 1;
         this.nameLabel = this.scene.add
             .text(x, y - height - 10, t('merchant.name'), {
                 fontFamily: 'monospace',
-                fontSize: '18px',
+                fontSize: '23px',
                 color: '#ffffff',
                 stroke: '#000000',
-                strokeThickness: 4,
+                strokeThickness: 5,
                 shadow: {
                     offsetX: 1,
                     offsetY: 1,
@@ -91,6 +97,7 @@ export class MerchantController {
             })
             .setResolution(2)
             .setOrigin(0.5, 1);
+        this.nameLabel.setScale(1 / fit);
         this.nameLabel.setDepth(y + 1);
 
         this.sprite = sprite;

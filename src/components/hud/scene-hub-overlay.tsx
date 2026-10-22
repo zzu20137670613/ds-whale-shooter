@@ -23,7 +23,16 @@ export const SceneHubOverlay: React.FC = () => {
                 <CornerPixels />
 
                 <div className="flex flex-col items-center gap-0.5">
-                    <span className="text-xs font-bold tracking-wider text-amber-500 drop-shadow-[1px_1px_0px_#000] leading-tight">
+                    {/*
+                     * NOTE the explicit `font-mono` on the title: both bundled
+                     * pixel faces (Silkscreen, Press Start 2P) are caps-only —
+                     * they have no lowercase glyphs at all, so "Claude" renders
+                     * as "CLAUDE" no matter what text-transform says. The title
+                     * is the one label in the HUD that must keep its authored
+                     * case (proper nouns: Claude / GPT / dsh), so it opts out of
+                     * the pixel face. Everything else stays on Silkscreen.
+                     */}
+                    <span className="font-mono text-sm font-bold tracking-wider text-amber-500 drop-shadow-[1px_1px_0px_#000] leading-tight">
                         {levelTitle}
                     </span>
                     <span className="text-[10px] text-white tracking-widest font-semibold leading-none mt-1 drop-shadow-[1px_1px_0px_#000]">
