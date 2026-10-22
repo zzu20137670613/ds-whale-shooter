@@ -1,0 +1,24 @@
+# 块 B · 深海之忆（左上 NW）
+
+> 四块里最暗的一块。梗概里的"半开青石门"按块 A 的经验改成**平躺在地面上的深色矩形槽**，
+> 冷光从槽里溢出来在沙上划出一道窄光——模型画不成立面，但读起来还是"门"。
+>
+> 接邻块：下边接 A（海床+沉船），右边接 C（摄政之谏）；上边和左边是地图外缘（黑礁）。
+
+```
+Hand-painted anime game art, strict top-down plan view: no isometric, no three-quarter, no horizon, no vertical structure. Nothing is taller than the ground; everything reads as flat shapes on the seabed. No arch, gate, doorway, pillar or standing wall; a doorway is only a dark rectangular slot lying flat in the floor. Smooth painted cel shading, NOT pixel art. Playable combat field, not an illustration.
+
+OCCUPANCY: >=70% open seabed floor; debris <=15%; haze in the outer 8% only.
+
+LIGHT: the darkest panel of the level - near-black blue seabed, one narrow BLADE OF COLD light lying across the floor. No other bright thing.
+
+Palette: sand #1E2A30, wet stone #2E4B52, water sheen #3E6B6E, light blade #9FD8E8, silt #5C5A4E.
+
+Subject: deep seabed under a thin sheet of still, almost-black water; stone slabs and rubble show through it, blue-shifted. Near the centre a long DARK RECTANGULAR SLOT lies flat in the floor, one edge slightly open, cold blue light spilling out of it in a narrow blade across the sand - the brightest passage in the frame. Faint scratched marks float on the water surface in loose rows like a drowned list, pale and abstract, never legible characters. A broken rib of timber and a coil of rotted rope lie flat nearby.
+
+Edges: TOP and LEFT are the map boundary: black reef. BOTTOM 140px ramp to #16262E (toward the landing); RIGHT ramp to #8FA3AC (toward the next hall); smooth, not banded. No border, frame or vignette; outer 140px free.
+
+Size: 3:2, largest available, full bleed. Compose for a 16:9 centre crop: outer 8% top/bottom cut, landmarks inside the central 84%; left/right uncropped.
+
+Negative: isometric, iso, three-quarter, side view, elevation, vertical wall, arch, door standing up, camera tilt, horizon, sky, pixel art, bright turquoise, sunny, waves from the side, characters, person, girl, mermaid, hands, text, lettering, watermark, logo, UI, frame, vignette.
+```
