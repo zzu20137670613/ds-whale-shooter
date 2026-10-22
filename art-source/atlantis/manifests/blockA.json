@@ -1,0 +1,66 @@
+{
+  "level": "atlantis",
+  "block": "A",
+  "source": "D:\\网页下载\\jimeng-2026-10-22-7750-Hand-painted anime game art, strict top-....png",
+  "source_size": [
+    2560,
+    1440
+  ],
+  "plate": "plates/blockA-raw.png",
+  "ramped": "plates/blockA-ramped.png",
+  "ramps": [
+    {
+      "edge": "top",
+      "target": "#0A1822"
+    },
+    {
+      "edge": "right",
+      "target": "#3A5A62"
+    }
+  ],
+  "hard_edges": [
+    "left",
+    "bottom"
+  ],
+  "tiles": [
+    {
+      "name": "blockA-tl",
+      "file": "tiles/blockA-tl.png",
+      "size": [
+        1280,
+        720
+      ]
+    },
+    {
+      "name": "blockA-tr",
+      "file": "tiles/blockA-tr.png",
+      "size": [
+        1280,
+        720
+      ]
+    },
+    {
+      "name": "blockA-bl",
+      "file": "tiles/blockA-bl.png",
+      "size": [
+        1280,
+        720
+      ]
+    },
+    {
+      "name": "blockA-br",
+      "file": "tiles/blockA-br.png",
+      "size": [
+        1280,
+        720
+      ]
+    }
+  ],
+  "tile_grid": [
+    2,
+    2
+  ],
+  "watermark_note": "即梦AI 水印在右下分块 br 内，超清后擦除",
+  "compromise": "船是 3/4 视角（桅杆立起、有侧舷），板块其余全平。与天空之城 D 块的王座同一处理：画面里只有一个立着的主物件时，人眼接受。船体建议在碰撞里标成不可达（玩家绕行）。",
+  "hero": "细长的暖白发光裂缝是这块的视觉锚点，玩家该被引导到它附近"
+}
