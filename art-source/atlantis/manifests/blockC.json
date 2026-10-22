@@ -1,0 +1,71 @@
+{
+  "level": "atlantis",
+  "block": "C",
+  "source": "D:\\网页下载\\jimeng-2026-10-22-1640-Hand-painted anime game art, strict top-....png",
+  "source_size": [
+    2560,
+    1440
+  ],
+  "plate": "plates/blockC-raw.png",
+  "ramped": "plates/blockC-ramped.png",
+  "ramps": [
+    {
+      "edge": "left",
+      "target": "#2A424C"
+    },
+    {
+      "edge": "bottom",
+      "target": "#B9AD86"
+    }
+  ],
+  "hard_edges": [
+    "top",
+    "right"
+  ],
+  "tiles": [
+    {
+      "name": "blockC-tl",
+      "file": "tiles/blockC-tl.png",
+      "size": [
+        1280,
+        720
+      ]
+    },
+    {
+      "name": "blockC-tr",
+      "file": "tiles/blockC-tr.png",
+      "size": [
+        1280,
+        720
+      ]
+    },
+    {
+      "name": "blockC-bl",
+      "file": "tiles/blockC-bl.png",
+      "size": [
+        1280,
+        720
+      ]
+    },
+    {
+      "name": "blockC-br",
+      "file": "tiles/blockC-br.png",
+      "size": [
+        1280,
+        720
+      ]
+    }
+  ],
+  "tile_grid": [
+    2,
+    2
+  ],
+  "watermark_note": "即梦AI 水印在右下分块 br 内，超清后擦除",
+  "compromise": "王座仍为立式（第三次：模型画不了半埋的座），与天空之城 D 块同处理，接受。三处楼梯为立面，但都在地图外缘，会被边界墙挡住。",
+  "good": [
+    "三块平躺鲸形石板",
+    "三个金边刻环",
+    "水下石板与涟漪",
+    "暖色光斑"
+  ]
+}
