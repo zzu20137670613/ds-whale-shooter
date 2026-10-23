@@ -404,6 +404,8 @@ export class MonsterController {
     private readonly monsters: Monster[] = [];
     /** Unsubscribes the dragon-roar listener. */
     private roarCleanup?: () => void;
+    /** Set by `destroy()`. Bus subscribers outlive the scene, so they check it. */
+    private destroyed = false;
     private readonly projectiles: MonsterProjectile[] = [];
     private readonly cb: MonsterControllerCallbacks;
     /** Cached for fast lookup in attack tests. */
@@ -1180,6 +1182,11 @@ export class MonsterController {
      * and announces it, the monsters own their own HP.
      */
     applyRoarDamage(hpFraction: number): void {
+        // The handler is subscribed on the EventBus, which outlives the scene.
+        // A controller whose scene has been torn down must stay mute —
+        // otherwise a skill press in a later level wakes it and it walks a
+        // dead display list.
+        if (this.destroyed) return;
         const view = this.scene.cameras.main.worldView;
         for (const m of this.monsters) {
             if (m.dead || m.state === 'dying') continue;
@@ -1216,6 +1223,7 @@ export class MonsterController {
     }
 
     destroy(): void {
+        this.destroyed = true;
         this.roarCleanup?.();
         this.roarCleanup = undefined;
         for (const m of this.monsters) m.destroy(this.scene);

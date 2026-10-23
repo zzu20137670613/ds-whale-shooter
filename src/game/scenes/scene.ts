@@ -593,10 +593,8 @@ export class LoadScene extends Phaser.Scene {
         // player to the tavern (character select), which is the old tavern
         // button's job.
         if (usesMerchant(this.level)) {
-            this.merchant = new MerchantController(
-                this,
-                this.level.imageSize,
-                () => this.monsterSystem.isAllCleared(),
+            this.merchant = new MerchantController(this, this.level.imageSize, () =>
+                this.monsterSystem.isAllCleared(),
             );
         }
 
@@ -837,6 +835,11 @@ export class LoadScene extends Phaser.Scene {
         this.isShutdown = true;
         this.releaseLoadedTextures();
         this.tavernController?.destroy();
+        // MonsterController owns the `skill:dragon-roar` listener and every
+        // monster body / sprite / tween. Not destroying it left one live
+        // listener per level load, so a later E press woke handlers that
+        // pointed at a torn-down scene.
+        this.monsterSystem?.destroy();
         this.teleporterSystem?.destroy();
         this.merchant?.destroy();
         this.merchant = undefined;
