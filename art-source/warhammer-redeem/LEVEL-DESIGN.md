@@ -56,6 +56,23 @@ have to sell the jump (portal-light, star-fall, a door back into the world).
 Confirm that the blocks may look **deliberately unrelated** rather than sharing
 one colour script.
 
+## Reference inventory (`reference/`)
+
+The owner numbers the comic pages 1–34, plus `35非主线结局.jpg` (the fan ending).
+Scene references added on 2026-10-23:
+
+| File | Use |
+| --- | --- |
+| `block1-ruins-illustration.jpg` | Ruined cathedral, three-quarter, painterly. **Not** a map source — loading art / mood only. |
+| `block1-v1-ruins-3q.png` | The same scene from the v1 prompt. Handed to 第七世 for her galgame side story. |
+| `block3-alley-night.png` | Night alley, lanterns, stall clutter — the target for block ③. Night half. |
+| `block4-church-front-01.png` / `-02.png` | Gothic church front, steps, fog. Two takes for block ④'s courtyard. |
+| `block4-first-meeting.png` | 鲸鲸 in the whale hoodie with the rice bowl among black-robed figures, Claude in white behind. **Block ④'s emotional reference** — and where the rice-bowl 暗号 lives. |
+| `misc-desk-agi.png` | Modern desk, monitors, instant-noodle bowl. Unassigned; may suit a cutscene. |
+
+Block ② (star sea) still has no reference of its own — it is the one block I can
+write blind, since the palette is the DeepSeek navy already used across the game.
+
 ## Pipeline (same as sky city / atlantis)
 
 4×4 screens = 2×2 blocks of 5504×3072 → world 11008×6144.
