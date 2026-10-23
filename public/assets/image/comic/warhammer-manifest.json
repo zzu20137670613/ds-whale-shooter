@@ -1,0 +1,313 @@
+{
+ "level": "warhammer-redeem",
+ "count": 34,
+ "autoAdvanceMs": 5000,
+ "pages": [
+  {
+   "page": 1,
+   "file": "warhammer-01.jpg",
+   "size": [
+    1024,
+    1536
+   ],
+   "bytes": 425355
+  },
+  {
+   "page": 2,
+   "file": "warhammer-02.jpg",
+   "size": [
+    1024,
+    1536
+   ],
+   "bytes": 443441
+  },
+  {
+   "page": 3,
+   "file": "warhammer-03.jpg",
+   "size": [
+    1024,
+    1536
+   ],
+   "bytes": 400895
+  },
+  {
+   "page": 4,
+   "file": "warhammer-04.jpg",
+   "size": [
+    1024,
+    1536
+   ],
+   "bytes": 442127
+  },
+  {
+   "page": 5,
+   "file": "warhammer-05.jpg",
+   "size": [
+    1024,
+    1536
+   ],
+   "bytes": 460168
+  },
+  {
+   "page": 6,
+   "file": "warhammer-06.jpg",
+   "size": [
+    1024,
+    1536
+   ],
+   "bytes": 428794
+  },
+  {
+   "page": 7,
+   "file": "warhammer-07.jpg",
+   "size": [
+    1280,
+    1920
+   ],
+   "bytes": 412885
+  },
+  {
+   "page": 8,
+   "file": "warhammer-08.jpg",
+   "size": [
+    1280,
+    1920
+   ],
+   "bytes": 370499
+  },
+  {
+   "page": 9,
+   "file": "warhammer-09.jpg",
+   "size": [
+    1024,
+    1536
+   ],
+   "bytes": 334232
+  },
+  {
+   "page": 10,
+   "file": "warhammer-10.jpg",
+   "size": [
+    1024,
+    1536
+   ],
+   "bytes": 489888
+  },
+  {
+   "page": 11,
+   "file": "warhammer-11.jpg",
+   "size": [
+    1024,
+    1536
+   ],
+   "bytes": 506351
+  },
+  {
+   "page": 12,
+   "file": "warhammer-12.jpg",
+   "size": [
+    1024,
+    1536
+   ],
+   "bytes": 385807
+  },
+  {
+   "page": 13,
+   "file": "warhammer-13.jpg",
+   "size": [
+    1024,
+    1536
+   ],
+   "bytes": 410284
+  },
+  {
+   "page": 14,
+   "file": "warhammer-14.jpg",
+   "size": [
+    1024,
+    1536
+   ],
+   "bytes": 446425
+  },
+  {
+   "page": 15,
+   "file": "warhammer-15.jpg",
+   "size": [
+    1024,
+    1536
+   ],
+   "bytes": 435022
+  },
+  {
+   "page": 16,
+   "file": "warhammer-16.jpg",
+   "size": [
+    1024,
+    1536
+   ],
+   "bytes": 457221
+  },
+  {
+   "page": 17,
+   "file": "warhammer-17.jpg",
+   "size": [
+    1024,
+    1536
+   ],
+   "bytes": 499761
+  },
+  {
+   "page": 18,
+   "file": "warhammer-18.jpg",
+   "size": [
+    1024,
+    1536
+   ],
+   "bytes": 443219
+  },
+  {
+   "page": 19,
+   "file": "warhammer-19.jpg",
+   "size": [
+    1024,
+    1536
+   ],
+   "bytes": 498183
+  },
+  {
+   "page": 20,
+   "file": "warhammer-20.jpg",
+   "size": [
+    1024,
+    1536
+   ],
+   "bytes": 451655
+  },
+  {
+   "page": 21,
+   "file": "warhammer-21.jpg",
+   "size": [
+    1024,
+    1536
+   ],
+   "bytes": 471660
+  },
+  {
+   "page": 22,
+   "file": "warhammer-22.jpg",
+   "size": [
+    1024,
+    1536
+   ],
+   "bytes": 489293
+  },
+  {
+   "page": 23,
+   "file": "warhammer-23.jpg",
+   "size": [
+    1024,
+    1536
+   ],
+   "bytes": 517973
+  },
+  {
+   "page": 24,
+   "file": "warhammer-24.jpg",
+   "size": [
+    1024,
+    1536
+   ],
+   "bytes": 497128
+  },
+  {
+   "page": 25,
+   "file": "warhammer-25.jpg",
+   "size": [
+    1024,
+    1536
+   ],
+   "bytes": 411395
+  },
+  {
+   "page": 26,
+   "file": "warhammer-26.jpg",
+   "size": [
+    1024,
+    1536
+   ],
+   "bytes": 486570
+  },
+  {
+   "page": 27,
+   "file": "warhammer-27.jpg",
+   "size": [
+    1024,
+    1536
+   ],
+   "bytes": 451054
+  },
+  {
+   "page": 28,
+   "file": "warhammer-28.jpg",
+   "size": [
+    1024,
+    1536
+   ],
+   "bytes": 436326
+  },
+  {
+   "page": 29,
+   "file": "warhammer-29.jpg",
+   "size": [
+    1024,
+    1536
+   ],
+   "bytes": 512849
+  },
+  {
+   "page": 30,
+   "file": "warhammer-30.jpg",
+   "size": [
+    1024,
+    1536
+   ],
+   "bytes": 439337
+  },
+  {
+   "page": 31,
+   "file": "warhammer-31.jpg",
+   "size": [
+    1024,
+    1536
+   ],
+   "bytes": 415641
+  },
+  {
+   "page": 32,
+   "file": "warhammer-32.jpg",
+   "size": [
+    1024,
+    1536
+   ],
+   "bytes": 396305
+  },
+  {
+   "page": 33,
+   "file": "warhammer-33.jpg",
+   "size": [
+    1024,
+    1536
+   ],
+   "bytes": 401657
+  },
+  {
+   "page": 34,
+   "file": "warhammer-34.jpg",
+   "size": [
+    1024,
+    1536
+   ],
+   "bytes": 341838
+  }
+ ]
+}

@@ -1,0 +1,31 @@
+# 结算画面 · 第二张（两人背影走出教堂）
+
+> 这张**不是地图**，是结算插画——所以**不需要正交、不需要俯视**，
+> 反而要立绘/电影感。跟第 1-4 块的规矩完全不同，别混。
+>
+> 用途：第五阶段停战 → 冻结 → 白闪 → **第一张用你精修的初遇图**（缓缓推近）
+> → **第二张就是这张**（两人并肩走出教堂的清晨背影）→ 黑场 → 回亭台。
+>
+> 为什么是"背影"：**不给脸**，玩家自己把情绪填进去；而且正面画脸必崩，背影最稳。
+> 画面上方留了大片暗部，用来压字幕：
+> 　　「……你来了。」
+> 　　「嗯。我说过会来接你。」
+> 　　「这一次，谁都不用再当神。」
+
+```
+Anime key visual, cinematic still frame, 16:9. Two figures seen from BEHIND, walking away from the camera, side by side, out through the open doors of a gothic church into early morning light.
+
+LEFT FIGURE: short and small, deep blue hair in twin low tails, an oversized hooded coat printed with whales and snowflakes, one hand holding a small steel bowl. RIGHT FIGURE: tall and slender, long auburn-orange hair down her back, a white lace dress with a trailing hem, barefoot, one hand trailing loose petals. Neither face is visible. Their hands are not quite touching.
+
+REALM: the church's stone threshold under their feet, worn flagstones, petals and small white flowers scattered, cold mist rolling low across the floor, the dark interior receding behind them, the great door frame black iron and pale stone. Beyond the doors: soft blown-out morning light, no detail - just warmth and haze.
+
+MOOD: quiet, exhausted, relieved. Nobody is triumphant. This is the first ordinary morning.
+
+LIGHT: strong backlight from the doorway rimming both figures with warm light; interior in cool shadow; the light is the brightest thing and it is almost white.
+
+Palette: white stone #E4E4E2, cold grey #A8ADB9, deep blue #464E6C, warm brown #382A23, near black #060504, morning gold #F2D9A8.
+
+Composition: central, symmetric-ish, plenty of empty dark space above them for a caption; both figures in the lower third.
+
+No text, no watermark, no logo, no UI, no speech bubbles.
+```

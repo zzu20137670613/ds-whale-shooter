@@ -56,6 +56,67 @@ have to sell the jump (portal-light, star-fall, a door back into the world).
 Confirm that the blocks may look **deliberately unrelated** rather than sharing
 one colour script.
 
+## Entry, intro and settlement (designed, not yet built)
+
+### Entry: stepping on the Atlantean throne
+No visible portal. The throne sits in atlantis block C at world origin (5504, 0)
+— see `_sheet/atlantis-for-marking.png` (1 px there = 8 px in world). The owner
+draws one bright-green `#00FF00` box on it; I read the bounding box numerically
+and convert it to a trigger zone.
+
+New trigger effect, alongside the lounger's existing `spawn`:
+
+```yaml
+triggers:
+  - id: hidden-2-entry
+    zone: { x: 6336, y: 704, width: 704, height: 512 }   # placeholder, replaced by his box
+    travel:
+      targetScene: warhammer-redeem
+      excludeCharacters: [claude]     # Claude steps on it -> nothing at all
+```
+
+Rules:
+- Silent. No prompt, no glow, no sound cue.
+- **Claude must not consume it.** The `usedTriggers` key is only written when the
+  travel actually happens, otherwise a Claude run would burn the door for later.
+- No `requiresClear`: this is a hidden door, not a reward.
+
+### Intro: the 34-page comic plays on entry
+Pages live in `public/assets/image/comic/warhammer-01..34.jpg` (re-encoded from
+the owner's `reference/1..34.jpg`, quality 82, 14.3 MB total, manifest beside
+them). They are lazy: page 1 first, page n+1 preloaded while n is on screen.
+
+- Full-screen reader over a black backdrop, page fitted by height.
+- **Click / tap / Space / →** advances immediately.
+- **5 s auto-advance** if untouched; the timer resets on any manual advance.
+- Preload next; the first page fades in from black, the last fades to gameplay.
+- A small `跳过` in the corner skips the rest (needed for replays).
+- No music yet; the audio module has nothing for this.
+
+### Settlement: my design
+Phase 5 stops the moment **either** side drops below 50 % HP.
+
+1. **Freeze.** Both sides become invulnerable, Claude stops firing and turns to
+   face the player, every add fades out and despawns.
+2. **White flash + 0.5 s hold**, then fade to black.
+3. **Plate 1 — `block4-first-meeting.png`** (the owner's retouched art) full
+   screen, slow push-in 1.06× over ~6 s. Captions fade in one line at a time:
+   - 「……你来了。」
+   - 「嗯。我说过会来接你。」
+4. **Plate 2 — the walk-out** (new art, prompt in
+   `prompts/ending-02-walk-out-PASTE.txt`): the two of them from behind, leaving
+   the church into morning light.
+   - 「这一次，谁都不用再当神。」
+5. **Plate 3 — a quiet ledger**: black screen, one line of small text with the
+   run time only. No rank, no score — this level is not a competition.
+6. **Fade → back to the seaside pavilion** with the character the player
+   originally picked restored.
+
+### The 白米饭 easter egg
+The steel bowl baked into block 4 (`centre-left`) becomes an interactable prop.
+Reading it prints one line: 「碗底刻着两个字：白米饭。」 — the code word 第七世
+asked for, delivered diegetically rather than in the settlement captions.
+
 ## Prompt law (learned the hard way, six rounds)
 
 Every rejected generation failed the same way, and it was never the negative
