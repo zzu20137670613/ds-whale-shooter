@@ -17,6 +17,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ShopPanel } from '@/components/hud/shop-panel';
 import { fetchCharacter } from '@/lib/characters';
 import { parseCharacterYaml } from '@/lib/characters/parser';
+import { SHOP_RESTORE_VITALS_EVENT, SHOP_RESTORE_VITALS_PRICE } from '@/lib/characters/vitals';
 import { EventBus } from '@/lib/events/bus';
 import { MERCHANT_SHOP_EVENT, RETURN_TO_PAVILION_EVENT } from '@/lib/merchant/logic';
 import { fetchWeapon } from '@/lib/weapons';
@@ -180,6 +181,31 @@ describe('ShopPanel', () => {
 
         expect(q('shop-buy-armor')?.textContent).toContain('60');
         expect(q('shop-level-armor')?.textContent).toContain('1/2');
+    });
+
+    it('sells a full HP + SP refill and tells the character', async () => {
+        useGameStore.setState({ money: 500, hp: 10, maxHp: 100, sp: 0, maxSp: 50 });
+
+        await openShop();
+
+        const heard: string[] = [];
+        const handler = () => heard.push('restore');
+        EventBus.on(SHOP_RESTORE_VITALS_EVENT, handler);
+        click('shop-restore-vitals');
+        EventBus.off(SHOP_RESTORE_VITALS_EVENT, handler);
+
+        expect(heard).toEqual(['restore']);
+        expect(useGameStore.getState().money).toBe(500 - SHOP_RESTORE_VITALS_PRICE);
+    });
+
+    it('refuses the refill when the pools are already full', async () => {
+        useGameStore.setState({ money: 500, hp: 100, maxHp: 100, sp: 50, maxSp: 50 });
+
+        await openShop();
+
+        expect((q('shop-restore-vitals') as HTMLButtonElement).disabled).toBe(true);
+        click('shop-restore-vitals');
+        expect(useGameStore.getState().money).toBe(500);
     });
 
     it('offers a way home and leaves the navigation to the app', async () => {

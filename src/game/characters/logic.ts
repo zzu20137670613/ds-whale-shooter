@@ -28,6 +28,7 @@ import {
     skillSpCost,
     useSkill,
 } from '@/lib/characters/skill';
+import { SHOP_RESTORE_VITALS_EVENT } from '@/lib/characters/vitals';
 import {
     AIM_ASSIST,
     CHARACTER_HURT_FLASH_MS,
@@ -399,6 +400,17 @@ export class CharacterController {
         this.cleanupFns.push(() =>
             EventBus.removeListener('dev:cheat:infiniteHp', infiniteHpHandler),
         );
+
+        // The merchant sells a full HP + SP refill. There is no passive regen
+        // any more, so this (and pickups) is the only way back up — the panel
+        // charges for it and this handler does the actual topping up.
+        const restoreVitalsHandler = () => {
+            this.heal(this.spec.hp - this.hp, this.spec.sp - this.sp);
+        };
+        EventBus.on(SHOP_RESTORE_VITALS_EVENT, restoreVitalsHandler);
+        this.cleanupFns.push(() =>
+            EventBus.removeListener(SHOP_RESTORE_VITALS_EVENT, restoreVitalsHandler),
+        );
     }
 
     // ─── Public API ──────────────────────────────────────────────────────
@@ -702,10 +714,13 @@ export class CharacterController {
         // ── Animation state machine ─────────────────────────────────
         this.driveAnims(intent.vx !== 0 || intent.vy !== 0, now < this.dodgeActiveUntil, sprinting);
 
-        // ── SP regen ────────────────────────────────────────────────
-        if (now >= this.dodgeActiveUntil && this.sp < this.spec.sp) {
-            this.sp = Math.min(this.spec.sp, this.sp + (this.spec.sp * 16) / this.spec.spRegenMs);
-        }
+        // ── SP regen: none ──────────────────────────────────────────
+        // HP and SP do NOT regenerate — that is the design. The only ways
+        // back up are a pickup on the ground or the merchant's paid refill
+        // (`lib/characters/vitals`). A passive trickle made every skill free
+        // again within seconds and erased the cost of a dodge, so the
+        // per-frame top-up that used to live here is gone on purpose.
+        // `spRegenMs` in the character YAML is now unused.
 
         // ── Footstep SFX (throttled; cadence from spec) ─────────────
         const moving = intent.vx !== 0 || intent.vy !== 0;

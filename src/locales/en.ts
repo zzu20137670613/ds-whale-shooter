@@ -23,6 +23,7 @@ const en: CatalogSource = {
         empty: 'No weapons yet.',
         ammo: 'Refill Ammo',
         returnHome: 'Return to Pavilion',
+        restoreVitals: 'Restore Vitals',
         upgrade: {
             armor: 'Armor',
             agility: 'Agility',

@@ -36,6 +36,10 @@ export type CatalogSource = {
         /** "Return to Pavilion" — the shop's way home now that the merchant
          *  carries it, so it has to live outside the tavern. */
         returnHome: string;
+        /** "Restore Vitals" — a paid full HP + SP refill. There is no passive
+         *  regeneration, so this row is the only deliberate way back up
+         *  besides a pickup. */
+        restoreVitals: string;
         upgrade: {
             armor: string;
             agility: string;
@@ -79,6 +83,7 @@ export type CatalogKey =
     | 'shop.empty'
     | 'shop.ammo'
     | 'shop.returnHome'
+    | 'shop.restoreVitals'
     | 'merchant.name'
     | 'shop.upgrade.armor'
     | 'shop.upgrade.agility'

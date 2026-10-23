@@ -30,6 +30,11 @@ import { useEffect, useMemo, useState } from 'react';
 import { Coins, Home, X } from 'lucide-react';
 
 import { CornerPixels, RETRO_BOX } from './retro-box';
+import {
+    SHOP_RESTORE_VITALS_EVENT,
+    SHOP_RESTORE_VITALS_PRICE,
+    canBuyRestore,
+} from '@/lib/characters/vitals';
 import { EventBus } from '@/lib/events/bus';
 import { MERCHANT_SHOP_EVENT, RETURN_TO_PAVILION_EVENT } from '@/lib/merchant/logic';
 import type { CharacterSpec } from '@/lib/characters';
@@ -61,6 +66,10 @@ export function ShopPanel() {
     const upgradeLevels = useGameStore((s) => s.upgradeLevels);
     const weaponLevels = useGameStore((s) => s.weaponLevels);
     const slots = useGameStore((s) => s.slots);
+    const hp = useGameStore((s) => s.hp);
+    const maxHp = useGameStore((s) => s.maxHp);
+    const sp = useGameStore((s) => s.sp);
+    const maxSp = useGameStore((s) => s.maxSp);
     const spendMoney = useGameStore((s) => s.spendMoney);
     const setUpgradeLevel = useGameStore((s) => s.setUpgradeLevel);
     const setWeaponLevel = useGameStore((s) => s.setWeaponLevel);
@@ -186,6 +195,17 @@ export function ShopPanel() {
     const buyRefill = () => {
         if (!canRefill) return;
         if (spendMoney(refillPrice)) refillAmmo();
+    };
+
+    // HP and SP never regenerate on their own any more — this purchase (and
+    // pickups) is the only way back up. The character applies it; the panel
+    // only charges and announces.
+    const canRestoreVitals = canBuyRestore({ hp, maxHp, sp, maxSp, money });
+    const buyVitals = () => {
+        if (!canRestoreVitals) return;
+        if (spendMoney(SHOP_RESTORE_VITALS_PRICE)) {
+            EventBus.emit(SHOP_RESTORE_VITALS_EVENT);
+        }
     };
 
     const rowClass =
@@ -348,6 +368,24 @@ export function ShopPanel() {
                             )}
                         </>
                     )}
+
+                    {/* No passive HP/SP regen exists, so this is the only
+                        deliberate refill outside a ground pickup. */}
+                    <div data-testid="shop-vitals-row" className={rowClass}>
+                        <span className="text-[12px] text-stone-200">
+                            {t('shop.restoreVitals')}
+                        </span>
+                        <button
+                            type="button"
+                            data-testid="shop-restore-vitals"
+                            disabled={!canRestoreVitals}
+                            onClick={buyVitals}
+                            className={buyClass(canRestoreVitals)}
+                        >
+                            <Coins className="size-2.5" />
+                            {SHOP_RESTORE_VITALS_PRICE}
+                        </button>
+                    </div>
 
                     {/* The way home. Deliberately NOT `restartAtTavern`: that
                         wipes the run and drops the player back into character

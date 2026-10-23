@@ -23,6 +23,7 @@ const zhCN: CatalogSource = {
         empty: '还没有武器。',
         ammo: '补充弹药',
         returnHome: '一键回城',
+        restoreVitals: '补满状态',
         upgrade: {
             armor: '护甲',
             agility: '敏捷',
