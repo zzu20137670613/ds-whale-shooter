@@ -8,8 +8,8 @@ OCCUPANCY: >=65% clean walkable slab paving; props only in the outer 30%.
 
 Palette: warm plaster #D8B98C, wet stone #8A8580, lantern gold #E8A24A, deep shade #2A2A38, dark wood #4A3A2E, dusk violet #6E5B7A.
 
-Ground detail, all lying flat: grey slab paving with a central drain channel and grate; kerb stones and a doorstep; flat wicker baskets, wooden crates, stacked bowls, cabbages and greens spilling out; a handcart tipped on its side; a bicycle lying flat; cloth and laundry as thin flat strips; small pools of lantern light with reflections in puddles; steam drifting flat across the stones; a few dropped goods near one corner where the shadow is deepest. CENTRE: a wide clean open square of pavement, 14% of frame width, EMPTY - no figure, no stall, no cart.
+Ground detail, all lying flat: grey slab paving with a central drain channel and grate; kerb stones and a doorstep; flat wicker baskets, wooden crates, stacked bowls, cabbages and greens spilling out; a handcart tipped over; a bicycle lying flat; cloth as thin flat strips; small pools of lantern light with reflections in puddles; steam drifting flat across the stones; a few dropped goods near one corner where the shadow is deepest. CENTRE: a wide clean open square of pavement, 14% of frame width, EMPTY - no figure, no stall, no cart.
 
 Size: 3:2 or 16:9, full bleed, composed for a 16:9 centre crop (landmarks inside the central 84%).
 
-Negative: buildings, houses, shops, storefronts, roofs, roof tiles, eaves, facades, walls standing, windows, doors in elevation, signs, banners hanging, awnings, arches, horizon, sky, sunset, sun, moon, perspective, vanishing point, isometric, three-quarter, characters, people, crowd, person, text, letters, labels, colour swatches, watermark, logo, cluttered.
+Negative: buildings, houses, shops, storefronts, roofs, eaves, facades, walls standing, windows, doors in elevation, signs, awnings, arches, horizon, sky, sunset, sun, moon, perspective, vanishing point, isometric, three-quarter, characters, people, crowd, person, text, letters, labels, colour swatches, watermark, logo, cluttered.
