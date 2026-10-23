@@ -51,3 +51,9 @@ __pycache__/
 
 # assembled world plates are derived from blocks/ and too large for git
 art-source/*/world/
+
+# The owner's own reference material (comics, mood boards) stays local — 15 MB+
+# of pages per level, and he keeps the originals. The design they produced is
+# written down in art-source/<level>/LEVEL-DESIGN.md instead.
+art-source/*/reference/
+art-source/*/_sheet/

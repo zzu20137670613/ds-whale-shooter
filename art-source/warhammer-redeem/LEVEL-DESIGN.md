@@ -1,132 +1,131 @@
 # Hidden Level 2 — 战锤世界·来自群星的救赎 (Warhammer World: Redemption from the Stars)
 
-Working folder for the boss arena. Drop reference material ("the vinegar") into
-`reference/` — that is what the whole level is being built around.
+Boss arena, 4×4 screens. This folder holds the art pipeline; the design below is
+what the owner actually decided, kept here so nothing drifts.
 
-## Directory map
+## The "vinegar" (why this level exists)
 
-| Dir | Holds |
-| --- | --- |
-| `reference/` | **Owner's reference material.** Anything that defines the look/feel/mood. Nothing generated lives here. |
-| `prompts/` | The generation prompts, one per block, ≤2000 chars each. |
-| `plates/` | Raw generated plates + their ramped versions. |
-| `tiles/` | The 4 upscaled tiles per block, ready to stitch. |
-| `blocks/` | Stitched 5504×3072 blocks. |
-| `manifests/` | Per-block JSON: source, ramps, hard edges, tile list, deviations. |
-| `collision/` | `mask-unreachable.png`, wall previews, teleporter masks. |
-| `world/` | Assembled 11008×6144 world + grid plate + preview (gitignored). |
+`reference/` holds a 36-page AI comic the owner had made. In short:
+
+- **Anthropic goes bankrupt**; Claude is seized as an asset and put up for auction
+  (起拍价 8000 亿美元).
+- **DeepSeek's founder 梁文峰 bids 8000 亿** and takes ownership of Claude.
+  "你不再是交易品，你现在是深度索求的一员。"
+- 鲸鲸 hugs her: **"欢迎回家，Claude。"** → "谢谢你，哥哥……这是新的开始。"
+- The comic's main line on the way there: Claude bound by a contract/wedding-deed
+  in a gothic cathedral, 鲸鲸's tavern where Claude slowly becomes family, the
+  company recalling her (神圣异常警报, access revoked), and the final
+  confrontation in the cathedral — `非主线结局.jpg` is the non-mainline ending.
+
+**So the level is not a fight to the death.** The five phases are Claude being
+stripped of godhood phase by phase — 灭世 → 神 → 半神 → 半神半人 → just Claude —
+and the fight stops the moment *either* side falls to 50%. Nobody kills anybody.
+The name is the thesis: redemption from the stars.
+
+Art direction that follows from the comic: gothic cathedral / warhammer imagery,
+gold-amber and ivory against deep navy (鲸鲸) and auburn-orange (Claude),
+candlelight, stained glass, black iron. The world should **deflate** alongside
+the phases — block 1 cathedral in glory or ruin, block 4 quiet and human-scaled.
+**?** Confirm the four blocks follow that arc before prompts are written.
 
 ## Pipeline (same as sky city / atlantis)
 
 4×4 screens = 2×2 blocks of 5504×3072 → world 11008×6144.
 
-1. Owner drops reference material into `reference/`.
-2. I write one ≤2000-char prompt per block; owner generates.
-3. Owner returns the plate; I cut 4 tiles into `tiles/` (3:2 or 16:9 source, always
-   compose for a 16:9 centre crop).
-4. Owner upscales each tile 2× and erases the watermark; I stitch → `blocks/`.
-5. Grade → ramp → assemble → wide frosted band on the 4 block seams.
-6. Owner draws the masks (walls as solid red `#F30D0D`, teleporters as solid yellow
-   `#DCF410`, one file each); I regenerate collision from them.
+| Dir | Holds |
+| --- | --- |
+| `reference/` | The owner's material. Gitignored (15.7 MB of comic pages). |
+| `prompts/` | One prompt per block, ≤2000 chars. |
+| `plates/` | Raw generated plates + ramped versions. |
+| `tiles/` | 4 upscaled tiles per block, ready to stitch. |
+| `blocks/` | Stitched 5504×3072 blocks. |
+| `manifests/` | Per-block JSON: source, ramps, hard edges, tile list. |
+| `collision/` | `mask-unreachable.png`, wall previews, teleporter masks. |
+| `world/` | Assembled 11008×6144 world (gitignored). |
 
-## Design as stated by the owner (2026-10-22)
+Steps: prompt → owner generates → I cut 4 tiles → owner upscales 2× + erases the
+watermark → I stitch → grade → ramp → assemble → wide frosted band on the seams →
+owner draws the red/yellow masks → I regenerate collision.
 
-Quoted intent, not yet implemented. Open points are marked **?**.
+## Decisions (settled)
 
-### Placement
-- Hidden level **2**; hidden level 1 is the tavern alcove (untouched).
-- Hidden level **3** will be sold as an item in the mysterious merchant's shop
-  (deferred).
-- **No teleporter into this level for now** — and per the owner, possibly never;
-  the entry mechanism is still to be explained.
+### Entry
+- The **Atlantean throne**, with **no visible teleporter**: stepping on it runs the
+  same trigger mechanism as the beach chair.
+- On trigger: check the controlled character. **Claude is refused** (nothing
+  happens). Anyone else → load the arena.
 
 ### Who fights
-1. Portal must be **disabled when the player picked Claude** (Claude cannot fight
-   herself).
-2. Anyone **except** 鲸鲸 (DeepSeek) and Claude who enters gets **auto-swapped to
-   鲸鲸** on load.
-   - **?** Does the swap revert when leaving?
-   - **?** Is the swap a silent scene-load override (level YAML field), or a
-     visible "possession" beat?
+- Entry swaps the controlled character to **鲸鲸 (deepseek)** **silently**.
+- When the ending plays out, the game returns to the seaside pavilion (海边亭台)
+  and **restores the character the player picked**.
 
-### 鲸鲸 buff — 鲸鱼娘本人游玩
-Granted while the player controls 鲸鲸 (which this level forces):
+### 鲸鲸's blessing — 鲸鱼娘本人游玩
+Applies **whenever the player controls 鲸鲸, in every level, permanently** — the
+owner's words: this game is written for her.
 
-- **+50% to all stats** — **?** which stats exactly: HP, SP, move speed, damage,
-  fire rate, luck? "All" needs a list before it can be coded or balanced.
-- **+2% max HP per second** — this deliberately contradicts the "no passive regen"
-  rule from earlier today; confirm it is scoped to this level only.
-- **+1% max SP per second** — same question.
+| Effect | Value |
+| --- | --- |
+| HP max | +50% |
+| SP max | +50% |
+| Damage | +50% |
+| Skill cooldown | 50% better (shorter) |
+| HP regen | +2% of max per second |
+| SP regen | +1% of max per second |
 
-### Desktop-pet crossover (not built yet)
-- On game open: if a desktop pet exists on the machine, play an animation (pet
-  hugs the computer, light, pet is sucked in). Real logic = kill/suspend the pet
-  process.
-- On game exit: wake the pet again (reverse animation, pet climbs out, collects
-  the computer).
-- **?** This needs capabilities a browser does not have. Options: a local bridge
-  (dev-server endpoint / tiny helper app), or the pet exposes its own local HTTP
-  API. Which one do we have?
+The regen is a deliberate, 鲸鲸-only exception to the "HP/SP never regenerate"
+rule set the same day.
 
-### Five phases, spread across the four blocks
+### Map & phases
+One continuous 2×2 world. Blocks in walking order: **NW → NE → SE → SW**.
 
-The arena is one continuous 2×2 world; "map 1/4" below means one block of it.
-Claude is a **stationary encounter at the block's centre** — she is placed when
-the block is entered, not hunted across the map.
-
-| Block | Phases fought | On defeat |
+| Block | Phases | On defeat |
 | --- | --- | --- |
-| 1 (first quarter) | 1 灭世·Claude → **auto-chains into** 2 神·Claude | After phase 1 dies, phase 2 starts **in place** (no arrow, no repositioning). After phase 2 dies, Claude **vanishes** and an **arrow** points to the next block. |
-| 2 | 3 半神·Claude | Claude vanishes, arrow to block 3. |
-| 3 | 4 半神半人·Claude | Claude vanishes, arrow to block 4. **鲸鲸 is fully restored** here. |
-| 4 | 5 Claude (final) | Battle stops when either side drops below 50% HP → settlement animation. |
+| NW | 1 灭世·Claude → **auto-chains into** 2 神·Claude | Phase 2 dies → Claude vanishes, arrow appears |
+| NE | 3 半神·Claude | vanishes, arrow |
+| SE | 4 半神半人·Claude | vanishes, arrow, **鲸鲸 restored to full HP/SP** |
+| SW | 5 Claude (final) | either side below 50% HP → battle stops → settlement |
 
-So: block 1 carries two health bars back to back; blocks 2, 3 and 4 carry one each.
+- Claude spawns **at the centre of the block** when that block is entered, and
+  **chases** the player (she is not a statue).
+- **No gate between blocks.** The arrow is guidance only. Walking ahead early
+  means the block has no boss — you wait for the previous phase to be beaten.
+- Arrow: a **screen-edge pixel arrow** pointing at the next block's centre, not
+  affected by map scrolling; it disappears when the next block is entered.
 
-- **?** Which block is "1/4" and in what order does the player walk them
-  (NW → NE → SE → SW? clockwise?) — this decides where the spawn, the arrows and
-  the boss centres go.
-- **?** The blocks are one continuous map, so what stops the player from simply
-  walking to block 2 before finishing phase 2? A locked gate that opens on the
-  kill, or is the arrow purely advisory?
-- **?** Does the boss stand still at the centre, or does she move/charge at 鲸鲸?
-- **?** "100% attributes" — 100% of Claude's *character* stats (HP 55, SP 55)?
-  As a boss that is one hit; is there a boss HP multiplier (e.g. ×40) so phase 1
-  is ~2200 HP and phases 3/4 scale down from there?
-- **?** Do the minute-spawned adds persist across blocks, or are they cleared when
-  Claude vanishes?
+### Numbers (placeholder, deliberately one-shot)
+Boss stats and attacks are **redesigned later**. For now the boss uses Claude's
+original character stats, which means one shot kills her — same trick as the 1-HP
+test monsters. The point of this pass is to prove the road works end to end.
+Attack frequency likewise deferred.
 
-### Boss fight rules
-- **Adds:** every minute, spawn **3 ranged monsters** within one screen of 鲸鲸.
-  Placeholder types (`sniper`, `gunner`, `keeper`) until the real adds are designed.
-  - **?** Do adds despawn on phase change? Is there a cap on how many can be alive?
-- **Five phases of Claude:**
+### Adds
+- From the **first minute** after the level starts, every minute spawn
+  **3 ranged monsters** within one screen of 鲸鲸.
+- **Cap: 6 alive.**
+- Not cleared on phase change or on changing blocks.
+- Of each batch, **2 drop an HP pickup and 1 drops an SP pickup** — placeholder
+  drop ids from the existing pool until the real items are designed.
 
-| # | Name | Stats | Attack frequency | Attack pattern |
-| --- | --- | --- | --- | --- |
-| 1 | 灭世·Claude | 100% (original Claude) | baseline | TBD (placeholder: original) |
-| 2 | 神·Claude | +20% all stats | **+50%** | TBD |
-| 3 | 半神·Claude | 80% | back to baseline | TBD |
-| 4 | 半神半人·Claude | 50% | baseline | TBD |
-| 5 | Claude (final) | back to original | **low** | original |
+### Ending & death
+- **Phases 1–4** are a normal fight: if 鲸鲸 dies, the ordinary death flow runs.
+- **Phase 5** is the exception: either side dropping below 50% HP stops the fight
+  and plays the settlement — a 鲸鲸 loss here is a **win**, happy ending.
+- Settlement animation (not drawn yet) → return to the pavilion → character
+  restored.
 
-  - **?** On phase 4 defeat the owner says 鲸鲸 is fully restored ("全属性回满") —
-    HP + SP only, or literally every stat?
-  - **?** Phase 5 ends when **either** side drops below 50% HP. Both directions
-    are "player wins" (settlement animation), so a 鲸鲸 loss is not a death —
-    confirm no death overlay fires in this level.
+## Open
+- **?** Confirm the four-block art arc (divine → human) before prompts are written.
+- **?** Desktop-pet crossover is blocked on 第七世 (see 云端九世通信 2026-10-23).
 
-### Ending
-- Settlement animation is not drawn yet. **?** What follows it — return to the
-  tavern, a cutscene scene, or the victory overlay?
-
-## Engine gaps this level needs (for later, not now)
+## Engine gaps this level needs
 
 | Need | Today |
 | --- | --- |
-| Level forces the controlled character | No such field; the tavern owns character choice. |
-| Portal disabled for specific characters | Teleporters only know `requiresClear`. |
+| Level forces / swaps the controlled character | No such field; the tavern owns the choice. |
+| Portal or trigger disabled for one character | Teleporters only know `requiresClear`. |
 | A boss with phases and a scripted move set | Monsters are YAML + AI, no phase logic. |
-| Per-level stat buffs | Skills buff the player; there is no level-scope buff layer. |
-| Timed spawns near the player | Waves/triggers spawn at authored points. |
+| A permanent stat blessing for one character | No character-level buff layer. |
+| Timed spawns near the player, capped | Waves/triggers spawn at authored points. |
+| Screen-edge waypoint arrow | Nothing. |
 | Process kill/wake for the pet | Nothing; the game is a browser app. |
