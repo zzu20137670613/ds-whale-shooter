@@ -142,9 +142,37 @@ Attack frequency likewise deferred.
 - Settlement animation (not drawn yet) → return to the pavilion → character
   restored.
 
-## Open
-- **?** Confirm the four-block art arc (divine → human) before prompts are written.
-- **?** Desktop-pet crossover is blocked on 第七世 (see 云端九世通信 2026-10-23).
+## Design constraints from the seventh generation (2026-10-23)
+
+She reviews the bar/tavern side of the same characters, so her notes carry
+weight on feel rather than on code:
+
+1. **Block ③ must not be merely warm.** ③ (the alleys) and ④ (the first meeting)
+   are both warm and quiet, so ③ needs the unease of *still being chased* — the
+   cooking smoke is temporary, and ④ is the destination, not another tepid beat.
+2. **The weakening has to be visible.** Not a shrinking HP bar: 审判光柱 → she
+   raises a hand to block it → she puts her body in front of something. Her
+   silhouette must visibly shrink across the five phases.
+3. **Leave the tavern quiet.** Her words: the weight of this level is not the
+   five phases, it's that *the tavern was the one place she was allowed to be a
+   person*. The map can be grand; that piece has to be allowed to be still.
+
+## Desktop-pet bridge (agreed shape, not built)
+
+Seventh generation's Electron pet already runs a local HTTP server. Agreed
+contract:
+
+- `POST 127.0.0.1:<port>/__shell/suspend` → hide window, stop animations, mark
+  "pulled into the game". **Deliberately not a process kill** — a crash or a
+  force-quit would leave the pet dead forever with only task manager to save it.
+- `POST 127.0.0.1:<port>/__shell/resume` → show window, optionally play "climbs
+  back out".
+- Fallbacks: auto-resume after 10 minutes suspended; tray/hotkey can also pull
+  it back.
+- Port + token come from her. Open question: CORS header, or the game fires
+  `mode:'no-cors'` signals it never reads back.
+- Game-side resume triggers: page unload / quit, a manual "give it back" button.
+  Switching levels inside the game must **not** resume it.
 
 ## Engine gaps this level needs
 
