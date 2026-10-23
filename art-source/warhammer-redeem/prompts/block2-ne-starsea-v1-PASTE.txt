@@ -1,0 +1,15 @@
+2D top-down game map asset seen from DIRECTLY ABOVE (90 degrees, orthographic plan view). Everything in frame is FLAT: nothing has height, nothing stands. Flat cel shading, thin ink outlines, large smooth colour fills, NOT painterly. One fragment of a large place.
+
+SUBJECT: an open observation deck floating in a star sea. The deck is pale stone and dark metal plating with long inlaid seams; below and around it, open space full of stars. Every edge of the deck breaks off into stars - the image is full of deck and stars, edge to edge, with no frame, no rim, no border, no vignette.
+
+OCCUPANCY: >=60% clean walkable deck; the star field fills the rest and reaches all four edges; asymmetric.
+
+LIGHT: even and cold, no sun and no god rays; the deck is lit by its own pale reflection, stars supply the only sparkle.
+
+Palette: deck stone #B9C4D2, deck shadow #6E7A8C, star white #EAF2FF, void navy #0E1A2E, inlay gold #B08A3C, whale blue #2E5B8A.
+
+Details, all flush with the surface: long straight inlay seams crossing the deck; a brass compass rose inlaid flat; circular glass panels in the floor showing stars through them; a few flat star-mote sparks; scattered flat metal plates; a faint whale-tail motif inlaid in gold at one side. CENTRE: a wide empty circular inlay of pale stone, 14% of frame width, EMPTY - no figure, no statue, no console.
+
+Size: 3:2 or 16:9, full bleed, composed for a 16:9 centre crop (landmarks inside the central 84%).
+
+Negative: room, interior, walls, ceiling, enclosure, platform edge, rim, border, frame, vignette, columns, pillars, arch, doorway, window, horizon, planet, earth, ground below, perspective, vanishing point, isometric, three-quarter, symmetry, characters, person, text, watermark, logo, cluttered.

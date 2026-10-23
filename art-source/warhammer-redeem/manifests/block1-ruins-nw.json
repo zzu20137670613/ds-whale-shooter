@@ -1,0 +1,38 @@
+{
+  "block": "1-ruins-nw",
+  "worldOffset": [
+    0,
+    0
+  ],
+  "tiles": [
+    "1-NW",
+    "2-NE",
+    "3-SW",
+    "4-SE"
+  ],
+  "tileSize": [
+    2370,
+    1250
+  ],
+  "stitched": [
+    4740,
+    2500
+  ],
+  "croppedWidthFrom": [
+    0,
+    4479,
+    2500
+  ],
+  "final": [
+    5504,
+    3072
+  ],
+  "seam": {
+    "vertical": 7.05,
+    "horizontal": 12.27,
+    "normal": [
+      4.86,
+      6.48
+    ]
+  }
+}
