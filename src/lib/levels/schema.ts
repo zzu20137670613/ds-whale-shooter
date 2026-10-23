@@ -188,17 +188,27 @@ export const TeleporterSchema = z
  * fresh run earns it again. Used by the beach lounger: step on the lounger, a
  * glass of iced juice pops out and lands on the side table.
  */
-export const TriggerSchema = z
+const TriggerZoneSchema = z
+    .object({
+        x: z.number(),
+        y: z.number(),
+        width: z.number().gt(0),
+        height: z.number().gt(0),
+    })
+    .strict();
+
+const zoneOut = (z0: { x: number; y: number; width: number; height: number }) => ({
+    x: Math.round(z0.x),
+    y: Math.round(z0.y),
+    width: Math.round(z0.width),
+    height: Math.round(z0.height),
+});
+
+/** Step into the zone, a reward drop pops out and arcs to a landing spot. */
+export const SpawnTriggerSchema = z
     .object({
         id: z.string().min(1),
-        zone: z
-            .object({
-                x: z.number(),
-                y: z.number(),
-                width: z.number().gt(0),
-                height: z.number().gt(0),
-            })
-            .strict(),
+        zone: TriggerZoneSchema,
         spawn: z
             .object({
                 /** Drop spec id, e.g. `beach-drink`. */
@@ -217,12 +227,7 @@ export const TriggerSchema = z
     .strict()
     .transform((v) => ({
         id: v.id,
-        zone: {
-            x: Math.round(v.zone.x),
-            y: Math.round(v.zone.y),
-            width: Math.round(v.zone.width),
-            height: Math.round(v.zone.height),
-        },
+        zone: zoneOut(v.zone),
         spawn: {
             type: v.spawn.type,
             from: { x: Math.round(v.spawn.from.x), y: Math.round(v.spawn.from.y) },
@@ -231,6 +236,39 @@ export const TriggerSchema = z
             durationMs: v.spawn.durationMs,
         },
     }));
+
+/**
+ * Step into the zone and the game moves to another scene — a hidden door.
+ *
+ * Deliberately silent: no glow, no prompt, no sound. `excludeCharacters` is how
+ * a door refuses a specific character without spending itself: Claude stepping
+ * on the Atlantean throne must do nothing at all AND leave the trigger armed,
+ * otherwise a Claude run would burn the entrance for the rest of the save.
+ */
+export const TravelTriggerSchema = z
+    .object({
+        id: z.string().min(1),
+        zone: TriggerZoneSchema,
+        travel: z
+            .object({
+                targetScene: z.string().min(1),
+                /** Character ids that must NOT be able to use this door. */
+                excludeCharacters: z.array(z.string().min(1)).default([]),
+            })
+            .strict(),
+    })
+    .strict()
+    .transform((v) => ({
+        id: v.id,
+        zone: zoneOut(v.zone),
+        travel: {
+            targetScene: v.travel.targetScene,
+            excludeCharacters: v.travel.excludeCharacters,
+        },
+    }));
+
+/** A one-shot region trigger, in either of its two effects. */
+export const TriggerSchema = z.union([SpawnTriggerSchema, TravelTriggerSchema]);
 
 // ─── Level ────────────────────────────────────────────────────────────────
 

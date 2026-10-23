@@ -2732,6 +2732,20 @@ monsters:
       'y': 4200
 dropSpawns: []
 materials: []
+triggers:
+    # Step on the throne seat and the arena beyond opens - no portal art, no
+    # glow, no sound. The zone was measured off the wall mask: the throne's back
+    # is marked unwalkable (red), so this rectangle is the red-free part of the
+    # owner's marking, 344x444 at (7976,1296) - the seat and its front step.
+    #
+    # Claude is refused BY NAME and the trigger stays armed, so a Claude run
+    # cannot spend the entrance for the rest of the save.
+    - id: hidden-2-entry
+      zone: { x: 7976, y: 1296, width: 344, height: 444 }
+      travel:
+          targetScene: warhammer-redeem
+          excludeCharacters: [claude]
+
 teleporters:
     # The glow crack in the wreck plate: arrival point from sky city, and the
     # way back up. Radius comes from the owner's standing rule (300).

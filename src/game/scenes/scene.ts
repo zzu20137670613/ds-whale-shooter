@@ -60,6 +60,7 @@ import { groundLayers, isPortalArmed, propKey, spawnsWithoutBrokenProps } from '
 import { usesMerchant } from '@/lib/merchant/logic';
 import { releasableTextureKeys } from '@/lib/textures/release';
 import { tilemapResourcesFor } from '@/lib/tilemaps/resources';
+import { resolveAndRestart } from '@/lib/phaser-game';
 import { useGameStore } from '@/store/game-store';
 import type { MusicSpec, SfxSpec, SoundSpec } from '@/lib/audios';
 import type { CharacterSpec } from '@/lib/characters';
@@ -489,7 +490,8 @@ export class LoadScene extends Phaser.Scene {
         // the character spec omits luck.
         this.monsterSystem.setPlayerLuck(this.assets.character.luck ?? 1);
 
-        // Wire one-shot region triggers — the beach lounger's iced juice.
+        // Wire one-shot region triggers — the beach lounger's iced juice, and the
+        // Atlantean throne's hidden door.
         this.triggerSystem = new TriggerController(
             this.character,
             this.id,
@@ -499,6 +501,19 @@ export class LoadScene extends Phaser.Scene {
                 const spec = this.assets.dropSpecs.get(id);
                 if (!spec) throw new Error(`Unknown drop id: ${id}`);
                 return spec;
+            },
+            // A travel trigger is a hidden door: no portal art, no fade art of
+            // its own, just the same handoff the teleporter performs.
+            (targetScene) => {
+                useGameStore.getState().setCurrentLevelId(targetScene);
+                useGameStore
+                    .getState()
+                    .setEntitySnapshots({
+                        player: undefined,
+                        monsters: undefined,
+                        drops: undefined,
+                    });
+                void resolveAndRestart(targetScene);
             },
         );
 

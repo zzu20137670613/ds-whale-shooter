@@ -18,7 +18,10 @@ export function collectDropIds(level: Level, monsterSpecs: Map<string, MonsterSp
     level.dropSpawns?.forEach((d) => ids.add(d.type));
     // A trigger's reward is named only by the trigger itself, so a level that
     // ships one would otherwise reach fire time without its drop spec loaded.
-    level.triggers?.forEach((t) => ids.add(t.spawn.type));
+    level.triggers?.forEach((t) => {
+        // Only a spawn trigger names a drop; a travel trigger is a door.
+        if ('spawn' in t) ids.add(t.spawn.type);
+    });
     monsterSpecs.forEach((spec) => {
         for (const ref of spec.drops ?? []) ids.add(ref.dropId);
     });

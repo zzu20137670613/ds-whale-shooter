@@ -1,0 +1,50 @@
+# Hidden level 2 - the arena the owner calls "the dumpling wrapped around the
+# vinegar": four painted blocks, one continuous 11008x6144 world.
+#
+#   NW = church ruins   NE = star sea
+#   SW = courtyard      SE = alley
+#
+# Claude spawns at the centre of NW and the player walks the four blocks, so the
+# map itself is the story: ruins -> stars -> home streets -> where they met.
+#
+# `character: deepseek` is the level forcing 鲸鲸 - the owner's design is that
+# anybody except Claude enters as the whale girl.
+title: Warhammer World - Redemption from the Stars
+titleZh: '战锤世界·来自群星的救赎'
+character: deepseek
+background: assets/image/scenes/warhammer-1-ruins.png
+backgroundBlocks:
+    - texture: assets/image/scenes/warhammer-1-ruins.png
+      x: 0
+      y: 0
+    - texture: assets/image/scenes/warhammer-2-starsea.png
+      x: 5504
+      y: 0
+    - texture: assets/image/scenes/warhammer-3-courtyard.png
+      x: 0
+      y: 3072
+    - texture: assets/image/scenes/warhammer-4-alley.png
+      x: 5504
+      y: 3072
+imageSize: 11008x6144
+# Daylight and stars are the subject here; the ambient twilight would grey them.
+pixelLighting: false
+characterSpawn:
+    x: 2752
+    y: 2560
+    facing: right
+airWalls:
+    # Only the world boundary for now - feature collision comes from the owner's
+    # red mask, the same way sky city and atlantis did.
+    - id: edge-left
+      kind: short
+      points: [[0, 0], [40, 0], [40, 6144], [0, 6144]]
+    - id: edge-right
+      kind: short
+      points: [[10968, 0], [11008, 0], [11008, 6144], [10968, 6144]]
+    - id: edge-top
+      kind: short
+      points: [[0, 0], [11008, 0], [11008, 40], [0, 40]]
+    - id: edge-bottom
+      kind: short
+      points: [[0, 6104], [11008, 6104], [11008, 6144], [0, 6144]]

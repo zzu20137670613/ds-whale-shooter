@@ -104,8 +104,25 @@ describe('public/data integrity', () => {
         const dir = join(DATA, 'levels');
         const index = parseLevelIndex(read(join(dir, 'index.yaml')));
 
-        expect(specIds(dir)).toEqual(sorted(index.levels));
-        for (const id of index.levels) {
+        // A level reached ONLY by a `travel` trigger is deliberately kept out of
+        // index.yaml: the index is the main line, and its last entry is what the
+        // victory check treats as the end of the game. Hidden doors name their
+        // target directly instead. Everything else must still be indexed.
+        const hidden = new Set<string>();
+        for (const id of specIds(dir)) {
+            if (id === 'index') continue;
+            const level = parseLevelYaml(read(join(dir, `${id}.yaml`)), id);
+            for (const trigger of level.triggers ?? []) {
+                if ('travel' in trigger) hidden.add(trigger.travel.targetScene);
+            }
+        }
+
+        const indexed = sorted(index.levels);
+        expect(specIds(dir).filter((id) => !hidden.has(id))).toEqual(indexed);
+        // And every door must lead somewhere real.
+        for (const target of hidden) expect(specIds(dir)).toContain(target);
+
+        for (const id of [...indexed, ...hidden]) {
             expect(() => parseLevelYaml(read(join(dir, `${id}.yaml`)), id)).not.toThrow();
         }
     });
@@ -346,7 +363,9 @@ describe('public/data integrity', () => {
                     x: trigger.zone.x + trigger.zone.width / 2,
                     y: trigger.zone.y + trigger.zone.height / 2,
                 });
-                entities.push({ label: `triggers.${trigger.id}.from`, ...trigger.spawn.from });
+                if ('spawn' in trigger) {
+                    entities.push({ label: `triggers.${trigger.id}.from`, ...trigger.spawn.from });
+                }
             }
 
             for (const entity of entities) {

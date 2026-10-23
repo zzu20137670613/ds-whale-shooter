@@ -64,6 +64,10 @@ export class TriggerController {
     /** Triggers still armed this run, in level order. */
     private readonly armed: Trigger[];
     private readonly flights: Flight[] = [];
+    /** Fires when a `travel` trigger is taken. Supplied by the scene. */
+    private readonly travelTo?: (sceneId: string) => void;
+    /** Whose feet these are — decides whether a `travel` trigger refuses us. */
+    private readonly characterId: () => string | null;
 
     constructor(
         character: Positioned,
@@ -71,11 +75,15 @@ export class TriggerController {
         triggers: readonly Trigger[] | undefined,
         drops: DropController,
         getDrop: (id: string) => DropSpec,
+        travelTo?: (sceneId: string) => void,
+        characterId?: () => string | null,
     ) {
         this.character = character;
         this.levelId = levelId;
         this.drops = drops;
         this.getDrop = getDrop;
+        this.travelTo = travelTo;
+        this.characterId = characterId ?? (() => useGameStore.getState().selectedCharacterId);
         this.armed = armedTriggers(levelId, triggers, useGameStore.getState().usedTriggers);
         // A level that ships triggers whose every one has already fired produces
         // no effect and no error at all, which reads exactly like a bug. Say so
@@ -96,6 +104,9 @@ export class TriggerController {
         for (let i = this.armed.length - 1; i >= 0; i--) {
             const trigger = this.armed[i];
             if (!isInsideZone(trigger.zone, x, y)) continue;
+            // A door that refuses this character stays armed: standing on it as
+            // Claude must not burn the entrance for the rest of the save.
+            if ('travel' in trigger && this.refuses(trigger)) continue;
             this.armed.splice(i, 1);
             useGameStore.getState().markTriggerUsed(triggerKey(this.levelId, trigger.id));
             try {
@@ -106,6 +117,14 @@ export class TriggerController {
                 console.error(`[trigger] ${triggerKey(this.levelId, trigger.id)} failed`, error);
             }
         }
+    }
+
+    /** True when this trigger's door is closed to whoever is walking. */
+    private refuses(trigger: Trigger): boolean {
+        if (!('travel' in trigger)) return false;
+        const who = this.characterId();
+        if (!who) return false;
+        return trigger.travel.excludeCharacters.includes(who);
     }
 
     destroy(): void {
@@ -132,6 +151,20 @@ export class TriggerController {
     }
 
     private fire(trigger: Trigger): void {
+        if ('travel' in trigger) {
+            // No drop, no animation: the scene owns what "move to another scene"
+            // means (level id, snapshot reset, fade). Without a callback we can
+            // only say so — silently doing nothing would look like a dead door.
+            if (!this.travelTo) {
+                console.warn(
+                    `[trigger] ${triggerKey(this.levelId, trigger.id)} is a travel trigger but no handler was wired`,
+                );
+                return;
+            }
+            this.travelTo(trigger.travel.targetScene);
+            return;
+        }
+
         const { from, to, lift, durationMs } = trigger.spawn;
         const drop: RewardDrop = this.drops.spawnLanded(
             this.getDrop(trigger.spawn.type),

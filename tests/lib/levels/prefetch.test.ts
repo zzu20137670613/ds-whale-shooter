@@ -145,7 +145,8 @@ describe('the shipped beach level', () => {
             ),
             'beach-holiday',
         );
-        const reward = beach.triggers?.[0]?.spawn.type;
+        const first = beach.triggers?.[0];
+        const reward = first && 'spawn' in first ? first.spawn.type : undefined;
         expect(reward).toBe('iced-juice');
         expect(collectDropIds(beach, new Map())).toContain(reward);
     });

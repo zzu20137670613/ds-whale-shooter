@@ -58,6 +58,22 @@ const ON_THE_CHAIR = {
     y: trigger.zone.y + trigger.zone.height / 2,
 };
 
+/** The drop effect of the lounger trigger, narrowed out of the union. */
+function spawnOf(t: unknown) {
+    if (!t || typeof t !== 'object' || !('spawn' in t)) throw new Error('expected a spawn trigger');
+    return (
+        t as {
+            spawn: {
+                type: string;
+                from: { x: number; y: number };
+                to: { x: number; y: number };
+                lift: number;
+                durationMs: number;
+            };
+        }
+    ).spawn;
+}
+
 describe('TriggerController (the lounger juice)', () => {
     beforeEach(() => {
         useGameStore.setState({ ...initialGameState });
@@ -65,7 +81,7 @@ describe('TriggerController (the lounger juice)', () => {
 
     it('reads a lounger trigger out of the shipped level', () => {
         expect(trigger.id).toBe('lounger-juice');
-        expect(trigger.spawn.type).toBe('iced-juice');
+        expect(spawnOf(trigger).type).toBe('iced-juice');
         expect(trigger.zone.width).toBeGreaterThan(0);
         expect(trigger.zone.height).toBeGreaterThan(0);
     });
@@ -82,7 +98,11 @@ describe('TriggerController (the lounger juice)', () => {
         const h = harness();
         h.character.body.position = { ...ON_THE_CHAIR };
         h.controller.update(FRAME);
-        expect(h.spawnLanded).toHaveBeenCalledWith(spec, trigger.spawn.to.x, trigger.spawn.to.y);
+        expect(h.spawnLanded).toHaveBeenCalledWith(
+            spec,
+            spawnOf(trigger).to.x,
+            spawnOf(trigger).to.y,
+        );
         expect(useGameStore.getState().usedTriggers).toEqual([`${LEVEL_ID}:lounger-juice`]);
     });
 
@@ -93,23 +113,23 @@ describe('TriggerController (the lounger juice)', () => {
 
         // It starts where it pops out, held clear of the magnet.
         expect(h.sprite.setPosition).toHaveBeenCalledWith(
-            trigger.spawn.from.x,
-            trigger.spawn.from.y,
+            spawnOf(trigger).from.x,
+            spawnOf(trigger).from.y,
         );
         expect(h.drop.rejected).toBe(true);
 
         // Halfway it is up in the air, between the two ends.
-        h.controller.update(trigger.spawn.durationMs / 2);
+        h.controller.update(spawnOf(trigger).durationMs / 2);
         const mid = h.sprite.setPosition.mock.calls.at(-1)!;
-        expect(mid[0]).toBeGreaterThan(trigger.spawn.from.x);
-        expect(mid[0]).toBeLessThan(trigger.spawn.to.x);
-        expect(mid[1]).toBeLessThan(trigger.spawn.from.y);
+        expect(mid[0]).toBeGreaterThan(spawnOf(trigger).from.x);
+        expect(mid[0]).toBeLessThan(spawnOf(trigger).to.x);
+        expect(mid[1]).toBeLessThan(spawnOf(trigger).from.y);
 
         // One more stretch and it rests on the table, pickable again.
-        h.controller.update(trigger.spawn.durationMs);
+        h.controller.update(spawnOf(trigger).durationMs);
         expect(h.sprite.setPosition).toHaveBeenLastCalledWith(
-            trigger.spawn.to.x,
-            trigger.spawn.to.y,
+            spawnOf(trigger).to.x,
+            spawnOf(trigger).to.y,
         );
         expect(h.drop.rejected).toBe(false);
     });
@@ -156,7 +176,7 @@ describe('TriggerController (the lounger juice)', () => {
         h.controller.update(FRAME);
         const before = h.sprite.setPosition.mock.calls.length;
         h.controller.destroy();
-        h.controller.update(trigger.spawn.durationMs);
+        h.controller.update(spawnOf(trigger).durationMs);
         expect(h.sprite.setPosition.mock.calls.length).toBe(before);
     });
 });
