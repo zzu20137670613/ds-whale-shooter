@@ -1,8 +1,10 @@
 import { Suspense, lazy, useEffect } from 'react';
 
 import { PhaserGame } from '@/PhaserGame';
+import { ComicOverlay } from '@/components/hud/comic-overlay';
 import { GameHUDLayer } from '@/components/hud/game-hud-layer';
 import { PixelCrosshair } from '@/components/hud/pixel-crosshair';
+import { SettlementOverlay } from '@/components/hud/settlement-overlay';
 import { ShopPanel } from '@/components/hud/shop-panel';
 import { TouchControls } from '@/components/hud/touch-controls';
 import { EventBus } from '@/lib/events/bus';
@@ -49,6 +51,16 @@ function App() {
         return () => EventBus.off(RETURN_TO_PAVILION_EVENT, handler);
     }, []);
 
+    // Preview hooks, so the opening and the ending can be looked at without
+    // playing to them: ?comic=warhammer-redeem and ?settlement=754000 (ms).
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        const comic = params.get('comic');
+        if (comic) useGameStore.getState().openComicIntro(comic);
+        const settlement = params.get('settlement');
+        if (settlement) useGameStore.getState().openSettlement(Number(settlement) || 754_000);
+    }, []);
+
     return (
         // Layout lives in index.css (#app). No Tailwind utilities here:
         // they would out-rank the forced-landscape media query.
@@ -66,6 +78,8 @@ function App() {
             <Suspense fallback={null}>
                 <EditorPanel />
             </Suspense>
+            <ComicOverlay />
+            <SettlementOverlay />
             <PixelCrosshair />
             {tavernCleared && <TouchControls />}
         </div>

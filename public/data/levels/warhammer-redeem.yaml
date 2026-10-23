@@ -12,6 +12,8 @@
 title: Warhammer World - Redemption from the Stars
 titleZh: '战锤世界·来自群星的救赎'
 character: deepseek
+# 34 pages of the comic the whole level exists for; plays once per save.
+introComic: { pages: 34 }
 background: assets/image/scenes/warhammer-1-ruins.png
 backgroundBlocks:
     - texture: assets/image/scenes/warhammer-1-ruins.png

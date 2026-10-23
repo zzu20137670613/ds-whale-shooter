@@ -334,6 +334,16 @@ export const LevelSchema = z
         tavern: z.boolean().optional(),
         airWalls: z.array(AirWallSchema),
         character: z.string().min(1).optional(),
+
+        /**
+         * A comic that plays over the level the first time it loads — the hidden
+         * level opens on 34 pages of the story that got it here. `pages` is the
+         * count; the files are `assets/image/comic/<levelId>-NN.jpg`.
+         */
+        introComic: z
+            .object({ pages: z.number().int().gt(0) })
+            .strict()
+            .optional(),
         characterSpawn: CharacterSpawnSchema.optional(),
         /** Tavern-mode only: per-character NPC standing positions. */
         npcSpawns: z.array(NpcSpawnSchema).optional(),
@@ -359,6 +369,7 @@ export const LevelSchema = z
             ...(v.pixelLighting !== undefined ? { pixelLighting: v.pixelLighting } : {}),
             ...(v.tavern !== undefined ? { tavern: v.tavern } : {}),
             ...(v.character !== undefined ? { character: v.character } : {}),
+            ...(v.introComic !== undefined ? { introComic: v.introComic } : {}),
             ...(v.characterSpawn !== undefined ? { characterSpawn: v.characterSpawn } : {}),
             ...(v.npcSpawns !== undefined ? { npcSpawns: v.npcSpawns } : {}),
             ...(v.monsters !== undefined ? { monsters: v.monsters } : {}),

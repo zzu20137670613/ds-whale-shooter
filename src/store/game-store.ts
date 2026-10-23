@@ -119,6 +119,24 @@ export interface GameUIState {
     /** Persisted id of the character the player selected in the tavern.
      *  null = never selected (tavern not yet completed). */
     selectedCharacterId: string | null;
+
+    /**
+     * The 34-page comic that opens the hidden level, while it is on screen.
+     * Null when nothing is playing. Holds the level id so the overlay knows
+     * which pages to fetch.
+     */
+    comicIntroLevelId: string | null;
+    /** Levels whose comic has already played this save - replayable via 跳过. */
+    comicPlayedLevels: string[];
+    /** The ending sequence is running; the scene is frozen behind it. */
+    settlementOpen: boolean;
+    /** Run time the ending's ledger prints, in ms. */
+    settlementRunMs: number;
+    /**
+     * Whoever the player was before the arena forced a character on them.
+     * Restored when the ending sends them back to the pavilion.
+     */
+    characterBeforeArena: string | null;
     /** true once the player has finished the tavern (selected a character
      *  + entered the first real level). Resets on clearSaveData. */
     tavernCleared: boolean;
@@ -203,6 +221,11 @@ export interface GameUIState {
     clearSceneSnapshots: () => void;
     clearSaveData: () => void;
     setSelectedCharacterId: (id: string | null) => void;
+    openComicIntro: (levelId: string) => void;
+    closeComicIntro: () => void;
+    openSettlement: (runMs: number) => void;
+    closeSettlement: () => void;
+    setCharacterBeforeArena: (id: string | null) => void;
     setTavernCleared: (cleared: boolean) => void;
     setTavernWeaponCount: (n: number) => void;
     /** Remember a prop as opened, so the scene stops spawning it. */
@@ -261,6 +284,11 @@ export const initialGameState = {
     isVictory: false,
 
     selectedCharacterId: null as string | null,
+    comicIntroLevelId: null as string | null,
+    comicPlayedLevels: [] as string[],
+    settlementOpen: false,
+    settlementRunMs: 0,
+    characterBeforeArena: null as string | null,
     tavernCleared: false,
     tavernWeaponCount: 0,
 };
@@ -441,6 +469,17 @@ export const useGameStore = create<GameUIState>()(
             },
 
             setSelectedCharacterId: (id) => set({ selectedCharacterId: id }),
+            openComicIntro: (levelId) =>
+                set((state) => ({
+                    comicIntroLevelId: levelId,
+                    comicPlayedLevels: state.comicPlayedLevels.includes(levelId)
+                        ? state.comicPlayedLevels
+                        : [...state.comicPlayedLevels, levelId],
+                })),
+            closeComicIntro: () => set({ comicIntroLevelId: null }),
+            openSettlement: (runMs) => set({ settlementOpen: true, settlementRunMs: runMs }),
+            closeSettlement: () => set({ settlementOpen: false }),
+            setCharacterBeforeArena: (id) => set({ characterBeforeArena: id }),
             setTavernCleared: (cleared) => set({ tavernCleared: cleared }),
             setTavernWeaponCount: (n) => set({ tavernWeaponCount: n }),
             markPropBroken: (key) =>

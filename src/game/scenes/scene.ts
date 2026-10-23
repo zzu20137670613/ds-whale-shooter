@@ -490,6 +490,24 @@ export class LoadScene extends Phaser.Scene {
         // the character spec omits luck.
         this.monsterSystem.setPlayerLuck(this.assets.character.luck ?? 1);
 
+        // A level that forces a character (the arena hands everyone 鲸鲸) has to
+        // remember who the player was, or the ending cannot hand them back.
+        if (this.level.character) {
+            const store = useGameStore.getState();
+            if (
+                store.characterBeforeArena === null &&
+                store.selectedCharacterId !== this.level.character
+            ) {
+                store.setCharacterBeforeArena(store.selectedCharacterId);
+            }
+        }
+
+        // The comic opens the level once per save; 跳过 is there for replays.
+        if (this.level.introComic) {
+            const store = useGameStore.getState();
+            if (!store.comicPlayedLevels.includes(this.id)) store.openComicIntro(this.id);
+        }
+
         // Wire one-shot region triggers — the beach lounger's iced juice, and the
         // Atlantean throne's hidden door.
         this.triggerSystem = new TriggerController(
@@ -506,13 +524,11 @@ export class LoadScene extends Phaser.Scene {
             // its own, just the same handoff the teleporter performs.
             (targetScene) => {
                 useGameStore.getState().setCurrentLevelId(targetScene);
-                useGameStore
-                    .getState()
-                    .setEntitySnapshots({
-                        player: undefined,
-                        monsters: undefined,
-                        drops: undefined,
-                    });
+                useGameStore.getState().setEntitySnapshots({
+                    player: undefined,
+                    monsters: undefined,
+                    drops: undefined,
+                });
                 void resolveAndRestart(targetScene);
             },
         );
