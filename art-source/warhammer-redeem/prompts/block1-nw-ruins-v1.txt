@@ -1,0 +1,24 @@
+# 块 1 · 教堂废墟（左上 NW）· v1
+
+> 教训沿用亚特兰蒂斯 A 块那次：**"拱门/门框/立窗"这类词一定把模型拽出俯视**。
+> 所以这里一个"站着的东西"都不写——柱是**倒在地上的一截截鼓石**，玫瑰窗是**整扇掉下来平贴在地板上**
+> 的碎玻璃圆盘。所有元素都没有高度，模型就画不出立面。
+> 另：Boss 刷在块中心，所以**中心必须留一块干净的空地**，提示词里写死了 12% 宽、不许有人。
+
+```
+Hand-painted anime game art, strict top-down plan view: no isometric, no three-quarter, no horizon, no vertical structure. Nothing stands up; everything reads as flat shapes on a ruined floor. No arch, doorway, standing pillar or upright window. Smooth painted cel shading, NOT pixel art. Playable boss arena, not an illustration.
+
+OCCUPANCY: >=65% open shattered stone floor; debris <=25%; ash haze in the outer 8% only.
+
+LIGHT: night, cold. One pool of pale moonlight through the hole where the roof was, off-centre right; ember-orange glow breathing out of floor cracks beneath it. No candle rows, no sun; one small cluster only.
+
+Palette: ash #2A2A2E, black iron #14151A, cold moon #C8D4E0, ember #C25A28, spent gold #B08A3C, stone #6E6A62.
+
+Subject: a gothic cathedral hall destroyed from inside by its own god. The vault is gone - broken rib stubs and open night void. The great rose window has FALLEN: its leaded glass lies FLAT on the floor as a cracked circular mosaic of dull red and blue shards, the empty stone frame lying flat around it. Column drums rolled flat; scorched pews thrown apart; a black iron chandelier collapsed and spread flat, chain coiled. Ash drifts. CENTRE: a clean circular dais of pale cracked stone, 12% of frame width, EMPTY - the boss spawns there: no figure, no statue.
+
+Edges: TOP and LEFT are the map boundary: cold ash haze, dark outer night. RIGHT ramps to #0A1A2E (void beyond the broken east wall). BOTTOM ramps to #3A2A1E (warm courtyard stone and candle glow). Smooth, not banded. No border, frame or vignette; outer 140px free.
+
+Size: 3:2, largest available, full bleed. Compose for a 16:9 centre crop: outer 8% top/bottom cut, landmarks inside the central 84%; left/right uncropped.
+
+Negative: isometric, three-quarter, side view, elevation, arch, gate, doorway, camera tilt, horizon, clouds, sun, characters, person, girl, hands, text, watermark, logo, UI, frame, vignette, pixel art, intact church, pristine marble, symmetry, warm daylight.
+```
