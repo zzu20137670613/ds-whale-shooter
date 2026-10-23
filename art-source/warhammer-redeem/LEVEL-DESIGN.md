@@ -68,6 +68,34 @@ Granted while the player controls 鲸鲸 (which this level forces):
   (dev-server endpoint / tiny helper app), or the pet exposes its own local HTTP
   API. Which one do we have?
 
+### Five phases, spread across the four blocks
+
+The arena is one continuous 2×2 world; "map 1/4" below means one block of it.
+Claude is a **stationary encounter at the block's centre** — she is placed when
+the block is entered, not hunted across the map.
+
+| Block | Phases fought | On defeat |
+| --- | --- | --- |
+| 1 (first quarter) | 1 灭世·Claude → **auto-chains into** 2 神·Claude | After phase 1 dies, phase 2 starts **in place** (no arrow, no repositioning). After phase 2 dies, Claude **vanishes** and an **arrow** points to the next block. |
+| 2 | 3 半神·Claude | Claude vanishes, arrow to block 3. |
+| 3 | 4 半神半人·Claude | Claude vanishes, arrow to block 4. **鲸鲸 is fully restored** here. |
+| 4 | 5 Claude (final) | Battle stops when either side drops below 50% HP → settlement animation. |
+
+So: block 1 carries two health bars back to back; blocks 2, 3 and 4 carry one each.
+
+- **?** Which block is "1/4" and in what order does the player walk them
+  (NW → NE → SE → SW? clockwise?) — this decides where the spawn, the arrows and
+  the boss centres go.
+- **?** The blocks are one continuous map, so what stops the player from simply
+  walking to block 2 before finishing phase 2? A locked gate that opens on the
+  kill, or is the arrow purely advisory?
+- **?** Does the boss stand still at the centre, or does she move/charge at 鲸鲸?
+- **?** "100% attributes" — 100% of Claude's *character* stats (HP 55, SP 55)?
+  As a boss that is one hit; is there a boss HP multiplier (e.g. ×40) so phase 1
+  is ~2200 HP and phases 3/4 scale down from there?
+- **?** Do the minute-spawned adds persist across blocks, or are they cleared when
+  Claude vanishes?
+
 ### Boss fight rules
 - **Adds:** every minute, spawn **3 ranged monsters** within one screen of 鲸鲸.
   Placeholder types (`sniper`, `gunner`, `keeper`) until the real adds are designed.
@@ -82,8 +110,6 @@ Granted while the player controls 鲸鲸 (which this level forces):
 | 4 | 半神半人·Claude | 50% | baseline | TBD |
 | 5 | Claude (final) | back to original | **low** | original |
 
-  - **?** What moves the boss between phases — a timer, an HP threshold, or a
-    scripted sequence? Nothing in the brief says yet.
   - **?** On phase 4 defeat the owner says 鲸鲸 is fully restored ("全属性回满") —
     HP + SP only, or literally every stat?
   - **?** Phase 5 ends when **either** side drops below 50% HP. Both directions
