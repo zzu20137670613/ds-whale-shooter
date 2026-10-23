@@ -1,0 +1,15 @@
+2D top-down game map asset seen from DIRECTLY ABOVE (90 degrees, orthographic plan view). Everything in frame is GROUND: nothing has height, no roofs, no eaves, no walls standing over the lanes. Flat cel shading, thin ink outlines, large smooth colour fills, NOT painterly. One fragment of a large place; the lanes run past all four edges with no frame, no rim, no border, no vignette.
+
+TIME: dusk, just after sunset. Warm lantern light already on, sky glow left in the wet stone. Long soft shadows, low contrast, no sun disc, no god rays.
+
+OCCUPANCY: >=60% clean walkable stone lane; props only in the outer 30%.
+
+Palette: warm plaster #D8B98C, wet stone #8A8580, lantern gold #E8A24A, deep shade #2A2A38, dark wood #4A3A2E, dusk violet #6E5B7A.
+
+Subject: old town lanes of a Chinese courtyard neighbourhood, seen straight down. Grey slab pavement with a central drain channel, doorstep stones, low kerbs. Small stalls: wooden tables, crates, bamboo baskets, stacked bowls, chopsticks, cabbages, hanging cloth seen as flat strips, laundry lines as thin lines. Paper lanterns read as small glowing discs. Steam from a cooker drifts flat across the ground. A bicycle and a handcart lie flat. Puddles hold lantern reflections. ONE lane mouth at the frame edge is dark and empty, a stall is knocked over beside it, a few things dropped and scattered - the warmth is temporary. CENTRE: a small clean open square of pale stone, 14% of frame width, EMPTY - no figure, no statue, no table.
+
+Buildings appear only as flat wall bases and thresholds along the lane edges - the paving is the subject, the buildings are the boundary.
+
+Size: 3:2 or 16:9, full bleed, composed for a 16:9 centre crop (landmarks inside the central 84%).
+
+Negative: roofs, roof tiles, eaves, bird view of houses, walls standing, arch, doorway seen in elevation, window in elevation, horizon, sky with clouds, moon, sun, perspective, vanishing point, isometric, three-quarter, symmetry, characters, person, crowd, text, watermark, logo, cluttered.

@@ -1,0 +1,30 @@
+# 块 3 · 老城小巷（右下 SE）· v1
+
+> **不需要图生图，也不建议从漫画里裁一块。** 理由在对话里说清：喂一张插画当参考，
+> 模型会被那张图的**视角**带走——第 1 块我们花了五轮才把正交锁住，图生图一喂就前功尽弃。
+> 参考的正确用法是**只取配色和道具词汇**，写进提示词。
+>
+> 色值是我从三张参考里**量化提取**的，不是我编的：
+> 他自己的小巷夜景 `#161C2D/#977067/#DAB178`、第七世市集 `#1C1E28/#8F7A82/#C9ABA2`。
+> 但**我把它从"夜"改成了"黄昏"**——第 2 块星海已经是深海军蓝，第 4 块庭院是烛光暖，
+> 三块连着暗会让亮度节奏塌掉。黄昏既保住暖，又把明度抬起来。要改回夜里，改 LIGHT 那行就行。
+>
+> 第七世那条"要留还在被追的不安"落在两处：**巷口的一段黑**（空、静）＋**一张翻倒的摊子**。
+
+```
+2D top-down game map asset seen from DIRECTLY ABOVE (90 degrees, orthographic plan view). Everything in frame is GROUND: nothing has height, no roofs, no eaves, no walls standing over the lanes. Flat cel shading, thin ink outlines, large smooth colour fills, NOT painterly. One fragment of a large place; the lanes run past all four edges with no frame, no rim, no border, no vignette.
+
+TIME: dusk, just after sunset. Warm lantern light already on, sky glow left in the wet stone. Long soft shadows, low contrast, no sun disc, no god rays.
+
+OCCUPANCY: >=60% clean walkable stone lane; props only in the outer 30%.
+
+Palette: warm plaster #D8B98C, wet stone #8A8580, lantern gold #E8A24A, deep shade #2A2A38, dark wood #4A3A2E, dusk violet #6E5B7A.
+
+Subject: old town lanes of a Chinese courtyard neighbourhood, seen straight down. Grey slab pavement with a central drain channel, doorstep stones, low kerbs. Small stalls: wooden tables, crates, bamboo baskets, stacked bowls, chopsticks, cabbages, hanging cloth seen as flat strips, laundry lines as thin lines. Paper lanterns read as small glowing discs. Steam from a cooker drifts flat across the ground. A bicycle and a handcart lie flat. Puddles hold lantern reflections. ONE lane mouth at the frame edge is dark and empty, a stall is knocked over beside it, a few things dropped and scattered - the warmth is temporary. CENTRE: a small clean open square of pale stone, 14% of frame width, EMPTY - no figure, no statue, no table.
+
+Buildings appear only as flat wall bases and thresholds along the lane edges - the paving is the subject, the buildings are the boundary.
+
+Size: 3:2 or 16:9, full bleed, composed for a 16:9 centre crop (landmarks inside the central 84%).
+
+Negative: roofs, roof tiles, eaves, bird view of houses, walls standing, arch, doorway seen in elevation, window in elevation, horizon, sky with clouds, moon, sun, perspective, vanishing point, isometric, three-quarter, symmetry, characters, person, crowd, text, watermark, logo, cluttered.
+```
