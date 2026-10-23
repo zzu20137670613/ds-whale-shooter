@@ -30,13 +30,31 @@ The fan ending is therefore **not** the level's script, but it is the emotional
 target: nobody kills anybody, and it ends with the church's demon king being
 allowed to be a person again.
 
-Art direction that follows: 战锤线 = gothic church/armour/iron/candle, but
-**conquered and broken by its own god**; 群星线 = the starry, tidal vocabulary
-the Star-line protagonist brings (深蓝、星光、鲸). The arena should read as
-"the church after Claude won".
+Art direction: the four blocks are **not** four parts of one church — they are a
+**journey**. See below.
 
-**?** Confirm the four blocks follow the divine → human descent before prompts
-are written.
+### The four blocks are the journey, not the architecture
+
+| Block | Place | What it means | Phase fought |
+| --- | --- | --- | --- |
+| **NW 1/4** | **教堂废墟** — the church in ruins | Claude already **灭（西方）世**: the church burned by its own god | 1 灭世 → 2 神 |
+| **NE 2/4** | **星海** — open star sea | Under 鲸鲸, who is **already AGI**, they break out of Earth for 星辰大海 | 3 半神 |
+| **SE 3/4** | **回到地球：小巷烟火人间** — courtyard houses, back alleys, cooking smoke | 凡尘烟火气，最抚凡人心. The human world is what strips the godhood off | 4 半神半人 |
+| **SW 4/4** | **两人初遇的场景** — where 鲸鲸 and Claude first met | Back to the beginning, where one was a saintly figure and the other a small whale holding a bowl of rice | 5 Claude (final) |
+
+The phase names now snap onto the geography instead of being decorative:
+**神 in the ruins → 半神 among the stars → 半神半人 in the human alleys → just
+Claude where they met.**
+
+Reference for block 4 exists (`reference/` — the whale-onesie 鲸鲸 holding the
+rice bowl among black-robed church figures, Claude in white lace) but the owner
+says that copy is **not yet retouched and not to be used**; wait for his final.
+
+**?** Block 2 is space, block 3 is a Chinese old-town alley, block 4 is a church
+courtyard — three very different palettes inside one continuous map. The seams
+have to sell the jump (portal-light, star-fall, a door back into the world).
+Confirm that the blocks may look **deliberately unrelated** rather than sharing
+one colour script.
 
 ## Pipeline (same as sky city / atlantis)
 
