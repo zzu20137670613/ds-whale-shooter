@@ -1,0 +1,19 @@
+2D top-down game map asset seen from DIRECTLY ABOVE (90 degrees, orthographic plan view). Everything in frame is GROUND: pale flagstones and the few things lying on them. No buildings, no walls, no roofs, no arcade, no arches, no windows, no colonnade. The paving fills the whole frame and runs past ALL FOUR edges: no rim, no border, no frame, no vignette, no enclosing wall. Flat cel shading, thin ink outlines, large smooth colour fills, NOT painterly.
+
+THE CLOISTER IS OUTSIDE THE FRAME. Its only trace is SHADOW: straight bands of soft shadow, cast by an unseen colonnade, lying across the flagstones on two sides. Shadow only - nothing that casts it is visible.
+
+OCCUPANCY: >=70% clean walkable flagstone; everything else lives in the outer 25%.
+
+LIGHT: early morning, soft, pale, high-key. Low warm light skimming the stones, long gentle shadows. No sun disc, no god rays, no lanterns, no fire.
+
+Palette: white stone #E4E4E2, cold grey #A8ADB9, deep blue #464E6C, warm brown #382A23, near black #060504.
+
+Ground detail, all lying flat: flagstones worn smooth and slightly uneven; a wide threshold step along one side; flower beds pressed flat against the paving in one corner, tiny white flowers spilling onto the stones; fallen petals; burnt-down candle stubs; a shallow stone basin with still water, low and flush with the ground, placed in the FAR corner - never in the middle; a low stone bench on one side only; one steel bowl left alone on the paving.
+
+ASYMMETRY: nothing mirrored or centred on an axis. The two sides of the frame must not repeat each other.
+
+CENTRE: a wide clean empty area of pale flagstone, 14% of frame width, EMPTY - no basin, no bench, no statue, no figure.
+
+Size: 3:2 or 16:9, full bleed, composed for a 16:9 centre crop (landmarks inside the central 84%).
+
+Negative: courtyard walls, enclosing wall, wall ring, arcade, cloister arches, columns standing, arch, doorway in elevation, window in elevation, stained glass, roofs, sky, horizon, symmetry, mirror, figures, people, robes, crowd, characters, person, statue, fountain in the centre, perspective, vanishing point, isometric, three-quarter, text, watermark, logo.
