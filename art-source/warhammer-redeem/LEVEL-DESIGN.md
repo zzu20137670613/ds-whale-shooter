@@ -56,6 +56,38 @@ have to sell the jump (portal-light, star-fall, a door back into the world).
 Confirm that the blocks may look **deliberately unrelated** rather than sharing
 one colour script.
 
+## Prompt law (learned the hard way, six rounds)
+
+Every rejected generation failed the same way, and it was never the negative
+list's fault — **it was the subject noun**:
+
+| Subject noun used | What came back |
+| --- | --- |
+| `gothic cathedral hall` (v1) | a 3/4 interior with columns, arches, moon, sky |
+| nothing wrong, but `arena`/`dark ramp` edges (v2, v3) | a floating plate in black with a raised rim |
+| `cathedral` again (v4) | a walled room |
+| `a floor surface` (v5) | **back to 3/4** — the orthographic lock lives in the object-free wording, not in the word "floor" |
+| `open observation deck floating in a star sea` (block 2 v1) | a ship in space with a railing |
+
+**The only shape that works is:**
+
+1. The subject is **a surface**, not a thing: `the broken pale stone pavement of…`,
+   `pale plating and dark metal seams, seen straight down`. Anything that can be
+   viewed as a whole object (deck, hall, arena, ship, island) gets drawn in 3/4.
+2. Say it **fills the frame and continues past all four edges** — no silhouette,
+   no rim, no railing, no visible underside.
+3. Ban the **standing** words in the negative list: `room, walls, ceiling, columns
+   standing, pillar shafts, capitals, arch, doorway, railing, balustrade`.
+4. Give the darkest tone a **hex value** (`#4A5058`), otherwise the model paints
+   pure black bands at the edges.
+5. **No seam/ramp instructions.** Neighbour ramps belong to post-processing; asking
+   the generator for them is what produced the four dark borders in v2/v3.
+6. Put anything that is a "structure" into the floor as `inlaid flush` (compass
+   rose, rose window, whale motif) — flush things cannot cast upward.
+
+Block 1 was the only one that passed, and it passed on the first try with this
+shape (v4, cropped). Every other failure changed the noun.
+
 ## Reference inventory (`reference/`)
 
 The owner numbers the comic pages 1–34, plus `35非主线结局.jpg` (the fan ending).
