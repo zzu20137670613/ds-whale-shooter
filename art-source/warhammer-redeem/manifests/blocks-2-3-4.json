@@ -1,0 +1,70 @@
+{
+ "block1-ruins-nw": {
+  "stitched": [
+   4740,
+   2500
+  ],
+  "dy": 0,
+  "seamBefore": 12.27,
+  "seamAfter": 0.94,
+  "fitted": [
+   4479,
+   2500
+  ],
+  "final": [
+   5504,
+   3072
+  ]
+ },
+ "block2-starsea-ne": {
+  "stitched": [
+   4720,
+   2480
+  ],
+  "dy": 0,
+  "seamBefore": 5.76,
+  "seamAfter": 0.48,
+  "fitted": [
+   4443,
+   2480
+  ],
+  "final": [
+   5504,
+   3072
+  ]
+ },
+ "block3-alley-se": {
+  "stitched": [
+   4728,
+   2660
+  ],
+  "dy": -1,
+  "seamBefore": 4.62,
+  "seamAfter": 0.29,
+  "fitted": [
+   4728,
+   2639
+  ],
+  "final": [
+   5504,
+   3072
+  ]
+ },
+ "block4-courtyard-sw": {
+  "stitched": [
+   4692,
+   2640
+  ],
+  "dy": 0,
+  "seamBefore": 5.51,
+  "seamAfter": 0.34,
+  "fitted": [
+   4692,
+   2619
+  ],
+  "final": [
+   5504,
+   3072
+  ]
+ }
+}
