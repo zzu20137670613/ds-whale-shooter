@@ -6,9 +6,9 @@ OCCUPANCY: >=60% clean walkable stone lane; props only in the outer 30%.
 
 Palette: warm plaster #D8B98C, wet stone #8A8580, lantern gold #E8A24A, deep shade #2A2A38, dark wood #4A3A2E, dusk violet #6E5B7A.
 
-Subject: old town lanes of a Chinese courtyard neighbourhood, seen straight down. Grey slab pavement with a central drain channel, doorstep stones, low kerbs. Small stalls: wooden tables, crates, bamboo baskets, stacked bowls, chopsticks, cabbages, hanging cloth seen as flat strips, laundry lines as thin lines. Paper lanterns read as small glowing discs. Steam from a cooker drifts flat across the ground. A bicycle and a handcart lie flat. Puddles hold lantern reflections. ONE lane mouth at the frame edge is dark and empty, a stall is knocked over beside it, a few things dropped and scattered - the warmth is temporary. CENTRE: a small clean open square of pale stone, 14% of frame width, EMPTY - no figure, no statue, no table.
+Subject: old town lanes of a Chinese courtyard neighbourhood, seen straight down. Grey slab pavement with a central drain channel, doorstep stones, low kerbs. Small stalls: tables, crates, bamboo baskets, stacked bowls, cabbages, hanging cloth as flat strips, laundry lines as thin lines. Paper lanterns read as small glowing discs. Steam from a cooker drifts flat across the ground. A bicycle and a handcart lie flat. Puddles hold lantern reflections. ONE lane mouth at the frame edge is dark and empty, a stall is knocked over beside it, a few things dropped and scattered - the warmth is temporary. CENTRE: a small clean open square of pale stone, 14% of frame width, EMPTY - no figure, no statue, no table.
 
-Buildings appear only as flat wall bases and thresholds along the lane edges - the paving is the subject, the buildings are the boundary.
+Buildings appear only as flat wall bases and thresholds at the lane edges; the paving is the subject.
 
 Size: 3:2 or 16:9, full bleed, composed for a 16:9 centre crop (landmarks inside the central 84%).
 

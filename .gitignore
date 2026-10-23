@@ -57,3 +57,5 @@ art-source/*/world/
 # written down in art-source/<level>/LEVEL-DESIGN.md instead.
 art-source/*/reference/
 art-source/*/_sheet/
+# Office/WPS lock files (~$name.ext) created when a doc is opened
+~\$*
