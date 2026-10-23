@@ -33,6 +33,13 @@ Quick context for working on **The 11th Forest** — a top-down, anime-styled pi
     - Never inline a magic constant in a game file if it belongs to either bucket above. If it's truly single-use (only ever referenced once in one block of code) — leave it inline; the test is "would another module or a future iteration need to read or change this?" If yes, it goes to YAML or `lib/constants.ts`, not the call site.
 12. **Each module owns its own concerns.** If a module is the source of truth for an asset or behaviour, the related loading, registration, animation driving, cleanup, etc. all live in that module's directory — not in the scene, orchestrator, or another module. Scene / orchestrator code dispatches _into_ the module; the module owns the _how_. Example: a character's sprite-sheet `load.spritesheet` + `anims.create` calls live in `src/game/characters/`, and the scene's `preload`/`create` only delegate — they don't reach in to set sprite keys, register anims, or drive transitions themselves. Reason: per-entity logic scattered across files is the classic "where do I even look for this bug" codebase — there should be one place per concern.
 
+13. **Hand a file over with its FULL absolute path.** Never leave the root implied
+    (`art-source/x/prompts/foo.txt` means the owner reassembles the path by hand
+    every time, and he has asked for this twice). Write it out in full:
+    `C:\Users\15639732925\Documents\deepseek-harness\default-workspace\whale-shooter\the-11th-forest\art-source\...`
+    Applies to anything he will open, paste, or generate from. Relative paths stay
+    fine inside docs and between agents; never in a hand-off.
+
 ## Commands
 
 | Task       | Command           |

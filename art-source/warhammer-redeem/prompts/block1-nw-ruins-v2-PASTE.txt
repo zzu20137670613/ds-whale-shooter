@@ -1,17 +1,17 @@
-2D top-down game map asset seen from DIRECTLY ABOVE (90 degrees, orthographic plan view). Everything in frame is FLOOR: nothing has height, nothing stands, no walls, no ceiling, no sky, no vanishing point. Flat cel shading, thin ink outlines, large smooth colour fills, NOT painterly, NOT an illustration, NOT a screenshot. Readable arena, not a picture.
+2D top-down game map asset seen from DIRECTLY ABOVE (90 degrees, orthographic plan view). Everything in frame is FLOOR: nothing has height, nothing stands, no walls, no ceiling, no sky, no vanishing point. Flat cel shading, thin ink outlines, large smooth colour fills, NOT painterly, NOT an illustration. Readable arena, not a picture.
 
-FRAMING: the cathedral exists ONLY as its floor. No interior, no room. Anything that would stand up lies flat on the ground instead.
+FRAMING: the cathedral exists ONLY as its floor. No interior, no room. Anything that would stand up lies flat instead.
 
-OCCUPANCY: >=70% plain pale stone floor; scenery only in the outer 25%, middle open.
+OCCUPANCY: >=70% plain pale stone floor; scenery only in the outer 25%.
 
-LIGHT: flat even ambient moonlight, high-key, pale and cool; no light shaft, no god rays, no window light; only two or three tiny ember dots.
+LIGHT: flat even ambient moonlight, high-key, pale and cool; no god rays, no window light; only two or three tiny ember dots.
 
 Palette: pale stone #C9C7C0, shadow #8E8C86, ash #E8E6E0, scorch #3A3430, glass red #8E3B3B, glass blue #3B4E6E, ember #C25A28.
 
-Subject: the cracked pale stone floor of a cathedral its own god destroyed. A huge shattered ROSE-WINDOW MOSAIC is INLAID FLAT into the floor: red and blue glass shards among the stones, frame flush with the ground. Scorch patches; ash drifts as flat pale smudges; column drums as flat stone discs; pews as loose planks; a black iron chandelier lying flat, chain coiled. CENTRE: a clean circular dais of pale cracked stone, 12% of frame width, EMPTY - the boss spawns there: no figure, no statue.
+Subject: the cracked pale stone floor of a cathedral its own god destroyed. A huge shattered ROSE-WINDOW MOSAIC is INLAID FLAT into the floor: red and blue glass shards among the stones, frame flush with the ground. Scorch patches; ash drifts as flat pale smudges; column drums as flat stone discs; pews as loose planks; a black iron chandelier lying flat. CENTRE: a clean circular dais of pale cracked stone, 12% of frame width, EMPTY - the boss spawns there: no figure, no statue.
 
-Edges: TOP and LEFT are the world boundary: dark outer night. RIGHT ramps to #0A1A2E, BOTTOM to #3A2A1E. Smooth, not banded; no border, frame or vignette; outer 140px free.
+Edges: TOP and LEFT are the world boundary: dark outer night. RIGHT ramps to #0A1A2E, BOTTOM to #3A2A1E. Smooth, not banded; no border or vignette; outer 140px free.
 
-Size: 3:2, largest available, full bleed. Compose for a 16:9 centre crop: outer 8% top/bottom cut, landmarks inside the central 84%; left/right uncropped.
+Size: 3:2, largest available, full bleed, composed for a 16:9 centre crop (outer 8% top/bottom cut; landmarks inside the central 84%).
 
-Negative: interior, room, walls, ceiling, columns standing, arch, doorway, upright window, sky, moon, stars, light shaft, god rays, perspective, vanishing point, isometric, three-quarter, camera tilt, depth of field, characters, person, girl, text, watermark, logo, UI, frame, vignette, pixel art, cluttered, carvings.
+Negative: interior, room, walls, ceiling, columns standing, arch, doorway, upright window, sky, moon, stars, light shaft, god rays, perspective, vanishing point, isometric, three-quarter, characters, person, text, watermark, logo, UI, frame, vignette, pixel art, cluttered.
