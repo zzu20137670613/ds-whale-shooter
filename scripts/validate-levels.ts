@@ -5,9 +5,13 @@
  *
  *   - Each id in index.yaml must have a matching data/levels/<id>.yaml file
  *   - Each file's imageSize must equal its prompts/scenes/<id>.yaml imageSize
+ *   - Every level a `travel` trigger leads to must exist and validate too
  *
  * Orphan files (data/levels/*.yaml not listed in index.yaml) are ALLOWED —
- * treat them as drafts. The check is one-way.
+ * treat them as drafts. The check is one-way. The one exception is a hidden
+ * door's target: it is deliberately kept out of index.yaml (the index's last
+ * entry is what the victory check treats as the end of the game), so it is
+ * discovered by following the travel triggers instead.
  *
  * Run:
  *   pnpm tsx scripts/validate-levels.ts
@@ -28,8 +32,18 @@ async function main(): Promise<void> {
         process.exit(1);
     }
 
-    let failed = 0;
+    // Follow every hidden door so its target is validated with the rest.
+    const doors = new Set<string>();
     for (const id of index.levels) {
+        const level = await fetchLevel(id);
+        for (const trigger of level.triggers ?? []) {
+            if ('travel' in trigger) doors.add(trigger.travel.targetScene);
+        }
+    }
+    const ids = [...index.levels, ...[...doors].filter((id) => !index.levels.includes(id))];
+
+    let failed = 0;
+    for (const id of ids) {
         try {
             const level = await fetchLevel(id);
 
@@ -38,7 +52,8 @@ async function main(): Promise<void> {
                 throw new Error(`invalid imageSize in level ${id}`);
             }
 
-            console.log(`  ✓ ${id}  (${level.airWalls.length} walls)`);
+            const tag = doors.has(id) && !index.levels.includes(id) ? ' [hidden door]' : '';
+            console.log(`  ✓ ${id}  (${level.airWalls.length} walls)${tag}`);
         } catch (err) {
             console.error(`  ✗ ${id}:`, err instanceof Error ? err.message : err);
             failed++;
@@ -49,7 +64,7 @@ async function main(): Promise<void> {
         console.error(`\n${failed} level(s) failed validation.`);
         process.exit(1);
     }
-    console.log(`\nAll ${index.levels.length} level(s) valid.`);
+    console.log(`\nAll ${ids.length} level(s) valid.`);
 }
 
 main().catch((err) => {
