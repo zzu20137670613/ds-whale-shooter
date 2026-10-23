@@ -1,0 +1,35 @@
+# 块 3 · 老城小巷（右下 SE）· v2
+
+> v1 判了：**画成了街景立面图**——屋檐、店面、招牌、走路的人，视角是平视。
+>
+> **这次的根因比"名词是物还是面"更具体**：只要画面里出现**"建筑"**这个概念，
+> 模型就一定去画它的**立面**。我写了 ``old town lanes`` ＋ ``stalls``，它就把整条街的房子画全了，
+> 连"建筑只作墙基"那句都没拦住。
+>
+> v2 换了个办法：**把街区整个移出画外**。
+> ``THE NEIGHBOURHOOD IS OUTSIDE THE FRAME. The only trace of it is SHADOW``
+> —— 看不见的房子，只用**投在地上的长影子**来暗示。影子是平的，画不出立面。
+>
+> 这样"烟火气"全靠地上的东西说：篮子、木箱、摞起来的碗、滚出来的白菜、翻倒的手推车、
+> 躺平的单车、当布条画的晾衣绳、水洼里的灯笼倒影、贴着地面流的蒸汽。
+>
+> 另：v1 底部出现一条**调色板色块和假文字**（模型把我的色值当海报元素画上去了），
+> 所以 Negative 里加了 ``text, letters, labels, colour swatches``。
+
+```
+2D top-down game map asset seen from DIRECTLY ABOVE (90 degrees, orthographic plan view). Everything in frame is GROUND: pavement and the things lying on it. No buildings, no houses, no shops, no roofs, no facades, no walls, no windows, no signs. The paving fills the whole frame and runs past ALL FOUR edges: no rim, no border, no frame, no vignette. Flat cel shading, thin ink outlines, large smooth colour fills, NOT painterly.
+
+THE NEIGHBOURHOOD IS OUTSIDE THE FRAME. The only trace of it is SHADOW: long soft bands of shadow, cast by unseen buildings, lying across the pavement at a low evening angle. Shadow only - nothing that casts it is visible.
+
+TIME: dusk just after sunset. Warm lantern light pools on the ground, sky glow left in the wet stone, long violet shadows.
+
+OCCUPANCY: >=65% clean walkable slab paving; props only in the outer 30%.
+
+Palette: warm plaster #D8B98C, wet stone #8A8580, lantern gold #E8A24A, deep shade #2A2A38, dark wood #4A3A2E, dusk violet #6E5B7A.
+
+Ground detail, all lying flat: grey slab paving with a central drain channel and grate; kerb stones and a doorstep; flat wicker baskets, wooden crates, stacked bowls, cabbages and greens spilling out; a handcart tipped on its side; a bicycle lying flat; cloth and laundry as thin flat strips; small pools of lantern light with reflections in puddles; steam drifting flat across the stones; a few dropped goods near one corner where the shadow is deepest. CENTRE: a wide clean open square of pavement, 14% of frame width, EMPTY - no figure, no stall, no cart.
+
+Size: 3:2 or 16:9, full bleed, composed for a 16:9 centre crop (landmarks inside the central 84%).
+
+Negative: buildings, houses, shops, storefronts, roofs, roof tiles, eaves, facades, walls standing, windows, doors in elevation, signs, banners hanging, awnings, arches, horizon, sky, sunset, sun, moon, perspective, vanishing point, isometric, three-quarter, characters, people, crowd, person, text, letters, labels, colour swatches, watermark, logo, cluttered.
+```
