@@ -1,0 +1,30 @@
+# 块 1 · 教堂废墟（左上 NW）· v4
+
+> v3 判了：**内容对了，但还是一座孤岛**。量了四边纯黑占比：上 72% / 左 76% / 右 54%。
+>
+> **根因是我自己写的 Edge 段**：``RIGHT ramps to #0A1A2E, BOTTOM to #3A2A1E``——这两个颜色本身就是接近黑的深色，模型照着刷了四条暗边。**接缝本来就不该由生成器负责**，我的拼图流程里有 ±96px 磨砂带可以自己做过渡。v4 把 Edge 段整段删掉。
+>
+> 另外补三条硬约束：
+> - ``NO ISLAND``：明说这是"更大地面的一部分"，四边都断在**瓦砾或铺装中间**，不许断在黑里、不许断在墙脚。
+> - **阴影下限给出具体色值** ``#4A5058``，并写 ``never pure black``——不给色值它就会刷纯黑。
+> - ``no rim, no raised border, no enclosure, no amphitheatre``，v3 那圈高起来的石边就是这么来的。
+>
+> 保留 v3 做对的部分：正交、平涂、淡调、玫瑰窗平嵌、中心圆台留空、柱墩齐地切断、长椅摊平、余烬两点。
+
+```
+2D top-down game map asset seen from DIRECTLY ABOVE (90 degrees, orthographic plan view). Everything in frame is FLOOR: nothing has height, nothing stands. Flat cel shading, thin ink outlines, large smooth colour fills, NOT painterly. One fragment of a large place.
+
+NO ISLAND: this is one part of a bigger floor. The pavement continues past ALL FOUR edges; wherever the frame ends, it ends in the MIDDLE of rubble or pavement, never in darkness and never at a wall. No rim, no raised border, no enclosure, no amphitheatre, no vignette, no black background. Darkest tone in the image is grey-blue #4A5058, never pure black.
+
+OCCUPANCY: >=65% plain pale stone floor; debris only in the outer 25%; asymmetric.
+
+LIGHT: flat even ambient moonlight, high-key, pale and cool; no god rays, no window light; only two or three tiny ember dots.
+
+Palette: pale stone #C9C7C0, shadow #8E8C86, ash #E8E6E0, scorch #3A3430, glass red #8E3B3B, glass blue #3B4E6E, ember #C25A28.
+
+Subject: the broken pale stone pavement of a cathedral its own god destroyed. Cracked slabs, some torn away to show rubble beneath, a few tilted. A huge shattered ROSE-WINDOW MOSAIC lies INLAID FLAT in the floor: red and blue glass shards among the stones, frame flush with the ground. Scorch patches, ash drifts. Column stumps cut FLUSH as flat discs, no shafts, no capitals. Pews as loose planks. A black iron chandelier lying flat. CENTRE: a clean circular dais of pale cracked stone, 12% of frame width, EMPTY - the boss spawns there: no figure, no statue.
+
+Size: 3:2 or 16:9, full bleed, composed for a 16:9 centre crop (landmarks inside the central 84%).
+
+Negative: island, platform, floating plate, stone rim, border, frame, enclosure, amphitheatre, vignette, black background, dark corners, walls, ceiling, columns standing, pillar shafts, capitals, arch, doorway, upright window, sky, moon, stars, perspective, vanishing point, isometric, three-quarter, symmetry, characters, person, text, watermark, logo, pixel art, cluttered.
+```
