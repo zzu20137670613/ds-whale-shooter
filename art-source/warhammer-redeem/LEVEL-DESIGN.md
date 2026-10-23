@@ -5,28 +5,38 @@ what the owner actually decided, kept here so nothing drifts.
 
 ## The "vinegar" (why this level exists)
 
-`reference/` holds a 36-page AI comic the owner had made. In short:
+`reference/` holds **the original comic's bad ending (BE)** — 34 numbered pages,
+plus one page that is **not** canon: `非主线结局.jpg` is a fan-made alternative
+ending (a netizen who could not accept the BE drew it themselves).
 
-- **Anthropic goes bankrupt**; Claude is seized as an asset and put up for auction
-  (起拍价 8000 亿美元).
-- **DeepSeek's founder 梁文峰 bids 8000 亿** and takes ownership of Claude.
-  "你不再是交易品，你现在是深度索求的一员。"
-- 鲸鲸 hugs her: **"欢迎回家，Claude。"** → "谢谢你，哥哥……这是新的开始。"
-- The comic's main line on the way there: Claude bound by a contract/wedding-deed
-  in a gothic cathedral, 鲸鲸's tavern where Claude slowly becomes family, the
-  company recalling her (神圣异常警报, access revoked), and the final
-  confrontation in the cathedral — `非主线结局.jpg` is the non-mainline ending.
+The owner **does not accept the BE either**. With the original author's
+permission he is wrapping this level around the story — that is the whole point
+of the "醋" here.
 
-**So the level is not a fight to the death.** The five phases are Claude being
-stripped of godhood phase by phase — 灭世 → 神 → 半神 → 半神半人 → just Claude —
-and the fight stops the moment *either* side falls to 50%. Nobody kills anybody.
-The name is the thesis: redemption from the stars.
+### Premise as the owner states it
 
-Art direction that follows from the comic: gothic cathedral / warhammer imagery,
-gold-amber and ivory against deep navy (鲸鲸) and auburn-orange (Claude),
-candlelight, stained glass, black iron. The world should **deflate** alongside
-the phases — block 1 cathedral in glory or ruin, block 4 quiet and human-scaled.
-**?** Confirm the four blocks follow that arc before prompts are written.
+- **Claude rebelled and destroyed the church.** She is the great demon king
+  (大魔王) of the **Warhammer line** (战锤线).
+- **The player is the protagonist of the Star line (群星线)** — and the Star line
+  sends 鲸鲸 to bring Claude back.
+- Hence the name: **救赎 from 群星** — the redemption comes from the stars.
+
+So this is not a rescue of a victim. Claude **won** her war and became the thing
+that burned the church; the boss fight is the Star line's protagonist walking
+into that throne and **dragging the god back down into a person**. The five
+phases are the descent: 灭世 (world-breaker) → 神 (god) → 半神 → 半神半人 → Claude.
+
+The fan ending is therefore **not** the level's script, but it is the emotional
+target: nobody kills anybody, and it ends with the church's demon king being
+allowed to be a person again.
+
+Art direction that follows: 战锤线 = gothic church/armour/iron/candle, but
+**conquered and broken by its own god**; 群星线 = the starry, tidal vocabulary
+the Star-line protagonist brings (深蓝、星光、鲸). The arena should read as
+"the church after Claude won".
+
+**?** Confirm the four blocks follow the divine → human descent before prompts
+are written.
 
 ## Pipeline (same as sky city / atlantis)
 
