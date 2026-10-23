@@ -1,0 +1,32 @@
+# 块 1 · 教堂废墟（左上 NW）· v5
+
+> v4 判了：**内容终于对了，但四边还有一圈石墙**，裁 104px 都裁不干净（墙环实际约 190px），
+> 硬裁到没有墙就只剩 2180×1060，比例和分辨率都亏。
+>
+> **根因**：只要主语还是 "cathedral / arena / nave"，模型就一定给你一间**带墙的房间**。
+> v5 换主语——**这张图是"地面"，不是"房间"**：`every pixel is pavement, rubble or ash`、
+> `the nave walls are OUTSIDE this frame`，并明说**画面里不存在任何墙**。
+>
+> 另外把 `dais`（高台）降级成 `faint circular inlay`（浅刻圆形镶嵌）——"dais"会招来平台和台阶。
+>
+> 保留 v3/v4 做对的：正交、平涂、淡调、玫瑰窗平嵌、抬高的东西一律压平、余烬两点、中心留空。
+
+```
+2D top-down game map asset seen from DIRECTLY ABOVE (90 degrees). This image is a FLOOR SURFACE, not a room: every pixel is pavement, rubble or ash. The nave walls are OUTSIDE this frame, so there is no wall, no rim, no border, no margin, no edge anywhere in the image. Flat cel shading, thin ink outlines, large smooth colour fills, NOT painterly.
+
+COVERAGE: the pale stone pavement fills 100% of the frame and continues past all four sides. Debris is spread across the whole surface, not gathered at the borders.
+
+OCCUPANCY: >=65% plain floor; asymmetric, no focal symmetry.
+
+DARKEST TONE: grey-blue #4A5058. No pure black.
+
+LIGHT: flat even ambient moonlight, high-key, pale and cool; no god rays, no window light; two or three tiny ember dots.
+
+Palette: pale stone #C9C7C0, shadow #8E8C86, ash #E8E6E0, scorch #3A3430, glass red #8E3B3B, glass blue #3B4E6E, ember #C25A28.
+
+Surface features, spread like a pattern over the whole frame: cracked pale slabs, some torn away to show rubble beneath; a huge shattered ROSE-WINDOW MOSAIC INLAID FLAT in the pavement, red and blue glass shards among the stones; scorch patches; ash drifts; pews as loose planks; flat column stumps flush with the ground, no shafts, no capitals; a black iron chandelier lying flat. Off-centre: a faint circular inlay in the pavement, unbroken and empty.
+
+Size: 3:2 or 16:9, full bleed.
+
+Negative: walls, wall, rim, border, frame, margin, room, interior, enclosure, amphitheatre, island, platform, columns standing, pillar shafts, capitals, arch, doorway, upright window, sky, moon, perspective, vanishing point, isometric, three-quarter, symmetry, black background, vignette, characters, person, text, watermark, logo, cluttered.
+```
