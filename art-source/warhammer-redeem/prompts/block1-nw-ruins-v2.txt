@@ -1,0 +1,30 @@
+# 块 1 · 教堂废墟（左上 NW）· v2
+
+> v1 判了：**画成一间屋子，不是一张地图**。四个原因，v2 逐条改。
+>
+> 1. **投影跑成 3/4 透视**——柱子、拱、窗户全立起来，还带月亮和天空。"gothic cathedral hall / vault / rose window"这些词天生召唤一个**房间**，光靠 Negative 拦不住。v2 把主语改成**"教堂只作为它的地板存在"**，从根上删掉房间这个概念。
+> 2. **细节太满**——长椅、锁链、吊灯、石像鬼、瓦砾堆满，没有可打的空地。v2 写死 70% 空地，景物只许压在外围 25%。
+> 3. **光太戏剧**——月光柱 + 火光 = 插画感。参考块（天空之城 A）是**平光、高调、淡**。v2 换 flat even ambient，火光只剩两三个小点。
+> 4. **"hand-painted"方向就错**——现有关卡是**平涂 + 细描边 + 大色块**，不是厚涂。v2 改 flat cel shading。
+>
+> 另：即梦右下角有"即梦AI"水印，切图时裁掉。
+
+```
+2D top-down game map asset seen from DIRECTLY ABOVE (90 degrees, orthographic plan view). Everything in frame is FLOOR: nothing has height, nothing stands, no walls, no ceiling, no sky, no vanishing point. Flat cel shading, thin ink outlines, large smooth colour fills, NOT painterly, NOT an illustration, NOT a screenshot. Readable arena, not a picture.
+
+FRAMING: the cathedral exists ONLY as its floor. No interior, no room. Anything that would stand up lies flat on the ground instead.
+
+OCCUPANCY: >=70% plain pale stone floor; scenery only in the outer 25%, middle open.
+
+LIGHT: flat even ambient moonlight, high-key, pale and cool; no light shaft, no god rays, no window light; only two or three tiny ember dots.
+
+Palette: pale stone #C9C7C0, shadow #8E8C86, ash #E8E6E0, scorch #3A3430, glass red #8E3B3B, glass blue #3B4E6E, ember #C25A28.
+
+Subject: the cracked pale stone floor of a cathedral its own god destroyed. A huge shattered ROSE-WINDOW MOSAIC is INLAID FLAT into the floor: red and blue glass shards among the stones, frame flush with the ground. Scorch patches; ash drifts as flat pale smudges; column drums as flat stone discs; pews as loose planks; a black iron chandelier lying flat, chain coiled. CENTRE: a clean circular dais of pale cracked stone, 12% of frame width, EMPTY - the boss spawns there: no figure, no statue.
+
+Edges: TOP and LEFT are the world boundary: dark outer night. RIGHT ramps to #0A1A2E, BOTTOM to #3A2A1E. Smooth, not banded; no border, frame or vignette; outer 140px free.
+
+Size: 3:2, largest available, full bleed. Compose for a 16:9 centre crop: outer 8% top/bottom cut, landmarks inside the central 84%; left/right uncropped.
+
+Negative: interior, room, walls, ceiling, columns standing, arch, doorway, upright window, sky, moon, stars, light shaft, god rays, perspective, vanishing point, isometric, three-quarter, camera tilt, depth of field, characters, person, girl, text, watermark, logo, UI, frame, vignette, pixel art, cluttered, carvings.
+```
