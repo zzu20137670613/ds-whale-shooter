@@ -12,4 +12,4 @@ Subject: the broken pale stone pavement of a cathedral its own god destroyed. Cr
 
 Size: 3:2 or 16:9, full bleed, composed for a 16:9 centre crop (landmarks inside the central 84%).
 
-Negative: island, platform, floating plate, stone rim, border, frame, enclosure, amphitheatre, vignette, black background, dark corners, walls, ceiling, columns standing, pillar shafts, capitals, arch, doorway, upright window, sky, moon, stars, perspective, vanishing point, isometric, three-quarter, symmetry, characters, person, text, watermark, logo, pixel art, cluttered.
+Negative: island, platform, floating plate, stone rim, border, frame, enclosure, amphitheatre, vignette, black background, dark corners, walls, ceiling, columns standing, pillar shafts, capitals, arch, doorway, upright window, sky, moon, stars, perspective, vanishing point, isometric, three-quarter, symmetry, characters, person, text, watermark, logo, cluttered.
