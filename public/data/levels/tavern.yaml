@@ -136,11 +136,14 @@ npcSpawns:
 # and creeps toward the player at moveSpeed, and the engine mirrors its sprite by
 # facing — the sprite art is pre-mirrored to compensate.
 monsters:
-    # The original game's wall ornament is gone; this is our own picture of the
-    # room the game is written in. Same hole in tavern.png behind it.
-    - type: dev-cabin-picture
-      x: 2667
-      'y': 895
+    # The original wall ornament. Our own picture was tried here first and
+    # reverted: the black alcove baked into tavern.png is about 130x170 and the
+    # picture only covered 106x114, so a black border showed around it and it
+    # read as a photo taped to a black board. Keep the ornament until a picture
+    # is cut to the alcove's exact size.
+    - type: hollow-emblem
+      x: 2642
+      'y': 896
 materials: []
 teleporters:
     - id: tavern-exit
