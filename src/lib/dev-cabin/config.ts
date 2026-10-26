@@ -3,10 +3,18 @@
  * --------------------------------------------------------------------------
  * The one place to edit when the cabin's letter route changes.
  *
- * `relay` is empty until the Worker is deployed: the sender then falls back to
- * opening a pre-filled "new issue" page, which needs no server at all. Fill it
- * in and the same code starts delivering letters with zero clicks - nothing
- * else has to change.
+ * `relay` is empty until the relay is reachable FROM THE PLAYER'S NETWORK.
+ * That is not the same question as "is it deployed":
+ *
+ *   The Worker is deployed and its logic works (it created, and we then
+ *   deleted, issue #2 during integration). But `*.workers.dev` is blocked on
+ *   this network: local DNS answers 69.30.25.21 (a poisoning sinkhole), the
+ *   real address via DoH is 128.242.245.244, and a TCP connect to that address
+ *   times out. The hostname is dead here even though the code behind it is fine.
+ *
+ * Fill `relay` in once it answers on a hostname that resolves and connects from
+ * where the game is played - a Cloudflare custom domain on a normal zone, or a
+ * domestic function URL. Nothing else has to change.
  */
 
 /** Where letters end up. */
@@ -16,7 +24,10 @@ export const DEV_CABIN_REPO = 'zzu20137670613/ds-whale-shooter';
 export const DEV_CABIN_GUESTBOOK = `https://github.com/${DEV_CABIN_REPO}/issues/1`;
 
 /**
- * Optional relay (see art-source/dev-cabin/relay/). Empty string = not
- * deployed yet, which is a supported state, not an error.
+ * Deployed, but unreachable from here — see the note above:
+ * https://dev-cabin-relay.ds-whale-shooter.workers.dev
+ *
+ * Empty string means "open GitHub's pre-filled new-issue page instead", which
+ * needs no server at all and is a supported state, not an error.
  */
 export const DEV_CABIN_RELAY = '';
