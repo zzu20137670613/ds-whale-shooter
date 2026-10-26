@@ -21,7 +21,7 @@ const zhCN: CatalogSource = {
     },
     death: {
         title: '你倒下了',
-        subtitle: '森林又收下了一个旅人。',
+        subtitle: '真可惜，我不是主角。',
         restart: '重新出发',
         hint: '回到海边亭台',
     },
