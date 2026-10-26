@@ -267,6 +267,24 @@ export const TravelTriggerSchema = z
         },
     }));
 
+/**
+ * A click target painted into the art: rectangles of the world that answer to
+ * the mouse instead of to the player's feet. `action` is a string, not an enum,
+ * so the scene can dispatch new ones without a schema change.
+ */
+export const InteractableSchema = z
+    .object({
+        id: z.string().min(1),
+        action: z.string().min(1),
+        zones: z.array(TriggerZoneSchema).min(1),
+    })
+    .strict()
+    .transform((v) => ({
+        id: v.id,
+        action: v.action,
+        zones: v.zones.map(zoneOut),
+    }));
+
 /** A one-shot region trigger, in either of its two effects. */
 export const TriggerSchema = z.union([SpawnTriggerSchema, TravelTriggerSchema]);
 
@@ -325,6 +343,7 @@ export const LevelSchema = z
         tilemap: TilemapSchema.optional(),
         backgroundBlocks: z.array(BackgroundBlockSchema).optional(),
         triggers: z.array(TriggerSchema).optional(),
+        interactables: z.array(InteractableSchema).optional(),
         imageSize: z.string().regex(/^\d+x\d+$/, 'expected "WxH"'),
         prompt: z.string().optional(),
         music: z.string().min(1).optional(),
@@ -380,6 +399,7 @@ export const LevelSchema = z
             ...(v.character !== undefined ? { character: v.character } : {}),
             ...(v.introComic !== undefined ? { introComic: v.introComic } : {}),
             ...(v.boss !== undefined ? { boss: v.boss } : {}),
+            ...(v.interactables !== undefined ? { interactables: v.interactables } : {}),
             ...(v.characterSpawn !== undefined ? { characterSpawn: v.characterSpawn } : {}),
             ...(v.npcSpawns !== undefined ? { npcSpawns: v.npcSpawns } : {}),
             ...(v.monsters !== undefined ? { monsters: v.monsters } : {}),

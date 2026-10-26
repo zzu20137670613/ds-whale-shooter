@@ -61,6 +61,7 @@ import { usesMerchant } from '@/lib/merchant/logic';
 import { releasableTextureKeys } from '@/lib/textures/release';
 import { tilemapResourcesFor } from '@/lib/tilemaps/resources';
 import { resolveAndRestart } from '@/lib/phaser-game';
+import { InteractableController } from '@/game/scenes/interactable';
 import { useGameStore } from '@/store/game-store';
 import type { MusicSpec, SfxSpec, SoundSpec } from '@/lib/audios';
 import type { CharacterSpec } from '@/lib/characters';
@@ -131,6 +132,9 @@ export class LoadScene extends Phaser.Scene {
     private materialManager!: MaterialManager;
     private teleporterSystem!: TeleporterController;
     private triggerSystem!: TriggerController;
+    /** Click targets painted into the art (the cabin's two screens). */
+    private interactables?: InteractableController;
+
     /** When this level started, for the ending's ledger. */
     private levelStartedAtMs = 0;
     private audio!: AudioController;
@@ -547,6 +551,18 @@ export class LoadScene extends Phaser.Scene {
             },
         );
 
+        // Click targets painted into the art. Bound on the scene's input and
+        // resolved through the camera, so a zone keeps matching the painting
+        // after the camera has scrolled or zoomed.
+        if (this.level.interactables && this.level.interactables.length > 0) {
+            this.interactables = new InteractableController(this.level.interactables);
+            this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
+                const world = this.cameras.main.getWorldPoint(pointer.x, pointer.y);
+                const hit = this.interactables?.handleClick(world.x, world.y);
+                if (hit) this.runInteractable(hit.action);
+            });
+        }
+
         // Wire AudioController (subscribes to EventBus sfx:*/music:* events).
         this.audio = new AudioController(
             this,
@@ -869,6 +885,15 @@ export class LoadScene extends Phaser.Scene {
     private readonly loadedTextureKeys = new Set<string>();
 
     private isShutdown = false;
+
+    /** What a click target does. One line per action; add as needed. */
+    private runInteractable(action: string): void {
+        if (action === 'dev-mail') {
+            useGameStore.getState().openDevCabin();
+            return;
+        }
+        console.warn('[interactable] no handler for action: ' + action);
+    }
 
     shutdown(): void {
         // Phaser fires both 'shutdown' AND 'destroy' on some paths
