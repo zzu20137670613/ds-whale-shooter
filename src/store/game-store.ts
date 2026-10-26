@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 import { setLocale as setLocaleRuntime, type LocaleCode } from '@/locales';
+import type { PetBonus } from '@/lib/pet/lifetime';
 
 export interface WeaponSlotData {
     id: string;
@@ -98,6 +99,13 @@ export interface GameUIState {
     // Language — which catalog `t()` reads, and which sibling `pickText()`
     // prefers for game data. Persisted; mirrored into the i18n runtime.
     locale: LocaleCode;
+
+    /**
+     * The desktop pet's buff for this page load, or null before the bridge has
+     * answered. `percent` is what her panel multiplies by - never assume 50, it
+     * is the pet's own tier now (see `@/lib/pet/bridge`).
+     */
+    petBonus: PetBonus | null;
 
     // Entity Snapshots for Fine-Grained Mid-Combat Save/Restore
     playerSnapshot?: PlayerSnapshot;
@@ -213,6 +221,7 @@ export interface GameUIState {
     refillAmmo: () => void;
     /** Switch language; mirrors into the i18n runtime immediately. */
     setLocale: (code: LocaleCode) => void;
+    setPetBonus: (bonus: PetBonus | null) => void;
     resetLevelProgress: (levelId: string) => void;
     /**
      * Clear per-scene entity snapshots only (player/monster/drop
@@ -278,6 +287,7 @@ export const initialGameState = {
     upgradeLevels: {} as Record<string, number>,
     weaponLevels: {} as Record<string, number>,
     locale: detectLocale(),
+    petBonus: null,
 
     playerSnapshot: undefined as PlayerSnapshot | undefined,
     activeMonstersSnapshot: undefined as MonsterSystemSnapshot | undefined,
@@ -415,6 +425,7 @@ export const useGameStore = create<GameUIState>()(
                     };
                 }),
 
+            setPetBonus: (bonus) => set({ petBonus: bonus }),
             setLocale: (code) => {
                 // Keep the pure i18n runtime in step with the persisted
                 // choice — the runtime owns `t()` / `pickText()`, the store

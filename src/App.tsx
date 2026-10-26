@@ -5,6 +5,8 @@ import { ComicOverlay } from '@/components/hud/comic-overlay';
 import { DevCabinPanel } from '@/components/hud/dev-cabin-panel';
 import { GameHUDLayer } from '@/components/hud/game-hud-layer';
 import { PixelCrosshair } from '@/components/hud/pixel-crosshair';
+import type { PetBonus } from '@/lib/pet/lifetime';
+import { installPetExitHooks, startPetBridge } from '@/lib/pet/boot';
 import { SettlementOverlay } from '@/components/hud/settlement-overlay';
 import { ShopPanel } from '@/components/hud/shop-panel';
 import { TouchControls } from '@/components/hud/touch-controls';
@@ -50,6 +52,18 @@ function App() {
         const handler = () => void resolveAndRestart('tavern');
         EventBus.on(RETURN_TO_PAVILION_EVENT, handler);
         return () => EventBus.off(RETURN_TO_PAVILION_EVENT, handler);
+    }, []);
+
+    // The desktop pet: read her tier once, then put her away for the session.
+    // The exit hooks give her back. Every call is a no-op when she is not
+    // running, so a player without the pet pays nothing but one refused socket.
+    useEffect(() => {
+        const deps = {
+            fetcher: (input: string, init?: RequestInit) => fetch(input, init),
+            onBonus: (bonus: PetBonus) => useGameStore.getState().setPetBonus(bonus),
+        };
+        void startPetBridge(deps);
+        return installPetExitHooks(deps);
     }, []);
 
     // Preview hooks, so the opening and the ending can be looked at without

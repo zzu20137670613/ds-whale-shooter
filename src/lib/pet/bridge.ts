@@ -159,3 +159,44 @@ export async function resolvePetBonus(deps: PetDeps): Promise<{
         label: probe.reason === 'no-level' ? '桌宠（旧版本）' : '桌宠',
     };
 }
+
+/**
+ * POST to a bridge route. Mutations are POST-only on her server (a GET returns
+ * 405, which is how the routes were located - `/__shell/*` never existed).
+ */
+async function post(deps: PetDeps, route: string): Promise<boolean> {
+    const origin = deps.origin ?? PET_BRIDGE_ORIGIN;
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), PET_TIMEOUT_MS);
+    try {
+        const res = await deps.fetcher(url(origin, route), {
+            method: 'POST',
+            signal: controller.signal,
+        });
+        if (!res.ok) return false;
+        const body = (await res.json()) as Record<string, unknown>;
+        return body.ok !== false;
+    } catch {
+        return false;
+    } finally {
+        clearTimeout(timer);
+    }
+}
+
+/**
+ * Ask the pet to hide itself and stop its effects - "被吸进电脑里了".
+ *
+ * She deliberately does NOT kill the process: a crashed game or a force quit
+ * would leave the pet unrecoverable, whereas hiding it looks identical to the
+ * player and can always be undone. Her side also auto-resumes after ten
+ * minutes, and the tray/hotkey can pull her back, so a lost game cannot strand
+ * her.
+ */
+export function suspendPet(deps: PetDeps): Promise<boolean> {
+    return post(deps, 'suspend');
+}
+
+/** Ask the pet to come back out. Safe to call when she was never suspended. */
+export function resumePet(deps: PetDeps): Promise<boolean> {
+    return post(deps, 'resume');
+}
