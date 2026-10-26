@@ -11,13 +11,13 @@ describe('i18n runtime', () => {
     });
 
     it('resolves known keys to the active locale string', () => {
-        expect(t('scene.mainMenu')).toBe('Main Menu');
+        expect(t('death.title')).toBe('YOU DIED');
         expect(t('menu.changeScene')).toBe('Change Scene');
     });
 
     it('switches to zh-CN and returns the Chinese strings', () => {
         setLocale('zh-CN');
-        expect(t('scene.mainMenu')).toBe('主菜单');
+        expect(t('death.title')).toBe('你倒下了');
         expect(t('menu.changeScene')).toBe('切换场景');
         expect(t('menu.addSprite')).toBe('添加新精灵');
     });

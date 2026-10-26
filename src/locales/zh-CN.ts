@@ -9,12 +9,24 @@ const zhCN: CatalogSource = {
     label: {
         spritePosition: '精灵位置:',
     },
-    scene: {
-        mainMenu: '主菜单',
+    settings: {
+        title: '设置',
+        resume: '继续游戏',
+        restart: '重新开始',
+        restartHint: '重新开始会回到海边亭台',
+    },
+    hud: {
+        spaceKey: '空格',
+        hits: '连击',
+    },
+    death: {
+        title: '你倒下了',
+        subtitle: '森林又收下了一个旅人。',
+        restart: '重新出发',
+        hint: '回到海边亭台',
     },
     shop: {
         title: '酒馆商店',
-        open: '商店',
         close: '关闭',
         noCharacter: '请先选一个角色。',
         level: '等级',
@@ -36,6 +48,7 @@ const zhCN: CatalogSource = {
     },
     tavern: {
         confirm: '确认',
+        select: '选择',
         tapToStart: '（点击开始）',
         cycle: '切换',
         confirmHold: '确认（长按 1.5 秒）',

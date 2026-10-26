@@ -20,6 +20,7 @@ import { Button } from '@/components/ui/button';
 import { MUSIC_PAUSE, MUSIC_RESUME } from '@/lib/constants';
 import { EventBus } from '@/lib/events/bus';
 import { getPhaserGame, restartAtTavern } from '@/lib/phaser-game';
+import { t } from '@/locales';
 
 import { CornerPixels, RETRO_BOX } from './retro-box';
 
@@ -91,8 +92,8 @@ export function SettingsOverlay() {
                 <button
                     type="button"
                     onClick={pauseGame}
-                    title="Settings"
-                    aria-label="Settings"
+                    title={t('settings.title')}
+                    aria-label={t('settings.title')}
                     className={`${RETRO_BOX} relative flex size-10 items-center justify-center text-amber-500 transition-colors hover:text-amber-300`}
                 >
                     <CornerPixels />
@@ -159,7 +160,7 @@ export function SettingsOverlay() {
                             <div className="flex items-center gap-2 w-full">
                                 <span className="flex-1 h-px bg-amber-800/50" />
                                 <span className="text-sm font-bold tracking-[0.35em] text-amber-400 uppercase drop-shadow-[1px_1px_0px_#000]">
-                                    Settings
+                                    {t('settings.title')}
                                 </span>
                                 <span className="flex-1 h-px bg-amber-800/50" />
                             </div>
@@ -174,7 +175,7 @@ export function SettingsOverlay() {
                                 className="h-9 w-full bg-amber-500 font-semibold text-black hover:bg-amber-400"
                             >
                                 <Play className="size-5" />
-                                Resume
+                                {t('settings.resume')}
                             </Button>
                             <Button
                                 onClick={handleRestart}
@@ -182,12 +183,12 @@ export function SettingsOverlay() {
                                 className="h-9 w-full border-stone-700 bg-stone-900/80 font-semibold text-stone-300 hover:bg-stone-800 hover:text-amber-300"
                             >
                                 <RotateCcw className="size-5" />
-                                Restart
+                                {t('settings.restart')}
                             </Button>
                         </div>
 
                         <div className="text-[9px] tracking-wider text-stone-500 uppercase">
-                            Restart returns to the tavern
+                            {t('settings.restartHint')}
                         </div>
                     </div>
                 </div>

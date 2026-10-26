@@ -9,12 +9,24 @@ const en: CatalogSource = {
     label: {
         spritePosition: 'Sprite Position:',
     },
-    scene: {
-        mainMenu: 'Main Menu',
+    settings: {
+        title: 'Settings',
+        resume: 'Resume',
+        restart: 'Restart',
+        restartHint: 'Restart returns to the tavern',
+    },
+    hud: {
+        spaceKey: 'SPACE',
+        hits: 'HITS',
+    },
+    death: {
+        title: 'YOU DIED',
+        subtitle: 'The forest claims another wanderer.',
+        restart: 'Restart',
+        hint: 'Returns to the tavern',
     },
     shop: {
         title: 'Tavern Shop',
-        open: 'Shop',
         close: 'Close',
         noCharacter: 'Pick a character first.',
         level: 'Lv',
@@ -36,6 +48,7 @@ const en: CatalogSource = {
     },
     tavern: {
         confirm: 'CONFIRM',
+        select: 'SELECT',
         tapToStart: '(TAP TO START)',
         cycle: 'Cycle',
         confirmHold: 'Confirm (hold 1.5s)',

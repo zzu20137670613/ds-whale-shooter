@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { t } from '@/locales';
 import { EventBus } from '@/lib/events/bus';
 
 export const ComboOverlay: React.FC = () => {
@@ -121,7 +122,7 @@ export const ComboOverlay: React.FC = () => {
                         {combo}
                     </span>
                     <span className="text-xs text-white/90 font-black uppercase tracking-tight drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]">
-                        HITS
+                        {t('hud.hits')}
                     </span>
                 </div>
 

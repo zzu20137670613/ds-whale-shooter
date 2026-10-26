@@ -16,12 +16,29 @@ export type CatalogSource = {
     label: {
         spritePosition: string;
     };
-    scene: {
-        mainMenu: string;
+    /** The gear panel: pause, resume, restart. */
+    settings: {
+        title: string;
+        resume: string;
+        restart: string;
+        restartHint: string;
+    };
+    /** In-run HUD bits that used to be English-only. */
+    hud: {
+        /** Keycap shown next to the skill badge. */
+        spaceKey: string;
+        /** Suffix on the combo counter ("12 HITS"). */
+        hits: string;
+    };
+    /** The death overlay. One of the two places a run actually ends. */
+    death: {
+        title: string;
+        subtitle: string;
+        restart: string;
+        hint: string;
     };
     shop: {
         title: string;
-        open: string;
         close: string;
         /** Shown when the player has not picked a character yet — the
          *  ladder prices come from the character spec, so there is
@@ -56,6 +73,8 @@ export type CatalogSource = {
      *  (m/s, /10, s) stay untranslated on purpose: they are symbols. */
     tavern: {
         confirm: string;
+        /** The character card's big button. */
+        select: string;
         tapToStart: string;
         cycle: string;
         confirmHold: string;
@@ -72,9 +91,7 @@ export type CatalogKey =
     | 'menu.toggleMovement'
     | 'menu.addSprite'
     | 'label.spritePosition'
-    | 'scene.mainMenu'
     | 'shop.title'
-    | 'shop.open'
     | 'shop.close'
     | 'shop.noCharacter'
     | 'shop.level'

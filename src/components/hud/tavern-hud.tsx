@@ -473,7 +473,9 @@ export const TavernHud: React.FC = () => {
                 }}
             >
                 <div className="tavern-hud-bob flex flex-col items-center">
-                    <div className={`${RETRO_BOX} relative ${mobile ? 'p-2.5 w-[210px]' : 'p-4 w-[320px]'}`}>
+                    <div
+                        className={`${RETRO_BOX} relative ${mobile ? 'p-2.5 w-[210px]' : 'p-4 w-[320px]'}`}
+                    >
                         <CornerPixels hideBottom={isSelection} />
 
                         {isSelection ? (
@@ -510,7 +512,7 @@ export const TavernHud: React.FC = () => {
                                             </button>
                                         </div>
                                         <span className="text-[10px] px-1.5 py-0.5 bg-amber-950/70 border border-amber-500/50 text-amber-300 font-mono">
-                                            SELECT
+                                            {t('tavern.select')}
                                         </span>
                                     </div>
 
@@ -520,25 +522,33 @@ export const TavernHud: React.FC = () => {
                                             <span className="flex items-center gap-1 text-red-400">
                                                 <Heart className="w-3 h-3 fill-red-500" /> HP
                                             </span>
-                                            <span className="font-mono text-stone-200">{focus.hp}</span>
+                                            <span className="font-mono text-stone-200">
+                                                {focus.hp}
+                                            </span>
                                         </div>
                                         <div className="flex items-center justify-between text-[9px]">
                                             <span className="flex items-center gap-1 text-sky-400">
                                                 <Zap className="w-3 h-3 fill-sky-400" /> SP
                                             </span>
-                                            <span className="font-mono text-stone-200">{focus.sp}</span>
+                                            <span className="font-mono text-stone-200">
+                                                {focus.sp}
+                                            </span>
                                         </div>
                                         <div className="flex items-center justify-between text-[9px]">
                                             <span className="flex items-center gap-1 text-emerald-400">
                                                 <Gauge className="w-3 h-3" /> SPD
                                             </span>
-                                            <span className="font-mono text-stone-200">{moveSpeedToMps(focus.moveSpeed)}m/s</span>
+                                            <span className="font-mono text-stone-200">
+                                                {moveSpeedToMps(focus.moveSpeed)}m/s
+                                            </span>
                                         </div>
                                         <div className="flex items-center justify-between text-[9px]">
                                             <span className="flex items-center gap-1 text-orange-400">
                                                 <Layers className="w-3 h-3" /> SLT
                                             </span>
-                                            <span className="font-mono text-stone-200">{focus.weaponMax} max</span>
+                                            <span className="font-mono text-stone-200">
+                                                {focus.weaponMax} max
+                                            </span>
                                         </div>
                                     </div>
 
@@ -552,7 +562,9 @@ export const TavernHud: React.FC = () => {
                                         className="w-full mt-1 py-1 px-2 pointer-events-auto bg-amber-500/20 active:bg-amber-500/40 border border-amber-400 text-amber-200 text-[9px] uppercase font-bold tracking-wider flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
                                     >
                                         <span>{t('tavern.confirm')}</span>
-                                        <span className="text-[10px] text-amber-300/80">{t('tavern.tapToStart')}</span>
+                                        <span className="text-[10px] text-amber-300/80">
+                                            {t('tavern.tapToStart')}
+                                        </span>
                                     </button>
                                 </>
                             ) : (
@@ -563,165 +575,169 @@ export const TavernHud: React.FC = () => {
                                         {focus.name}
                                     </div>
 
-                                {/* Description */}
-                                {focus.description && (
-                                    <div
-                                        data-testid="tavern-lore"
-                                        className={`text-[13px] leading-relaxed text-stone-200 mb-3 pr-1 ${
-                                            isChinese ? '' : 'italic'
-                                        }`}
-                                    >
-                                        {focus.description}
-                                    </div>
-                                )}
-
-                                {/* Stats grid: left column HP/SP/MoveSpeed,
-                                    right column radar polygon + STR/AGI/VIT/SPI */}
-                                <div className="flex gap-5 mb-3">
-                                    {/* Left column: numerical stats with icons */}
-                                    <div className="flex flex-col justify-center gap-1 flex-1 min-w-0">
-                                        <StatRow
-                                            icon={
-                                                <Heart className="w-3.5 h-3.5 fill-red-500 text-red-400" />
-                                            }
-                                            label="HP"
-                                            value={focus.hp}
-                                            color="text-red-400"
-                                        />
-                                        <StatRow
-                                            icon={
-                                                <Zap className="w-3.5 h-3.5 fill-sky-400 text-sky-300" />
-                                            }
-                                            label="SP"
-                                            value={focus.sp}
-                                            subValue={`${spRegenToSec(focus.spRegenMs)}s`}
-                                            color="text-sky-400"
-                                        />
-                                        <StatRow
-                                            icon={
-                                                <Sparkles className="w-3.5 h-3.5 text-yellow-300" />
-                                            }
-                                            label="LCK"
-                                            value={focus.stats?.luck ?? 1}
-                                            suffix="/10"
-                                            color="text-yellow-300"
-                                        />
-                                        <StatRow
-                                            icon={<Gauge className="w-3.5 h-3.5" />}
-                                            label="SPD"
-                                            value={moveSpeedToMps(focus.moveSpeed)}
-                                            suffix="m/s"
-                                            color="text-emerald-400"
-                                        />
-                                        <StatRow
-                                            icon={<Layers className="w-3.5 h-3.5" />}
-                                            label="SLT"
-                                            value={focus.weaponMax}
-                                            suffix="max"
-                                            color="text-orange-300"
-                                        />
-                                    </div>
-
-                                    {/* Right column: radar polygon */}
-                                    {focus.stats && focus.statRange && (
-                                        <div className="shrink-0 items-center">
-                                            <RadarPolygon
-                                                points={[
-                                                    {
-                                                        value: focus.stats.hp,
-                                                        min: focus.statRange.hp.min,
-                                                        max: focus.statRange.hp.max,
-                                                        label: 'HP',
-                                                        icon: (
-                                                            <Heart className="w-2.5 h-2.5 fill-red-500 text-red-400" />
-                                                        ),
-                                                        iconColor: 'text-red-400',
-                                                    },
-                                                    {
-                                                        value: focus.stats.sp,
-                                                        min: focus.statRange.sp.min,
-                                                        max: focus.statRange.sp.max,
-                                                        label: 'SP',
-                                                        icon: (
-                                                            <Zap className="w-2.5 h-2.5 fill-sky-400 text-sky-300" />
-                                                        ),
-                                                        iconColor: 'text-sky-400',
-                                                    },
-                                                    {
-                                                        value: focus.stats.moveSpeed,
-                                                        min: focus.statRange.moveSpeed.min,
-                                                        max: focus.statRange.moveSpeed.max,
-                                                        label: 'SPD',
-                                                        icon: <Gauge className="w-2.5 h-2.5" />,
-                                                        iconColor: 'text-emerald-400',
-                                                    },
-                                                    {
-                                                        value: focus.stats.weaponMax,
-                                                        min: focus.statRange.weaponMax.min,
-                                                        max: focus.statRange.weaponMax.max,
-                                                        label: 'SLT',
-                                                        icon: <Layers className="w-2.5 h-2.5" />,
-                                                        iconColor: 'text-orange-300',
-                                                    },
-                                                    {
-                                                        value: focus.stats.luck,
-                                                        min: focus.statRange.luck.min,
-                                                        max: focus.statRange.luck.max,
-                                                        label: 'LCK',
-                                                        icon: (
-                                                            <Sparkles className="w-2.5 h-2.5 text-yellow-300" />
-                                                        ),
-                                                        iconColor: 'text-yellow-300',
-                                                    },
-                                                ]}
-                                                size={125}
-                                            />
+                                    {/* Description */}
+                                    {focus.description && (
+                                        <div
+                                            data-testid="tavern-lore"
+                                            className={`text-[13px] leading-relaxed text-stone-200 mb-3 pr-1 ${
+                                                isChinese ? '' : 'italic'
+                                            }`}
+                                        >
+                                            {focus.description}
                                         </div>
                                     )}
-                                </div>
 
-                                <div className="flex flex-col gap-1 my-4 border-t border-stone-300/90" />
+                                    {/* Stats grid: left column HP/SP/MoveSpeed,
+                                    right column radar polygon + STR/AGI/VIT/SPI */}
+                                    <div className="flex gap-5 mb-3">
+                                        {/* Left column: numerical stats with icons */}
+                                        <div className="flex flex-col justify-center gap-1 flex-1 min-w-0">
+                                            <StatRow
+                                                icon={
+                                                    <Heart className="w-3.5 h-3.5 fill-red-500 text-red-400" />
+                                                }
+                                                label="HP"
+                                                value={focus.hp}
+                                                color="text-red-400"
+                                            />
+                                            <StatRow
+                                                icon={
+                                                    <Zap className="w-3.5 h-3.5 fill-sky-400 text-sky-300" />
+                                                }
+                                                label="SP"
+                                                value={focus.sp}
+                                                subValue={`${spRegenToSec(focus.spRegenMs)}s`}
+                                                color="text-sky-400"
+                                            />
+                                            <StatRow
+                                                icon={
+                                                    <Sparkles className="w-3.5 h-3.5 text-yellow-300" />
+                                                }
+                                                label="LCK"
+                                                value={focus.stats?.luck ?? 1}
+                                                suffix="/10"
+                                                color="text-yellow-300"
+                                            />
+                                            <StatRow
+                                                icon={<Gauge className="w-3.5 h-3.5" />}
+                                                label="SPD"
+                                                value={moveSpeedToMps(focus.moveSpeed)}
+                                                suffix="m/s"
+                                                color="text-emerald-400"
+                                            />
+                                            <StatRow
+                                                icon={<Layers className="w-3.5 h-3.5" />}
+                                                label="SLT"
+                                                value={focus.weaponMax}
+                                                suffix="max"
+                                                color="text-orange-300"
+                                            />
+                                        </div>
 
-                                {/* Keyboard hints */}
-                                <div className="flex flex-col gap-2">
-                                    <div className="flex items-center gap-2 text-[11px] text-stone-500">
-                                        <span className="inline-flex min-w-[18px] items-center justify-center px-1 py-0.5 bg-stone-800 border border-stone-600 text-stone-300">
-                                            A
-                                        </span>
-                                        <span>/</span>
-                                        <span className="inline-flex min-w-[18px] items-center justify-center px-1 py-0.5 bg-stone-800 border border-stone-600 text-stone-300">
-                                            D
-                                        </span>
-                                        <span>{t('tavern.cycle')}</span>
-                                    </div>
-                                    <div className="flex items-center gap-2 text-[11px] text-amber-400">
-                                        <span className="relative inline-flex min-w-[18px] items-center justify-center px-1 py-0.5 bg-amber-900/40 border border-amber-900 text-amber-300">
-                                            F
-                                            <svg
-                                                className="absolute -inset-[1px] w-[calc(100%+2px)] h-[calc(100%+2px)] pointer-events-none overflow-visible"
-                                                viewBox="0 0 100 100"
-                                                preserveAspectRatio="none"
-                                                aria-hidden="true"
-                                            >
-                                                <path
-                                                    className={holding ? 'f-holding' : undefined}
-                                                    d="M 0.5 0.5 L 99.5 0.5 L 99.5 99.5 L 0.5 99.5 Z"
-                                                    fill="none"
-                                                    stroke="#fbbf24"
-                                                    strokeWidth="4"
-                                                    strokeDasharray="396"
-                                                    strokeDashoffset="396"
+                                        {/* Right column: radar polygon */}
+                                        {focus.stats && focus.statRange && (
+                                            <div className="shrink-0 items-center">
+                                                <RadarPolygon
+                                                    points={[
+                                                        {
+                                                            value: focus.stats.hp,
+                                                            min: focus.statRange.hp.min,
+                                                            max: focus.statRange.hp.max,
+                                                            label: 'HP',
+                                                            icon: (
+                                                                <Heart className="w-2.5 h-2.5 fill-red-500 text-red-400" />
+                                                            ),
+                                                            iconColor: 'text-red-400',
+                                                        },
+                                                        {
+                                                            value: focus.stats.sp,
+                                                            min: focus.statRange.sp.min,
+                                                            max: focus.statRange.sp.max,
+                                                            label: 'SP',
+                                                            icon: (
+                                                                <Zap className="w-2.5 h-2.5 fill-sky-400 text-sky-300" />
+                                                            ),
+                                                            iconColor: 'text-sky-400',
+                                                        },
+                                                        {
+                                                            value: focus.stats.moveSpeed,
+                                                            min: focus.statRange.moveSpeed.min,
+                                                            max: focus.statRange.moveSpeed.max,
+                                                            label: 'SPD',
+                                                            icon: <Gauge className="w-2.5 h-2.5" />,
+                                                            iconColor: 'text-emerald-400',
+                                                        },
+                                                        {
+                                                            value: focus.stats.weaponMax,
+                                                            min: focus.statRange.weaponMax.min,
+                                                            max: focus.statRange.weaponMax.max,
+                                                            label: 'SLT',
+                                                            icon: (
+                                                                <Layers className="w-2.5 h-2.5" />
+                                                            ),
+                                                            iconColor: 'text-orange-300',
+                                                        },
+                                                        {
+                                                            value: focus.stats.luck,
+                                                            min: focus.statRange.luck.min,
+                                                            max: focus.statRange.luck.max,
+                                                            label: 'LCK',
+                                                            icon: (
+                                                                <Sparkles className="w-2.5 h-2.5 text-yellow-300" />
+                                                            ),
+                                                            iconColor: 'text-yellow-300',
+                                                        },
+                                                    ]}
+                                                    size={125}
                                                 />
-                                            </svg>
-                                        </span>
-                                        <span>{t('tavern.confirmHold')}</span>
+                                            </div>
+                                        )}
                                     </div>
-                                </div>
-                            </>
-                        )
-                    ) : (
-                        /* ── Phase 2: Weapon pickup ── */
-                        <>
+
+                                    <div className="flex flex-col gap-1 my-4 border-t border-stone-300/90" />
+
+                                    {/* Keyboard hints */}
+                                    <div className="flex flex-col gap-2">
+                                        <div className="flex items-center gap-2 text-[11px] text-stone-500">
+                                            <span className="inline-flex min-w-[18px] items-center justify-center px-1 py-0.5 bg-stone-800 border border-stone-600 text-stone-300">
+                                                A
+                                            </span>
+                                            <span>/</span>
+                                            <span className="inline-flex min-w-[18px] items-center justify-center px-1 py-0.5 bg-stone-800 border border-stone-600 text-stone-300">
+                                                D
+                                            </span>
+                                            <span>{t('tavern.cycle')}</span>
+                                        </div>
+                                        <div className="flex items-center gap-2 text-[11px] text-amber-400">
+                                            <span className="relative inline-flex min-w-[18px] items-center justify-center px-1 py-0.5 bg-amber-900/40 border border-amber-900 text-amber-300">
+                                                F
+                                                <svg
+                                                    className="absolute -inset-[1px] w-[calc(100%+2px)] h-[calc(100%+2px)] pointer-events-none overflow-visible"
+                                                    viewBox="0 0 100 100"
+                                                    preserveAspectRatio="none"
+                                                    aria-hidden="true"
+                                                >
+                                                    <path
+                                                        className={
+                                                            holding ? 'f-holding' : undefined
+                                                        }
+                                                        d="M 0.5 0.5 L 99.5 0.5 L 99.5 99.5 L 0.5 99.5 Z"
+                                                        fill="none"
+                                                        stroke="#fbbf24"
+                                                        strokeWidth="4"
+                                                        strokeDasharray="396"
+                                                        strokeDashoffset="396"
+                                                    />
+                                                </svg>
+                                            </span>
+                                            <span>{t('tavern.confirmHold')}</span>
+                                        </div>
+                                    </div>
+                                </>
+                            )
+                        ) : (
+                            /* ── Phase 2: Weapon pickup ── */
+                            <>
                                 <div className="text-sm font-bold text-amber-200 mb-3">
                                     {focus.name}
                                 </div>

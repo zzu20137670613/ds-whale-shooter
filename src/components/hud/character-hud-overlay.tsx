@@ -1,6 +1,7 @@
 import React from 'react';
 import { Heart, Zap } from 'lucide-react';
 import { useGameStore } from '@/store/game-store';
+import { t } from '@/locales';
 import { useIsMobile } from '@/lib/use-is-mobile';
 
 import { CornerPixels, RETRO_BOX } from './retro-box';
@@ -103,7 +104,7 @@ export const CharacterHUDOverlay: React.FC = () => {
                                 <Zap className="w-4 h-4 fill-sky-400 text-sky-300 shrink-0" />
                                 <span className="leading-none">SP</span>
                                 <span className="ml-1 text-[9px] bg-stone-800 text-sky-300 px-1 py-0.5 border border-stone-600 rounded-[2px] leading-none uppercase tracking-tighter inline-flex items-center">
-                                    SPACE
+                                    {t('hud.spaceKey')}
                                 </span>
                                 <SkillBadge />
                             </span>
