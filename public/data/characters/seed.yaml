@@ -71,6 +71,7 @@ skill:
     name: Mascot Head
     nameZh: "头套"
     kind: headgear
+    spCost: 15
     absorbHits: 2
     cooldownMs: 30000
     tintColor: 0xFFE9A8

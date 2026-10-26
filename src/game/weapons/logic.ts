@@ -391,10 +391,10 @@ export class WeaponController {
         tx: number,
         ty: number,
         fire: boolean,
-        halfH: number,
+        handUp: number,
         footY?: number,
     ): void {
-        this.lastHalfH = halfH;
+        this.lastHalfH = handUp;
         this.lastFootY = footY;
         // Empty hotbar (tavern phase 2 / post-spawn with no weapons yet):
         // skip reload, fire, and auto-reload logic. The visual controller
@@ -455,7 +455,8 @@ export class WeaponController {
         // 4. Sync weapon attachment visual at character upper body / hand position
         const origin = this.body.position;
         const handX = origin.x;
-        const handY = origin.y - halfH; // Align weapon to character hitbox center (chest/hands)
+        // `handUp` is how far above the body centre her hands are drawn.
+        const handY = origin.y - handUp;
         const dx = tx - handX;
         const dy = ty - handY;
         const aimAngle = Math.atan2(dy, dx);

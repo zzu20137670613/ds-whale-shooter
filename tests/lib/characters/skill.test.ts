@@ -30,6 +30,7 @@ const HEADGEAR: CharacterSkillSpec = {
     nameZh: '头套',
     kind: 'headgear',
     absorbHits: 2,
+    spCost: 15,
     cooldownMs: 30000,
     tintColor: 0xffe9a8,
 };
@@ -91,8 +92,28 @@ describe('skillSpCost', () => {
         expect(skillSpCost(ROAR, 80)).toBe(64);
     });
 
-    it('is free for the headgear', () => {
-        expect(skillSpCost(HEADGEAR, 75)).toBe(0);
+    it('charges the headgear its spec price', () => {
+        // It used to be free by design, and that WAS the bug: press E on a full
+        // bar and the mascot head never cost anything.
+        expect(skillSpCost(HEADGEAR, 75)).toBe(15);
+    });
+
+    it('leaves a headgear free only when its spec says zero', () => {
+        expect(skillSpCost({ ...HEADGEAR, spCost: 0 }, 75)).toBe(0);
+    });
+});
+
+describe('headgear SP', () => {
+    it('pays the price when the head is put on', () => {
+        const result = useSkill(HEADGEAR, emptySkillRuntime(), 1000, 90, 90);
+        expect(result.used).toBe(true);
+        expect(result.spCost).toBe(15);
+    });
+
+    it('refuses the press when the pool cannot cover it', () => {
+        const result = useSkill(HEADGEAR, emptySkillRuntime(), 1000, 10, 90);
+        expect(result.used).toBe(false);
+        expect(result.spCost).toBe(0);
     });
 });
 

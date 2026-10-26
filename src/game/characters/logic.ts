@@ -28,6 +28,7 @@ import {
     skillSpCost,
     useSkill,
 } from '@/lib/characters/skill';
+import { handUpOffset, pickBodyTint } from '@/lib/characters/hand';
 import { SHOP_RESTORE_VITALS_EVENT } from '@/lib/characters/vitals';
 import {
     AIM_ASSIST,
@@ -653,18 +654,21 @@ export class CharacterController {
         sprite.setDepth(footY);
 
         // Player hurt flash visual feedback (danger crimson additive highlight)
-        if (now < this.hurtFlashUntil) {
-            sprite.setTint(0x992222);
-            (sprite as any).setTintMode?.(2);
-        } else if (this.skillRuntime.hitsLeft > 0) {
-            // The headgear stays visibly on until it breaks. The hurt flash
-            // wins for its short window, then this takes the tint back.
-            sprite.setTint(
+        // The headgear used to tint ADDITIVELY, which pushes light art to pure
+        // white - the owner's "释放技能后变成了全白". It now multiplies; the hurt
+        // flash keeps its additive blow-out because it lasts three frames.
+        const tint = pickBodyTint({
+            hurtFlash: now < this.hurtFlashUntil,
+            headgearWorn: this.skillRuntime.hitsLeft > 0,
+            headgearTint:
                 this.spec.skill?.kind === 'headgear'
                     ? (this.spec.skill.tintColor ?? HEADGEAR_DEFAULT_TINT)
                     : HEADGEAR_DEFAULT_TINT,
-            );
-            (sprite as any).setTintMode?.(2);
+            defaultTint: HEADGEAR_DEFAULT_TINT,
+        });
+        if (tint) {
+            sprite.setTint(tint.color);
+            (sprite as any).setTintMode?.(tint.mode);
         } else if ((sprite as any).tintMode !== 0) {
             sprite.clearTint();
             (sprite as any).setTintMode?.(0);
@@ -756,12 +760,22 @@ export class CharacterController {
         const defaultAimX = pos.x + (sprite.flipX ? -100 : 100);
         const defaultAimY = pos.y - this.spec.body.halfH;
 
+        // Where her hands actually are, not where her physics box is. The old
+        // `-halfH` orbit sits at knee height on a tall sprite (the owner's
+        // report: "武器位置太低了，在膝盖处"). Derived from the drawn height, so it
+        // scales with the art instead of with the hitbox.
+        const rawSpriteY =
+            this.spec.sprite?.offset?.bottom !== undefined
+                ? -this.spec.sprite.offset.bottom
+                : (this.spec.sprite?.offset?.y ?? 0);
+        const handUp = handUpOffset(sprite.displayHeight, this.spec.body.halfH + rawSpriteY);
+
         this.parts.weapons.update(
             now,
             this.targetX ?? defaultAimX,
             this.targetY ?? defaultAimY,
             (this.firing || this.mobileFiring) && now >= this.dodgeActiveUntil,
-            this.spec.body.halfH,
+            handUp,
             footY,
         );
 

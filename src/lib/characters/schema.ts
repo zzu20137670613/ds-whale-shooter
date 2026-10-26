@@ -79,7 +79,14 @@ const HeadgearSkillSchema = z
         absorbHits: z.number().int().gt(0),
         /** Cooldown before a broken headgear can be worn again. */
         cooldownMs: z.number().int().gte(0),
-        /** Additive tint while worn. Defaults to HEADGEAR_DEFAULT_TINT. */
+        /**
+         * SP paid when the headgear is put on. Optional with a default of 0 so
+         * older specs still parse - but 0 means the skill is free, which is how
+         * Seed ended up casting it forever on a full bar (the owner's report:
+         * "释放技能没扣蓝").
+         */
+        spCost: z.number().int().gte(0).default(0),
+        /** Tint colour while worn. Multiplied, never additive - see pickBodyTint. */
         tintColor: z.number().int().gte(0).optional(),
     })
     .strict();

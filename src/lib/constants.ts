@@ -204,6 +204,25 @@ export const DROP_FULL_RESTORE_AMOUNT = 9999;
  *  deliberately unlike the crimson hurt flash and the cyan dodge trail. */
 export const HEADGEAR_DEFAULT_TINT = 0xffe9a8;
 
+/**
+ * Where along a character's drawn height the held weapon should sit, measured
+ * from the feet up. 0.5 puts it at chest height - high enough to read as "held",
+ * low enough that a tall sprite's gun does not float over her head.
+ *
+ * The old code used the physics box (`-halfH` from the body centre) instead,
+ * which is roughly knee height on a sprite this tall; see `handUpOffset`.
+ */
+export const HAND_HEIGHT_RATIO = 0.5;
+
+// ─── Tint modes (Phaser 4 `Phaser.TintModes`) ──────────────────────────────
+// Copied as numbers so `lib/` stays engine-free. Verified against
+// node_modules/phaser/src/renderer/TintModes.js: MULTIPLY 0, FILL 1, ADD 2.
+export const TINT_MODE_MULTIPLY = 0;
+/** Replaces the texture colour with the tint. A white-out, not a highlight. */
+export const TINT_MODE_FILL = 1;
+/** Adds the tint on top of the texture. Saturates bright art to white. */
+export const TINT_MODE_ADD = 2;
+
 // ─── Character: locomotion (sprint) ────────────────────────────────────
 
 /**

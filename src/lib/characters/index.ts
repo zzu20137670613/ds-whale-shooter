@@ -7,14 +7,15 @@
  *   import { fetchCharacter } from '@/lib/characters';
  */
 
-export type { AnimSpec, CharacterIndex, CharacterSpec, CharacterUpgrade, SpriteSpec } from './types';
+export type {
+    AnimSpec,
+    CharacterIndex,
+    CharacterSpec,
+    CharacterUpgrade,
+    SpriteSpec,
+} from './types';
 export { parseCharacterIndex, parseCharacterYaml } from './parser';
 export { fetchCharacter, fetchCharacterIndex } from './loader';
 export { resolveRosterCharacterId } from './logic';
-export {
-    applyUpgrades,
-    clampUpgradeLevel,
-    maxUpgradeLevel,
-    upgradeCost,
-} from './upgrades';
+export { applyUpgrades, clampUpgradeLevel, maxUpgradeLevel, upgradeCost } from './upgrades';
 export type { UpgradeStat } from './upgrades';
