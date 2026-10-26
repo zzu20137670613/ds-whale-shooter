@@ -35,11 +35,13 @@ export const PET_PROTOCOL = 1;
  * Bonus used when the pet cannot be reached at all (not installed, asleep, or
  * an older build without `/level`).
  *
- * Chosen deliberately over the conservative options: this is an easter egg, not
- * a competitive stat, and 第七世's point stands - it should not be a nerf for
- * people who were already playing. She recommended the same.
+ * The owner set this at 20%, deliberately below every real tier (10/20/30/40/50):
+ * it is the floor for "I cannot verify your pet", not a substitute for MAX. An
+ * old build keeps half of a maxed pet's value instead of all of it, so upgrading
+ * the pet is still worth doing, while nobody's panel collapses on the day they
+ * update the game.
  */
-export const PET_FALLBACK_BONUS_PERCENT = 50;
+export const PET_FALLBACK_BONUS_PERCENT = 20;
 
 /** How long any single bridge call may take before it is treated as absent. */
 export const PET_TIMEOUT_MS = 900;

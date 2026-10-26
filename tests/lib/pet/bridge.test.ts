@@ -115,7 +115,7 @@ describe('resolvePetBonus', () => {
         expect(bonus).toEqual({ percent: 50, source: 'pet', label: 'MAX' });
     });
 
-    it('falls back to +50% when the pet is not there', async () => {
+    it('falls back to 20% when the pet is not there', async () => {
         const bonus = await resolvePetBonus({
             fetcher: vi.fn(async () => {
                 throw new Error('no pet');
@@ -133,6 +133,21 @@ describe('resolvePetBonus', () => {
         });
         expect(bonus.percent).toBe(PET_FALLBACK_BONUS_PERCENT);
         expect(bonus.label).toContain('旧版本');
+    });
+});
+
+describe('the fallback tier', () => {
+    it('is 20% - the owner set the fallback himself', () => {
+        expect(PET_FALLBACK_BONUS_PERCENT).toBe(20);
+    });
+
+    it('stays below a maxed pet, so upgrading her is still worth doing', () => {
+        // 20% is deliberately well under MAX. Note it equals the Lv.5-6 tier and
+        // sits *above* Lv.1-4: someone with no reachable pet gets more than
+        // someone on a Lv.1 pet. That asymmetry is the owner's call, but it is
+        // recorded here so nobody "tidies" the number up without deciding it.
+        expect(PET_FALLBACK_BONUS_PERCENT).toBeLessThan(50);
+        expect(PET_FALLBACK_BONUS_PERCENT).toBeGreaterThan(10);
     });
 });
 
