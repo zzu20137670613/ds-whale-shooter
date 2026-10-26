@@ -1,0 +1,38 @@
+# 隐藏关 3 · 开发者小屋（单图 2752x1536）
+
+> 规格抄的是**酒馆那张**（`public/assets/image/scenes/tavern.png`）：这是这边"单图小屋"的标准——
+> **严格正俯视、地板铺满整张画、家具一律贴边、没有立起来的墙**。
+>
+> 三个设计要点：
+>
+> 1. **笔记本是开着的、屏幕朝镜头倾斜**。从正上方看显示器本来只能看到一块板，
+>    但开着的笔记本屏幕天然朝上倾斜 —— 这样"屏幕亮着、能点"在物理上成立，
+>    玩家也一眼知道那是可交互的东西。
+> 2. **那个人只给背影**：小、在桌子前弓着、脸被头发和椅背挡住。
+>    正面画脸必崩，而且这间屋子的重点是"她在写代码"，不是她长什么样。
+> 3. **不写"电脑里显示你的名字"这类直白第四面墙**。破墙靠互动，
+>    不靠画面里塞字——画面里的字模型一律画成乱码。
+>
+> 尺寸：一张 2560x1440 生成 → 放大到 **2752x1536**（跟酒馆同规格，单图，不切块）。
+
+```
+2D top-down game map asset seen from DIRECTLY ABOVE (90 degrees, plan view), one cozy cabin room. The worn plank floor fills the whole frame and runs past ALL FOUR edges: no rim, no border, no vignette. Flat cel shading, thin ink outlines, large smooth colour fills, clean read at 1:1 - NOT painterly, NOT photoreal.
+
+EVERYTHING IS SEEN FROM ABOVE. Furniture exists only as flat shapes lying in the room, no standing walls, no ceiling, no roof beams overhead, no window in elevation. The room's edges are suggested by flat wooden bands and rails only.
+
+FURNITURE, all touching the frame edges, never in the middle: along the TOP EDGE a long worktable seen from above, its flat surface loaded; along the LEFT EDGE a low shelf with books and a whiteboard; along the RIGHT EDGE a bunk bed corner and a beanbag.
+
+ON THE TABLE, the centrepiece: an OPEN LAPTOP seen from above, its lid tilted toward the camera so the glowing screen is clearly visible - a bright cyan-white panel with faint lines of code. Beside it a second small monitor lying flat, a mechanical keyboard, a mouse, a mug, three noodle cups, a rubber duck, sticky notes along the table edge, a tangle of cables.
+
+ONE PERSON: a small figure seen from above and behind, sitting on an office chair at the table, back to the camera, hunched over the keyboard, one hand on the mouse. Face not visible - hidden by hair and the chair back. Dark hoodie, headphones. Keep the figure small and simple, one readable silhouette only.
+
+META PROPS scattered flat on the planks: printed pages, a whale plush on the shelf, an empty energy drink, a plush cat asleep on the beanbag, a whiteboard with a rough diagram and a checkmark, a small potted plant.
+
+TIME AND LIGHT: 3am. Warm desk lamp pool over the table, cold screen glow spilling onto the planks, the rest of the room in deep blue shadow, one window band showing night rain at the very edge. Long soft shadows from unseen furniture.
+
+Palette: warm oak #8A5A33, plank shadow #4A2E1C, screen cyan #7FE6F0, lamp gold #F0B45C, deep night blue #1A2233, dust grey #9A9186.
+
+Size: 16:9, full bleed, composed for a 2752x1536 canvas (everything readable inside the central 90%).
+
+Negative: isometric, three-quarter, perspective, vanishing point, walls standing up, ceiling, roof, window frame in elevation, horizon, people crowd, characters walking, text, letters, watermark, logo, cluttered mess in the centre, bright daylight, painterly.
+```
