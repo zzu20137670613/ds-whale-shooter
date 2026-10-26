@@ -1,0 +1,24 @@
+# The framed picture on the pavilion's wall - and the door behind it.
+#
+# Replaces the original game's wall ornament, which was a placeholder: same
+# trick (a prop monster whose death reveals the black alcove baked into
+# tavern.png), but the sprite is cut from our own art, so what hangs there now
+# is a small window into the room where this game is written.
+#
+# The weapon is the ornament's borrowed hack and must stay: ranged range 1 keeps
+# it out of the attack state, which is also what exempts it from contact damage.
+name: Cabin Picture
+nameZh: '小屋的画'
+hp: 1
+moveSpeed: 0.01
+prop: true
+body:
+    halfW: 53
+    halfH: 57
+weaponId: hollow-emblem
+sprite:
+    texture: assets/image/monsters/dev-cabin-picture.png
+    grid: { rows: 1, cols: 1 }
+    scale: 1.0
+    offset: { left: 0, bottom: 0 }
+drops: []

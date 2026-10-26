@@ -136,9 +136,11 @@ npcSpawns:
 # and creeps toward the player at moveSpeed, and the engine mirrors its sprite by
 # facing — the sprite art is pre-mirrored to compensate.
 monsters:
-    - type: hollow-emblem
-      x: 2642
-      'y': 896
+    # The original game's wall ornament is gone; this is our own picture of the
+    # room the game is written in. Same hole in tavern.png behind it.
+    - type: dev-cabin-picture
+      x: 2667
+      'y': 895
 materials: []
 teleporters:
     - id: tavern-exit
@@ -151,10 +153,10 @@ teleporters:
       targetPortalId: tavern-return
       requiresClear: false
       radius: 60
-    # Hidden level 1 (sunlit-henge). The wall ornament at x 2614..2720, y 838..952
-    # is a prop monster: shoot it and its sprite vanishes, revealing the black
-    # hole baked into tavern.png. This portal stays dark until then, because the
-    # tavern's only monster is that ornament and the portal is gated on the
+    # Hidden level 3 (dev-cabin). The picture at x 2614..2720, y 838..952 is a
+    # prop monster: shoot it and its sprite vanishes, revealing the black hole
+    # baked into tavern.png. This portal stays dark until then, because the
+    # tavern's only monster is that picture and the portal is gated on the
     # monster clear, so the hole and the portal appear together. wall-3a/3b/3c
     # form the doorway around it; radius 90 keeps the trigger inside the alcove,
     # so the player has to step into the hole rather than brush past the wall
@@ -162,7 +164,9 @@ teleporters:
     - id: hidden-1-entrance
       x: 2667
       'y': 895
-      targetScene: sunlit-henge
-      targetPortalId: teleporter-msfpy6pw
+      targetScene: dev-cabin
+      # Paired with the cabin's exit, so coming back puts the player in the hole
+      # they crawled out of rather than at the tavern's spawn point.
+      targetPortalId: dev-cabin-exit
       requiresClear: true
       radius: 90
