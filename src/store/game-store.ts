@@ -126,6 +126,8 @@ export interface GameUIState {
      * which pages to fetch.
      */
     comicIntroLevelId: string | null;
+    /** The developer cabin's computer is open on screen. */
+    devCabinOpen: boolean;
     /** Levels whose comic has already played this save - replayable via 跳过. */
     comicPlayedLevels: string[];
     /** The ending sequence is running; the scene is frozen behind it. */
@@ -222,6 +224,8 @@ export interface GameUIState {
     clearSaveData: () => void;
     setSelectedCharacterId: (id: string | null) => void;
     openComicIntro: (levelId: string) => void;
+    openDevCabin: () => void;
+    closeDevCabin: () => void;
     closeComicIntro: () => void;
     openSettlement: (runMs: number) => void;
     closeSettlement: () => void;
@@ -285,6 +289,7 @@ export const initialGameState = {
 
     selectedCharacterId: null as string | null,
     comicIntroLevelId: null as string | null,
+    devCabinOpen: false,
     comicPlayedLevels: [] as string[],
     settlementOpen: false,
     settlementRunMs: 0,
@@ -469,6 +474,8 @@ export const useGameStore = create<GameUIState>()(
             },
 
             setSelectedCharacterId: (id) => set({ selectedCharacterId: id }),
+            openDevCabin: () => set({ devCabinOpen: true }),
+            closeDevCabin: () => set({ devCabinOpen: false }),
             openComicIntro: (levelId) =>
                 set((state) => ({
                     comicIntroLevelId: levelId,

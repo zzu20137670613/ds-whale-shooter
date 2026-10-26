@@ -2,6 +2,7 @@ import { Suspense, lazy, useEffect } from 'react';
 
 import { PhaserGame } from '@/PhaserGame';
 import { ComicOverlay } from '@/components/hud/comic-overlay';
+import { DevCabinPanel } from '@/components/hud/dev-cabin-panel';
 import { GameHUDLayer } from '@/components/hud/game-hud-layer';
 import { PixelCrosshair } from '@/components/hud/pixel-crosshair';
 import { SettlementOverlay } from '@/components/hud/settlement-overlay';
@@ -57,6 +58,7 @@ function App() {
         const params = new URLSearchParams(window.location.search);
         const comic = params.get('comic');
         if (comic) useGameStore.getState().openComicIntro(comic);
+        if (params.get('devmail')) useGameStore.getState().openDevCabin();
         const settlement = params.get('settlement');
         if (settlement) useGameStore.getState().openSettlement(Number(settlement) || 754_000);
     }, []);
@@ -79,6 +81,7 @@ function App() {
                 <EditorPanel />
             </Suspense>
             <ComicOverlay />
+            <DevCabinPanel />
             <SettlementOverlay />
             <PixelCrosshair />
             {tavernCleared && <TouchControls />}
