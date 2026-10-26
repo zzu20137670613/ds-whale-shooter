@@ -21,7 +21,9 @@ const en: CatalogSource = {
     },
     death: {
         title: 'YOU DIED',
-        subtitle: 'The forest claims another wanderer.',
+        // Ezreal, First Move. The owner picked this line for the death
+        // screen: a sidekick's line under a death, not a hero's.
+        subtitle: "Oh, please don't die. I can't lose a sidekick. Not again.",
         restart: 'Restart',
         hint: 'Returns to the tavern',
     },
