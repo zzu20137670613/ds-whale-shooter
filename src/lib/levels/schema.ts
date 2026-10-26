@@ -340,6 +340,15 @@ export const LevelSchema = z
          * level opens on 34 pages of the story that got it here. `pages` is the
          * count; the files are `assets/image/comic/<levelId>-NN.jpg`.
          */
+        /**
+         * The monster whose death ends this level: the scene hands over to the
+         * settlement sequence instead of the normal clear-the-map victory.
+         */
+        boss: z
+            .object({ monsterType: z.string().min(1) })
+            .strict()
+            .optional(),
+
         introComic: z
             .object({ pages: z.number().int().gt(0) })
             .strict()
@@ -370,6 +379,7 @@ export const LevelSchema = z
             ...(v.tavern !== undefined ? { tavern: v.tavern } : {}),
             ...(v.character !== undefined ? { character: v.character } : {}),
             ...(v.introComic !== undefined ? { introComic: v.introComic } : {}),
+            ...(v.boss !== undefined ? { boss: v.boss } : {}),
             ...(v.characterSpawn !== undefined ? { characterSpawn: v.characterSpawn } : {}),
             ...(v.npcSpawns !== undefined ? { npcSpawns: v.npcSpawns } : {}),
             ...(v.monsters !== undefined ? { monsters: v.monsters } : {}),

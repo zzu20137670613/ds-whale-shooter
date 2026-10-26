@@ -1,0 +1,49 @@
+# PLACEHOLDER BOSS - Claude in the Warhammer line.
+#
+# Everything here is deliberately temporary, so the whole hidden level can be
+# walked end to end before a single phase is written:
+#   - hp 1: one shot kills her (the owner's call: "先用一枪死，先把路子跑通")
+#   - no phase logic, no bespoke attacks; she carries the weakest weapon in the
+#     game so the MonsterController has one, and mostly just closes in
+#   - the visual is her PLAYABLE character sheet, so the placeholder at least
+#     reads as Claude. When the boss sheet is drawn, swap `sprite.texture` and
+#     the `anims` frames here - nothing else needs to change.
+name: Claude
+nameZh: '克劳德（占位）'
+hp: 1
+money: 0
+moveSpeed: 2
+body:
+    halfW: 30
+    halfH: 34
+weaponId: rune-shield
+sfx:
+    hit: monster-hit
+    death: monster-death
+    aggro: monster-aggro
+sprite:
+    texture: assets/image/characters/claude.png
+    grid:
+        rows: 4
+        cols: 4
+    scale: 2
+    offset:
+        left: 0
+        bottom: 0
+anims:
+    idle:
+        frames: [0, 3]
+        frameRate: 6
+        repeat: -1
+    move:
+        frames: [4, 7]
+        frameRate: 10
+        repeat: -1
+    hit:
+        frames: [12, 15]
+        frameRate: 14
+        repeat: 0
+    death:
+        frames: [12, 15]
+        frameRate: 10
+        repeat: 0

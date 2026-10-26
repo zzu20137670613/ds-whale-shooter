@@ -131,6 +131,8 @@ export class LoadScene extends Phaser.Scene {
     private materialManager!: MaterialManager;
     private teleporterSystem!: TeleporterController;
     private triggerSystem!: TriggerController;
+    /** When this level started, for the ending's ledger. */
+    private levelStartedAtMs = 0;
     private audio!: AudioController;
     private pathDebugOverlay!: PathDebugOverlayHandles;
     private tavernController?: TavernController;
@@ -369,6 +371,16 @@ export class LoadScene extends Phaser.Scene {
             this.character.body,
             {
                 onMonsterDied: (monster) => {
+                    // The boss's death is the end of the story, not a clear-map
+                    // victory: hand over to the settlement sequence and stop.
+                    if (this.level.boss && monster.spec.id === this.level.boss.monsterType) {
+                        const runMs = Math.max(
+                            0,
+                            Math.round(performance.now() - this.levelStartedAtMs),
+                        );
+                        useGameStore.getState().openSettlement(runMs);
+                        return;
+                    }
                     // Scenery, not a creature: an opened prop stays open, which
                     // is what keeps the tavern ornament's black hole and the
                     // portal it hides revealed for good.
@@ -501,6 +513,8 @@ export class LoadScene extends Phaser.Scene {
                 store.setCharacterBeforeArena(store.selectedCharacterId);
             }
         }
+
+        this.levelStartedAtMs = performance.now();
 
         // The comic opens the level once per save; 跳过 is there for replays.
         if (this.level.introComic) {

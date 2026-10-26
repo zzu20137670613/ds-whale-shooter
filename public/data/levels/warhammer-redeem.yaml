@@ -35,6 +35,16 @@ characterSpawn:
     x: 2752
     y: 2560
     facing: right
+monsters:
+    # PLACEHOLDER: one-shot Claude standing in the middle of the ruined block.
+    # Everything about her behaviour lives in public/data/monsters/claude.yaml;
+    # the five phases replace this whole block once they are written.
+    - type: claude
+      x: 2752
+      y: 1536
+# Her death ends the level - the scene freezes and the settlement plays.
+boss: { monsterType: claude }
+
 airWalls:
     # Generated from the owner's red marking by scripts/collision-from-mask.py:
     # 73 largest-inscribed rectangles, 98% of the paint covered, and each of the
