@@ -8,7 +8,7 @@ import { CornerPixels, RETRO_BOX } from './retro-box';
 import { SkillBadge } from './skill-badge';
 
 export const CharacterHUDOverlay: React.FC = () => {
-    const { characterName, hp, maxHp, sp, maxSp, hubsVisible } = useGameStore();
+    const { characterName, hp, maxHp, sp, maxSp, hubsVisible, petBonus } = useGameStore();
     const mobile = useIsMobile();
 
     // Show whenever the character exists. Previously gated on
@@ -29,8 +29,20 @@ export const CharacterHUDOverlay: React.FC = () => {
         return (
             <div className="absolute top-4 left-4 z-20 pointer-events-none select-none font-['Silkscreen',monospace] w-[220px]">
                 <div className="flex flex-col gap-1.5 bg-stone-950/55 px-2.5 py-1.5 border border-amber-900/60 backdrop-blur-sm">
-                    <span className="text-[10px] font-bold tracking-wider text-amber-200 uppercase drop-shadow-[1px_1px_0px_#000]">
+                    <span className="flex items-baseline gap-1.5 text-[10px] font-bold tracking-wider text-amber-200 uppercase drop-shadow-[1px_1px_0px_#000]">
                         {characterName}
+                        {/* The desktop pet's tier. Visible on purpose: the bonus
+                            is invisible in the numbers, so without this the
+                            player has no way to tell the bridge worked. */}
+                        {petBonus && (
+                            <span
+                                data-testid="pet-bonus-chip"
+                                title={`${petBonus.label} · +${petBonus.percent}%`}
+                                className="text-[8px] font-normal tracking-normal text-emerald-300/90 normal-case"
+                            >
+                                ⌁{petBonus.label} +{petBonus.percent}%
+                            </span>
+                        )}
                     </span>
                     <div className="flex items-center gap-1.5">
                         <Heart className="w-3 h-3 fill-red-500 text-red-400 shrink-0" />

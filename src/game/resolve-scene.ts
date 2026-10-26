@@ -16,7 +16,13 @@
 import type { MusicSpec, SfxSpec } from '@/lib/audios';
 import { fetchAudioIndex, fetchAudioMusic, fetchAudioSfx } from '@/lib/audios';
 import type { CharacterSpec } from '@/lib/characters';
-import { applyUpgrades, fetchCharacter, fetchCharacterIndex, resolveRosterCharacterId } from '@/lib/characters';
+import {
+    applyUpgrades,
+    fetchCharacter,
+    fetchCharacterIndex,
+    resolveRosterCharacterId,
+} from '@/lib/characters';
+import { applyPetBonus } from '@/lib/pet/bonus';
 import type { SceneAssets } from '@/game/scenes/scene';
 import { fetchDrop } from '@/lib/drops';
 import type { DropSpec } from '@/lib/drops';
@@ -121,10 +127,17 @@ export async function resolveScene(
     // is built from: spawn HP, the HUD bars, movement and the save-restore
     // clamp all read this spec, so this single call makes every purchase
     // real. See `lib/characters/upgrades.ts`.
-    const character = applyUpgrades(
+    const upgraded = applyUpgrades(
         await fetchCharacter(characterId),
         useGameStore.getState().upgradeLevels,
     );
+    // The desktop pet's tier, applied last so it multiplies the *upgraded*
+    // panel - buying armor and then wearing the pet should compound. Reads the
+    // store rather than awaiting the bridge: the probe runs at boot and takes
+    // milliseconds, while the player needs seconds just to reach a level, and a
+    // missing pet is a no-op.
+    const petBonus = useGameStore.getState().petBonus;
+    const character = petBonus ? applyPetBonus(upgraded, petBonus.percent) : upgraded;
 
     const monsterSpecMap = new Map<string, MonsterSpec>();
     const monsterWeaponIds = new Set<string>();
