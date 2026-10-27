@@ -2,7 +2,6 @@ weapons:
     # Reserved rewards — not in any loadout. Damage / upgrade numbers stay at
     # their upstream placeholder values until those levels are designed.
     - arcana-staff      # hidden level 1 — ranged single shot
-    - rocket-launcher   # galgame level   — ranged AoE
     # DeepSeek's weapons (placeholder art; see each YAML for the swap note)
     - whale-cannon      # ranged — the heavy shot
     - whale-tail-slam   # melee   -- 咸鱼剑（原鲸娘尾击，2026-10-27 改名）
