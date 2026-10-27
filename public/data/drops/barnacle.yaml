@@ -1,12 +1,11 @@
 name: Barnacle
 nameZh: "藤壶"
+sellPrice: 1
 kind: monster
 sfx: pickup-hp
 # Not used, only sold. The price is a placeholder the shop will read later.
 effect:
     type: material
-    sellPrice: 1
-
 visual:
     size: 22
     tint: 0xe7e2d3

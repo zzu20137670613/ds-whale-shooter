@@ -1,5 +1,6 @@
 name: Weapon Drop
 nameZh: "武器"
+sellPrice: 0
 kind: static
 sfx: pickup-weapon
 visual:

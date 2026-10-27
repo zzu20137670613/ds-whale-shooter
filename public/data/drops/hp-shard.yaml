@@ -1,5 +1,6 @@
 name: HP Shard
 nameZh: "生命碎片"
+sellPrice: 0
 kind: static
 sfx: pickup-hp
 visual:

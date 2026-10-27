@@ -11,6 +11,7 @@
 # anim table is needed - DropInstance falls back to `setFrame(0)`.
 name: Iced Juice
 nameZh: "冰镇果汁"
+sellPrice: 0
 kind: static
 sfx: pickup-hp
 visual:

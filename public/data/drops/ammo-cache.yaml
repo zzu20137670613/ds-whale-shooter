@@ -1,5 +1,6 @@
 name: Ammo Cache
 nameZh: "弹药箱"
+sellPrice: 0
 kind: static
 sfx: pickup-ammo
 visual:

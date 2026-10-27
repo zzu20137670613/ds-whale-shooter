@@ -1,5 +1,6 @@
 name: Overcharge Core
 nameZh: "过载核心"
+sellPrice: 0
 kind: static
 sfx: pickup-overcharge
 visual:

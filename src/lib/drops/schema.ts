@@ -91,6 +91,8 @@ export const DropSpecSchema = z
         name: z.string().min(1),
         /** Chinese display name, shown in the backpack. */
         nameZh: z.string().min(1).optional(),
+        /** Coins a shop pays per unit. Missing = not sellable yet. */
+        sellPrice: z.number().gte(0).optional(),
         kind: z.enum(['static', 'monster']),
         visual: DropVisualSchema,
         effect: DropEffectSchema,
