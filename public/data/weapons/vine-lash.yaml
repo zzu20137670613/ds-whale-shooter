@@ -3,6 +3,10 @@ nameZh: "藤鞭"
 damage: 8
 cooldownMs: 600
 range: 200
+# Melee since 2026-10-27: a whip's range is how far it reaches, not how far
+# a projectile flies. The sheet always listed the stalker as 近战.
+hitWidth: 110
+hitHeight: 110
 upgrades:
     # Tavern weapon ladder. `costs.length` IS the max level.
     costs: [40, 90, 160, 250, 360]
@@ -13,18 +17,3 @@ visual:
     orbitRadius: 16
     anchor: [0.5, 0.5]
     swingAngle: 220
-bullet:
-    texture: assets/image/weapons/vine-tip.png
-    type: projectile
-    scale: 0.5
-    anchor: [0.5, 0.5]
-projectile:
-    speed: 13
-    visual:
-        radius: 5
-        width: 20
-        height: 6
-        color: 0x6f9a3c
-    lifeMs: 1500
-sfx:
-    bulletWall: bullet-wall

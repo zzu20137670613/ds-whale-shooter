@@ -553,10 +553,10 @@ describe('public/data integrity', () => {
 });
 
 describe('swing weapons', () => {
-    it('rune-shield and branch-sweep are melee, so they carry no projectile', () => {
+    it('the swing weapons carry no projectile', () => {
         // Converted 2026-10-27: their `range` is a swing reach now. A projectile
         // that died after 80px was a flash, not a threat.
-        for (const id of ['rune-shield', 'branch-sweep']) {
+        for (const id of ['rune-shield', 'branch-sweep', 'vine-lash']) {
             const spec = parseWeaponYaml(read(join(DATA, 'weapons', `${id}.yaml`)), id);
             expect(spec.projectile, `${id}: projectile`).toBeUndefined();
             expect(spec.hitWidth, `${id}: hitWidth`).toBeGreaterThan(0);
