@@ -333,6 +333,58 @@ export const BackgroundBlockSchema = z
         y: Math.round(v.y),
     }));
 
+/**
+ * Follow-spawn: entering one of the first few quadrants of the map drops a wave
+ * around the player. Off by default; only the big levels opt in.
+ *
+ * `pool` is split by role because a wave's shape is fixed - 2 melee + 2 ranged
+ * close, 2 melee + 3 ranged on the edges - so the only per-level choice is which
+ * monster fills each role.
+ */
+const SpawnerPoolSchema = z
+    .object({
+        melee: z.array(z.string().min(1)).default([]),
+        ranged: z.array(z.string().min(1)).default([]),
+    })
+    .strict();
+
+export const RegionSpawnerSchema = z
+    .object({
+        /** Grace period after the player enters a fresh quadrant. */
+        delayMs: z.number().gte(0).default(2000),
+        /** How many quadrants get a wave (the first N entered, each once). */
+        waves: z.number().int().gte(1).lte(4).default(3),
+        near: z
+            .object({
+                count: z.number().int().gte(0).default(4),
+                /** Ring around the player, in px. */
+                minDistance: z.number().gt(0).default(300),
+                maxDistance: z.number().gt(0).default(900),
+            })
+            .strict()
+            .default({ count: 4, minDistance: 300, maxDistance: 900 }),
+        far: z
+            .object({
+                count: z.number().int().gte(0).default(5),
+                /** How far inside the quadrant's edge the points sit. */
+                edgeInset: z.number().gte(0).default(200),
+            })
+            .strict()
+            .default({ count: 5, edgeInset: 200 }),
+        pool: SpawnerPoolSchema,
+    })
+    .strict()
+    .superRefine((value, ctx) => {
+        if (value.near.count + value.far.count <= 0) return;
+        if (value.pool.melee.length === 0 && value.pool.ranged.length === 0) {
+            ctx.addIssue({
+                code: 'custom',
+                message: 'spawner needs at least one monster in pool.melee or pool.ranged',
+                path: ['pool'],
+            });
+        }
+    });
+
 export const LevelSchema = z
     .object({
         title: z.string().min(1),
@@ -376,6 +428,8 @@ export const LevelSchema = z
         /** Tavern-mode only: per-character NPC standing positions. */
         npcSpawns: z.array(NpcSpawnSchema).optional(),
         monsters: z.array(MonsterSpawnSchema).optional(),
+        /** Follow-spawn configuration; absent means hand-placed monsters only. */
+        spawner: RegionSpawnerSchema.optional(),
         dropSpawns: z.array(DropSpawnSchema).optional(),
         materials: z.array(PlacedMaterialSchema).optional(),
         teleporters: z.array(TeleporterSchema).optional(),
@@ -405,6 +459,7 @@ export const LevelSchema = z
             ...(v.monsters !== undefined ? { monsters: v.monsters } : {}),
             ...(v.dropSpawns !== undefined ? { dropSpawns: v.dropSpawns } : {}),
             ...(v.materials !== undefined ? { materials: v.materials } : {}),
+            ...(v.spawner !== undefined ? { spawner: v.spawner } : {}),
             ...(v.teleporters !== undefined ? { teleporters: v.teleporters } : {}),
         };
     });

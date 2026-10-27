@@ -1039,6 +1039,16 @@ monsters:
     - type: sniper
       x: 6700
       'y': 1500
+spawner:
+    # 进入前 3 个象限各刷一波 9 只：近处 2 近战 + 2 远程，远处 2 近战 + 3 远程。
+    delayMs: 2000
+    waves: 3
+    near: { count: 4, minDistance: 300, maxDistance: 900 }
+    far: { count: 5, edgeInset: 200 }
+    pool:
+        melee: [drone]     # 星空潜行者
+        ranged: [sniper]   # 孢子狙击手
+
 dropSpawns: []
 materials: []
 teleporters:
