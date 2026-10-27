@@ -106,9 +106,43 @@ export const WeaponUpgradeSchema = z
     .object({
         /** Price of each successive level; `costs[0]` buys level 1. */
         costs: z.array(z.number().gte(0)).min(1),
-        damageMulPerLevel: z.number().gt(0),
+        /**
+         * Multiplier per level, compounded: `damage * mul ** level`.
+         *
+         * Convenient, but it rounds every level, so a low-damage weapon ends up
+         * with levels that buy nothing (4 damage at 1.15 gives 5, 5, 6, 7, 8).
+         * Use `damagePerLevel` when that matters.
+         */
+        damageMulPerLevel: z.number().gt(0).optional(),
+        /**
+         * Explicit damage at each level, read straight out of the table:
+         * `[base, lv1, lv2, ...]`, so the array is one longer than `costs`.
+         *
+         * Wins over `damageMulPerLevel` when both are present. This is the same
+         * idea as `costs`: no formula, no rounding surprises, every number in
+         * the YAML is the number the game uses.
+         */
+        damagePerLevel: z.array(z.number().gte(0)).min(2).optional(),
     })
-    .strict();
+    .strict()
+    .superRefine((ladder, ctx) => {
+        if (ladder.damagePerLevel) {
+            if (ladder.damagePerLevel.length !== ladder.costs.length + 1) {
+                ctx.addIssue({
+                    code: z.ZodIssueCode.custom,
+                    message:
+                        `damagePerLevel must list the base plus every level: ` +
+                        `expected ${ladder.costs.length + 1} entries, got ` +
+                        `${ladder.damagePerLevel.length}`,
+                });
+            }
+        } else if (ladder.damageMulPerLevel === undefined) {
+            ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: 'a weapon ladder needs either damagePerLevel or damageMulPerLevel',
+            });
+        }
+    });
 
 export const WeaponSpecSchema = z
     .object({

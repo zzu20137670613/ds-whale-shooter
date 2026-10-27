@@ -10,7 +10,7 @@ aoeRadius: 90
 upgrades:
     # Tavern weapon ladder. `costs.length` IS the max level.
     costs: [55, 120, 205, 315, 455]
-    damageMulPerLevel: 1.18
+    damagePerLevel: [46, 54, 64, 76, 89, 105]
 clipSize: 3
 reloadTimeMs: 3200
 visual:

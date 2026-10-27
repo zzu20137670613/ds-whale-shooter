@@ -57,7 +57,11 @@ export function applyWeaponUpgrade(spec: WeaponSpec, level: number): WeaponSpec 
     if (!ladder) return spec;
     const lv = clampLevel(level, ladder.costs.length);
     if (lv === 0) return spec;
-    const damage = Math.max(1, Math.round(spec.damage * Math.pow(ladder.damageMulPerLevel, lv)));
+    const damage = ladder.damagePerLevel
+        ? // Explicit table: the YAML number IS the number the game uses. No
+          // rounding, so no level can silently buy nothing.
+          Math.max(1, Math.round(ladder.damagePerLevel[lv] ?? spec.damage))
+        : Math.max(1, Math.round(spec.damage * Math.pow(ladder.damageMulPerLevel ?? 1, lv)));
     return { ...spec, damage };
 }
 

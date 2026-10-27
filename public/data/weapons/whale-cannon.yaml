@@ -7,7 +7,7 @@ range: 760
 upgrades:
     # Tavern weapon ladder. `costs.length` IS the max level.
     costs: [40, 90, 160, 250, 360]
-    damageMulPerLevel: 1.15
+    damagePerLevel: [40, 46, 53, 61, 70, 80]
 clipSize: 2
 reloadTimeMs: 2600
 bulletsPerShot: 1

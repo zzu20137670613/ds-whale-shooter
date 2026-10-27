@@ -44,6 +44,69 @@ hitHeight: 20
 const spec = parseWeaponYaml(YAML, 'shotgun');
 const plain = parseWeaponYaml(PLAIN, 'bare-hands');
 
+/**
+ * The owner asked for the ladder to be writable as explicit numbers, the same
+ * way `costs` already is: "写成死值". These cover the branch that reads them.
+ */
+const EXPLICIT_YAML = `
+name: Table Gun
+damage: 4
+cooldownMs: 100
+range: 500
+projectile:
+    speed: 20
+    visual: { radius: 4, width: 16, height: 4, color: 1 }
+upgrades:
+    costs: [40, 90, 160]
+    damagePerLevel: [4, 5, 7, 10]
+`;
+
+describe('an explicit damage ladder', () => {
+    const ID = 'table-gun';
+
+    it('uses the YAML numbers verbatim, base index 0', () => {
+        const spec = parseWeaponYaml(EXPLICIT_YAML, ID);
+        expect(applyWeaponUpgrade(spec, 0).damage).toBe(4);
+        expect(applyWeaponUpgrade(spec, 1).damage).toBe(5);
+        expect(applyWeaponUpgrade(spec, 2).damage).toBe(7);
+        expect(applyWeaponUpgrade(spec, 3).damage).toBe(10);
+    });
+
+    it('beats damageMulPerLevel when both are present', () => {
+        const both = parseWeaponYaml(
+            EXPLICIT_YAML.replace(
+                'damagePerLevel: [4, 5, 7, 10]',
+                'damagePerLevel: [4, 5, 7, 10]\n    damageMulPerLevel: 2',
+            ),
+            ID,
+        );
+        // 4 * 2^1 would be 8; the table says 5 and the table wins.
+        expect(applyWeaponUpgrade(both, 1).damage).toBe(5);
+    });
+
+    it('can express a level that is deliberately flat', () => {
+        const flat = parseWeaponYaml(
+            EXPLICIT_YAML.replace('damagePerLevel: [4, 5, 7, 10]', 'damagePerLevel: [4, 5, 5, 9]'),
+            ID,
+        );
+        expect(applyWeaponUpgrade(flat, 2).damage).toBe(5);
+    });
+
+    it('rejects a table that does not cover base + every level', () => {
+        // Three costs means four entries: base, lv1, lv2, lv3.
+        const short = EXPLICIT_YAML.replace(
+            'damagePerLevel: [4, 5, 7, 10]',
+            'damagePerLevel: [4, 5, 7]',
+        );
+        expect(() => parseWeaponYaml(short, ID)).toThrow(/damagePerLevel/);
+    });
+
+    it('rejects a ladder that offers neither a table nor a multiplier', () => {
+        const neither = EXPLICIT_YAML.replace(/\n    damagePerLevel: \[4, 5, 7, 10\]/, '');
+        expect(() => parseWeaponYaml(neither, ID)).toThrow(/damagePerLevel|damageMulPerLevel/);
+    });
+});
+
 describe('maxWeaponUpgradeLevel', () => {
     it('reads the ladder length', () => {
         expect(maxWeaponUpgradeLevel(spec)).toBe(3);
@@ -97,7 +160,10 @@ describe('applyWeaponUpgrade', () => {
 
     it('never drops damage below 1', () => {
         const weak = parseWeaponYaml(
-            YAML.replace('damage: 5', 'damage: 1').replace('damageMulPerLevel: 1.5', 'damageMulPerLevel: 0.01'),
+            YAML.replace('damage: 5', 'damage: 1').replace(
+                'damageMulPerLevel: 1.5',
+                'damageMulPerLevel: 0.01',
+            ),
             'shotgun',
         );
 
