@@ -5,8 +5,8 @@
 # swing are live; the pose is an art task.
 # PLACEHOLDER ART — reuses the vine-lash.png tendril as the tail until tail art
 # exists. Numbers are placeholders: the whole ladder gets re-tuned.
-name: Whale Tail Slam
-nameZh: "鲸娘尾击"
+name: Salted Fish Sword
+nameZh: "咸鱼剑"
 damage: 24
 cooldownMs: 520
 range: 210

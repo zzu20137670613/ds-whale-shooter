@@ -21,25 +21,25 @@ describe('pickText', () => {
     it('returns the English string in the en locale even when a sibling exists', () => {
         setLocale('en');
 
-        expect(pickText('Whale Tail Slam', '鲸娘尾击')).toBe('Whale Tail Slam');
+        expect(pickText('Salted Fish Sword', '咸鱼剑')).toBe('Salted Fish Sword');
     });
 
     it('prefers the localized sibling in the zh-CN locale', () => {
         setLocale('zh-CN');
 
-        expect(pickText('Whale Tail Slam', '鲸娘尾击')).toBe('鲸娘尾击');
+        expect(pickText('Salted Fish Sword', '咸鱼剑')).toBe('咸鱼剑');
     });
 
     it('falls back to English when no sibling was supplied', () => {
         setLocale('zh-CN');
 
-        expect(pickText('Whale Tail Slam')).toBe('Whale Tail Slam');
+        expect(pickText('Salted Fish Sword')).toBe('Salted Fish Sword');
     });
 
     it('treats an empty sibling as absent rather than rendering a blank name', () => {
         setLocale('zh-CN');
 
-        expect(pickText('Whale Tail Slam', '')).toBe('Whale Tail Slam');
+        expect(pickText('Salted Fish Sword', '')).toBe('Salted Fish Sword');
     });
 
     it('follows the locale the store set', () => {

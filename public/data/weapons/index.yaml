@@ -5,7 +5,7 @@ weapons:
     - rocket-launcher   # galgame level   — ranged AoE
     # DeepSeek's weapons (placeholder art; see each YAML for the swap note)
     - whale-cannon      # ranged — the heavy shot
-    - whale-tail-slam   # melee  — she turns and swings her tail
+    - whale-tail-slam   # melee   -- 咸鱼剑（原鲸娘尾击，2026-10-27 改名）
     # Monster weapons — one per monster in the levels that exist today
     - thorn-scythe-claws
     - moss-bark-rifle
