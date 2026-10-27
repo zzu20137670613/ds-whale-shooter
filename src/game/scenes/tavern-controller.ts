@@ -46,7 +46,8 @@ export interface TavernFocusPayload {
     hp: number;
     sp: number;
     moveSpeed: number;
-    spRegenMs: number;
+    /** Passive SP per second (the HUD turns it into a refill time). */
+    spRegenPerSec: number;
     /** Free-form description from the character spec — lore / role.
      *  Shown on the tavern HUD below the name. */
     description?: string;
@@ -377,7 +378,7 @@ export class TavernController {
             hp: s.hp,
             sp: s.sp,
             moveSpeed: s.moveSpeed,
-            spRegenMs: s.spRegenMs,
+            spRegenPerSec: s.spRegenPerSec,
             description: s.description ? pickText(s.description, s.descriptionZh) : undefined,
             stats: {
                 hp: s.hp,

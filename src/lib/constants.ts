@@ -258,7 +258,15 @@ export const COMBAT_PLAYER_DAMAGE_COOLDOWN_MS = 100;
  *  At 0.5: luck=10 → 50 %, luck=5 → 25 %, luck=1 → 5 %.
  *  Tune this to adjust overall crit frequency without
  *  touching individual character YAML files. */
-export const COMBAT_CRIT_MULTIPLIER = 0.5;
+export const COMBAT_CRIT_MULTIPLIER = 1.0;
+
+/**
+ * Flat damage soaked per armour level: L1 soaks 5, L5 soaks 25.
+ *
+ * Flat rather than a percentage on purpose - a percentage would blunt a boss's
+ * ultimate, and the owner wants those to still land like a truck.
+ */
+export const ARMOR_PER_LEVEL = 5;
 
 /** Damage multiplier applied when a hit is a critical strike.
  *  finalDamage = baseDamage * COMBAT_CRIT_DAMAGE_MULTIPLIER.

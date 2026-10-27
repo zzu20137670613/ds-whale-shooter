@@ -55,8 +55,9 @@ const PX_PER_METER = 150;
 const STEPS_PER_SEC = 60;
 const moveSpeedToMps = (moveSpeed: number): string =>
     ((moveSpeed * STEPS_PER_SEC) / PX_PER_METER).toFixed(1);
-/** SP regen time (ms → s, 1 decimal). spRegenMs is "0→max refill time". */
-const spRegenToSec = (spRegenMs: number): string => (spRegenMs / 1000).toFixed(1);
+/** Seconds to refill an empty SP bar at `perSec`. */
+const spRegenToSec = (sp: number, perSec: number): string =>
+    perSec > 0 ? (sp / perSec).toFixed(1) : '∞';
 
 interface StatRowProps {
     icon: React.ReactNode;
@@ -286,7 +287,7 @@ function isSameFocusContent(a: TavernFocusPayload | null, b: TavernFocusPayload 
         a.name !== b.name ||
         a.hp !== b.hp ||
         a.sp !== b.sp ||
-        a.spRegenMs !== b.spRegenMs ||
+        a.spRegenPerSec !== b.spRegenPerSec ||
         a.weaponCount !== b.weaponCount ||
         a.weaponMax !== b.weaponMax ||
         a.description !== b.description
@@ -606,7 +607,7 @@ export const TavernHud: React.FC = () => {
                                                 }
                                                 label="SP"
                                                 value={focus.sp}
-                                                subValue={`${spRegenToSec(focus.spRegenMs)}s`}
+                                                subValue={`${spRegenToSec(focus.sp, focus.spRegenPerSec)}s`}
                                                 color="text-sky-400"
                                             />
                                             <StatRow

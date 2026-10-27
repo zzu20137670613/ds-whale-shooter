@@ -63,6 +63,8 @@ export interface CharacterRuntime {
     heal(hpDelta: number, spDelta: number): void;
     /** Add `fraction * currentWeaponClipSize` bullets to the active weapon. */
     refillAmmo(fraction: number): void;
+    /** Apply a world hit; flat armour is subtracted inside the character. */
+    hurt(damage: number): void;
     /** Switch to a named weapon if it's in the hotbar. No-op if not present.
      *  Returns false on the placeholder. */
     pickUpWeapon(weaponId: string): boolean;
@@ -324,6 +326,9 @@ export function loadCharacter(
             refillAmmo: () => {
                 /* placeholder: no controller */
             },
+            hurt: () => {
+                /* placeholder: no controller */
+            },
             pickUpWeapon: () => false,
             tryPickupWeaponById: () => 'unknown' as const,
             replaceWeaponSlot: () => false,
@@ -493,6 +498,7 @@ export function loadCharacter(
         debugHitboxRect,
         heal: (hp, sp) => controller.heal(hp, sp),
         refillAmmo: (f) => controller.refillAmmo(f),
+        hurt: (damage) => controller.hurt(damage),
         pickUpWeapon: (id) => controller.pickUpWeapon(id),
         tryPickupWeaponById: (id, byId) => controller.tryPickupWeaponById(id, byId),
         replaceWeaponSlot: (idx, id, byId) => controller.replaceWeaponSlot(idx, id, byId),

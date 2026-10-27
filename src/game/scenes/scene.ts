@@ -449,7 +449,7 @@ export class LoadScene extends Phaser.Scene {
                         this.dropSystem.spawn(r.spec as never, mp.x, mp.y);
                     }
                 },
-                onPlayerHit: (damage) => this.character.heal(-damage, 0),
+                onPlayerHit: (damage) => this.character.hurt(damage),
             },
             pathfinder,
         );

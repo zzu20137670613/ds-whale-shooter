@@ -30,7 +30,14 @@
 import type { CharacterSpec } from './types';
 
 /** Stats an upgrade may move. */
-export type UpgradeStat = 'hp' | 'sp' | 'moveSpeed' | 'spRegenMs' | 'luck';
+export type UpgradeStat =
+    | 'hp'
+    | 'sp'
+    | 'moveSpeed'
+    | 'spRegenMs'
+    | 'spRegenPerSec'
+    | 'armor'
+    | 'luck';
 
 /** Clamp a raw purchase level into `[0, ladderLength]`. */
 export function clampUpgradeLevel(level: number | undefined, ladderLength: number): number {

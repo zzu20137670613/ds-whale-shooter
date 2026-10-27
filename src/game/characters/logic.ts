@@ -29,6 +29,7 @@ import {
     useSkill,
 } from '@/lib/characters/skill';
 import { handUpOffset, pickBodyTint } from '@/lib/characters/hand';
+import { damageAfterArmor } from '@/lib/characters/combat';
 import { SHOP_RESTORE_VITALS_EVENT } from '@/lib/characters/vitals';
 import {
     AIM_ASSIST,
@@ -342,6 +343,8 @@ export class CharacterController {
     /** Dev cheat: when true, `heal(hpDelta<0, …)` is a no-op so the
      *  character can't die. Toggled via the cheat panel / EventBus. */
     private infiniteHp = false;
+    /** Timestamp of the last SP trickle, so the rate is frame-rate independent. */
+    private lastSpRegenAt = 0;
     /** Skill state — see `lib/characters/skill`. One runtime serves every
      *  kind; the controller only reads and writes it through the pure API. */
     private skillRuntime = emptySkillRuntime();
@@ -479,6 +482,16 @@ export class CharacterController {
             }
         }
         if (spDelta !== 0) this.sp = Math.max(0, Math.min(this.spec.sp, this.sp + spDelta));
+    }
+
+    /**
+     * Take a hit from the world. Flat armour is applied here, once, so every
+     * damage source shares the same clamp and a soaked hit can never heal.
+     */
+    hurt(damage: number): void {
+        const taken = damageAfterArmor(damage, this.spec.armor ?? 0);
+        if (taken <= 0) return;
+        this.heal(-taken, 0);
     }
 
     /** Add `fraction * currentWeaponClipSize` bullets to the active weapon. */
@@ -720,13 +733,20 @@ export class CharacterController {
         // ── Animation state machine ─────────────────────────────────
         this.driveAnims(intent.vx !== 0 || intent.vy !== 0, now < this.dodgeActiveUntil, sprinting);
 
-        // ── SP regen: none ──────────────────────────────────────────
-        // HP and SP do NOT regenerate — that is the design. The only ways
-        // back up are a pickup on the ground or the merchant's paid refill
-        // (`lib/characters/vitals`). A passive trickle made every skill free
-        // again within seconds and erased the cost of a dodge, so the
-        // per-frame top-up that used to live here is gone on purpose.
-        // `spRegenMs` in the character YAML is now unused.
+        // ── SP regen: a slow trickle, rate-based ────────────────────
+        // The owner brought this back, so skills and dodges slowly pay for
+        // themselves again. Rate is `spRegenPerSec` (0.5 base, up to 2.0 with a
+        // fully upgraded spirit ladder), accumulated in seconds. HP still does
+        // NOT regenerate - that part of the old rule stands.
+        const spRate = this.spec.spRegenPerSec ?? 0;
+        if (spRate > 0 && this.sp < this.spec.sp) {
+            if (this.lastSpRegenAt === 0) this.lastSpRegenAt = now;
+            const elapsedSec = (now - this.lastSpRegenAt) / 1000;
+            if (elapsedSec > 0) {
+                this.sp = Math.min(this.spec.sp, this.sp + elapsedSec * spRate);
+            }
+        }
+        this.lastSpRegenAt = now;
 
         // ── Footstep SFX (throttled; cadence from spec) ─────────────
         const moving = intent.vx !== 0 || intent.vy !== 0;

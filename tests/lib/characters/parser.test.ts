@@ -32,6 +32,9 @@ hotbar:
             hp: 100,
             sp: 60,
             moveSpeed: 10,
+            // Schema defaults: no armour yet, and half an SP per second.
+            armor: 0,
+            spRegenPerSec: 0.5,
             spRegenMs: 5000,
             body: { halfW: 16, halfH: 24 },
             dodge: { spCost: 15, speed: 14, durationMs: 220, cooldownMs: 600 },

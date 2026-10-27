@@ -19,10 +19,12 @@ prompt: |
     `deepseek.yaml`: 2048x2048, 4x4 grid, one flat continuous magenta field,
     no grid lines, no text, no watermark, and the same character in all 16
     cells — idle (row 1), walk (row 2), run (row 3), dodge (row 4).
-hp: 88
-sp: 85
-luck: 8
-moveSpeed: 4.6
+hp: 90
+armor: 0
+spRegenPerSec: 0.5
+sp: 110
+luck: 5
+moveSpeed: 5
 spRegenMs: 3400
 gender: female
 body:
@@ -52,24 +54,27 @@ skill:
     shieldHits: 1
 weaponMax: 4
 upgrades:
-    # Tavern upgrade ladders. `costs.length` IS the max level. The cheapest
-    # column is the character's own growth axis — that is what separates the
-    # five AI girls from each other, see 角色数值总表.md.
+    # 四条梯子，级数 = costs.length；价格是角色之间的区分度，效果是全局规则。
     armor:
+        # 护甲：固定减伤 -5/级，满级 -25。承伤 = max(0, 伤害 - 护甲)，不会回血。
         costs: [34, 68, 112, 168, 240]
         effects:
-            - { stat: hp, mode: mul, perLevel: 1.12 }
+            - { stat: armor, mode: add, perLevel: 5 }
     agility:
+        # 敏捷：移速绝对值 +0.3/级。
         costs: [46, 92, 150, 222, 316]
         effects:
-            - { stat: moveSpeed, mode: mul, perLevel: 1.08 }
+            - { stat: moveSpeed, mode: add, perLevel: 0.3 }
     spirit:
+        # 灵力：每级 +10 HP 上限、+10 SP 上限、+0.3 SP/秒。
         costs: [28, 56, 92, 136, 192]
         effects:
-            - { stat: sp, mode: mul, perLevel: 1.15 }
-            - { stat: spRegenMs, mode: mul, perLevel: 0.92 }
+            - { stat: hp, mode: add, perLevel: 10 }
+            - { stat: sp, mode: add, perLevel: 10 }
+            - { stat: spRegenPerSec, mode: add, perLevel: 0.3 }
     luck:
-        costs: [68, 136, 220, 340]
+        # 幸运：+1/级，5 级。幸运 10 = 100% 暴击（双倍伤害）。
+        costs: [68, 136, 220, 340, 527]
         effects:
             - { stat: luck, mode: add, perLevel: 1 }
 stats:

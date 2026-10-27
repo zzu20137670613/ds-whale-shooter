@@ -223,7 +223,7 @@ export const CharacterUpgradeSchema = z
             .array(
                 z
                     .object({
-                        stat: z.enum(['hp', 'sp', 'moveSpeed', 'spRegenMs', 'luck']),
+                        stat: z.enum(['hp', 'sp', 'moveSpeed', 'spRegenMs', 'spRegenPerSec', 'armor', 'luck']),
                         /** `mul` compounds per level, `add` is flat per level. */
                         mode: z.enum(['mul', 'add']),
                         perLevel: z.number(),
@@ -265,7 +265,16 @@ export const CharacterSpecSchema = z
         hp: z.number().gte(0),
         sp: z.number().gte(0),
         moveSpeed: z.number().gt(0),
-        spRegenMs: z.number().gt(0),
+        /** Flat damage soaked per hit. 0 = no armour; upgraded to 25. */
+        armor: z.number().gte(0).default(0),
+        /**
+         * Passive SP per second. Replaces the old `spRegenMs` interval, which the
+         * game stopped reading when passive regen was removed; the trickle is back
+         * now, and a rate is the unit the design is written in.
+         */
+        spRegenPerSec: z.number().gte(0).default(0.5),
+        /** Deprecated: kept so old YAML and the editor still load. Unused. */
+        spRegenMs: z.number().gt(0).optional(),
         /** Voice identity for the `hurt` SFX. When set, CharacterController
          *  picks `sfx.hurtFemale` / `sfx.hurtMale`; otherwise falls back to
          *  the gender-neutral `sfx.hurt`. */

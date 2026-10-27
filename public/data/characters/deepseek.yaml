@@ -86,9 +86,11 @@ prompt: |
     - Limited muted palette: ~32 colors total.
     - No magenta or pink anywhere on the character body; the background
       is the only place magenta appears.
-hp: 95
-sp: 75
-luck: 6
+hp: 110
+armor: 0
+spRegenPerSec: 0.5
+sp: 90
+luck: 3
 moveSpeed: 5
 spRegenMs: 4200
 gender: female
@@ -116,23 +118,27 @@ skill:
     damageMul: 2
 weaponMax: 4
 upgrades:
-    # Tavern upgrade ladders. `costs.length` IS the max level.
-    # armor->hp, agility->moveSpeed, spirit->sp+spRegenMs, luck->luck.
+    # 四条梯子，级数 = costs.length；价格是角色之间的区分度，效果是全局规则。
     armor:
+        # 护甲：固定减伤 -5/级，满级 -25。承伤 = max(0, 伤害 - 护甲)，不会回血。
         costs: [30, 60, 100, 150, 220]
         effects:
-            - { stat: hp, mode: mul, perLevel: 1.12 }
+            - { stat: armor, mode: add, perLevel: 5 }
     agility:
+        # 敏捷：移速绝对值 +0.3/级。
         costs: [40, 80, 130, 190, 270]
         effects:
-            - { stat: moveSpeed, mode: mul, perLevel: 1.08 }
+            - { stat: moveSpeed, mode: add, perLevel: 0.3 }
     spirit:
+        # 灵力：每级 +10 HP 上限、+10 SP 上限、+0.3 SP/秒。
         costs: [35, 70, 115, 170, 240]
         effects:
-            - { stat: sp, mode: mul, perLevel: 1.15 }
-            - { stat: spRegenMs, mode: mul, perLevel: 0.92 }
+            - { stat: hp, mode: add, perLevel: 10 }
+            - { stat: sp, mode: add, perLevel: 10 }
+            - { stat: spRegenPerSec, mode: add, perLevel: 0.3 }
     luck:
-        costs: [80, 160, 260, 400]
+        # 幸运：+1/级，5 级。幸运 10 = 100% 暴击（双倍伤害）。
+        costs: [80, 160, 260, 400, 620]
         effects:
             - { stat: luck, mode: add, perLevel: 1 }
 sfx:
