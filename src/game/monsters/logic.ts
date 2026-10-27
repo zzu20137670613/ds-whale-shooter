@@ -204,6 +204,18 @@ export class PathfindingService {
      * our grid — is what cost those hundreds of milliseconds. Keeping the world
      * grid whole is what keeps every index -> world conversion unchanged.
      */
+    /**
+     * Whether a world point sits on a wall cell. Used to keep follow-spawn
+     * points out of bookshelves; the one-cell safety buffer counts as walkable so
+     * a monster is never refused a spot just outside a wall.
+     */
+    isBlocked(x: number, y: number): boolean {
+        const gx = Math.floor(x / this.cellSize);
+        const gy = Math.floor(y / this.cellSize);
+        if (gx < 0 || gy < 0 || gx >= this.gridWidth || gy >= this.gridHeight) return true;
+        return this.grid[gy][gx] === 1;
+    }
+
     setFocus(view: { left: number; top: number; right: number; bottom: number } | null): void {
         this.focusRect = view;
 

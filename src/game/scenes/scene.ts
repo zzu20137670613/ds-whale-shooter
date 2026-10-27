@@ -37,6 +37,7 @@ async function getMonsterSpriteCellDims(
     };
 }
 import { PathfindingService } from '@/game/monsters/logic';
+import { RegionSpawner } from '@/game/monsters/region-spawner';
 import {
     createPathDebugOverlay,
     type PathDebugOverlayHandles,
@@ -125,7 +126,22 @@ import { loadWeaponAssets } from '@/game/weapons/weapon';
 
 export class LoadScene extends Phaser.Scene {
     private character!: CharacterRuntime;
+    /**
+     * Whether the level counts as finished.
+     *
+     * Levels with a `spawner` (the library, the sky city, Atlantis) must also have
+     * fired every wave - otherwise the field would read as "empty" during the two
+     * seconds before the first wave and the exit portal would pop immediately.
+     * Every other level keeps the original rule: no monsters, no pending spawns.
+     */
+    private isLevelCleared(): boolean {
+        if (!this.monsterSystem.isAllCleared()) return false;
+        return this.regionSpawner ? this.regionSpawner.isDone() : true;
+    }
+
     private monsterSystem!: MonsterController;
+    /** Follow-spawn waves; only built when the level declares a `spawner`. */
+    private regionSpawner?: RegionSpawner;
     /** Present only in the four-block worlds — see `usesMerchant`. */
     private merchant?: MerchantController;
     private dropSystem!: DropController;
@@ -352,6 +368,24 @@ export class LoadScene extends Phaser.Scene {
         // Stays hidden in production; toggled via the path-debug-visible
         // event from the editor's Air-walls section.
         this.pathDebugOverlay = createPathDebugOverlay(this, pathfinder);
+
+        // Follow-spawn: only the levels whose YAML declares a `spawner` block get
+        // one. Every other level keeps its hand-placed waves and the old clear
+        // rule untouched.
+        if (this.level.spawner) {
+            this.regionSpawner = new RegionSpawner({
+                levelId: this.id,
+                imageSize: this.level.imageSize,
+                config: this.level.spawner,
+                getMonster: (type) => this.assets.monsterSpecs.get(type),
+                getWeapon: (weaponId) => this.assets.weaponsById.get(weaponId),
+                spawn: (spec, weapon, x, y, waveId) =>
+                    this.monsterSystem.spawnDynamic(spec, weapon, x, y, waveId),
+                // Walls only: the one-cell safety buffer is fine to stand in,
+                // otherwise a point just outside a bookshelf gets refused.
+                isBlocked: (x, y) => pathfinder.isBlocked(x, y),
+            });
+        }
 
         // Wire monster controller — self-spawns from level.monsters.
         // Props the player has already shot open are not spawned again: the
@@ -645,7 +679,7 @@ export class LoadScene extends Phaser.Scene {
             this.level.teleporters,
             this.id,
             () => (this.character?.body?.position ? this.character.body.position : null),
-            (spec) => isPortalArmed(spec, this.monsterSystem.isAllCleared()),
+            (spec) => isPortalArmed(spec, this.isLevelCleared()),
         );
 
         // The mysterious merchant: shows up on the junction of the four painted
@@ -655,12 +689,15 @@ export class LoadScene extends Phaser.Scene {
         // button's job.
         if (usesMerchant(this.level)) {
             this.merchant = new MerchantController(this, this.level.imageSize, () =>
-                this.monsterSystem.isAllCleared(),
+                this.isLevelCleared(),
             );
         }
 
         this.events.on('update', (_time: number, delta: number) => {
             this.monsterSystem.update(this.time.now);
+        if (this.regionSpawner && this.character?.body) {
+            this.regionSpawner.update(this.character.body.position.x, this.character.body.position.y);
+        }
             this.pathDebugOverlay.refresh(
                 this.monsterSystem.getDebugMonsters(),
                 this.character.body,
@@ -950,7 +987,7 @@ export class LoadScene extends Phaser.Scene {
                 if (!levels || levels.length === 0) return;
                 const lastLevelId = levels[levels.length - 1];
                 if (this.id === lastLevelId) {
-                    if (this.monsterSystem.isAllCleared()) {
+                    if (this.isLevelCleared()) {
                         // Trigger Victory! Scene keeps running so the
                         // player can walk to the teleporter and return
                         // to the tavern — the React overlay is just

@@ -573,6 +573,22 @@ export class MonsterController {
     }
 
     /** Check if all monsters in this level are dead and no pending spawns remain. */
+    /**
+     * Spawn a monster that is not in the level YAML - the follow-spawn waves.
+     * Same entity as the hand-placed ones, so every AI / drop / HUD path applies.
+     */
+    public spawnDynamic(
+        spec: MonsterSpec,
+        weapon: WeaponSpec,
+        x: number,
+        y: number,
+        waveId?: string,
+    ): Monster {
+        const monster = new Monster(this.scene, spec, weapon, x, y, waveId);
+        this.monsters.push(monster);
+        return monster;
+    }
+
     public isAllCleared(): boolean {
         const aliveCount = this.monsters.filter((m) => !m.dead && m.state !== 'dying').length;
         return aliveCount === 0 && this.pendingSpawns.length === 0;

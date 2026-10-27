@@ -2128,20 +2128,8 @@ characterSpawn:
     x: 2200
     'y': 4700
     facing: right
-monsters:
-    # 一只典狱长顶正面、一只守望者守侧翼、一只无人机绕后。
-    - type: warden
-      x: 2875
-      'y': 1263
-      waveId: wave-1
-    - type: keeper
-      x: 4200
-      'y': 1200
-      waveId: wave-1
-    - type: drone-ultra
-      x: 1500
-      'y': 1500
-      waveId: wave-1
+monsters: []
+    # 手摆怪已删：这一关改走 `spawner` 的跟随刷怪（进入前 3 个象限各一波）。
 spawner:
     # 进入前 3 个象限各刷一波 9 只：近处 2 近战 + 2 远程，远处 2 近战 + 3 远程。
     delayMs: 2000

@@ -119,6 +119,12 @@ export interface GameUIState {
     /** Backpack overlay visibility. The overlay pauses the scene itself. */
     backpackOpen: boolean;
 
+    /**
+     * Quadrants whose follow-spawn wave has already fired, keyed `levelId:index`.
+     * Persisted: a reload must not hand the player another free wave to farm.
+     */
+    spawnedRegions: string[];
+
     // Tavern upgrades — how many levels of each upgrade the player has
     // bought this run, keyed by upgrade id (see `characters/*.yaml` →
     // `upgrades:`). The prices and the stat effects live in that YAML;
@@ -249,6 +255,8 @@ export interface GameUIState {
     /** Publish the drop specs the current scene loaded (names, prices, usability). */
     setDropCatalog: (entries: Record<string, DropCatalogEntry>) => void;
     setBackpackOpen: (open: boolean) => void;
+    /** Record that a quadrant's wave fired. */
+    markRegionSpawned: (key: string) => void;
     /**
      * Sell one unit out of the slot at `index`, paying its `sellPrice`. Returns
      * the coins earned (0 when the item has no price, so a shop row can gate on
@@ -339,6 +347,7 @@ export const initialGameState = {
     inventory: emptyInventory(),
     dropCatalog: {} as Record<string, DropCatalogEntry>,
     backpackOpen: false,
+    spawnedRegions: [] as string[],
     // World state, not run state — `clearSaveData` deliberately keeps it.
     brokenProps: [] as string[],
     // Run state, not world state — a new run earns the trigger again.
@@ -497,6 +506,13 @@ export const useGameStore = create<GameUIState>()(
 
             setBackpackOpen: (open) => set({ backpackOpen: open }),
 
+            markRegionSpawned: (key) =>
+                set((state) =>
+                    state.spawnedRegions.includes(key)
+                        ? {}
+                        : { spawnedRegions: [...state.spawnedRegions, key] },
+                ),
+
             sellInventorySlot: (index) => {
                 let earned = 0;
                 set((state) => {
@@ -652,6 +668,7 @@ export const useGameStore = create<GameUIState>()(
                 maxSp: state.maxSp,
                 slots: state.slots,
                 inventory: state.inventory,
+                spawnedRegions: state.spawnedRegions,
                 activeWeaponIndex: state.activeWeaponIndex,
                 levelElapsedMs: state.levelElapsedMs,
                 playerSnapshot: state.playerSnapshot,
