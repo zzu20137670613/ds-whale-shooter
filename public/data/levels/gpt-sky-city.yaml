@@ -2129,45 +2129,19 @@ characterSpawn:
     'y': 4700
     facing: right
 monsters:
-    - type: drone
-      x: 1500
-      'y': 4200
-      waveId: wave-1
-    - type: drone
-      x: 3000
-      'y': 5200
-      waveId: wave-1
-    - type: gunner
-      x: 899
-      'y': 1640
-      waveId: Suprise
-      trigger:
-          kind: time
-          delayMs: 5000
-    - type: stalker
-      x: 4200
-      'y': 1200
-      waveId: wave-2
-      trigger:
-          kind: clear
-          delayMs: 3000
-          waveId: wave-1
-    - type: sniper
+    # 一只典狱长顶正面、一只守望者守侧翼、一只无人机绕后。
+    - type: warden
       x: 2875
       'y': 1263
-      waveId: wave-2
-      trigger:
-          kind: clear
-          delayMs: 2000
-          waveId: wave-1
-    - type: drone
+      waveId: wave-1
+    - type: keeper
+      x: 4200
+      'y': 1200
+      waveId: wave-1
+    - type: drone-ultra
       x: 1500
       'y': 1500
-      waveId: wave-3
-      trigger:
-          kind: clear
-          delayMs: 2000
-          waveId: wave-2
+      waveId: wave-1
 teleporters:
     # Return portal sits next to the spawn, as before.
     - id: to-library

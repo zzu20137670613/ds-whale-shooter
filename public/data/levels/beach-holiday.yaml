@@ -242,14 +242,15 @@ characterSpawn:
     'y': 400
     facing: right
 monsters:
-    - type: drone
+    # 第一波：5 只藤壶寄生者，从左右两侧与沙滩中段同时压上来。
+    - type: stalker
       x: 2354
       'y': 556
       waveId: wave-1
       trigger:
           kind: time
           delayMs: 1500
-    - type: drone
+    - type: stalker
       x: 3124
       'y': 804
       waveId: wave-1
@@ -257,69 +258,108 @@ monsters:
           kind: time
           delayMs: 1500
     - type: stalker
-      x: 2100
-      'y': 1480
-      waveId: wave-2
+      x: 1560
+      'y': 1180
+      waveId: wave-1
       trigger:
-          kind: clear
-          delayMs: 500
-          waveId: wave-1
-    - type: sniper
-      x: 3500
-      'y': 1668
-      waveId: wave-2
+          kind: time
+          delayMs: 1500
+    - type: stalker
+      x: 4020
+      'y': 1420
+      waveId: wave-1
       trigger:
-          kind: clear
-          delayMs: 500
-          waveId: wave-1
-    - type: keeper
+          kind: time
+          delayMs: 1500
+    - type: stalker
+      x: 2720
+      'y': 1072
+      waveId: wave-1
+      trigger:
+          kind: time
+          delayMs: 1500
+    # 第二波：3 只寄生者贴脸 + 2 只炮手在后排压枪。
+    - type: stalker
       x: 3472
       'y': 1126
-      waveId: wave-3
+      waveId: wave-2
       trigger:
           kind: clear
           delayMs: 500
-          waveId: wave-2
+          waveId: wave-1
     - type: stalker
       x: 2604
       'y': 2270
-      waveId: wave-3
+      waveId: wave-2
       trigger:
           kind: clear
           delayMs: 500
-          waveId: wave-2
-    - type: drone-ultra
+          waveId: wave-1
+    - type: stalker
       x: 1704
       'y': 1898
+      waveId: wave-2
+      trigger:
+          kind: clear
+          delayMs: 500
+          waveId: wave-1
+    - type: gunner
+      x: 2100
+      'y': 2480
+      waveId: wave-2
+      trigger:
+          kind: clear
+          delayMs: 500
+          waveId: wave-1
+    - type: gunner
+      x: 3600
+      'y': 2520
+      waveId: wave-2
+      trigger:
+          kind: clear
+          delayMs: 500
+          waveId: wave-1
+    # 第三波：1 只寄生者打头阵，4 只炮手拉开成一条横线。
+    - type: stalker
+      x: 2900
+      'y': 1900
       waveId: wave-3
       trigger:
           kind: clear
           delayMs: 500
           waveId: wave-2
     - type: gunner
-      x: 2100
-      'y': 2480
-      waveId: wave-4
+      x: 2450
+      'y': 1300
+      waveId: wave-3
       trigger:
           kind: clear
           delayMs: 500
-          waveId: wave-3
-    - type: sniper
-      x: 2720
-      'y': 1072
-      waveId: wave-4
+          waveId: wave-2
+    - type: gunner
+      x: 3250
+      'y': 1600
+      waveId: wave-3
       trigger:
           kind: clear
           delayMs: 500
-          waveId: wave-3
-    - type: drone-ultra
-      x: 3600
-      'y': 2520
-      waveId: wave-4
+          waveId: wave-2
+    - type: gunner
+      x: 1900
+      'y': 2200
+      waveId: wave-3
       trigger:
           kind: clear
           delayMs: 500
-          waveId: wave-3
+          waveId: wave-2
+    - type: gunner
+      x: 4380
+      'y': 2100
+      waveId: wave-3
+      trigger:
+          kind: clear
+          delayMs: 500
+          waveId: wave-2
 dropSpawns:
     # One drink beside the spawn, handed out once per run - the level's opening
     # gift. It never respawns; there is no periodic refill.
