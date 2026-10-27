@@ -18,6 +18,7 @@ import { EventBus } from '@/lib/events/bus';
 import { isWithinView } from '@/lib/props/activation';
 import type { Box } from '@/lib/props/activation';
 import type { DropSpec } from '@/lib/drops';
+import { dropIdleFrame } from '@/lib/drops/frames';
 import type { DropSpawn } from '@/lib/levels/types';
 import type { WeaponSpec } from '@/lib/weapons';
 
@@ -217,7 +218,10 @@ export class DropInstance {
             if (DROP_CONFIG.ENABLE_ANIMATION && scene.anims.exists(idleAnimKey)) {
                 spriteObj.play(idleAnimKey);
             } else {
-                spriteObj.setFrame(0);
+                // Not frame 0: all four drops share one 4x4 atlas, so frame 0 is
+                // the chicken leg for every one of them. Ask the spec where its
+                // own idle pose starts.
+                spriteObj.setFrame(dropIdleFrame(spec));
             }
             this.sprite = spriteObj;
         }
