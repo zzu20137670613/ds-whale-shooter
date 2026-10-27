@@ -268,6 +268,12 @@ export const COMBAT_CRIT_MULTIPLIER = 1.0;
  */
 export const ARMOR_PER_LEVEL = 5;
 
+/** Skill growth per tavern upgrade level. */
+export const SKILL_SP_COST_PER_LEVEL = 10;
+export const SKILL_CD_REDUCTION_PER_LEVEL_MS = 2000;
+/** Cooldown floor: a -2s/level cut would otherwise make a short skill spam. */
+export const SKILL_MIN_COOLDOWN_MS = 500;
+
 /** Damage multiplier applied when a hit is a critical strike.
  *  finalDamage = baseDamage * COMBAT_CRIT_DAMAGE_MULTIPLIER.
  *  Default 2 = double damage on crit. */

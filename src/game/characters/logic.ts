@@ -30,6 +30,7 @@ import {
 } from '@/lib/characters/skill';
 import { handUpOffset, pickBodyTint } from '@/lib/characters/hand';
 import { damageAfterArmor } from '@/lib/characters/combat';
+import { scaledSkillCooldown, scaledSkillSpCost } from '@/lib/characters/skill-scaling';
 import { SHOP_RESTORE_VITALS_EVENT } from '@/lib/characters/vitals';
 import {
     AIM_ASSIST,
@@ -562,7 +563,8 @@ export class CharacterController {
         const skill = this.spec.skill;
         if (!skill) return;
         const readyInMs = Math.max(0, this.skillRuntime.readyAt - now);
-        const spCost = skillSpCost(skill, this.spec.sp);
+        const skillLevel = useGameStore.getState().upgradeLevels.armor ?? 0;
+        const spCost = scaledSkillSpCost(skillSpCost(skill, this.spec.sp), skillLevel);
         const signature = `${readyInMs > 0 ? 'cooling' : 'ready'}|${this.sp >= spCost}|${
             this.skillRuntime.hitsLeft > 0
         }`;
@@ -595,10 +597,20 @@ export class CharacterController {
         // is the exception: its effect belongs to the monsters, so the
         // character only pays for it and announces it.
         if (this.spec.skill && kb.addKey(KEY_E).isDown) {
-            const used = useSkill(this.spec.skill, this.skillRuntime, now, this.sp, this.spec.sp);
+            // Skill growth rides the armour ladder (0..5): +10 SP, -2s cooldown
+            // per level, so the price the badge shows is the price charged.
+            const skillLevel = useGameStore.getState().upgradeLevels.armor ?? 0;
+            const used = useSkill(
+                this.spec.skill,
+                this.skillRuntime,
+                now,
+                this.sp,
+                this.spec.sp,
+                scaledSkillCooldown(this.spec.skill.cooldownMs, skillLevel),
+            );
             if (used.used) {
                 this.skillRuntime = used.runtime;
-                this.sp -= used.spCost;
+                this.sp -= scaledSkillSpCost(used.spCost, skillLevel);
                 EventBus.emit('skill:used', { kind: this.spec.skill.kind });
                 if (this.spec.skill.kind === 'dragon-roar') {
                     EventBus.emit('skill:dragon-roar', { hpFraction: this.spec.skill.hpFraction });

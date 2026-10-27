@@ -74,13 +74,16 @@ export function useSkill(
     now: number,
     sp: number,
     maxSp: number,
+    /** Upgrade-scaled cooldown; defaults to the spec's own value. */
+    cooldownMs?: number,
 ): { runtime: SkillRuntime; used: boolean; spCost: number } {
     if (!skill || !canUseSkill(skill, runtime, now, sp, maxSp)) {
         return { runtime, used: false, spCost: 0 };
     }
     const next: SkillRuntime = { ...runtime };
     // The headgear's clock starts when it breaks, in absorbIncomingHit.
-    if (skill.kind !== 'headgear') next.readyAt = now + skill.cooldownMs;
+    const effectiveCooldown = cooldownMs ?? skill.cooldownMs;
+    if (skill.kind !== 'headgear') next.readyAt = now + effectiveCooldown;
 
     switch (skill.kind) {
         case 'headgear':
@@ -147,6 +150,8 @@ export function absorbIncomingHit(
     skill: CharacterSkillSpec | undefined,
     runtime: SkillRuntime,
     now: number,
+    /** Upgrade-scaled cooldown; defaults to the spec's own value. */
+    cooldownMs?: number,
 ): { runtime: SkillRuntime; absorbed: boolean; brokeHeadgear: boolean } {
     if (runtime.shieldLeft > 0) {
         return {
@@ -162,7 +167,7 @@ export function absorbIncomingHit(
             runtime: {
                 ...runtime,
                 hitsLeft,
-                readyAt: broke ? now + skill.cooldownMs : runtime.readyAt,
+                readyAt: broke ? now + (cooldownMs ?? skill.cooldownMs) : runtime.readyAt,
             },
             absorbed: true,
             brokeHeadgear: broke,
