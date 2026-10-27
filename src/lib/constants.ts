@@ -83,6 +83,8 @@ export const KEY_SIX = 54;
 export const KEY_SEVEN = 55;
 export const KEY_R = 82;
 export const KEY_E = 69;
+/** Manual reload. F is the habit key; R keeps working as the alias. */
+export const KEY_F = 70;
 
 // ─── HUD: shared layout values (apply to all HUDs) ────────────────────
 

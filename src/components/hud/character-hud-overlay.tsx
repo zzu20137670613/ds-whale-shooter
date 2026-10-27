@@ -115,9 +115,6 @@ export const CharacterHUDOverlay: React.FC = () => {
                             <span className="text-sky-400 flex items-center gap-1.5 drop-shadow-[1px_1px_0px_#000]">
                                 <Zap className="w-4 h-4 fill-sky-400 text-sky-300 shrink-0" />
                                 <span className="leading-none">SP</span>
-                                <span className="ml-1 text-[9px] bg-stone-800 text-sky-300 px-1 py-0.5 border border-stone-600 rounded-[2px] leading-none uppercase tracking-tighter inline-flex items-center">
-                                    {t('hud.spaceKey')}
-                                </span>
                                 <SkillBadge />
                             </span>
                             <span className="text-stone-200 font-mono tracking-tighter drop-shadow-[1px_1px_0px_#000] leading-none">
@@ -132,6 +129,17 @@ export const CharacterHUDOverlay: React.FC = () => {
                         </div>
                     </div>
                 </div>
+            </div>
+
+            {/* Key hints live outside the card: inside, they read as a second
+                skill key and crowd the E badge. */}
+            <div className="flex items-center gap-1.5">
+                <span className="text-[9px] bg-stone-900/85 text-sky-300 px-1.5 py-1 border border-stone-600 rounded-[2px] leading-none tracking-tight">
+                    {t('hud.spaceKey')}
+                </span>
+                <span className="text-[9px] bg-stone-900/85 text-amber-300 px-1.5 py-1 border border-stone-600 rounded-[2px] leading-none tracking-tight">
+                    {t('hud.reloadKey')}
+                </span>
             </div>
         </div>
     );

@@ -27,6 +27,8 @@ export type CatalogSource = {
     hud: {
         /** Keycap shown next to the skill badge. */
         spaceKey: string;
+        /** Keycap next to the ammo readout. */
+        reloadKey: string;
         /** Suffix on the combo counter ("12 HITS"). */
         hits: string;
     };

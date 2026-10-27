@@ -42,6 +42,7 @@ import {
     KEY_FOUR,
     KEY_ONE,
     KEY_R,
+    KEY_F,
     KEY_S,
     KEY_SEVEN,
     KEY_SHIFT,
@@ -937,6 +938,9 @@ export class CharacterController {
         kb.addKey(KEY_SIX).on('down', () => weapons.switchTo(5));
         kb.addKey(KEY_SEVEN).on('down', () => weapons.switchTo(6));
         kb.addKey(KEY_R).on('down', () => weapons.manualReload());
+        // F is the reload key people expect from other shooters. R stays
+        // bound so nobody's existing habit breaks.
+        kb.addKey(KEY_F).on('down', () => weapons.manualReload());
     }
 
     /**

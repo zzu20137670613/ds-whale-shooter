@@ -16,7 +16,8 @@ const zhCN: CatalogSource = {
         restartHint: '重新开始会回到海边亭台',
     },
     hud: {
-        spaceKey: '空格',
+        spaceKey: '空格 闪避',
+        reloadKey: 'F 换弹',
         hits: '连击',
     },
     death: {

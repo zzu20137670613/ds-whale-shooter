@@ -16,7 +16,8 @@ const en: CatalogSource = {
         restartHint: 'Restart returns to the tavern',
     },
     hud: {
-        spaceKey: 'SPACE',
+        spaceKey: 'SPACE · Dodge',
+        reloadKey: 'F · Reload',
         hits: 'HITS',
     },
     death: {
