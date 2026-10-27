@@ -205,6 +205,23 @@ export async function resolveScene(
 
     const weapons = character.hotbar.map((wid) => weaponsById.get(wid)!).filter(Boolean);
 
+    // The backpack draws names, prices and a colour block per item; hand it the
+    // drop specs once, here, where every spec is already resolved.
+    useGameStore.getState().setDropCatalog(
+        Object.fromEntries(
+            dropEntries.map(([id, spec]) => [
+                id,
+                {
+                    name: spec.name,
+                    nameZh: spec.nameZh,
+                    usable: spec.effect.type !== 'material' && spec.effect.type !== 'weapon',
+                    sellPrice: spec.sellPrice ?? 0,
+                    tint: spec.visual.tint,
+                },
+            ]),
+        ),
+    );
+
     const audioIndex = await fetchAudioIndex();
     const sfxEntries = await Promise.all(
         audioIndex.sfx.map(async (id) => [id, await fetchAudioSfx(id)] as const),

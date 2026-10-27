@@ -17,3 +17,4 @@ export {
     removeFromInventory,
 } from './inventory';
 export type { AddResult, InventorySlot } from './inventory';
+export { INVENTORY_USE_EVENT } from './events';

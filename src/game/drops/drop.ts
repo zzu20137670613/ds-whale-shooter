@@ -24,6 +24,8 @@ import type { WeaponSpec } from '@/lib/weapons';
 
 import { useGameStore } from '@/store/game-store';
 
+import { INVENTORY_USE_EVENT } from '@/lib/inventory/events';
+
 import { planDropEffect } from './logic';
 
 // ─── Entity ──────────────────────────────────────────────────────────────
@@ -345,6 +347,8 @@ export class DropController {
      *  switched to that weapon's in-hand texture and the pickup
      *  callback resolves to that weapon. */
     private readonly getWeapon?: (id: string) => WeaponSpec | undefined;
+    /** Resolve a drop id to its spec, so a backpack click can find the effect. */
+    private readonly getDrop: (id: string) => DropSpec;
 
     constructor(
         scene: Phaser.Scene,
@@ -358,6 +362,8 @@ export class DropController {
         this.character = character;
         this.cb = cb;
         this.getWeapon = getWeapon;
+        this.getDrop = getDrop;
+        EventBus.on(INVENTORY_USE_EVENT, this.handleInventoryUse);
 
         // Drop restoration is unified across static (dropSpawns) and
         // runtime (monster-death) drops:
@@ -565,11 +571,17 @@ export class DropController {
     }
 
     destroy(): void {
+        EventBus.removeListener(INVENTORY_USE_EVENT, this.handleInventoryUse);
         for (const d of this.staticDrops) d.destroy(this.scene);
         for (const d of this.runtimeDrops) d.destroy(this.scene);
         this.staticDrops.length = 0;
         this.runtimeDrops.length = 0;
     }
+
+    /** EventBus listener identity, so destroy() can unbind exactly this one. */
+    private readonly handleInventoryUse = (payload: { index: number }): void => {
+        this.useFromBackpack(payload.index);
+    };
 
     private bindCollisions(): void {
         this.scene.matter.world.on('collisionstart', (event: any) => {
@@ -615,17 +627,63 @@ export class DropController {
         d.destroy(this.scene);
     }
 
+    /**
+     * The receivers a drop effect can touch. Shared by pickup (weapons) and by a
+     * backpack click, so the two paths can never drift apart.
+     */
+    private effectSinks(consumedRef?: { consumed: boolean }) {
+        return {
+            heal: (hp: number, sp: number) => this.character.heal(hp, sp),
+            refillAmmo: (fraction: number) => this.character.refillAmmo(fraction),
+            // `heal` clamps to [0, max], so an overkill delta is a full refill.
+            fullRestore: () =>
+                this.character.heal(DROP_FULL_RESTORE_AMOUNT, DROP_FULL_RESTORE_AMOUNT),
+            onWeaponPickup: (id: string) => {
+                if (consumedRef) consumedRef.consumed = this.cb.onWeaponPickup(id);
+            },
+        };
+    }
+
+    /**
+     * Apply a bag item the player clicked. Returns false for items that cannot be
+     * used (materials are sold, not drunk), and for unknown ids.
+     */
+    useFromBackpack(index: number): boolean {
+        const state = useGameStore.getState();
+        const slot = state.inventory[index];
+        if (!slot) return false;
+
+        let spec: DropSpec;
+        try {
+            spec = this.getDrop(slot.dropId);
+        } catch {
+            return false;
+        }
+        if (spec.effect.type === 'material' || spec.effect.type === 'weapon') return false;
+
+        // Consume first: the effect is applied to the live character, and a
+        // second click racing this one must find an empty slot.
+        if (!state.consumeInventorySlot(index)) return false;
+
+        const sfxId = spec.sfx ?? 'pickup-generic';
+        EventBus.emit(SFX_EVENT(sfxId), { key: `drop:${slot.dropId}`, throttleMs: spec.throttleMs });
+        planDropEffect(spec, this.effectSinks());
+        return true;
+    }
+
     private applyEffect(dropInstance: DropInstance): boolean {
         // Emit SFX BEFORE applying effect so the audio engine can play
         // before the pickup animation / freeze-frame finishes. Falls
         // back to a generic pickup tone when the spec doesn't declare
         // its own.
         const spec = dropInstance.spec;
-        const sfxId = spec.sfx ?? 'pickup-generic';
-        EventBus.emit(SFX_EVENT(sfxId), {
-            key: `drop:${spec.id}`,
-            throttleMs: spec.throttleMs,
-        });
+        const playPickupSfx = () => {
+            const sfxId = spec.sfx ?? 'pickup-generic';
+            EventBus.emit(SFX_EVENT(sfxId), {
+                key: `drop:${spec.id}`,
+                throttleMs: spec.throttleMs,
+            });
+        };
         // For weapon drops carrying a weaponSpec override, the spec's
         // embedded `effect.weaponId` is the generic placeholder —
         // resolve to the actual weapon's id so the pickup handler
@@ -637,24 +695,26 @@ export class DropController {
                   effect: { type: 'weapon', weaponId: dropInstance.weaponSpec.id },
               } as DropSpec)
             : spec;
+        // Weapons still go to the hotbar directly: a hotbar slot is not a
+        // backpack slot. Everything else is picked *up*, not used - the player
+        // decides when to open the bag and click it.
+        if (effectiveSpec.effect.type !== 'weapon') {
+            const dropKey = spec.id ?? 'unknown';
+            const added = useGameStore.getState().addInventoryItem(dropKey, 1);
+            // A full bag leaves the item where it is, so nothing is silently lost.
+            if (added > 0) playPickupSfx();
+            return added > 0;
+        }
+
         // Default consumed=true covers non-weapon drops (instant /
         // refill-ammo) which have no opt-out path. For weapons the
         // callback returns false when the cap-replace hub has not
         // confirmed yet — the caller (magnet loop / collisionstart)
         // uses this to keep the drop on the ground.
-        let consumed = true;
-        planDropEffect(effectiveSpec, {
-            heal: (hp, sp) => this.character.heal(hp, sp),
-            refillAmmo: (f) => this.character.refillAmmo(f),
-            // `heal` clamps to [0, max] (character.ts), so an overkill delta is a
-            // complete refill without the drop logic reading the character's maxima.
-            fullRestore: () =>
-                this.character.heal(DROP_FULL_RESTORE_AMOUNT, DROP_FULL_RESTORE_AMOUNT),
-            onWeaponPickup: (id) => {
-                consumed = this.cb.onWeaponPickup(id);
-            },
-        });
-        return consumed;
+        const consumedRef = { consumed: true };
+        playPickupSfx();
+        planDropEffect(effectiveSpec, this.effectSinks(consumedRef));
+        return consumedRef.consumed;
     }
 
     /**

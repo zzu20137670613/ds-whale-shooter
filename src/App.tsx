@@ -1,6 +1,7 @@
 import { Suspense, lazy, useEffect } from 'react';
 
 import { PhaserGame } from '@/PhaserGame';
+import { BackpackOverlay } from '@/components/hud/backpack-overlay';
 import { ComicOverlay } from '@/components/hud/comic-overlay';
 import { DevCabinPanel } from '@/components/hud/dev-cabin-panel';
 import { GameHUDLayer } from '@/components/hud/game-hud-layer';
@@ -83,6 +84,7 @@ function App() {
         <div id="app">
             <PhaserGame />
             <GameHUDLayer />
+            <BackpackOverlay />
             {!tavernCleared && (
                 <Suspense fallback={null}>
                     <TavernHud />

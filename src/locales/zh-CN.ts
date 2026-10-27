@@ -20,6 +20,13 @@ const zhCN: CatalogSource = {
         reloadKey: 'F 换弹',
         hits: '连击',
     },
+    backpack: {
+        title: '背包',
+        hint: 'B 关闭 · 点道具使用',
+        empty: '空',
+        material: '材料 · 可出售',
+        count: '数量',
+    },
     death: {
         title: '你倒下了',
         subtitle: '真可惜，我不是主角。',

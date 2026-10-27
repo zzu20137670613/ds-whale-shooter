@@ -20,6 +20,13 @@ const en: CatalogSource = {
         reloadKey: 'F · Reload',
         hits: 'HITS',
     },
+    backpack: {
+        title: 'Backpack',
+        hint: 'B to close · click an item to use it',
+        empty: 'Empty',
+        material: 'Material · sellable',
+        count: 'Count',
+    },
     death: {
         title: 'YOU DIED',
         // Ezreal, First Move. The owner picked this line for the death

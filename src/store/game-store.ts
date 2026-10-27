@@ -3,6 +3,8 @@ import { persist } from 'zustand/middleware';
 
 import { setLocale as setLocaleRuntime, type LocaleCode } from '@/locales';
 import { reserveMaxFor } from '@/lib/weapons/ammo';
+import { addToInventory, emptyInventory, removeFromInventory } from '@/lib/inventory';
+import type { InventorySlot } from '@/lib/inventory';
 import type { PetBonus } from '@/lib/pet/lifetime';
 
 export interface WeaponSlotData {
@@ -15,6 +17,18 @@ export interface WeaponSlotData {
     /** Public-path URL for the weapon thumbnail (e.g. `/assets/image/weapons/arcana-staff.png`).
      *  Undefined for melee weapons or spec.visual entries without a texture. */
     texture?: string;
+}
+
+/** What the backpack UI needs to draw one kind of item. */
+export interface DropCatalogEntry {
+    name: string;
+    nameZh?: string;
+    /** `material` items cannot be used, only sold. */
+    usable: boolean;
+    /** Coins per unit when sold; 0 for items the shop will not buy yet. */
+    sellPrice: number;
+    /** The colour the drop drew itself with; the bag draws a block of it. */
+    tint: number;
 }
 
 export interface LevelWaveProgress {
@@ -87,6 +101,22 @@ export interface GameUIState {
     // Persisted, so a purchase survives a refresh. Wiped by clearSaveData
     // along with the rest of the run — death is a full reset, not a bank.
     money: number;
+
+    /**
+     * The backpack. 60 slots, the same item stacking to 30 per slot, filled by
+     * walking over a drop. Persisted with the run.
+     */
+    inventory: InventorySlot[];
+
+    /**
+     * Display data for every drop id the scene loaded, so the backpack can name
+     * an item it holds. Rebuilt on scene boot, never persisted (it is data, not
+     * progress).
+     */
+    dropCatalog: Record<string, DropCatalogEntry>;
+
+    /** Backpack overlay visibility. The overlay pauses the scene itself. */
+    backpackOpen: boolean;
 
     // Tavern upgrades — how many levels of each upgrade the player has
     // bought this run, keyed by upgrade id (see `characters/*.yaml` →
@@ -206,6 +236,19 @@ export interface GameUIState {
      */
     addMoney: (amount: number) => void;
     /**
+     * Put `count` units of `dropId` into the backpack. Returns how many fit; 0
+     * means the bag is full and the caller must leave the drop on the floor.
+     */
+    addInventoryItem: (dropId: string, count: number) => number;
+    /**
+     * Take one unit out of the slot at `index` and return its drop id, or null
+     * when the index is empty. The caller applies the effect.
+     */
+    consumeInventorySlot: (index: number) => string | null;
+    /** Publish the drop specs the current scene loaded (names, prices, usability). */
+    setDropCatalog: (entries: Record<string, DropCatalogEntry>) => void;
+    setBackpackOpen: (open: boolean) => void;
+    /**
      * Deduct a price if the player can afford it. Returns false and
      * changes nothing otherwise, so a shop row can gate its purchase on
      * the result instead of re-reading the balance.
@@ -284,6 +327,9 @@ export const initialGameState = {
     merchantReady: false,
 
     money: 0,
+    inventory: emptyInventory(),
+    dropCatalog: {} as Record<string, DropCatalogEntry>,
+    backpackOpen: false,
     // World state, not run state — `clearSaveData` deliberately keeps it.
     brokenProps: [] as string[],
     // Run state, not world state — a new run earns the trigger again.
@@ -417,6 +463,31 @@ export const useGameStore = create<GameUIState>()(
                     },
                 })),
 
+            addInventoryItem: (dropId, count) => {
+                let added = 0;
+                set((state) => {
+                    const result = addToInventory(state.inventory, dropId, count);
+                    added = result.added;
+                    return result.added > 0 ? { inventory: result.slots } : {};
+                });
+                return added;
+            },
+
+            consumeInventorySlot: (index) => {
+                let taken: string | null = null;
+                set((state) => {
+                    const slot = state.inventory[index];
+                    if (!slot) return {};
+                    taken = slot.dropId;
+                    return { inventory: removeFromInventory(state.inventory, index, 1) };
+                });
+                return taken;
+            },
+
+            setDropCatalog: (entries) => set({ dropCatalog: entries }),
+
+            setBackpackOpen: (open) => set({ backpackOpen: open }),
+
             refillAmmo: () =>
                 set((state) => {
                     const slots = state.slots.map((slot) => ({
@@ -535,6 +606,7 @@ export const useGameStore = create<GameUIState>()(
                 sp: state.sp,
                 maxSp: state.maxSp,
                 slots: state.slots,
+                inventory: state.inventory,
                 activeWeaponIndex: state.activeWeaponIndex,
                 levelElapsedMs: state.levelElapsedMs,
                 playerSnapshot: state.playerSnapshot,

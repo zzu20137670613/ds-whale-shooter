@@ -33,6 +33,13 @@ export type CatalogSource = {
         hits: string;
     };
     /** The death overlay. One of the two places a run actually ends. */
+    backpack: {
+        title: string;
+        hint: string;
+        empty: string;
+        material: string;
+        count: string;
+    };
     death: {
         title: string;
         subtitle: string;
