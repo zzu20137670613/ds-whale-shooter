@@ -551,3 +551,17 @@ describe('public/data integrity', () => {
         );
     });
 });
+
+describe('swing weapons', () => {
+    it('rune-shield and branch-sweep are melee, so they carry no projectile', () => {
+        // Converted 2026-10-27: their `range` is a swing reach now. A projectile
+        // that died after 80px was a flash, not a threat.
+        for (const id of ['rune-shield', 'branch-sweep']) {
+            const spec = parseWeaponYaml(read(join(DATA, 'weapons', `${id}.yaml`)), id);
+            expect(spec.projectile, `${id}: projectile`).toBeUndefined();
+            expect(spec.hitWidth, `${id}: hitWidth`).toBeGreaterThan(0);
+            expect(spec.hitHeight, `${id}: hitHeight`).toBeGreaterThan(0);
+            expect(spec.bullet?.type, `${id}: bullet type`).toBeUndefined();
+        }
+    });
+});

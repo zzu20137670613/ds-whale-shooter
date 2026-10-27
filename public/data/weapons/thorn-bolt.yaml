@@ -1,12 +1,12 @@
 name: Barnacle Gun
 nameZh: "藤壶炮"
-damage: 5
+damage: 15
 cooldownMs: 550
 range: 520
 upgrades:
     # Tavern weapon ladder. `costs.length` IS the max level.
     costs: [40, 90, 160, 250, 360]
-    damagePerLevel: [5, 5, 5, 10, 10, 10]
+    damagePerLevel: [15, 15, 15, 30, 30, 30]
 bulletsPerShot: 1
 bullet:
     texture: assets/image/weapons/thorn-bolt.png

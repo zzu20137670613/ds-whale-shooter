@@ -10,7 +10,7 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { applyPetBonus } from '@/lib/pet/bonus';
+import { petBonusAppliesTo, applyPetBonus } from '@/lib/pet/bonus';
 import type { CharacterSpec } from '@/lib/characters/types';
 
 /** Seed's real numbers, trimmed to what the buff reads. */
@@ -79,5 +79,16 @@ describe('applyPetBonus', () => {
         const buffed = applyPetBonus(SEED, 50);
         expect(buffed.id).toBe('seed');
         expect(buffed.body).toEqual({ halfW: 28, halfH: 28 });
+    });
+});
+
+describe('petBonusAppliesTo', () => {
+    it('is DeepSeek and nobody else', () => {
+        expect(petBonusAppliesTo('deepseek')).toBe(true);
+        expect(petBonusAppliesTo('claude')).toBe(false);
+        expect(petBonusAppliesTo('gpt')).toBe(false);
+        expect(petBonusAppliesTo('qwen')).toBe(false);
+        expect(petBonusAppliesTo('seed')).toBe(false);
+        expect(petBonusAppliesTo(undefined)).toBe(false);
     });
 });

@@ -1,30 +1,17 @@
 name: Branch Sweep
 nameZh: "横扫枝击"
-damage: 30
+damage: 40
 cooldownMs: 650
-range: 480
+range: 180
+# Melee since 2026-10-27: the range is a swing reach, not a bullet's flight.
+hitWidth: 60
+hitHeight: 60
 upgrades:
     # Tavern weapon ladder. `costs.length` IS the max level.
     costs: [40, 90, 160, 250, 360]
-    damagePerLevel: [30, 30, 30, 60, 60, 60]
+    damagePerLevel: [40, 40, 40, 80, 80, 80]
 visual:
     texture: assets/image/weapons/branch-sweep.png
     scale: 0.5
     orbitRadius: 0
     anchor: [0.5, 0.35]
-bullet:
-    texture: assets/image/weapons/sap-drop-flipped.png
-    type: projectile
-    scale: 0.5
-    anchor: [0.5, 0.5]
-projectile:
-    speed: 11
-    visual:
-        radius: 12
-        width: 24
-        height: 24
-        color: 0x6b8a4a
-    lifeMs: 1500
-sfx:
-    shoot: arcana-staff-shoot
-    bulletWall: bullet-wall

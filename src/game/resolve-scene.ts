@@ -22,7 +22,7 @@ import {
     fetchCharacterIndex,
     resolveRosterCharacterId,
 } from '@/lib/characters';
-import { applyPetBonus } from '@/lib/pet/bonus';
+import { applyPetBonus, petBonusAppliesTo } from '@/lib/pet/bonus';
 import type { SceneAssets } from '@/game/scenes/scene';
 import { fetchDrop } from '@/lib/drops';
 import type { DropSpec } from '@/lib/drops';
@@ -137,7 +137,12 @@ export async function resolveScene(
     // milliseconds, while the player needs seconds just to reach a level, and a
     // missing pet is a no-op.
     const petBonus = useGameStore.getState().petBonus;
-    const character = petBonus ? applyPetBonus(upgraded, petBonus.percent) : upgraded;
+    // The pet buffs DeepSeek only - see `petBonusAppliesTo`. Everyone else plays
+    // on their own upgraded numbers.
+    const character =
+        petBonus && petBonusAppliesTo(characterId)
+            ? applyPetBonus(upgraded, petBonus.percent)
+            : upgraded;
 
     const monsterSpecMap = new Map<string, MonsterSpec>();
     const monsterWeaponIds = new Set<string>();

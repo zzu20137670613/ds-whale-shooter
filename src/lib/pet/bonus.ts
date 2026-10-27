@@ -20,6 +20,20 @@
 
 import type { CharacterSpec } from '@/lib/characters/types';
 
+/**
+ * The only character the pet buffs.
+ *
+ * 第七世's call, restated by the owner: the desktop pet is DeepSeek's companion.
+ * Everyone else plays on their own numbers, so a MAX pet can never hand Qwen or
+ * GPT a crit rate they did not earn.
+ */
+export const PET_BONUS_CHARACTER_ID = 'deepseek';
+
+/** Whether the pet's bonus applies to this character at all. */
+export function petBonusAppliesTo(characterId: string | undefined): boolean {
+    return characterId === PET_BONUS_CHARACTER_ID;
+}
+
 /** Stats the pet is allowed to touch. Explicit so a future stat is opt-in. */
 export const PET_BONUSED_STATS = ['hp', 'sp', 'moveSpeed'] as const;
 
