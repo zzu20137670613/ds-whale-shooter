@@ -1,6 +1,6 @@
-name: Thorn Drone
-nameZh: "荆棘无人机"
-hp: 1
+name: Starlit Stalker
+nameZh: "星空潜行者"
+hp: 70
 money: 16
 moveSpeed: 4
 body:

@@ -1,5 +1,5 @@
-name: Moss Gunner
-nameZh: "苔藓炮手"
+name: Barnacle Gunner
+nameZh: "藤壶炮手"
 prompt: |
     The 11th Forest — Sacred Forest Sanctuary Moss Gunner sprite sheet
 
@@ -82,13 +82,13 @@ prompt: |
     - Hard clean pixel edges, no anti-aliasing on the silhouette.
     - Limited muted color palette: ~32 colors total per character.
     - No purple, magenta, or pink in the monster body itself.
-hp: 1
+hp: 40
 money: 12
 moveSpeed: 3
 body:
     halfW: 32
     halfH: 20
-weaponId: moss-bark-rifle
+weaponId: thorn-bolt
 drops:
     - dropId: ammo-cache
       chance: 0.5

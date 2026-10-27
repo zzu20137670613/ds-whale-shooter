@@ -1,6 +1,6 @@
-name: Bramble Stalker
-nameZh: "荆棘潜行者"
-hp: 1
+name: Barnacle Parasite
+nameZh: "藤壶寄生者"
+hp: 55
 money: 14
 moveSpeed: 4
 body:
