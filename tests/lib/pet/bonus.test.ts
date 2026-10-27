@@ -43,8 +43,18 @@ describe('applyPetBonus', () => {
         expect(applyPetBonus(SEED, 50).spRegenMs).toBe(2600);
     });
 
-    it('leaves luck alone, so the pet is not a farming exploit', () => {
-        expect(applyPetBonus(SEED, 50).luck).toBe(6);
+    it('adds flat luck instead of scaling it, and never past 10', () => {
+        // The owner's ladder: +0 / +0 / +1 / +1 / +2.
+        expect(applyPetBonus(SEED, 10).luck).toBe(6);
+        expect(applyPetBonus(SEED, 20).luck).toBe(6);
+        expect(applyPetBonus(SEED, 30).luck).toBe(7);
+        expect(applyPetBonus(SEED, 40).luck).toBe(7);
+        expect(applyPetBonus(SEED, 50).luck).toBe(8);
+    });
+
+    it('caps luck at 10, so a maxed Qwen is not carrying a meaningless 12', () => {
+        const qwen = { ...SEED, luck: 10 };
+        expect(applyPetBonus(qwen, 50).luck).toBe(10);
     });
 
     it('does not mutate the spec it was given', () => {

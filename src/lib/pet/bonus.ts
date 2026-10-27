@@ -9,14 +9,40 @@
  * scaling it would make a MAX pet refill so fast that ammo planning stops
  * mattering.
  *
- * `luck` is also left alone: it changes drop rolls, so scaling it would turn
- * the pet into a farming exploit rather than a companion.
+ * Luck is the exception to "percent only": it gets a small FLAT bonus, because a
+ * percentage of a number that means "10% crit per point" reads as nonsense. The
+ * owner's ladder is +0 / +0 / +1 / +1 / +2, so a maxed pet turns a maxed Qwen
+ * into a guaranteed crit - which he decided she has earned.
+ *
+ * Armour is left alone on purpose: it is a handful of flat points, and scaling it
+ * would blunt the boss hits the design wants to still hurt.
  */
 
 import type { CharacterSpec } from '@/lib/characters/types';
 
 /** Stats the pet is allowed to touch. Explicit so a future stat is opt-in. */
 export const PET_BONUSED_STATS = ['hp', 'sp', 'moveSpeed'] as const;
+
+/**
+ * Flat luck per bonus tier: +0 at 10-20%, +1 at 30-40%, +2 at 50%.
+ *
+ * Kept as explicit steps rather than a formula: the owner picked these numbers,
+ * and a formula would invent values he never asked for on a re-tiered pet.
+ */
+export const PET_LUCK_LADDER = [
+    { percentAtLeast: 50, luck: 2 },
+    { percentAtLeast: 30, luck: 1 },
+    { percentAtLeast: 0, luck: 0 },
+] as const;
+
+/** Luck a given pet percentage adds. */
+export function petLuckBonus(percent: number): number {
+    if (!Number.isFinite(percent) || percent <= 0) return 0;
+    for (const step of PET_LUCK_LADDER) {
+        if (percent >= step.percentAtLeast) return step.luck;
+    }
+    return 0;
+}
 
 export type PetBonusedStat = (typeof PET_BONUSED_STATS)[number];
 
@@ -40,5 +66,13 @@ export function applyPetBonus(spec: CharacterSpec, percent: number): CharacterSp
         const raw = base * factor;
         patched[stat] = INTEGER_STATS.has(stat) ? Math.round(raw) : raw;
     }
+
+    // Flat luck, capped at 10: past that a point buys nothing, and a HUD showing
+    // 12/10 would be lying to the player.
+    const luckBonus = petLuckBonus(percent);
+    if (luckBonus > 0 && typeof spec.luck === 'number') {
+        patched.luck = Math.min(10, spec.luck + luckBonus);
+    }
+
     return patched as unknown as CharacterSpec;
 }
