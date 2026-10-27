@@ -47,8 +47,16 @@ export interface RegionSpawnerDeps {
     getWeapon: (weaponId: string) => WeaponSpec | undefined;
     /** Spawn one monster; the controller owns the actual entity. */
     spawn: (spec: MonsterSpec, weapon: WeaponSpec, x: number, y: number, waveId: string) => void;
-    /** True when a point is inside a wall / outside the walkable area. */
+    /**
+     * True when a point cannot host a monster: inside a wall, or in a part of the
+     * map the player cannot walk to (a sealed room). Wall-free is not enough.
+     */
     isBlocked: (x: number, y: number) => boolean;
+    /**
+     * Nearest point a monster *can* stand on, used when every re-roll fails.
+     * Optional: without it the spawner falls back to the player's own position.
+     */
+    nearestSpawnable?: (x: number, y: number) => { x: number; y: number } | null;
     /** Injected so tests are deterministic. */
     rng?: () => number;
     now?: () => number;
@@ -205,10 +213,14 @@ export class RegionSpawner {
                     y: candidate.y + (this.rng() - 0.5) * 220,
                 };
             }
-            return {
+            // Every re-roll failed: snap to the closest reachable cell so the
+            // monster is never dropped somewhere it can only walk into a wall.
+            const clamped = {
                 x: Math.min(Math.max(candidate.x, 16), width - 16),
                 y: Math.min(Math.max(candidate.y, 16), height - 16),
             };
+            const snapped = this.deps.nearestSpawnable?.(clamped.x, clamped.y);
+            return snapped ?? clamped;
         });
     }
 }

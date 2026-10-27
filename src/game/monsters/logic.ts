@@ -15,6 +15,8 @@ const EasyStarCtor = (EasyStarPkg as unknown as { js: new () => EasyStarInstance
 
 import { COMBAT_KNOCKBACK_BASE_MULT, COMBAT_KNOCKBACK_MAX_SPEED } from '@/lib/constants';
 import { rasterizeWalls, subGrid } from '@/lib/nav/raster';
+import { buildReachability, nearestReachable } from '@/lib/nav/reachability';
+import type { ReachabilityMask } from '@/lib/nav/reachability';
 import { windowFor } from '@/lib/nav/window';
 import { DEFAULT_ACTIVATION_MARGIN, isWithinView } from '@/lib/props/activation';
 
@@ -209,6 +211,44 @@ export class PathfindingService {
      * points out of bookshelves; the one-cell safety buffer counts as walkable so
      * a monster is never refused a spot just outside a wall.
      */
+    /**
+     * Flood-fill the floor cells connected to a world point (normally the
+     * player's spawn). Everything outside the flooded region is unreachable, no
+     * matter how clear it looks - a walled-off room is still a walled-off room.
+     */
+    buildReachabilityFrom(x: number, y: number): ReachabilityMask | null {
+        return buildReachability(
+            this.grid,
+            Math.floor(x / this.cellSize),
+            Math.floor(y / this.cellSize),
+        );
+    }
+
+    /** Whether a world point is inside the reachable region. */
+    isReachableWith(mask: ReachabilityMask, x: number, y: number): boolean {
+        const gx = Math.floor(x / this.cellSize);
+        const gy = Math.floor(y / this.cellSize);
+        if (gx < 0 || gy < 0 || gx >= this.gridWidth || gy >= this.gridHeight) return false;
+        return mask[gy * this.gridWidth + gx] === 1;
+    }
+
+    /** Nearest reachable world point, or null when nothing is close enough. */
+    nearestReachableWith(
+        mask: ReachabilityMask,
+        x: number,
+        y: number,
+        maxRadiusCells = 24,
+    ): { x: number; y: number } | null {
+        const gx = Math.floor(x / this.cellSize);
+        const gy = Math.floor(y / this.cellSize);
+        const cell = nearestReachable(mask, gx, gy, this.gridWidth, this.gridHeight, maxRadiusCells);
+        if (!cell) return null;
+        return {
+            x: (cell.x + 0.5) * this.cellSize,
+            y: (cell.y + 0.5) * this.cellSize,
+        };
+    }
+
     isBlocked(x: number, y: number): boolean {
         const gx = Math.floor(x / this.cellSize);
         const gy = Math.floor(y / this.cellSize);

@@ -373,6 +373,18 @@ export class LoadScene extends Phaser.Scene {
         // one. Every other level keeps its hand-placed waves and the old clear
         // rule untouched.
         if (this.level.spawner) {
+            // Flood the floor from the player's spawn: a cell that is merely
+            // wall-free can still be sealed inside a room, and a monster dropped
+            // there would spend the level grinding against a bookshelf.
+            const spawnPoint = this.level.characterSpawn ?? {
+                x: this.level.imageSize.width / 2,
+                y: this.level.imageSize.height / 2,
+            };
+            const reachable = pathfinder.buildReachabilityFrom(spawnPoint.x, spawnPoint.y);
+            const isSpawnable = (x: number, y: number) =>
+                !pathfinder.isBlocked(x, y) &&
+                (reachable ? pathfinder.isReachableWith(reachable, x, y) : true);
+
             this.regionSpawner = new RegionSpawner({
                 levelId: this.id,
                 imageSize: this.level.imageSize,
@@ -381,9 +393,9 @@ export class LoadScene extends Phaser.Scene {
                 getWeapon: (weaponId) => this.assets.weaponsById.get(weaponId),
                 spawn: (spec, weapon, x, y, waveId) =>
                     this.monsterSystem.spawnDynamic(spec, weapon, x, y, waveId),
-                // Walls only: the one-cell safety buffer is fine to stand in,
-                // otherwise a point just outside a bookshelf gets refused.
-                isBlocked: (x, y) => pathfinder.isBlocked(x, y),
+                isBlocked: (x, y) => !isSpawnable(x, y),
+                nearestSpawnable: (x, y) =>
+                    reachable ? pathfinder.nearestReachableWith(reachable, x, y) : null,
             });
         }
 
