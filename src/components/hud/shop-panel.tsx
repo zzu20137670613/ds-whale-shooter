@@ -74,6 +74,7 @@ export function ShopPanel() {
     const spendMoney = useGameStore((s) => s.spendMoney);
     const setUpgradeLevel = useGameStore((s) => s.setUpgradeLevel);
     const setWeaponLevel = useGameStore((s) => s.setWeaponLevel);
+    const refillWeaponAmmo = useGameStore((s) => s.refillWeaponAmmo);
     const refillAmmo = useGameStore((s) => s.refillAmmo);
     // Subscribed (not read) so the labels re-render on a language switch:
     // `t()` reads module state, which React cannot see change on its own.
@@ -198,7 +199,11 @@ export function ShopPanel() {
         const level = weaponLevels[id] ?? 0;
         const price = weaponUpgradeCost(weapon, level);
         if (price === null) return;
-        if (spendMoney(price)) setWeaponLevel(id, level + 1);
+        if (!spendMoney(price)) return;
+        setWeaponLevel(id, level + 1);
+        // An upgrade comes with a full load. Refill *after* the level lands so the
+        // bigger reserve is what gets filled.
+        refillWeaponAmmo(id);
     };
 
     const buyRefill = () => {

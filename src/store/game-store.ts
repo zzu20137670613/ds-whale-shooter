@@ -284,6 +284,11 @@ export interface GameUIState {
      * its slots from the store (`weapons/logic.ts`).
      */
     refillAmmo: () => void;
+    /**
+     * Fill one weapon's magazine and reserve. Buying an upgrade does this for
+     * free, so the new magazine's worth of spares never arrives half empty.
+     */
+    refillWeaponAmmo: (weaponId: string) => void;
     /** Switch language; mirrors into the i18n runtime immediately. */
     setLocale: (code: LocaleCode) => void;
     setPetBonus: (bonus: PetBonus | null) => void;
@@ -548,6 +553,26 @@ export const useGameStore = create<GameUIState>()(
                 });
                 return earned;
             },
+
+            refillWeaponAmmo: (weaponId) =>
+                set((state) => {
+                    const level = state.weaponLevels[weaponId] ?? 0;
+                    const slots = state.slots.map((slot) =>
+                        slot.id === weaponId
+                            ? {
+                                  ...slot,
+                                  ammo: slot.clipSize,
+                                  reserve: reserveMaxFor(slot.clipSize, level),
+                              }
+                            : slot,
+                    );
+                    const active = slots[state.activeWeaponIndex];
+                    return {
+                        slots,
+                        activeAmmo: active ? active.ammo : state.activeAmmo,
+                        activeMaxAmmo: active ? active.clipSize : state.activeMaxAmmo,
+                    };
+                }),
 
             refillAmmo: () =>
                 set((state) => {
