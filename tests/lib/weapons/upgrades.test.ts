@@ -7,6 +7,7 @@
  */
 import { describe, expect, it } from 'vitest';
 
+import { reserveMaxFor } from '@/lib/weapons/ammo';
 import { parseWeaponYaml } from '@/lib/weapons/parser';
 import {
     AMMO_REFILL_PRICE_PER_ROUND,
@@ -186,28 +187,32 @@ describe('applyWeaponUpgrade', () => {
 });
 
 describe('ammoRefillPrice', () => {
-    it('charges per missing round', () => {
-        expect(ammoRefillPrice([{ ammo: 1, clipSize: 5 }])).toBe(4 * AMMO_REFILL_PRICE_PER_ROUND);
+    it('charges per missing reserve round', () => {
+        // A 5-round magazine carries 5 * AMMO_RESERVE_CLIPS spare rounds.
+        const reserveMax = reserveMaxFor(5);
+        expect(ammoRefillPrice([{ reserve: 0, clipSize: 5 }])).toBe(
+            reserveMax * AMMO_REFILL_PRICE_PER_ROUND,
+        );
     });
 
-    it('sums across the whole hotbar', () => {
+    it('charges only the missing part', () => {
+        const reserveMax = reserveMaxFor(4);
         const price = ammoRefillPrice([
-            { ammo: 0, clipSize: 3 },
-            { ammo: 2, clipSize: 4 },
+            { reserve: reserveMax - 2, clipSize: 4 },
+            { reserve: reserveMax, clipSize: 4 },
         ]);
-
-        expect(price).toBe(5 * AMMO_REFILL_PRICE_PER_ROUND);
+        expect(price).toBe(2 * AMMO_REFILL_PRICE_PER_ROUND);
     });
 
-    it('costs nothing when every slot is already full', () => {
-        expect(ammoRefillPrice([{ ammo: 4, clipSize: 4 }])).toBe(0);
+    it('costs nothing when every reserve is already full', () => {
+        expect(ammoRefillPrice([{ reserve: reserveMaxFor(4), clipSize: 4 }])).toBe(0);
     });
 
     it('is free for an empty hotbar', () => {
         expect(ammoRefillPrice([])).toBe(0);
     });
 
-    it('ignores an over-full slot rather than paying the player', () => {
-        expect(ammoRefillPrice([{ ammo: 9, clipSize: 4 }])).toBe(0);
+    it('does not pay the player for an over-full reserve', () => {
+        expect(ammoRefillPrice([{ reserve: reserveMaxFor(4) + 5, clipSize: 4 }])).toBe(0);
     });
 });

@@ -23,8 +23,6 @@ import type { WeaponSpec } from './types';
  */
 export function isMeleeWeapon(spec: WeaponSpec): boolean {
     return (
-        spec.hitWidth !== undefined ||
-        spec.hitHeight !== undefined ||
-        spec.bullet?.type === 'melee'
+        spec.hitWidth !== undefined || spec.hitHeight !== undefined || spec.bullet?.type === 'melee'
     );
 }

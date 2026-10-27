@@ -93,7 +93,9 @@ export const WeaponHUDOverlay: React.FC = () => {
                             >
                                 {index + 1}
                             </span>
-                            {/* Ammo badge — bottom-right corner (current / total) */}
+                            {/* Ammo badge — bottom-right corner. Left is the
+                                magazine, right is the reserve, which is what
+                                the owner reads as "备弹". */}
                             {slot.clipSize > 1 && (
                                 <span
                                     className={`absolute bottom-0 right-0 px-1 text-[9px] font-bold font-mono leading-none border ${
@@ -103,7 +105,7 @@ export const WeaponHUDOverlay: React.FC = () => {
                                     }`}
                                 >
                                     {String(slot.ammo).padStart(2, '0')}/
-                                    {String(slot.clipSize).padStart(2, '0')}
+                                    {String(slot.reserve ?? 0).padStart(2, '0')}
                                 </span>
                             )}
                             {/* Reload progress overlay (active slot only) */}

@@ -85,6 +85,18 @@ export const KEY_R = 82;
 export const KEY_E = 69;
 /** Manual reload. F is the habit key; R keeps working as the alias. */
 export const KEY_F = 70;
+/** Cycle weapons (Q). */
+export const KEY_Q = 81;
+
+// ─── Weapons: reserve ammunition ──────────────────────────────────────────
+/**
+ * How many magazines' worth of spare rounds a ranged weapon carries.
+ *
+ * 4 keeps a fight going without turning ammo into a chore: the assault rifle's
+ * 35-round magazine becomes 140 in reserve, which is roughly one level's worth
+ * of shooting before ammo drops matter.
+ */
+export const AMMO_RESERVE_CLIPS = 4;
 
 // ─── HUD: shared layout values (apply to all HUDs) ────────────────────
 

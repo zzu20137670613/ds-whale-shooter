@@ -43,6 +43,7 @@ import {
     KEY_ONE,
     KEY_R,
     KEY_F,
+    KEY_Q,
     KEY_S,
     KEY_SEVEN,
     KEY_SHIFT,
@@ -941,6 +942,8 @@ export class CharacterController {
         // F is the reload key people expect from other shooters. R stays
         // bound so nobody's existing habit breaks.
         kb.addKey(KEY_F).on('down', () => weapons.manualReload());
+        // Q walks the hotbar one weapon at a time, wrapping at the end.
+        kb.addKey(KEY_Q).on('down', () => weapons.cycleSlot(1));
     }
 
     /**

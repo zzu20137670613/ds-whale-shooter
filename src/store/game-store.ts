@@ -2,12 +2,15 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 import { setLocale as setLocaleRuntime, type LocaleCode } from '@/locales';
+import { reserveMaxFor } from '@/lib/weapons/ammo';
 import type { PetBonus } from '@/lib/pet/lifetime';
 
 export interface WeaponSlotData {
     id: string;
     name: string;
     ammo: number;
+    /** Spare rounds behind the magazine; the weapon card's right-hand number. */
+    reserve?: number;
     clipSize: number;
     /** Public-path URL for the weapon thumbnail (e.g. `/assets/image/weapons/arcana-staff.png`).
      *  Undefined for melee weapons or spec.visual entries without a texture. */
@@ -188,6 +191,8 @@ export interface GameUIState {
         name: string;
         ammo: number;
         maxAmmo: number;
+        /** Spare rounds behind the active magazine. */
+        reserve: number;
         isReloading: boolean;
         reloadProgress: number;
         slots: WeaponSlotData[];
@@ -414,7 +419,13 @@ export const useGameStore = create<GameUIState>()(
 
             refillAmmo: () =>
                 set((state) => {
-                    const slots = state.slots.map((slot) => ({ ...slot, ammo: slot.clipSize }));
+                    const slots = state.slots.map((slot) => ({
+                        ...slot,
+                        ammo: slot.clipSize,
+                        // The reserve is what the shop actually sells now: a
+                        // magazine refills itself out of it.
+                        reserve: reserveMaxFor(slot.clipSize),
+                    }));
                     // Refresh the derived active-ammo mirrors too, so the HUD
                     // does not keep showing the pre-refill count.
                     const active = slots[state.activeWeaponIndex];

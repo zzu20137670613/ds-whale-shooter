@@ -18,6 +18,7 @@
  */
 
 import type { WeaponSpec } from './types';
+import { reserveMaxFor } from './ammo';
 
 /** Price charged per missing round when refilling the hotbar.
  *
@@ -70,9 +71,14 @@ export function applyWeaponUpgrade(spec: WeaponSpec, level: number): WeaponSpec 
  * `AMMO_REFILL_PRICE_PER_ROUND`. Already-full slots cost nothing, so a
  * player who just reloaded is not charged twice.
  */
-export function ammoRefillPrice(slots: ReadonlyArray<{ ammo: number; clipSize: number }>): number {
+export function ammoRefillPrice(
+    slots: ReadonlyArray<{ reserve?: number; clipSize: number }>,
+): number {
     const missing = slots.reduce(
-        (sum, slot) => sum + Math.max(0, Math.floor(slot.clipSize) - Math.floor(slot.ammo)),
+        // Reserve, not magazine: a magazine refills itself out of the reserve,
+        // so the rounds worth paying for are the spares behind it.
+        (sum, slot) =>
+            sum + Math.max(0, reserveMaxFor(slot.clipSize) - Math.floor(slot.reserve ?? 0)),
         0,
     );
     return missing * AMMO_REFILL_PRICE_PER_ROUND;

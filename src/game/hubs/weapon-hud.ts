@@ -14,6 +14,7 @@ export class WeaponHud {
         const active = weapons.getActive();
         const ammo = weapons.getAmmo();
         const max = weapons.getMaxAmmo();
+        const reserve = weapons.getReserve();
         const isReloading = weapons.isReloading();
         const reloadProgress = isReloading ? weapons.getReloadProgress(time) : 0;
 
@@ -22,6 +23,8 @@ export class WeaponHud {
             id: string;
             name: string;
             ammo: number;
+            /** Spare rounds — the weapon card's right-hand number. */
+            reserve: number;
             clipSize: number;
             texture?: string;
         }> = [];
@@ -32,6 +35,7 @@ export class WeaponHud {
                 id: slotState.spec.id ?? `slot-${i}`,
                 name: pickText(slotState.spec.name, slotState.spec.nameZh),
                 ammo: slotState.ammo,
+                reserve: slotState.reserve,
                 clipSize: slotState.spec.clipSize ?? 1,
                 texture: slotState.spec.visual?.texture,
             });
@@ -42,6 +46,7 @@ export class WeaponHud {
             name: active ? pickText(active.name, active.nameZh) : '',
             ammo,
             maxAmmo: max,
+            reserve,
             isReloading,
             reloadProgress,
             slots,

@@ -20,6 +20,13 @@ import { EventBus } from '@/lib/events/bus';
 import type { WeaponSpec } from '@/lib/weapons';
 
 import {
+    addReserve,
+    canReloadFromReserve,
+    reloadFromReserve,
+    reserveMaxFor,
+} from '@/lib/weapons/ammo';
+
+import {
     bulletVelocity,
     createBulletTrail,
     destroyBulletVisual,
@@ -64,7 +71,10 @@ export function isWall(body: { label?: string }): boolean {
 
 interface SlotState {
     spec: WeaponSpec;
+    /** Rounds in the magazine right now. */
     ammo: number;
+    /** Spare rounds; a reload moves them into `ammo`. Melee weapons keep 0. */
+    reserve: number;
     lastFireAt: number;
     reloading: boolean;
     reloadStartedAt: number;
@@ -109,8 +119,13 @@ export class WeaponController {
         this.slots = weapons.map((spec, idx) => {
             const clipSize = spec.clipSize ?? 1;
             const savedSlot = savedSlots?.find((s) => s.id === spec.id) ?? savedSlots?.[idx];
+            const isMelee = spec.bullet?.type === 'melee' || spec.hitWidth !== undefined;
+            const reserveMax = isMelee ? 0 : reserveMaxFor(clipSize);
+            const savedReserve =
+                savedSlot && typeof savedSlot.reserve === 'number' ? savedSlot.reserve : reserveMax;
             return {
                 spec,
+                reserve: isMelee ? 0 : Math.min(savedReserve, reserveMax),
                 ammo:
                     savedSlot && typeof savedSlot.ammo === 'number'
                         ? Math.min(savedSlot.ammo, clipSize)
@@ -205,19 +220,28 @@ export class WeaponController {
         const isMelee = slot.spec.bullet?.type === 'melee' || slot.spec.hitWidth !== undefined;
         if (isMelee || slot.reloading) return;
         const clipSize = slot.spec.clipSize ?? 1;
-        if (slot.ammo >= clipSize) return;
+        if (!canReloadFromReserve(slot.ammo, slot.reserve, clipSize)) return;
         slot.reloading = true;
         slot.reloadStartedAt = this.scene.time.now;
         EventBus.emit(SFX_EVENT(slot.spec.sfx?.reloadStart ?? 'reload-start'));
     }
 
     /** Drop ammo into the current slot — caps at clipSize. */
+    /** Top every ranged slot's reserve back up, the way the shop's refill does. */
+    refillAllReserves(): void {
+        for (const slot of this.slots) {
+            const isMelee = slot.spec.bullet?.type === 'melee' || slot.spec.hitWidth !== undefined;
+            if (isMelee) continue;
+            slot.reserve = reserveMaxFor(slot.spec.clipSize ?? 1);
+        }
+    }
+
     refillActiveAmmo(fraction: number): void {
         if (this.slots.length === 0) return;
         const slot = this.slots[this.currentIndex];
         const clipSize = slot.spec.clipSize ?? 1;
         const add = Math.round(clipSize * fraction);
-        slot.ammo = Math.min(clipSize, slot.ammo + add);
+        slot.reserve = addReserve(slot.reserve, add, reserveMaxFor(clipSize));
     }
 
     /** Switch to a named weapon if it's already in the hotbar. */
@@ -241,8 +265,10 @@ export class WeaponController {
     tryPickupWeapon(spec: WeaponSpec): 'added' | 'capped' {
         if (this.slots.length >= this.maxSlots) return 'capped';
         const clipSize = spec.clipSize ?? 1;
+        const pickupMelee = spec.bullet?.type === 'melee' || spec.hitWidth !== undefined;
         this.slots.push({
             spec,
+            reserve: pickupMelee ? 0 : reserveMaxFor(clipSize),
             ammo: clipSize,
             lastFireAt: 0,
             reloading: false,
@@ -271,8 +297,10 @@ export class WeaponController {
         if (this.slots.length === 0) return;
         if (slotIndex < 0 || slotIndex >= this.slots.length) return;
         const clipSize = spec.clipSize ?? 1;
+        const replaceMelee = spec.bullet?.type === 'melee' || spec.hitWidth !== undefined;
         this.slots[slotIndex] = {
             spec,
+            reserve: replaceMelee ? 0 : reserveMaxFor(clipSize),
             ammo: clipSize,
             lastFireAt: 0,
             reloading: false,
@@ -313,6 +341,18 @@ export class WeaponController {
         };
     }
 
+    /** Spare rounds behind the active magazine. 0 for melee. */
+    getReserve(): number {
+        const slot = this.slots[this.currentIndex];
+        return slot ? slot.reserve : 0;
+    }
+
+    /** Capacity of the active weapon's reserve, for the HUD's bar/ratio. */
+    getReserveMax(): number {
+        const slot = this.slots[this.currentIndex];
+        return slot ? reserveMaxFor(slot.spec.clipSize ?? 1) : 0;
+    }
+
     getAmmo(): number {
         if (this.slots.length === 0) return 0;
         const slot = this.slots[this.currentIndex];
@@ -346,11 +386,11 @@ export class WeaponController {
         return this.slots.length < this.maxSlots;
     }
 
-    getSlot(index: number): { spec: WeaponSpec; ammo: number } | null {
+    getSlot(index: number): { spec: WeaponSpec; ammo: number; reserve: number } | null {
         if (index < 0 || index >= this.slots.length) return null;
         const s = this.slots[index];
         const isMelee = s.spec.bullet?.type === 'melee' || s.spec.hitWidth !== undefined;
-        return { spec: s.spec, ammo: isMelee ? 1 : s.ammo };
+        return { spec: s.spec, ammo: isMelee ? 1 : s.ammo, reserve: isMelee ? 0 : s.reserve };
     }
 
     isReloading(): boolean {
@@ -409,7 +449,15 @@ export class WeaponController {
                 if (slot.reloading && reloadTimeMs > 0) {
                     const elapsed = time - slot.reloadStartedAt;
                     if (elapsed >= reloadTimeMs) {
-                        slot.ammo = slot.spec.clipSize ?? 1;
+                        // Rounds come out of the reserve. A reserve that cannot
+                        // fill the magazine just gives what it has.
+                        const filled = reloadFromReserve(
+                            slot.ammo,
+                            slot.reserve,
+                            slot.spec.clipSize ?? 1,
+                        );
+                        slot.ammo = filled.ammo;
+                        slot.reserve = filled.reserve;
                         slot.reloading = false;
                         slot.justCompletedAt = time;
                         EventBus.emit(SFX_EVENT(slot.spec.sfx?.reloadFinish ?? 'reload-finish'));
@@ -430,7 +478,11 @@ export class WeaponController {
             if (isActiveMelee) {
                 active.ammo = 1;
                 active.reloading = false;
-            } else if (active.ammo === 0 && !active.reloading && active.justCompletedAt === 0) {
+            } else if (
+                canReloadFromReserve(active.ammo, active.reserve, active.spec.clipSize ?? 1) &&
+                !active.reloading &&
+                active.justCompletedAt === 0
+            ) {
                 active.reloading = true;
                 active.reloadStartedAt = time;
                 EventBus.emit(SFX_EVENT(active.spec.sfx?.reloadStart ?? 'reload-start'));
