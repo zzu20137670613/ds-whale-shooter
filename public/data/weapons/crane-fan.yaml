@@ -4,9 +4,9 @@
 # exists. Numbers are placeholders: the whole ladder gets re-tuned.
 name: Crane Fan
 nameZh: "鹤扇"
-damage: 18
+damage: 40
 cooldownMs: 420
-range: 190
+range: 180
 upgrades:
     # Tavern weapon ladder. `costs.length` IS the max level.
     costs: [36, 80, 140, 220, 320]

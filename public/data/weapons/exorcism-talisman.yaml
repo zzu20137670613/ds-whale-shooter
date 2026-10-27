@@ -5,7 +5,7 @@
 # hand until Exorcism Talisman art exists.
 name: Exorcism Talisman
 nameZh: "灭妖符"
-damage: 20
+damage: 40
 cooldownMs: 900
 range: 600
 aoeRadius: 70

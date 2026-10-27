@@ -3,7 +3,7 @@
 # exists. Stats and behaviour are final; only the textures are borrowed.
 name: White Dragon Fangs
 nameZh: "白龙獠牙"
-damage: 5
+damage: 25
 cooldownMs: 90
 range: 560
 upgrades:

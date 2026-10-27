@@ -3,7 +3,7 @@
 # exists. Stats and behaviour are final; only the textures are borrowed.
 name: Inkwell Mortar
 nameZh: "墨壶迫击"
-damage: 46
+damage: 70
 cooldownMs: 1500
 range: 700
 aoeRadius: 90

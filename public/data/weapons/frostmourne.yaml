@@ -6,9 +6,9 @@
 # placeholders: the whole ladder gets re-tuned in the numeric pass.
 name: Frostmourne
 nameZh: "霜之哀伤"
-damage: 22
+damage: 40
 cooldownMs: 400
-range: 180
+range: 200
 upgrades:
     # Tavern weapon ladder. `costs.length` IS the max level.
     costs: [40, 90, 160, 250, 360]

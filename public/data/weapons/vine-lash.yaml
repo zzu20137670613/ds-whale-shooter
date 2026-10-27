@@ -1,8 +1,8 @@
 name: Vine Lash
 nameZh: "藤鞭"
-damage: 1
+damage: 8
 cooldownMs: 600
-range: 450
+range: 200
 upgrades:
     # Tavern weapon ladder. `costs.length` IS the max level.
     costs: [40, 90, 160, 250, 360]

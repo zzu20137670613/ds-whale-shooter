@@ -5,9 +5,9 @@
 # whole ladder gets re-tuned in the numeric pass.
 name: Scripture
 nameZh: "教典"
-damage: 34
+damage: 60
 cooldownMs: 900
-range: 190
+range: 180
 upgrades:
     # Tavern weapon ladder. `costs.length` IS the max level.
     costs: [45, 100, 175, 270, 390]

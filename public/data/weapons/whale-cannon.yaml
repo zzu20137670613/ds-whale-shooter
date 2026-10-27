@@ -1,6 +1,6 @@
 name: Whale Cannon
 nameZh: "鲸娘重炮"
-damage: 40
+damage: 50
 aoeRadius: 75
 cooldownMs: 1100
 range: 760

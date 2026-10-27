@@ -6,9 +6,9 @@
 # `rotationOffset: 180` flips the blade end-for-end if the tip reads backwards.
 name: Nashor's Tooth
 nameZh: "纳什之牙"
-damage: 11
+damage: 50
 cooldownMs: 190
-range: 300
+range: 200
 upgrades:
     # Tavern weapon ladder. `costs.length` IS the max level.
     costs: [38, 85, 148, 232, 336]

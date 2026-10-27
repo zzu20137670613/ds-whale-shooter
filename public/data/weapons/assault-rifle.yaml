@@ -3,7 +3,7 @@
 # minus the unread `bullet.speed` the schema no longer accepts.
 name: Assault Rifle
 nameZh: "突击步枪"
-damage: 4
+damage: 30
 cooldownMs: 100
 range: 550
 upgrades:

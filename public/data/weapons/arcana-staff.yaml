@@ -3,7 +3,7 @@
 # they are not final until that level is designed.
 name: Arcana Staff
 nameZh: "秘法法杖"
-damage: 24
+damage: 40
 cooldownMs: 500
 range: 1000
 upgrades:
