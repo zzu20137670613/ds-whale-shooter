@@ -13,12 +13,19 @@
  * a full magazine, and the dry-fire state where both are zero.
  */
 
-import { AMMO_RESERVE_CLIPS } from '@/lib/constants';
+import { AMMO_RESERVE_BASE_CLIPS, AMMO_RESERVE_CLIPS_PER_LEVEL } from '@/lib/constants';
 
-/** Capacity of a weapon's reserve pool. Melee weapons have no reserve at all. */
-export function reserveMaxFor(clipSize: number, clips: number = AMMO_RESERVE_CLIPS): number {
+/**
+ * Capacity of a weapon's reserve pool: `clipSize * (2 + level)`.
+ *
+ * Melee weapons pass a clip size of 0 and get 0. `level` is that weapon's own
+ * upgrade level, clamped at 0 so a malformed save can only ever shrink nothing.
+ */
+export function reserveMaxFor(clipSize: number, level = 0): number {
     const clip = Math.max(0, Math.floor(clipSize));
-    return clip * Math.max(0, Math.floor(clips));
+    const steps = Number.isFinite(level) ? Math.max(0, Math.floor(level)) : 0;
+    const clips = AMMO_RESERVE_BASE_CLIPS + steps * AMMO_RESERVE_CLIPS_PER_LEVEL;
+    return clip * clips;
 }
 
 /** Whether a reload would actually move rounds right now. */

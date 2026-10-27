@@ -90,13 +90,14 @@ export const KEY_Q = 81;
 
 // ─── Weapons: reserve ammunition ──────────────────────────────────────────
 /**
- * How many magazines' worth of spare rounds a ranged weapon carries.
+ * Reserve ammunition, counted in magazines: `2 + upgradeLevel`.
  *
- * 4 keeps a fight going without turning ammo into a chore: the assault rifle's
- * 35-round magazine becomes 140 in reserve, which is roughly one level's worth
- * of shooting before ammo drops matter.
+ * A fresh weapon carries two magazines of spares, and every bought upgrade adds
+ * one more, so the whale cannon walks 2/4 -> 2/6 -> 2/8 while its magazine stays
+ * at 2. Only the reserve grows: buying firepower must not also buy a bigger clip.
  */
-export const AMMO_RESERVE_CLIPS = 4;
+export const AMMO_RESERVE_BASE_CLIPS = 2;
+export const AMMO_RESERVE_CLIPS_PER_LEVEL = 1;
 
 // ─── HUD: shared layout values (apply to all HUDs) ────────────────────
 

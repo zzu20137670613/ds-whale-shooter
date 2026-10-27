@@ -328,8 +328,8 @@ describe('ShopPanel', () => {
     });
 
     it('prices an ammo refill by the missing rounds and refills the slots', async () => {
-        // A 5-round magazine carries 5 * AMMO_RESERVE_CLIPS = 20 spare rounds, so
-        // an empty reserve is 20 rounds * AMMO_REFILL_PRICE_PER_ROUND (2) = 40.
+        // A 5-round magazine carries 5 * 2 = 10 spare rounds at level 0, so an
+        // empty reserve is 10 rounds * AMMO_REFILL_PRICE_PER_ROUND (2) = 20.
         useGameStore.setState({
             money: 100,
             slots: [{ id: 'shotgun', name: 'Shotgun', ammo: 1, clipSize: 5, reserve: 0 }],
@@ -337,13 +337,13 @@ describe('ShopPanel', () => {
 
         await openShop();
 
-        expect(q('shop-refill')?.textContent).toContain('40');
+        expect(q('shop-refill')?.textContent).toContain('20');
 
         click('shop-refill');
 
-        expect(useGameStore.getState().money).toBe(60);
+        expect(useGameStore.getState().money).toBe(80);
         expect(useGameStore.getState().slots[0].ammo).toBe(5);
-        expect(useGameStore.getState().slots[0].reserve).toBe(20);
+        expect(useGameStore.getState().slots[0].reserve).toBe(10);
     });
 
     it('disables the refill once the hotbar is full, and charges nothing', async () => {

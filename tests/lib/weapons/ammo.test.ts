@@ -16,20 +16,33 @@ import {
     reloadFromReserve,
     reserveMaxFor,
 } from '@/lib/weapons/ammo';
-import { AMMO_RESERVE_CLIPS } from '@/lib/constants';
+import { AMMO_RESERVE_BASE_CLIPS, AMMO_RESERVE_CLIPS_PER_LEVEL } from '@/lib/constants';
 
 describe('reserveMaxFor', () => {
-    it('is a small number of magazines', () => {
-        expect(reserveMaxFor(35)).toBe(35 * AMMO_RESERVE_CLIPS);
-        expect(reserveMaxFor(2)).toBe(2 * AMMO_RESERVE_CLIPS);
+    it('starts at two magazines', () => {
+        expect(AMMO_RESERVE_BASE_CLIPS).toBe(2);
+        expect(reserveMaxFor(35)).toBe(70);
+        expect(reserveMaxFor(2)).toBe(4);
+    });
+
+    it('grows one magazine per weapon upgrade level', () => {
+        // The owner's examples: 2/4 -> 2/6 -> 2/8, and 35/70 -> 35/105.
+        expect(reserveMaxFor(2, 0)).toBe(4);
+        expect(reserveMaxFor(2, 1)).toBe(6);
+        expect(reserveMaxFor(2, 2)).toBe(8);
+        expect(reserveMaxFor(35, 0)).toBe(70);
+        expect(reserveMaxFor(35, 1)).toBe(105);
+        expect(reserveMaxFor(35, 5)).toBe(35 * (2 + 5 * AMMO_RESERVE_CLIPS_PER_LEVEL));
     });
 
     it('is zero for a weapon with no magazine', () => {
         expect(reserveMaxFor(0)).toBe(0);
+        expect(reserveMaxFor(0, 5)).toBe(0);
     });
 
-    it('takes a clip count so a gun can carry more or less than the default', () => {
-        expect(reserveMaxFor(10, 3)).toBe(30);
+    it('treats a malformed level as no upgrades', () => {
+        expect(reserveMaxFor(10, -3)).toBe(20);
+        expect(reserveMaxFor(10, Number.NaN)).toBe(20);
     });
 });
 

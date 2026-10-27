@@ -72,13 +72,17 @@ export function applyWeaponUpgrade(spec: WeaponSpec, level: number): WeaponSpec 
  * player who just reloaded is not charged twice.
  */
 export function ammoRefillPrice(
-    slots: ReadonlyArray<{ reserve?: number; clipSize: number }>,
+    slots: ReadonlyArray<{ reserve?: number; clipSize: number; level?: number }>,
 ): number {
     const missing = slots.reduce(
         // Reserve, not magazine: a magazine refills itself out of the reserve,
         // so the rounds worth paying for are the spares behind it.
         (sum, slot) =>
-            sum + Math.max(0, reserveMaxFor(slot.clipSize) - Math.floor(slot.reserve ?? 0)),
+            sum +
+            Math.max(
+                0,
+                reserveMaxFor(slot.clipSize, slot.level ?? 0) - Math.floor(slot.reserve ?? 0),
+            ),
         0,
     );
     return missing * AMMO_REFILL_PRICE_PER_ROUND;

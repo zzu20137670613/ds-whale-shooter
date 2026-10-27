@@ -555,8 +555,12 @@ export const useGameStore = create<GameUIState>()(
                         ...slot,
                         ammo: slot.clipSize,
                         // The reserve is what the shop actually sells now: a
-                        // magazine refills itself out of it.
-                        reserve: reserveMaxFor(slot.clipSize),
+                        // magazine refills itself out of it. Its cap grows with
+                        // the weapon's own upgrade level.
+                        reserve: reserveMaxFor(
+                            slot.clipSize,
+                            state.weaponLevels[slot.id] ?? 0,
+                        ),
                     }));
                     // Refresh the derived active-ammo mirrors too, so the HUD
                     // does not keep showing the pre-refill count.
