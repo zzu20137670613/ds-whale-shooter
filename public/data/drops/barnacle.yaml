@@ -8,20 +8,20 @@ effect:
     sellPrice: 1
 
 visual:
-    size: 18
+    size: 22
     tint: 0xe7e2d3
 
-# PLACEHOLDER ART: borrows the shared drops.png atlas until barnacle.png exists
-# (four 64x64 frames in a row, transparent background). Swap `texture` and
-# `grid` to { rows: 1, cols: 4 } when the real sheet lands.
+# Three 64x64 frames in a row. The source sheet had four, but the fourth carried
+# a watermark, so it was dropped; three frames of a slow shimmer is the whole
+# idle loop.
 sprite:
-    texture: assets/image/drops/drops.png
-    grid: { rows: 4, cols: 4 }
+    texture: assets/image/drops/barnacle.png
+    grid: { rows: 1, cols: 3 }
     scale: 1
     offset: { left: 0, bottom: 0 }
 
 anims:
     idle:
-        frames: [0, 3]
-        frameRate: 6
+        frames: [0, 2]
+        frameRate: 4
         repeat: -1
