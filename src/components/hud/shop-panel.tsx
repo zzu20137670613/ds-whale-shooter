@@ -32,7 +32,7 @@ import { Coins, Home, X } from 'lucide-react';
 import { CornerPixels, RETRO_BOX } from './retro-box';
 import {
     SHOP_RESTORE_VITALS_EVENT,
-    SHOP_RESTORE_VITALS_PRICE,
+    vitalsRestorePrice,
     canBuyRestore,
 } from '@/lib/characters/vitals';
 import { EventBus } from '@/lib/events/bus';
@@ -222,10 +222,12 @@ export function ShopPanel() {
     // HP and SP never regenerate on their own any more — this purchase (and
     // pickups) is the only way back up. The character applies it; the panel
     // only charges and announces.
+    // Refill price rides the armour ladder: 5 / 10 / 20 / 40 / 80 / 160.
+    const restorePrice = vitalsRestorePrice(upgradeLevels.armor ?? 0);
     const canRestoreVitals = canBuyRestore({ hp, maxHp, sp, maxSp, money });
     const buyVitals = () => {
         if (!canRestoreVitals) return;
-        if (spendMoney(SHOP_RESTORE_VITALS_PRICE)) {
+        if (spendMoney(restorePrice)) {
             EventBus.emit(SHOP_RESTORE_VITALS_EVENT);
         }
     };
@@ -405,7 +407,7 @@ export function ShopPanel() {
                             className={buyClass(canRestoreVitals)}
                         >
                             <Coins className="size-2.5" />
-                            {SHOP_RESTORE_VITALS_PRICE}
+                            {restorePrice}
                         </button>
                     </div>
 
