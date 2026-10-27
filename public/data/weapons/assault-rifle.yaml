@@ -11,6 +11,7 @@ upgrades:
     costs: [40, 90, 160, 250, 360]
     damagePerLevel: [30, 38, 38, 45, 52, 60]
 clipSize: 35
+ammoPrice: { price: 1, perRounds: 3 }
 reloadTimeMs: 1500
 bulletsPerShot: 1
 visual:

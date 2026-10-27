@@ -9,6 +9,7 @@ upgrades:
     costs: [40, 90, 160, 250, 360]
     damagePerLevel: [50, 57, 66, 76, 88, 100]
 clipSize: 2
+ammoPrice: { price: 2, perRounds: 1 }
 reloadTimeMs: 2600
 bulletsPerShot: 1
 # PLACEHOLDER ASSET — reuses the rocket-launcher / rocket-missile

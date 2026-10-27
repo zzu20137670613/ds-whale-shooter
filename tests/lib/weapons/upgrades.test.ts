@@ -186,6 +186,30 @@ describe('applyWeaponUpgrade', () => {
     });
 });
 
+describe('ammoRefillPrice tiers', () => {
+    const cannon = { price: 2, perRounds: 1 };
+    const talisman = { price: 1, perRounds: 1 };
+    const gun = { price: 1, perRounds: 3 };
+
+    it('prices a cannon differently from a rifle', () => {
+        // Same 6 missing rounds, three classes.
+        const base = { reserve: 0, clipSize: 3 };
+        expect(ammoRefillPrice([{ ...base, ammoPrice: cannon }])).toBe(6 * 2);
+        expect(ammoRefillPrice([{ ...base, ammoPrice: talisman }])).toBe(6 * 1);
+        expect(ammoRefillPrice([{ ...base, ammoPrice: gun }])).toBe(Math.ceil(6 / 3) * 1);
+    });
+
+    it('rounds a gun refill up to whole coins', () => {
+        // 1 round short of a gun: 1/3 of a round is not a thing, so it costs 1.
+        const slot = { reserve: 5, clipSize: 3, ammoPrice: gun };
+        expect(ammoRefillPrice([slot])).toBe(1);
+    });
+
+    it('falls back to the flat per-round price when a weapon has no class', () => {
+        expect(ammoRefillPrice([{ reserve: 0, clipSize: 2 }])).toBe(4 * 2);
+    });
+});
+
 describe('ammoRefillPrice', () => {
     it('charges per missing reserve round', () => {
         // A 5-round magazine carries 5 * AMMO_RESERVE_CLIPS spare rounds.

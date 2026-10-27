@@ -162,6 +162,18 @@ export const WeaponSpecSchema = z
         // Ranged-only
         projectile: ProjectileSchema.optional(),
         clipSize: z.number().gt(0).optional(),
+        /**
+         * What the shop charges to buy ammunition back: `price` coins per
+         * `perRounds` rounds. A gun is cheap per round because it burns rounds
+         * fast; a cannon is expensive because every round is a decision.
+         */
+        ammoPrice: z
+            .object({
+                price: z.number().gt(0),
+                perRounds: z.number().gt(0),
+            })
+            .strict()
+            .optional(),
         reloadTimeMs: z.number().gt(0).optional(),
         bulletsPerShot: z.number().gt(0).optional(),
         // Melee-only

@@ -71,21 +71,31 @@ export function applyWeaponUpgrade(spec: WeaponSpec, level: number): WeaponSpec 
  * `AMMO_REFILL_PRICE_PER_ROUND`. Already-full slots cost nothing, so a
  * player who just reloaded is not charged twice.
  */
-export function ammoRefillPrice(
-    slots: ReadonlyArray<{ reserve?: number; clipSize: number; level?: number }>,
+/** Coins one refill costs, per slot, given that weapon's `ammoPrice`. */
+export function ammoPriceForSlot(
+    slot: { reserve?: number; clipSize: number; level?: number; ammoPrice?: { price: number; perRounds: number } },
 ): number {
-    const missing = slots.reduce(
-        // Reserve, not magazine: a magazine refills itself out of the reserve,
-        // so the rounds worth paying for are the spares behind it.
-        (sum, slot) =>
-            sum +
-            Math.max(
-                0,
-                reserveMaxFor(slot.clipSize, slot.level ?? 0) - Math.floor(slot.reserve ?? 0),
-            ),
+    const missing = Math.max(
         0,
+        reserveMaxFor(slot.clipSize, slot.level ?? 0) - Math.floor(slot.reserve ?? 0),
     );
-    return missing * AMMO_REFILL_PRICE_PER_ROUND;
+    if (missing === 0) return 0;
+    const price = slot.ammoPrice?.price ?? AMMO_REFILL_PRICE_PER_ROUND;
+    const perRounds = slot.ammoPrice?.perRounds ?? 1;
+    // Whole coins only: 1 coin per 3 rounds means 4 missing rounds cost 2.
+    return Math.ceil(missing / perRounds) * price;
+}
+
+/** What refilling the whole hotbar costs. */
+export function ammoRefillPrice(
+    slots: ReadonlyArray<{
+        reserve?: number;
+        clipSize: number;
+        level?: number;
+        ammoPrice?: { price: number; perRounds: number };
+    }>,
+): number {
+    return slots.reduce((sum, slot) => sum + ammoPriceForSlot(slot), 0);
 }
 
 function clampLevel(level: number, ladderLength: number): number {

@@ -181,7 +181,15 @@ export function ShopPanel() {
     const sellEverything = useGameStore((s) => s.sellEverything);
     const listings = sellListings(inventory, dropCatalog);
 
-    const refillPrice = ammoRefillPrice(slots);
+    // Each slot is priced by its own weapon: a cannon round costs more than a
+    // rifle round, and the reserve cap depends on how many upgrades it has.
+    const refillPrice = ammoRefillPrice(
+        slots.map((slot) => ({
+            ...slot,
+            level: weaponLevels[slot.id] ?? 0,
+            ammoPrice: weaponSpecs[slot.id]?.ammoPrice,
+        })),
+    );
     const canRefill = refillPrice > 0 && money >= refillPrice;
 
     const buyUpgrade = (id: string) => {

@@ -12,6 +12,7 @@ upgrades:
     costs: [55, 120, 205, 315, 455]
     damagePerLevel: [70, 82, 97, 116, 135, 160]
 clipSize: 3
+ammoPrice: { price: 2, perRounds: 1 }
 reloadTimeMs: 3200
 visual:
     texture: assets/image/weapons/rocket-launcher.png
