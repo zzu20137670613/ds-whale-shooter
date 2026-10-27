@@ -36,6 +36,10 @@ const en: CatalogSource = {
         hint: 'Returns to the tavern',
     },
     shop: {
+        sell: 'Sell',
+        sellAll: 'Sell all',
+        nothingToSell: 'Nothing to sell',
+        sellUnit: 'each',
         title: 'Tavern Shop',
         close: 'Close',
         noCharacter: 'Pick a character first.',

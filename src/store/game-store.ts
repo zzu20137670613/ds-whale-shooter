@@ -4,6 +4,7 @@ import { persist } from 'zustand/middleware';
 import { setLocale as setLocaleRuntime, type LocaleCode } from '@/locales';
 import { reserveMaxFor } from '@/lib/weapons/ammo';
 import { addToInventory, emptyInventory, removeFromInventory } from '@/lib/inventory';
+import { bagSellValue } from '@/lib/inventory/sell';
 import type { InventorySlot } from '@/lib/inventory';
 import type { PetBonus } from '@/lib/pet/lifetime';
 
@@ -249,6 +250,14 @@ export interface GameUIState {
     setDropCatalog: (entries: Record<string, DropCatalogEntry>) => void;
     setBackpackOpen: (open: boolean) => void;
     /**
+     * Sell one unit out of the slot at `index`, paying its `sellPrice`. Returns
+     * the coins earned (0 when the item has no price, so a shop row can gate on
+     * it).
+     */
+    sellInventorySlot: (index: number) => number;
+    /** Sell every sellable unit in the bag. Returns coins earned. */
+    sellEverything: () => number;
+    /**
      * Deduct a price if the player can afford it. Returns false and
      * changes nothing otherwise, so a shop row can gate its purchase on
      * the result instead of re-reading the balance.
@@ -487,6 +496,42 @@ export const useGameStore = create<GameUIState>()(
             setDropCatalog: (entries) => set({ dropCatalog: entries }),
 
             setBackpackOpen: (open) => set({ backpackOpen: open }),
+
+            sellInventorySlot: (index) => {
+                let earned = 0;
+                set((state) => {
+                    const slot = state.inventory[index];
+                    if (!slot) return {};
+                    const unitPrice = Math.max(
+                        0,
+                        Math.floor(state.dropCatalog[slot.dropId]?.sellPrice ?? 0),
+                    );
+                    if (unitPrice === 0) return {};
+                    earned = unitPrice;
+                    return {
+                        inventory: removeFromInventory(state.inventory, index, 1),
+                        money: state.money + unitPrice,
+                    };
+                });
+                return earned;
+            },
+
+            sellEverything: () => {
+                let earned = 0;
+                set((state) => {
+                    const value = bagSellValue(state.inventory, state.dropCatalog);
+                    if (value === 0) return {};
+                    earned = value;
+                    // Keep unsellable items; drop only what the shop pays for.
+                    const kept = state.inventory.filter(
+                        (slot) =>
+                            Math.max(0, Math.floor(state.dropCatalog[slot.dropId]?.sellPrice ?? 0)) ===
+                            0,
+                    );
+                    return { inventory: kept, money: state.money + value };
+                });
+                return earned;
+            },
 
             refillAmmo: () =>
                 set((state) => {

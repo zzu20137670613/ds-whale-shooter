@@ -34,6 +34,10 @@ const zhCN: CatalogSource = {
         hint: '回到海边亭台',
     },
     shop: {
+        sell: '出售',
+        sellAll: '全部卖出',
+        nothingToSell: '没有可卖的东西',
+        sellUnit: '单价',
         title: '酒馆商店',
         close: '关闭',
         noCharacter: '请先选一个角色。',

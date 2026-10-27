@@ -43,6 +43,7 @@ import { upgradeCost } from '@/lib/characters/upgrades';
 import type { WeaponSpec } from '@/lib/weapons';
 import { fetchWeapon } from '@/lib/weapons';
 import { ammoRefillPrice, maxWeaponUpgradeLevel, weaponUpgradeCost } from '@/lib/weapons/upgrades';
+import { sellListings } from '@/lib/inventory/sell';
 import { t, pickText } from '@/locales';
 import { useGameStore } from '@/store/game-store';
 
@@ -170,6 +171,14 @@ export function ShopPanel() {
             });
         // `locale` is a real dependency: the names above follow it.
     }, [weaponSpecs, weaponLevels, money, locale]);
+
+    // Sell-back: materials only. The shop pays `sellPrice` per unit, and a
+    // price of 0 means "not bought yet", so those rows never appear.
+    const inventory = useGameStore((s) => s.inventory);
+    const dropCatalog = useGameStore((s) => s.dropCatalog);
+    const sellInventorySlot = useGameStore((s) => s.sellInventorySlot);
+    const sellEverything = useGameStore((s) => s.sellEverything);
+    const listings = sellListings(inventory, dropCatalog);
 
     const refillPrice = ammoRefillPrice(slots);
     const canRefill = refillPrice > 0 && money >= refillPrice;
@@ -385,6 +394,65 @@ export function ShopPanel() {
                             <Coins className="size-2.5" />
                             {SHOP_RESTORE_VITALS_PRICE}
                         </button>
+                    </div>
+
+                    {/* Sell-back. Materials are dead weight until sold, and the
+                        barnacle is the only priced item so far. */}
+                    <div className="mt-2 border-t-2 border-amber-900/40 pt-2">
+                        <div className="mb-1 flex items-center justify-between">
+                            <span className="text-[10px] tracking-wider text-amber-500 uppercase">
+                                {t('shop.sell')}
+                            </span>
+                            {listings.length > 0 && (
+                                <button
+                                    type="button"
+                                    data-testid="shop-sell-all"
+                                    onClick={() => sellEverything()}
+                                    className={buyClass(true)}
+                                >
+                                    <Coins className="size-2.5" />
+                                    {t('shop.sellAll')}
+                                </button>
+                            )}
+                        </div>
+                        <div data-testid="shop-sell-section">
+                            {listings.length === 0 && (
+                                <div className="py-1 text-[10px] text-stone-600">
+                                    {t('shop.nothingToSell')}
+                                </div>
+                            )}
+                            {listings.map((listing) => (
+                                <div
+                                    key={listing.dropId}
+                                    data-testid={`shop-sell-${listing.dropId}`}
+                                    className={rowClass}
+                                >
+                                    <span className="text-[12px] text-stone-200">
+                                        {listing.name}
+                                        <span className="ml-1 text-stone-500">
+                                            ×{listing.count}
+                                        </span>
+                                        <span className="ml-1 text-[9px] text-stone-600">
+                                            {t('shop.sellUnit')} {listing.unitPrice}
+                                        </span>
+                                    </span>
+                                    <button
+                                        type="button"
+                                        data-testid={`shop-sell-one-${listing.dropId}`}
+                                        onClick={() => {
+                                            const index = inventory.findIndex(
+                                                (slot) => slot.dropId === listing.dropId,
+                                            );
+                                            if (index >= 0) sellInventorySlot(index);
+                                        }}
+                                        className={buyClass(true)}
+                                    >
+                                        <Coins className="size-2.5" />
+                                        {listing.unitPrice}
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
                     </div>
 
                     {/* The way home. Deliberately NOT `restartAtTavern`: that

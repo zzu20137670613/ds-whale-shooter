@@ -18,3 +18,6 @@ export {
 } from './inventory';
 export type { AddResult, InventorySlot } from './inventory';
 export { INVENTORY_USE_EVENT } from './events';
+
+export { bagSellValue, sellListings } from './sell';
+export type { SellCatalogEntry, SellListing } from './sell';

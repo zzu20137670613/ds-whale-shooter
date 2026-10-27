@@ -55,6 +55,11 @@ export type CatalogSource = {
         noCharacter: string;
         level: string;
         maxed: string;
+        /** Sell-back section: materials the shop buys. */
+        sell: string;
+        sellAll: string;
+        nothingToSell: string;
+        sellUnit: string;
         /** Weapon section heading + its empty state + the ammo refill row. */
         weapons: string;
         empty: string;
