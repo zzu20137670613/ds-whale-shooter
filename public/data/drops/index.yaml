@@ -2,6 +2,7 @@ drops:
     - hp-shard
     - sp-fragment
     - ammo-cache
+    - barnacle
     - overcharge-core
     - weapon-drop
     - beach-drink

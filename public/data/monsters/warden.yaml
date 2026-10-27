@@ -105,6 +105,9 @@ body:
     halfH: 32
 weaponId: rune-shield
 drops:
+    # 每只怪必掉一个藤壶，卖店 1 块。
+    - dropId: barnacle
+      chance: 1
     - dropId: overcharge-core
       chance: 1
     - dropId: hp-shard

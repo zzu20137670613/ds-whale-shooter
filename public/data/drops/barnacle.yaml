@@ -1,0 +1,27 @@
+name: Barnacle
+nameZh: "藤壶"
+kind: monster
+sfx: pickup-hp
+# Not used, only sold. The price is a placeholder the shop will read later.
+effect:
+    type: material
+    sellPrice: 1
+
+visual:
+    size: 18
+    tint: 0xe7e2d3
+
+# PLACEHOLDER ART: borrows the shared drops.png atlas until barnacle.png exists
+# (four 64x64 frames in a row, transparent background). Swap `texture` and
+# `grid` to { rows: 1, cols: 4 } when the real sheet lands.
+sprite:
+    texture: assets/image/drops/drops.png
+    grid: { rows: 4, cols: 4 }
+    scale: 1
+    offset: { left: 0, bottom: 0 }
+
+anims:
+    idle:
+        frames: [0, 3]
+        frameRate: 6
+        repeat: -1

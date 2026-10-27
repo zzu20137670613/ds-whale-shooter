@@ -10,6 +10,7 @@
 # which is exactly this image's size, so frame 0 is the whole cup and no
 # anim table is needed - DropInstance falls back to `setFrame(0)`.
 name: Iced Juice
+nameZh: "冰镇果汁"
 kind: static
 sfx: pickup-hp
 visual:

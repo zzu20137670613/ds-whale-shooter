@@ -7,6 +7,7 @@
  *   type = 'refill-ammo' — add N bullets to current weapon's clip: { ammoFraction: 0..1 }
  *   type = 'full-restore' — refill HP and SP completely: {} (the beach drink)
  *   type = 'weapon'      — switch active weapon: { weaponId: string }
+ *   type = 'material'    — not used, only sold: { sellPrice: number }
  *
  *   kind = 'static'      — placed on the map from level.dropSpawns
  *   kind = 'monster'     — dropped by a monster on death

@@ -1,4 +1,5 @@
 name: Ammo Cache
+nameZh: "弹药箱"
 kind: static
 sfx: pickup-ammo
 visual:

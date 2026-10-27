@@ -12,6 +12,9 @@ sfx:
     death: monster-death
     aggro: monster-aggro
 drops:
+    # 每只怪必掉一个藤壶，卖店 1 块。
+    - dropId: barnacle
+      chance: 1
     - dropId: overcharge-core
       chance: 1.0
     - dropId: hp-shard

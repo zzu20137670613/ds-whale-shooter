@@ -50,6 +50,18 @@ const FullRestoreEffectSchema = z
     })
     .strict();
 
+/**
+ * A pickup that is not used, only kept and sold. The barnacle is the first one:
+ * one drops from every monster, and the shop pays `sellPrice` per unit.
+ */
+const MaterialEffectSchema = z
+    .object({
+        type: z.literal('material'),
+        /** Coins per unit when sold. 0 until a price is decided. */
+        sellPrice: z.number().gte(0).default(0),
+    })
+    .strict();
+
 const WeaponEffectSchema = z
     .object({
         type: z.literal('weapon'),
@@ -61,6 +73,7 @@ export const DropEffectSchema = z.discriminatedUnion('type', [
     InstantEffectSchema,
     RefillAmmoEffectSchema,
     FullRestoreEffectSchema,
+    MaterialEffectSchema,
     WeaponEffectSchema,
 ]);
 
@@ -76,6 +89,8 @@ export const DropSpecSchema = z
     .object({
         id: z.string().min(1).optional(),
         name: z.string().min(1),
+        /** Chinese display name, shown in the backpack. */
+        nameZh: z.string().min(1).optional(),
         kind: z.enum(['static', 'monster']),
         visual: DropVisualSchema,
         effect: DropEffectSchema,

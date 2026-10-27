@@ -44,6 +44,10 @@ export function planDropEffect(
         case 'weapon':
             sinks.onWeaponPickup(e.weaponId);
             return { requestWeaponSwap: e.weaponId };
+        case 'material':
+            // Nothing to apply: a material is dead weight until it is sold.
+            // The backpack (and later the shop) is what gives it value.
+            return {};
         default: {
             // exhaustiveness check at compile-time
             const _exhaustive: never = e;

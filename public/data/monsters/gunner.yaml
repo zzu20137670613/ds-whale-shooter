@@ -90,6 +90,9 @@ body:
     halfH: 20
 weaponId: thorn-bolt
 drops:
+    # 每只怪必掉一个藤壶，卖店 1 块。
+    - dropId: barnacle
+      chance: 1
     - dropId: ammo-cache
       chance: 0.5
     - dropId: overcharge-core
