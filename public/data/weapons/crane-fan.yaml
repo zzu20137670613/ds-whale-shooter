@@ -10,7 +10,7 @@ range: 180
 upgrades:
     # Tavern weapon ladder. `costs.length` IS the max level.
     costs: [36, 80, 140, 220, 320]
-    damagePerLevel: [18, 20, 23, 25, 28, 32]
+    damagePerLevel: [40, 44, 51, 56, 62, 71]
 hitWidth: 140
 hitHeight: 120
 visual:

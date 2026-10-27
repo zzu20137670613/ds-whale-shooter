@@ -8,7 +8,7 @@ range: 460
 upgrades:
     # Tavern weapon ladder. `costs.length` IS the max level.
     costs: [40, 90, 160, 250, 360]
-    damagePerLevel: [1, 1, 1, 2, 2, 2]
+    damagePerLevel: [20, 20, 20, 40, 40, 40]
 visual:
     texture: assets/image/weapons/bramble-knuckles.png
     scale: 0.5

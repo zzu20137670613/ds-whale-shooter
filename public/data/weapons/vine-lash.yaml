@@ -6,7 +6,7 @@ range: 200
 upgrades:
     # Tavern weapon ladder. `costs.length` IS the max level.
     costs: [40, 90, 160, 250, 360]
-    damagePerLevel: [1, 1, 1, 2, 2, 2]
+    damagePerLevel: [8, 8, 8, 16, 16, 16]
 visual:
     texture: assets/image/weapons/vine-lash.png
     scale: 0.5

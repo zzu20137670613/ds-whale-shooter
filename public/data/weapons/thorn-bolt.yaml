@@ -6,7 +6,7 @@ range: 520
 upgrades:
     # Tavern weapon ladder. `costs.length` IS the max level.
     costs: [40, 90, 160, 250, 360]
-    damagePerLevel: [1, 1, 1, 2, 2, 2]
+    damagePerLevel: [5, 5, 5, 10, 10, 10]
 bulletsPerShot: 1
 bullet:
     texture: assets/image/weapons/thorn-bolt.png
