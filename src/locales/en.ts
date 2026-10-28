@@ -15,6 +15,10 @@ const en: CatalogSource = {
         restart: 'Restart',
         restartHint: 'Restart returns to the tavern',
     },
+    input: {
+        mouse: 'Mouse',
+        directional: 'Arrows',
+    },
     hud: {
         spaceKey: 'SPACE · Dodge',
         reloadKey: 'F · Reload',

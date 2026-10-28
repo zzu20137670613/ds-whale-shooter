@@ -23,6 +23,13 @@ export type CatalogSource = {
         restart: string;
         restartHint: string;
     };
+    /** The corner chip that picks how you aim. */
+    input: {
+        /** Cursor aims. */
+        mouse: string;
+        /** Arrow keys aim, eight ways. */
+        directional: string;
+    };
     /** In-run HUD bits that used to be English-only. */
     hud: {
         /** Keycap shown next to the skill badge. */

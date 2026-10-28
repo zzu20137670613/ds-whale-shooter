@@ -156,6 +156,19 @@ export interface GameUIState {
 
     // Language — which catalog `t()` reads, and which sibling `pickText()`
     // prefers for game data. Persisted; mirrored into the i18n runtime.
+    /**
+     * Which half of the input redesign is live.
+     *
+     *   'mouse'       the cursor aims, manually (the magnet is gone either way)
+     *   'directional' the arrow keys aim, eight ways
+     *
+     * Persisted: a player who aims with arrows should not re-pick it every reload.
+     */
+    inputScheme: InputScheme;
+
+    /** Switch schemes. Called by the HUD corner chip and by the settings page. */
+    setInputScheme: (scheme: InputScheme) => void;
+
     locale: LocaleCode;
 
     /**
@@ -345,6 +358,15 @@ function detectLocale(): LocaleCode {
     return lang.toLowerCase().startsWith('zh') ? 'zh-CN' : 'en';
 }
 
+/**
+ * Two ways to aim, one at a time.
+ *
+ *  'mouse'        the cursor is the aim
+ *  'directional'  the arrow keys aim, eight ways (gamepad stick and touch walk
+ *                 direction feed the same path)
+ */
+export type InputScheme = 'mouse' | 'directional';
+
 export const initialGameState = {
     characterName: '',
     hp: 0,
@@ -380,6 +402,7 @@ export const initialGameState = {
 
     upgradeLevels: {} as Record<string, number>,
     weaponLevels: {} as Record<string, number>,
+    inputScheme: 'mouse' as InputScheme,
     locale: detectLocale(),
     petBonus: null,
 
@@ -653,7 +676,8 @@ export const useGameStore = create<GameUIState>()(
                 }),
 
             setPetBonus: (bonus) => set({ petBonus: bonus }),
-            setLocale: (code) => {
+            setInputScheme: (inputScheme) => set({ inputScheme }),
+        setLocale: (code) => {
                 // Keep the pure i18n runtime in step with the persisted
                 // choice — the runtime owns `t()` / `pickText()`, the store
                 // only owns the preference.
@@ -771,6 +795,7 @@ export const useGameStore = create<GameUIState>()(
                 weaponLevels: state.weaponLevels,
                 // Language
                 locale: state.locale,
+                inputScheme: state.inputScheme,
             }),
             onRehydrateStorage: () => (state) => {
                 // A restored save carries the player's language choice;

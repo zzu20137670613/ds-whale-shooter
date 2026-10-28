@@ -754,8 +754,10 @@ export class CharacterController {
         // very first tick, undoing the spawn-time facing.
         if (this.targetX !== null) sprite.setFlipX(this.targetX < pos.x);
 
-        // Per-frame magnetic aim assist update (for moving monsters / camera)
-        this.updateAimTarget(now);
+        // Cursor aiming only while the mouse scheme is live. Under the directional
+        // scheme the arrows own the aim and the cursor is ignored, so a moving mouse
+        // cannot quietly steal it back.
+        if (useGameStore.getState().inputScheme === 'mouse') this.updateAimTarget(now);
 
         // ── Animation state machine ─────────────────────────────────
         this.driveAnims(intent.vx !== 0 || intent.vy !== 0, now < this.dodgeActiveUntil, sprinting);
@@ -819,9 +821,9 @@ export class CharacterController {
         // monster exists, fall back to whatever the cursor set last.
         this.applyMobileAutoAim(pos);
 
-        // Scheme B: the arrow keys aim, and they win over the cursor for as long
-        // as they are held. Released, the cursor takes the aim back.
-        this.applyKeyboardAim(pos);
+        // Scheme B: the arrows own the aim, and the last direction is kept when
+        // nothing is held — releasing mid-fight must not blank the target.
+        if (useGameStore.getState().inputScheme === 'directional') this.applyKeyboardAim(pos);
 
         // ── Weapon update ───────────────────────────────────────────
         // Default aiming target when cursor hasn't moved yet aligns with character's sprite facing (flipX)

@@ -15,6 +15,10 @@ const zhCN: CatalogSource = {
         restart: '重新开始',
         restartHint: '重新开始会回到海边亭台',
     },
+    input: {
+        mouse: '键鼠',
+        directional: '方向键',
+    },
     hud: {
         spaceKey: '空格 闪避',
         reloadKey: 'F 换弹',
