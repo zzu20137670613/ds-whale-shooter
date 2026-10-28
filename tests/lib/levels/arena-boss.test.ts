@@ -35,14 +35,19 @@ describe('arena boss wiring', () => {
         expect(spawn!.y).toBe(1536);
     });
 
-    it('ships a spec for it, and it dies to a single hit', () => {
+    it('ships the phase-1 numbers, armour included', () => {
         const spec = parseMonsterYaml(
             readFileSync(join(process.cwd(), 'public', 'data', 'monsters', 'claude.yaml'), 'utf8'),
             'claude',
         );
-        expect(spec.hp).toBe(1);
-        // No phase logic yet: the placeholder borrows a weapon rather than
-        // carrying a skill set of its own.
+        // Owner's baseline for 灭世·Claude. Her phases scale from these
+        // (神 = 150%, 半神 = 80%, 半神半人 / Claude = 50%), so the armour has to
+        // travel with the HP ladder.
+        expect(spec.hp).toBe(4000);
+        expect(spec.armor).toBe(20);
+        expect(spec.moveSpeed).toBe(7);
+        // No phase logic yet: she borrows a weapon rather than carrying a skill
+        // set of her own.
         expect(spec.id).toBe('claude');
     });
 

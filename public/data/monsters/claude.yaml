@@ -2,7 +2,9 @@
 #
 # Everything here is deliberately temporary, so the whole hidden level can be
 # walked end to end before a single phase is written:
-#   - hp 1: one shot kills her (the owner's call: "先用一枪死，先把路子跑通")
+#   - Phase 1 numbers are in place (hp 4000 / armor 20 / speed 7); the five
+#     phases themselves are not written yet, so she still fires one borrowed
+#     weapon and just closes in.
 #   - no phase logic, no bespoke attacks; she carries the weakest weapon in the
 #     game so the MonsterController has one, and mostly just closes in
 #   - the visual is her PLAYABLE character sheet, so the placeholder at least
@@ -10,9 +12,12 @@
 #     the `anims` frames here - nothing else needs to change.
 name: Claude
 nameZh: '克劳德（占位）'
-hp: 1
+# 阶段 1 · 灭世：主人定的基准值。其余阶段按倍率算
+# （神 150% → HP 6000 / 护甲 30；半神 80% → 护甲 16；半神半人 50% → 护甲 10）。
+hp: 4000
+armor: 20
 money: 0
-moveSpeed: 2
+moveSpeed: 7
 body:
     halfW: 30
     halfH: 34

@@ -34,6 +34,7 @@ import {
     MONSTER_DEATH_FADE_MS,
     SFX_EVENT,
 } from '@/lib/constants';
+import { damageAfterArmor } from '@/lib/characters/combat';
 import { getCheats } from '@/lib/dev/cheats';
 import { EventBus } from '@/lib/events/bus';
 import type { WeaponSpec } from '@/lib/weapons';
@@ -1077,11 +1078,15 @@ export class MonsterController {
             const isCrit =
                 !getCheats().oneHitKill &&
                 Math.random() < (this.playerLuck / 10) * COMBAT_CRIT_MULTIPLIER;
-            const finalDamage = getCheats().oneHitKill
+            const rawDamage = getCheats().oneHitKill
                 ? 999999
                 : isCrit
                   ? bulletDamage * COMBAT_CRIT_DAMAGE_MULTIPLIER
                   : bulletDamage;
+            // Boss armour soaks flat, after the crit multiplier: a crit still hits
+            // the same armour, it just arrives bigger.
+            const finalDamage = damageAfterArmor(rawDamage, target.spec.armor ?? 0);
+            if (finalDamage <= 0) return;
             target.hp -= finalDamage;
             target.lastHitAt = this.scene.time.now;
             target.hitFlashUntil = this.scene.time.now + COMBAT_HIT_FLASH_MS;
@@ -1159,7 +1164,11 @@ export class MonsterController {
                     const d = distBetween(hitPos, otherM.body.position);
                     if (d <= aoeRadius) {
                         const falloff = 1 - (d / aoeRadius) * 0.4;
-                        const splashDamage = Math.max(1, Math.round(finalDamage * falloff));
+                        const splashDamage = damageAfterArmor(
+                            Math.max(1, Math.round(finalDamage * falloff)),
+                            otherM.spec.armor ?? 0,
+                        );
+                        if (splashDamage <= 0) continue;
                         otherM.hp -= splashDamage;
                         otherM.lastHitAt = this.scene.time.now;
                         otherM.hitFlashUntil = this.scene.time.now + COMBAT_HIT_FLASH_MS;

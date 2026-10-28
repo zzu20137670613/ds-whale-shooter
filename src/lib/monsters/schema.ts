@@ -96,7 +96,15 @@ export const MonsterSpecSchema = z
             .regex(/^\d+x\d+$/)
             .optional(),
         prompt: z.string().optional(),
-        hp: z.number().gte(0),
+        hp: z.number().gt(0),
+        /**
+         * Flat damage soaked per player hit. 0 = none. Same rule as the player's
+         * armour: `taken = max(0, incoming - armour)`, so a weak hit is absorbed
+         * whole and can never heal.
+         *
+         * Bosses scale this per phase (灭世 Claude: 20, its 神 phase: 30).
+         */
+        armor: z.number().gte(0).default(0),
         /** Bounty paid into the player's wallet when this monster dies.
          *  Game data, not an engine constant — a boss is worth far more
          *  than a drone. Defaults to 0 so specs without one stay valid. */
