@@ -2137,8 +2137,8 @@ spawner:
     near: { count: 4, minDistance: 300, maxDistance: 900 }
     far: { count: 5, edgeInset: 200 }
     pool:
-        melee: [drone]     # 星空潜行者
-        ranged: [sniper]   # 孢子狙击手
+        melee: [keeper]         # 星空守望者（横扫枝击，近战）
+        ranged: [drone-ultra]   # 荆棘无人机（荆棘拳套，远程）
 
 teleporters:
     # Return portal sits next to the spawn, as before.

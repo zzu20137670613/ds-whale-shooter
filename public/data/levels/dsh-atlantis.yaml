@@ -2737,8 +2737,8 @@ spawner:
     near: { count: 4, minDistance: 300, maxDistance: 900 }
     far: { count: 5, edgeInset: 200 }
     pool:
-        melee: [drone]     # 星空潜行者
-        ranged: [sniper]   # 孢子狙击手
+        melee: [warden]         # 钢铁典狱长（符文盾，近战）
+        ranged: [bengbu-erba]   # 奔波儿灞（鱼枪，远程；素材暂用 stalker 占位）
 
 dropSpawns: []
 materials: []

@@ -1,0 +1,32 @@
+# 鱼枪 — 奔波儿灞's weapon. Ranged, no magazine (a monster never reloads), which
+# is why there is no `clipSize` / `reloadTimeMs`: 弹匣 0 / 换弹 0 in the sheet.
+name: Fish Spear
+nameZh: "鱼枪"
+damage: 40
+cooldownMs: 340
+range: 460
+# Not a grassy toy: a harpoon on a line, thrown hard. Placeholder art reuses the
+# thorn bolt sprite until 奔波儿灞's own sheet exists.
+upgrades:
+    costs: [40, 90, 160, 250, 360]
+    damagePerLevel: [40, 40, 40, 80, 80, 80]
+visual:
+    texture: assets/image/weapons/thorn-bolt.png
+    scale: 0.5
+    orbitRadius: 0
+    anchor: [0.5, 0.5]
+bullet:
+    texture: assets/image/weapons/thorn-bolt.png
+    type: projectile
+    scale: 0.5
+    anchor: [0.5, 0.5]
+projectile:
+    speed: 16
+    visual:
+        radius: 6
+        width: 26
+        height: 8
+        color: 0x7FB7C9
+    lifeMs: 1200
+sfx:
+    bulletWall: bullet-wall
