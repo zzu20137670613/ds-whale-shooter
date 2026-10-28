@@ -106,6 +106,9 @@ export class MerchantController {
 
     /** The tavern shop's old job, now hers. */
     private openShop(): void {
+        // The cat in the cabin opens the same panel under another name; tapping
+        // her must put the normal title back.
+        useGameStore.getState().setShopTitle('shop.title');
         EventBus.emit(MERCHANT_SHOP_EVENT);
     }
 

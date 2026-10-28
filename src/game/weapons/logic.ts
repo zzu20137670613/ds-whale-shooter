@@ -244,6 +244,11 @@ export class WeaponController {
         slot.reserve = addReserve(slot.reserve, add, reserveMaxFor(clipSize));
     }
 
+    /** True when this weapon id already sits in the hotbar. */
+    hasWeapon(weaponId: string): boolean {
+        return this.slots.some((slot) => slot.spec.id === weaponId);
+    }
+
     /** Switch to a named weapon if it's already in the hotbar. */
     swapToWeapon(weaponId: string): boolean {
         if (this.slots.length === 0) return false;

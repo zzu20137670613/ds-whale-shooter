@@ -29,6 +29,13 @@ imageSize: 11008x6144
 # Bright open sky: opt out of the ambient darkening, like the beach and tavern.
 pixelLighting: false
 airWalls:
+    # The dragon throne's backrest. Measured off the painting (block SE, world
+    # x 7955..8610, y 3720..4470): the seat below it stays walkable, so you can
+    # stand on the throne and only the back stops you - which is what GPT's
+    # easter egg knocks against.
+    - id: dragon-throne-back
+      kind: short
+      points: [[7955, 3720], [8610, 3720], [8610, 4470], [7955, 4470]]
     # World boundary, four rects the mask does not describe.
     - id: edge-left
       kind: short
@@ -2155,3 +2162,18 @@ teleporters:
       targetScene: dsh-atlantis
       targetPortalId: to-sky-city
       radius: 300
+
+triggers:
+    # GPT's easter egg: bump the throne's backrest and a White Dragon Fangs pops
+    # over the top and lands on the seat. GPT only - the trigger stays armed for
+    # anyone else, so the save does not burn it.
+    - id: dragon-throne-fangs
+      zone: { x: 8000, y: 4480, width: 620, height: 110 }
+      onlyCharacters: [gpt]
+      spawn:
+          type: weapon-drop
+          weaponId: white-dragon-fangs
+          from: { x: 8282, y: 3560 }
+          to: { x: 8282, y: 4620 }
+          lift: 120
+          durationMs: 750

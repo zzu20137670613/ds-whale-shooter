@@ -479,6 +479,17 @@ export class DropController {
      * parabola lands well within the magnet radius and the player
      * immediately sucks the just-thrown weapon back up.
      */
+    /**
+     * A weapon pickup that starts already at rest, so a caller can fly its
+     * sprite along an arc and let it settle (the cat shop's gift does this).
+     */
+    spawnWeaponLanded(spec: DropSpec, weaponSpec: WeaponSpec, x: number, y: number): DropInstance {
+        const d = new DropInstance(this.scene, spec, x, y, false, weaponSpec);
+        d.rejected = true;
+        this.runtimeDrops.push(d);
+        return d;
+    }
+
     spawnWeapon(spec: DropSpec, weaponSpec: WeaponSpec, x: number, y: number): DropInstance {
         const d = new DropInstance(this.scene, spec, x, y, true, weaponSpec);
         d.rejected = true;

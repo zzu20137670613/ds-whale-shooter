@@ -70,13 +70,19 @@ describe('the shipped cabin level', () => {
         'dev-cabin',
     );
 
-    it('ships exactly one interactable: the desk mail', () => {
-        expect(level.interactables).toHaveLength(1);
-        expect(level.interactables?.[0].action).toBe('dev-mail');
+    it('ships two interactables: the cat shop and the desk mail', () => {
+        expect(level.interactables).toHaveLength(2);
+        expect(level.interactables?.[0].action).toBe('cat-shop');
+        expect(level.interactables?.[1].action).toBe('dev-mail');
+    });
+
+    it('puts the cat shop on the beanbag cats', () => {
+        const zone = level.interactables?.[0].zones[0];
+        expect(zone).toEqual({ x: 520, y: 1130, width: 320, height: 320 });
     });
 
     it('has both screens as targets, at the coordinates marked on the art', () => {
-        const zones = level.interactables?.[0].zones ?? [];
+        const zones = level.interactables?.[1].zones ?? [];
         expect(zones).toHaveLength(2);
         expect(zones[0]).toEqual(laptop);
         expect(zones[1]).toEqual(monitor);

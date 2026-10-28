@@ -48,6 +48,8 @@ export type CatalogSource = {
     };
     shop: {
         title: string;
+        /** The cabin cat opens the same shop under this name. */
+        catTitle: string;
         close: string;
         /** Shown when the player has not picked a character yet — the
          *  ladder prices come from the character spec, so there is
@@ -106,6 +108,7 @@ export type CatalogKey =
     | 'menu.addSprite'
     | 'label.spritePosition'
     | 'shop.title'
+    | 'shop.catTitle'
     | 'shop.close'
     | 'shop.noCharacter'
     | 'shop.level'

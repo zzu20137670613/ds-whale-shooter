@@ -29,6 +29,7 @@ import { arcPoint, armedTriggers, isInsideZone, triggerKey } from '@/lib/levels/
 import { useGameStore } from '@/store/game-store';
 import type { DropController } from '@/game/drops/drop';
 import type { DropSpec } from '@/lib/drops';
+import type { WeaponSpec } from '@/lib/weapons/types';
 import type { Level } from '@/lib/levels/types';
 import type { Point } from '@/lib/levels/logic';
 
@@ -66,8 +67,10 @@ export class TriggerController {
     private readonly flights: Flight[] = [];
     /** Fires when a `travel` trigger is taken. Supplied by the scene. */
     private readonly travelTo?: (sceneId: string) => void;
-    /** Whose feet these are — decides whether a `travel` trigger refuses us. */
+    /** Whose feet these are — decides whether a trigger refuses us. */
     private readonly characterId: () => string | null;
+    /** Weapon lookup, for triggers that drop a weapon. */
+    private readonly getWeapon?: (id: string) => WeaponSpec | undefined;
 
     constructor(
         character: Positioned,
@@ -77,6 +80,7 @@ export class TriggerController {
         getDrop: (id: string) => DropSpec,
         travelTo?: (sceneId: string) => void,
         characterId?: () => string | null,
+        getWeapon?: (id: string) => WeaponSpec | undefined,
     ) {
         this.character = character;
         this.levelId = levelId;
@@ -84,6 +88,7 @@ export class TriggerController {
         this.getDrop = getDrop;
         this.travelTo = travelTo;
         this.characterId = characterId ?? (() => useGameStore.getState().selectedCharacterId);
+        this.getWeapon = getWeapon;
         this.armed = armedTriggers(levelId, triggers, useGameStore.getState().usedTriggers);
         // A level that ships triggers whose every one has already fired produces
         // no effect and no error at all, which reads exactly like a bug. Say so
@@ -104,9 +109,9 @@ export class TriggerController {
         for (let i = this.armed.length - 1; i >= 0; i--) {
             const trigger = this.armed[i];
             if (!isInsideZone(trigger.zone, x, y)) continue;
-            // A door that refuses this character stays armed: standing on it as
-            // Claude must not burn the entrance for the rest of the save.
-            if ('travel' in trigger && this.refuses(trigger)) continue;
+            // A trigger that refuses this character stays armed: standing on it
+            // as the wrong character must not burn the reward for the save.
+            if (this.refuses(trigger)) continue;
             this.armed.splice(i, 1);
             useGameStore.getState().markTriggerUsed(triggerKey(this.levelId, trigger.id));
             try {
@@ -119,12 +124,19 @@ export class TriggerController {
         }
     }
 
-    /** True when this trigger's door is closed to whoever is walking. */
+    /**
+     * True when this character may not fire the trigger.
+     *
+     * `travel` triggers carry an exclude list; spawn triggers carry an allow
+     * list (`onlyCharacters`). A refused trigger stays armed rather than burning
+     * itself, so the right character can still earn it later in the same save.
+     */
     private refuses(trigger: Trigger): boolean {
-        if (!('travel' in trigger)) return false;
         const who = this.characterId();
         if (!who) return false;
-        return trigger.travel.excludeCharacters.includes(who);
+        if ('travel' in trigger) return trigger.travel.excludeCharacters.includes(who);
+        const only = trigger.onlyCharacters;
+        return only ? !only.includes(who) : false;
     }
 
     destroy(): void {
@@ -150,6 +162,33 @@ export class TriggerController {
         }
     }
 
+    /**
+     * Fly a drop along the same arc the triggers use, from any point to any
+     * point. The cat shop's gift needs this because its target is the player's
+     * feet, which no authored zone can know in advance.
+     */
+    launch(
+        dropSpec: DropSpec,
+        from: Point,
+        to: Point,
+        lift: number,
+        durationMs: number,
+        weaponSpec?: WeaponSpec,
+    ): void {
+        const drop: RewardDrop = weaponSpec
+            ? this.drops.spawnWeaponLanded(dropSpec, weaponSpec, to.x, to.y)
+            : this.drops.spawnLanded(dropSpec, to.x, to.y);
+        const sprite = drop.sprite;
+        if (!sprite) {
+            console.warn(`[trigger] launch: ${dropSpec.id} has no sprite`);
+            return;
+        }
+        drop.rejected = true;
+        sprite.setPosition(from.x, from.y);
+        sprite.setDepth(Math.round(from.y));
+        this.flights.push({ sprite, drop, from, to, lift, durationMs, elapsedMs: 0 });
+    }
+
     private fire(trigger: Trigger): void {
         if ('travel' in trigger) {
             // No drop, no animation: the scene owns what "move to another scene"
@@ -166,11 +205,17 @@ export class TriggerController {
         }
 
         const { from, to, lift, durationMs } = trigger.spawn;
-        const drop: RewardDrop = this.drops.spawnLanded(
-            this.getDrop(trigger.spawn.type),
-            to.x,
-            to.y,
-        );
+        const dropSpec = this.getDrop(trigger.spawn.type);
+        const weaponSpec = trigger.spawn.weaponId
+            ? this.getWeapon?.(trigger.spawn.weaponId)
+            : undefined;
+        if (trigger.spawn.weaponId && !weaponSpec) {
+            console.warn(`[trigger] unknown weaponId: ${trigger.spawn.weaponId}`);
+            return;
+        }
+        const drop: RewardDrop = weaponSpec
+            ? this.drops.spawnWeaponLanded(dropSpec, weaponSpec, to.x, to.y)
+            : this.drops.spawnLanded(dropSpec, to.x, to.y);
         const sprite = drop.sprite;
         // Without a sprite (headless, or the art never loaded) the drop still
         // exists, but it is invisible - and invisible is indistinguishable from

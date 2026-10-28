@@ -54,11 +54,12 @@ import {
     TAVERN_ACTOR_SCALE,
 } from '@/lib/constants';
 import { EventBus } from '@/lib/events/bus';
+import { maxWeaponUpgradeLevel } from '@/lib/weapons/upgrades';
 import { setBootProgress } from '@/lib/boot-loading/progress';
 import { setCurrentLevel } from '@/lib/levels/current-level';
 import { fetchLevelIndex } from '@/lib/levels/loader';
 import { groundLayers, isPortalArmed, propKey, spawnsWithoutBrokenProps } from '@/lib/levels/logic';
-import { usesMerchant } from '@/lib/merchant/logic';
+import { MERCHANT_SHOP_EVENT, usesMerchant } from '@/lib/merchant/logic';
 import { releasableTextureKeys } from '@/lib/textures/release';
 import { tilemapResourcesFor } from '@/lib/tilemaps/resources';
 import { resolveAndRestart } from '@/lib/phaser-game';
@@ -466,6 +467,21 @@ export class LoadScene extends Phaser.Scene {
             },
             {
                 onWeaponPickup: (weaponId) => {
+                    // Picking up a weapon you already carry MERGES the two into
+                    // one: +1 level and a full load. That is the seed's rifle
+                    // easter egg and GPT's fangs easter egg sharing one rule, and
+                    // it stops a duplicate from wasting a hotbar slot anywhere
+                    // else.
+                    if (this.character.weapons?.hasWeapon(weaponId)) {
+                        const spec = this.assets.weaponsById.get(weaponId);
+                        if (spec) {
+                            useGameStore
+                                .getState()
+                                .mergeOwnedWeapon(weaponId, maxWeaponUpgradeLevel(spec));
+                            EventBus.emit(SFX_EVENT('weapon-switch'));
+                            return true;
+                        }
+                    }
                     // Tavern mode: walk-onto-drop auto-pickup / auto-
                     // swap. Below cap the weapon slots in fresh; at
                     // cap the active slot is replaced and the old
@@ -586,6 +602,8 @@ export class LoadScene extends Phaser.Scene {
             },
             // A travel trigger is a hidden door: no portal art, no fade art of
             // its own, just the same handoff the teleporter performs.
+            // A travel trigger is a hidden door: no portal art, no fade art of
+            // its own, just the same handoff the teleporter performs.
             (targetScene) => {
                 useGameStore.getState().setCurrentLevelId(targetScene);
                 useGameStore.getState().setEntitySnapshots({
@@ -595,6 +613,8 @@ export class LoadScene extends Phaser.Scene {
                 });
                 void resolveAndRestart(targetScene);
             },
+            undefined,
+            (weaponId) => this.assets.weaponsById.get(weaponId),
         );
 
         // Click targets painted into the art. Bound on the scene's input and
@@ -941,7 +961,37 @@ export class LoadScene extends Phaser.Scene {
             useGameStore.getState().openDevCabin();
             return;
         }
+        if (action === 'cat-shop') {
+            this.openCatShop();
+            return;
+        }
         console.warn('[interactable] no handler for action: ' + action);
+    }
+
+    /**
+     * 猫猫商店 — the cabin cat opens the very same shop the merchant carries.
+     *
+     * The first click of a save also hands over an assault rifle: it pops out of
+     * the cats and arcs down to the player's feet, the same flight the lounger's
+     * iced juice uses, retargeted at wherever the player happens to stand.
+     */
+    private openCatShop(): void {
+        const state = useGameStore.getState();
+        const firstOfSave = !state.catShopGiftGiven;
+        state.openCatShop();
+        EventBus.emit(MERCHANT_SHOP_EVENT);
+        if (!firstOfSave) return;
+
+        const dropSpec = this.assets.dropSpecs.get('weapon-drop');
+        const weaponSpec = this.assets.weaponsById.get('assault-rifle');
+        const zone = this.level.interactables?.find((item) => item.action === 'cat-shop')?.zones[0];
+        if (!dropSpec || !weaponSpec || !zone) {
+            console.warn('[cat-shop] gift skipped: drop, weapon or zone missing');
+            return;
+        }
+        const from = { x: zone.x + zone.width / 2, y: zone.y + zone.height / 2 };
+        const { x, y } = this.character.body.position;
+        this.triggerSystem.launch(dropSpec, from, { x, y }, 130, 800, weaponSpec);
     }
 
     shutdown(): void {

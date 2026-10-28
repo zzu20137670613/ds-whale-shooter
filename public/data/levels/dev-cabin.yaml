@@ -54,6 +54,14 @@ interactables:
     #   monitor 2560-space 1407..1721 x 297..542
     # A shot still fires when you click (this is a shooter), which is why the
     # rectangle has to be tight enough to feel like a button and not the desk.
+    # 猫猫: the two cats asleep on the beanbag. Clicking them opens the same shop
+    # the mysterious merchant carries, under the name 猫猫商店 - and the first
+    # click of a save drops an assault rifle at the player's feet.
+    # Box measured off the painting: cats span world x 560..810, y 1150..1435.
+    - id: cat-shop
+      action: cat-shop
+      zones:
+          - { x: 520, y: 1130, width: 320, height: 320 }
     - id: dev-desk-mail
       action: dev-mail
       zones:

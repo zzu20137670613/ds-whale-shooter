@@ -209,10 +209,17 @@ export const SpawnTriggerSchema = z
     .object({
         id: z.string().min(1),
         zone: TriggerZoneSchema,
+        /**
+         * Only these characters can set it off. Omitted = anyone. Used by the
+         * Sky City throne: the White Dragon Fangs is GPT's easter egg alone.
+         */
+        onlyCharacters: z.array(z.string().min(1)).optional(),
         spawn: z
             .object({
                 /** Drop spec id, e.g. `beach-drink`. */
                 type: z.string().min(1),
+                /** For `type: 'weapon-drop'` — which weapon to drop. */
+                weaponId: z.string().min(1).optional(),
                 /** Where the pickup pops out - the lounger. */
                 from: z.object({ x: z.number(), y: z.number() }).strict(),
                 /** Where it lands and waits - the side table. */
@@ -228,8 +235,10 @@ export const SpawnTriggerSchema = z
     .transform((v) => ({
         id: v.id,
         zone: zoneOut(v.zone),
+        ...(v.onlyCharacters ? { onlyCharacters: v.onlyCharacters } : {}),
         spawn: {
             type: v.spawn.type,
+            ...(v.spawn.weaponId ? { weaponId: v.spawn.weaponId } : {}),
             from: { x: Math.round(v.spawn.from.x), y: Math.round(v.spawn.from.y) },
             to: { x: Math.round(v.spawn.to.x), y: Math.round(v.spawn.to.y) },
             lift: v.spawn.lift,

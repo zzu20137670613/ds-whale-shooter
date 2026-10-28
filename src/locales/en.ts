@@ -41,6 +41,7 @@ const en: CatalogSource = {
         nothingToSell: 'Nothing to sell',
         sellUnit: 'each',
         title: 'Tavern Shop',
+        catTitle: 'Cat Shop',
         close: 'Close',
         noCharacter: 'Pick a character first.',
         level: 'Lv',

@@ -74,6 +74,8 @@ export function ShopPanel() {
     const spendMoney = useGameStore((s) => s.spendMoney);
     const setUpgradeLevel = useGameStore((s) => s.setUpgradeLevel);
     const setWeaponLevel = useGameStore((s) => s.setWeaponLevel);
+    // 猫猫商店: the same shop, opened from the cabin's cat.
+    const shopTitleKey = useGameStore((s) => s.shopTitleKey);
     const refillWeaponAmmo = useGameStore((s) => s.refillWeaponAmmo);
     const refillAmmo = useGameStore((s) => s.refillAmmo);
     // Subscribed (not read) so the labels re-render on a language switch:
@@ -252,7 +254,7 @@ export function ShopPanel() {
 
                     <div className="mb-2 flex items-center justify-between">
                         <span className="text-[12px] font-bold uppercase tracking-widest text-amber-300">
-                            {t('shop.title')}
+                            {shopTitleKey === 'shop.catTitle' ? t('shop.catTitle') : t('shop.title')}
                         </span>
                         <div className="flex items-center gap-2">
                             <span

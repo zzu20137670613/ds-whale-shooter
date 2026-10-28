@@ -92,6 +92,24 @@ export interface GameUIState {
      *  the scene's update() loop; HUDs read it to display MM:SS. */
     levelElapsedMs: number;
 
+    /**
+     * Title key the shop panel renders. Transient: the cat in the developer's
+     * cabin opens the very same shop under its own name (猫猫商店).
+     */
+    shopTitleKey: 'shop.title' | 'shop.catTitle';
+    /** Persisted: the cat's gift rifle is once per save. */
+    catShopGiftGiven: boolean;
+    setShopTitle: (key: 'shop.title' | 'shop.catTitle') => void;
+    /**
+     * Open the shop from the cat. Returns true on the FIRST call of a save, which
+     * is when the gift rifle is due. Persisted, so the gift is once per run.
+     */
+    openCatShop: () => boolean;
+    /**
+     * Merge a weapon the character already owns into one: +1 level (capped by the
+     * ladder) and a full magazine plus reserve. Returns true when a slot matched.
+     */
+    mergeOwnedWeapon: (weaponId: string, maxLevel: number) => boolean;
     /** Transient, never persisted: the mysterious merchant is standing on the
      *  current level, so her shop is available. The scene sets it when she
      *  appears (all monsters cleared) and clears it on teardown. */
@@ -347,6 +365,8 @@ export const initialGameState = {
     levelProgressMap: {} as Record<string, LevelWaveProgress>,
     levelElapsedMs: 0,
     merchantReady: false,
+    shopTitleKey: 'shop.title' as 'shop.title' | 'shop.catTitle',
+    catShopGiftGiven: false,
 
     money: 0,
     inventory: emptyInventory(),
@@ -384,11 +404,46 @@ export const initialGameState = {
 
 export const useGameStore = create<GameUIState>()(
     persist(
-        (set) => ({
+        (set, get) => ({
             ...initialGameState,
 
             setLevelTitle: (title) => set({ levelTitle: title }),
             setMerchantReady: (ready) => set({ merchantReady: ready }),
+
+            setShopTitle: (key) => set({ shopTitleKey: key }),
+
+            openCatShop: () => {
+        const due = !get().catShopGiftGiven;
+        set({ shopTitleKey: 'shop.catTitle', merchantReady: true, catShopGiftGiven: true });
+        return due;
+    },
+
+    mergeOwnedWeapon: (weaponId, maxLevel) => {
+        const state = get();
+        if (!state.slots.some((slot) => slot.id === weaponId)) return false;
+        const level = state.weaponLevels[weaponId] ?? 0;
+        const ladderMax = Math.max(0, maxLevel);
+        const nextLevel = Math.min(level + 1, ladderMax);
+        set((current) => {
+            const slots = current.slots.map((slot) =>
+                slot.id === weaponId
+                    ? {
+                          ...slot,
+                          ammo: slot.clipSize,
+                          reserve: reserveMaxFor(slot.clipSize, nextLevel),
+                      }
+                    : slot,
+            );
+            const active = slots[current.activeWeaponIndex];
+            return {
+                weaponLevels: { ...current.weaponLevels, [weaponId]: nextLevel },
+                slots,
+                activeAmmo: active ? active.ammo : current.activeAmmo,
+                activeMaxAmmo: active ? active.clipSize : current.activeMaxAmmo,
+            };
+        });
+        return true;
+    },
 
             setCurrentLevelId: (levelId) => set({ currentLevelId: levelId }),
 
@@ -709,6 +764,7 @@ export const useGameStore = create<GameUIState>()(
                 // World state — survives a death restart.
                 brokenProps: state.brokenProps,
                 usedTriggers: state.usedTriggers,
+                catShopGiftGiven: state.catShopGiftGiven,
                 // Economy + upgrades
                 money: state.money,
                 upgradeLevels: state.upgradeLevels,

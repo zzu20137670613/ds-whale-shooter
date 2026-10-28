@@ -39,6 +39,7 @@ const zhCN: CatalogSource = {
         nothingToSell: '没有可卖的东西',
         sellUnit: '单价',
         title: '酒馆商店',
+        catTitle: '猫猫商店',
         close: '关闭',
         noCharacter: '请先选一个角色。',
         level: '等级',
