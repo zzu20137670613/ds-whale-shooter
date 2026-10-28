@@ -18,20 +18,30 @@ hp: 4000
 armor: 20
 money: 0
 moveSpeed: 7
+# Collision body scaled 1.5x with the art: the player's is 60x60, so at 90x102
+# she reads as "one size bigger" without becoming a wall you cannot walk around.
+# Keep the body-to-sprite ratio when the real boss sheet arrives
+# (102 / 384 = 26.6%, the same share the placeholder has today).
 body:
-    halfW: 30
-    halfH: 34
+    halfW: 45
+    halfH: 51
 weaponId: rune-shield
 sfx:
     hit: monster-hit
     death: monster-death
     aggro: monster-aggro
 sprite:
+    # Placeholder: her playable sheet at 1.5x, so the fight already looks like a
+    # boss before the real art exists. 128px frame * 3 = 384px tall (the player
+    # renders at 256), i.e. exactly half a size up.
+    # When the 3096x3096 sheet lands, swap texture + grid and recompute scale:
+    #   a 4x4 grid (774px frames) -> scale 0.5   (774 * 0.5 = 387)
+    #   a single 3096 frame       -> scale 0.124 (3096 * 0.124 = 384)
     texture: assets/image/characters/claude.png
     grid:
         rows: 4
         cols: 4
-    scale: 2
+    scale: 3
     offset:
         left: 0
         bottom: 0
