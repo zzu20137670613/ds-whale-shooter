@@ -87,6 +87,15 @@ export const KEY_E = 69;
 export const KEY_F = 70;
 /** Cycle weapons (Q). */
 export const KEY_Q = 81;
+/** Fire, for scheme B. J is where the right hand rests on the ASDF home row. */
+export const KEY_J = 74;
+/** Dodge, alongside space — K sits under the middle finger, same home row. */
+export const KEY_K = 75;
+/** Eight-way aim, for scheme B. */
+export const KEY_UP = 38;
+export const KEY_DOWN = 40;
+export const KEY_LEFT = 37;
+export const KEY_RIGHT = 39;
 
 // ─── Weapons: reserve ammunition ──────────────────────────────────────────
 /**
@@ -402,17 +411,14 @@ export const MUSIC_RESUME = 'music:resume';
 /** Default cross-fade when a music stop / switch lacks an explicit fadeOut. */
 export const AUDIO_DEFAULT_FADE_MS = 250;
 
-// ─── Aim Assist: Magnetic Snap & Acceleration Breakout Constants ───────
-export const AIM_ASSIST = {
-    /** Mouse speed threshold (px/ms) required to break magnetic target lock. */
-    BREAKOUT_SPEED: 3.5,
-    /** Duration in ms that aim assist is disabled after a fast flick breakout. */
-    BREAKOUT_DURATION_MS: 150,
-    /** Distance radius in world px to initially snap onto a monster. */
-    INITIAL_SNAP_RADIUS: 120,
-    /** Max distance radius in world px to maintain sticky tether lock on an active monster. */
-    STICKY_TETHER_RADIUS: 280,
-} as const;
+// ─── Aim: Directional (no magnetism) ────────────────────────────────
+/**
+ * How far out along an eight-way direction the aim point is placed.
+ *
+ * Only needs to be further than any weapon's range: weapons shoot along the
+ * direction from the hands to this point, so the number itself never caps a shot.
+ */
+export const AIM_DIRECTIONAL_RANGE = 600;
 
 // ─── Drops: Parabolic Arc & Magnet Absorption Constants ─────────────────
 export const DROP_CONFIG = {

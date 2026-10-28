@@ -32,9 +32,10 @@ import { handUpOffset, pickBodyTint } from '@/lib/characters/hand';
 import { damageAfterArmor } from '@/lib/characters/combat';
 import { WHALE_BLESSING, blessingApplies } from '@/lib/pet/bonus';
 import { scaledSkillCooldown, scaledSkillSpCost } from '@/lib/characters/skill-scaling';
+import { aimFromIntent, aimPointFrom } from '@/lib/input/aim';
 import { SHOP_RESTORE_VITALS_EVENT } from '@/lib/characters/vitals';
 import {
-    AIM_ASSIST,
+    AIM_DIRECTIONAL_RANGE,
     CHARACTER_HURT_FLASH_MS,
     CHARACTER_SPRINT_MULTIPLIER,
     HEADGEAR_DEFAULT_TINT,
@@ -52,6 +53,12 @@ import {
     KEY_SHIFT,
     KEY_SIX,
     KEY_SPACE,
+    KEY_RIGHT,
+    KEY_LEFT,
+    KEY_DOWN,
+    KEY_UP,
+    KEY_K,
+    KEY_J,
     KEY_THREE,
     KEY_TWO,
     KEY_W,
@@ -591,7 +598,8 @@ export class CharacterController {
         });
 
         // ── Dodge initiation ────────────────────────────────────────
-        const spaceDown = kb.addKey(KEY_SPACE).isDown || this.mobileDodge;
+        const spaceDown =
+            kb.addKey(KEY_SPACE).isDown || kb.addKey(KEY_K).isDown || this.mobileDodge;
         // ── Skill (E) ───────────────────────────────────────────────
         // One path for every kind — see lib/characters/skill. The press is
         // level-triggered; the skill's own cooldown gates repeats. GPT's roar
@@ -811,6 +819,10 @@ export class CharacterController {
         // monster exists, fall back to whatever the cursor set last.
         this.applyMobileAutoAim(pos);
 
+        // Scheme B: the arrow keys aim, and they win over the cursor for as long
+        // as they are held. Released, the cursor takes the aim back.
+        this.applyKeyboardAim(pos);
+
         // ── Weapon update ───────────────────────────────────────────
         // Default aiming target when cursor hasn't moved yet aligns with character's sprite facing (flipX)
         const defaultAimX = pos.x + (sprite.flipX ? -100 : 100);
@@ -830,7 +842,8 @@ export class CharacterController {
             now,
             this.targetX ?? defaultAimX,
             this.targetY ?? defaultAimY,
-            (this.firing || this.mobileFiring) && now >= this.dodgeActiveUntil,
+            (this.firing || this.mobileFiring || kb.addKey(KEY_J).isDown) &&
+                now >= this.dodgeActiveUntil,
             handUp,
             footY,
         );
@@ -1055,10 +1068,7 @@ export class CharacterController {
     private rawClientY = 0;
     private lastClientX = 0;
     private lastClientY = 0;
-    private lastMouseTime = 0;
-    private lockBreakoutUntil = 0;
     private hasPointerMoved = false;
-    private currentLockedMonsterId: number | null = null;
 
     /**
      * While the mobile FIRE button is held, override `targetX/Y` with
@@ -1070,32 +1080,42 @@ export class CharacterController {
      * when no monsters are alive (targetX/Y keep their last value, then
      * weapons.update falls through to `defaultAimX/Y` on the next frame).
      */
+    /**
+     * Touch: the direction of travel is the aim (owner's call for ⑤).
+     *
+     * The old version snapped to the nearest live monster while FIRE was held — that
+     * is the same auto-targeting the redesign removes on desktop, so it goes here
+     * too. Walking is aiming: the player can face anything they can walk at, and
+     * cannot strafe-shoot sideways. Adding a right-hand stick later is a small change
+     * to this method alone.
+     */
     private applyMobileAutoAim(pos: { x: number; y: number }): void {
-        if (!this.mobileFiring) return;
-        const monsters: { id: number; x: number; y: number }[] =
-            (this.scene as any).monsterSystem?.getActiveMonsters() ?? [];
-        const target = pickNearestMonster(monsters, pos.x, pos.y);
-        if (!target) return;
+        const mm = this.mobileMove;
+        if (!mm) return;
+        const direction = aimFromIntent({
+            up: mm.vy < -0.2,
+            down: mm.vy > 0.2,
+            left: mm.vx < -0.2,
+            right: mm.vx > 0.2,
+        });
+        if (!direction) return;
 
-        this.targetX = target.x;
-        this.targetY = target.y;
-
-        // Mirror the desktop path's crosshair emit so the on-screen
-        // reticle tracks the lock target.
-        const camera = this.scene.cameras.main;
-        if (camera) {
-            const hudX = (target.x - camera.scrollX) * (1536 / camera.width);
-            const hudY = (target.y - camera.scrollY) * (864 / camera.height);
-            EventBus.emit('aim-crosshair-update', {
-                x: hudX,
-                y: hudY,
-                isLocked: true,
-                visible: true,
-            });
-        }
+        const point = aimPointFrom(pos, direction, AIM_DIRECTIONAL_RANGE);
+        this.targetX = point.x;
+        this.targetY = point.y;
+        this.publishCrosshair(point.x, point.y);
     }
 
-    private updateAimTarget(now: number): void {
+    /**
+     * Scheme A: the cursor is the aim.
+     *
+     * The old version was a magnet: it snapped to the nearest monster within 120px,
+     * held that lock out to 280px, released it on a fast flick, and re-based the
+     * cursor onto the monster so the release felt continuous. The owner's redesign
+     * removed all of that — aim is now exactly where the pointer is, everywhere.
+     * Nothing about lock state survives, so the crosshair has no `isLocked` to show.
+     */
+    private updateAimTarget(_now: number): void {
         if (!this.hasPointerMoved) return;
 
         const canvas = (this.scene as any).game?.canvas as HTMLCanvasElement | undefined;
@@ -1105,83 +1125,47 @@ export class CharacterController {
         const camera = this.scene.cameras.main;
         if (!rectEl || !camera) return;
 
-        const rawWorldX =
+        const worldX =
             camera.scrollX + (this.rawClientX - rectEl.left) * (camera.width / rectEl.width);
-        const rawWorldY =
+        const worldY =
             camera.scrollY + (this.rawClientY - rectEl.top) * (camera.height / rectEl.height);
 
-        let finalWorldX = rawWorldX;
-        let finalWorldY = rawWorldY;
-        let isLocked = false;
+        this.targetX = worldX;
+        this.targetY = worldY;
+        this.publishCrosshair(worldX, worldY);
+    }
 
-        const isBreakout = now < this.lockBreakoutUntil;
-        if (isBreakout) {
-            this.currentLockedMonsterId = null;
-        }
+    /**
+     * Scheme B: eight-way aim from the arrow keys.
+     *
+     * The aim point is placed `AIM_DIRECTIONAL_RANGE` out along the direction, which
+     * is enough for every weapon — they shoot along the line, not to the point.
+     */
+    private applyKeyboardAim(pos: { x: number; y: number }): void {
+        const kb = this.scene.input.keyboard;
+        if (!kb) return;
+        const direction = aimFromIntent({
+            up: kb.addKey(KEY_UP).isDown,
+            down: kb.addKey(KEY_DOWN).isDown,
+            left: kb.addKey(KEY_LEFT).isDown,
+            right: kb.addKey(KEY_RIGHT).isDown,
+        });
+        if (!direction) return;
 
-        const monsters: { id: number; x: number; y: number }[] =
-            (this.scene as any).monsterSystem?.getActiveMonsters() ?? [];
+        const point = aimPointFrom(pos, direction, AIM_DIRECTIONAL_RANGE);
+        this.targetX = point.x;
+        this.targetY = point.y;
+        this.publishCrosshair(point.x, point.y);
+    }
 
-        if (!isBreakout && monsters.length > 0) {
-            // 1. Check if we already have a sticky locked monster that is still valid & within tether distance
-            let activeLockedMonster: { id: number; x: number; y: number } | null = null;
-            if (this.currentLockedMonsterId !== null) {
-                const found = monsters.find((m) => m.id === this.currentLockedMonsterId);
-                if (found) {
-                    const distToMouse = Math.hypot(found.x - rawWorldX, found.y - rawWorldY);
-                    if (distToMouse < AIM_ASSIST.STICKY_TETHER_RADIUS) {
-                        // Sticky tether range
-                        activeLockedMonster = found;
-                    }
-                }
-            }
-
-            // 2. If no valid sticky target, search for nearest monster within snap radius
-            if (!activeLockedMonster) {
-                let minDist: number = AIM_ASSIST.INITIAL_SNAP_RADIUS; // Initial snap radius
-                for (const m of monsters) {
-                    const d = Math.hypot(m.x - rawWorldX, m.y - rawWorldY);
-                    if (d < minDist) {
-                        minDist = d;
-                        activeLockedMonster = m;
-                    }
-                }
-            }
-
-            if (activeLockedMonster) {
-                this.currentLockedMonsterId = activeLockedMonster.id;
-                finalWorldX = activeLockedMonster.x;
-                finalWorldY = activeLockedMonster.y;
-                isLocked = true;
-
-                // Mouse Reference 100% Synchronized to Locked Monster Screen Position:
-                // When player flicks mouse to break lock, the breakout delta starts DIRECTLY from the monster's body position!
-                const monsterScreenX =
-                    rectEl.left +
-                    (activeLockedMonster.x - camera.scrollX) * (rectEl.width / camera.width);
-                const monsterScreenY =
-                    rectEl.top +
-                    (activeLockedMonster.y - camera.scrollY) * (rectEl.height / camera.height);
-                this.rawClientX = monsterScreenX;
-                this.rawClientY = monsterScreenY;
-            } else {
-                this.currentLockedMonsterId = null;
-            }
-        } else {
-            this.currentLockedMonsterId = null;
-        }
-
-        this.targetX = finalWorldX;
-        this.targetY = finalWorldY;
-
-        // Convert effective aim point to native HUD container coordinates (1536 x 864)
-        const hudX = (finalWorldX - camera.scrollX) * (1536 / camera.width);
-        const hudY = (finalWorldY - camera.scrollY) * (864 / camera.height);
-
+    /** Keep the HUD reticle on whatever point the aim resolves to this frame. */
+    private publishCrosshair(worldX: number, worldY: number): void {
+        const camera = this.scene.cameras.main;
+        if (!camera) return;
         EventBus.emit('aim-crosshair-update', {
-            x: hudX,
-            y: hudY,
-            isLocked,
+            x: (worldX - camera.scrollX) * (1536 / camera.width),
+            y: (worldY - camera.scrollY) * (864 / camera.height),
+            isLocked: false,
             visible: true,
         });
     }
@@ -1201,28 +1185,19 @@ export class CharacterController {
                 this.rawClientX = p.x;
                 this.rawClientY = p.y;
                 this.hasPointerMoved = true;
-                this.lastMouseTime = now;
-                this.updateAimTarget(now);
+                    this.updateAimTarget(now);
                 return;
             }
 
-            const dt = Math.max(1, now - this.lastMouseTime);
             const dx = p.x - this.lastClientX;
             const dy = p.y - this.lastClientY;
-            const mouseSpeed = Math.hypot(dx, dy) / dt; // px/ms
 
             this.lastClientX = p.x;
             this.lastClientY = p.y;
-            this.lastMouseTime = now;
 
             // Accumulate relative delta onto rawClientX/Y so breakout starts directly from monster anchor
             this.rawClientX += dx;
             this.rawClientY += dy;
-
-            // Acceleration breakout: requires strong/fast mouse flick (> BREAKOUT_SPEED px/ms) to break lock
-            if (mouseSpeed > AIM_ASSIST.BREAKOUT_SPEED) {
-                this.lockBreakoutUntil = now + AIM_ASSIST.BREAKOUT_DURATION_MS;
-            }
 
             this.updateAimTarget(now);
         };
