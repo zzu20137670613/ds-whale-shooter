@@ -45,19 +45,29 @@ sprite:
         left: 0
         bottom: 0
 anims:
-    # Row 1: standing with the book. Row 3: walking. Row 4: the crouch (kept for
-    # the hit/death beats). Row 2 is a second standing set, unused for now.
+    # Row 1: standing with the book.
     idle:
         frames: [0, 3]
         frameRate: 6
         repeat: -1
+    # Row 2: the turn-in. Played once when she notices the player, then `move`.
+    # There is no left-facing copy of the art: the sprite flips on the X axis, so
+    # this one turn serves both directions.
+    turn:
+        frames: [4, 7]
+        frameRate: 12
+        repeat: 0
+    # Row 3: the stride.
     move:
         frames: [8, 11]
         frameRate: 10
         repeat: -1
-    hit:
+    # Row 4: the crouch. The owner's call - this is her wind-up/cast, not a hit
+    # reaction. `hit` is deliberately absent: getting shot flashes the sprite and
+    # leaves the animation alone.
+    cast:
         frames: [12, 15]
-        frameRate: 14
+        frameRate: 8
         repeat: 0
     death:
         frames: [12, 15]

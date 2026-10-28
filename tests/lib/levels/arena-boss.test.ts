@@ -72,6 +72,21 @@ describe('arena boss wiring', () => {
         expect(width / spec.sprite!.grid!.cols).toBe(256);
     });
 
+    it('has a turn-in and a cast, but no hit reaction', () => {
+        const spec = parseMonsterYaml(
+            readFileSync(join(process.cwd(), 'public', 'data', 'monsters', 'claude.yaml'), 'utf8'),
+            'claude',
+        );
+        const anims = spec.anims ?? {};
+        // Row 2 is the turn-in, row 4 the crouch the owner reserved for her
+        // wind-up. Getting shot flashes the sprite instead of playing a track.
+        expect(anims.turn?.frames).toEqual([4, 7]);
+        expect(anims.cast?.frames).toEqual([12, 15]);
+        expect(anims.hit).toBeUndefined();
+        // The stride is row 3, not the turn row.
+        expect(anims.move?.frames).toEqual([8, 11]);
+    });
+
     it('freezes the arena behind a comic and hands over to the settlement', () => {
         // 34 pages, and a boss - the two pieces the ending depends on.
         expect(level.introComic?.pages).toBe(34);

@@ -925,3 +925,23 @@ export function calcKnockbackVelocity(
     const speed = Math.min(maxSpeed, Math.max(0.4, Math.sqrt(damage) * baseMultiplier));
     return { vx: kx * speed, vy: ky * speed };
 }
+
+/**
+ * Which animation track a monster should be on this frame.
+ *
+ * Extracted from the controller so the precedence is testable: a hit reaction wins,
+ * then the one-shot turn, then the chase stride, then idle. A monster with no `turn`
+ * track in its YAML never enters the turn branch, so adding the track to one boss
+ * cannot change any other monster.
+ */
+export function monsterAnimTrack(input: {
+    isHit: boolean;
+    hasTurn: boolean;
+    turnUntil: number;
+    now: number;
+    chasing: boolean;
+}): 'hit' | 'turn' | 'move' | 'idle' {
+    if (input.isHit) return 'hit';
+    if (input.hasTurn && input.now < input.turnUntil) return 'turn';
+    return input.chasing ? 'move' : 'idle';
+}

@@ -63,8 +63,8 @@ import {
     getSurroundOffset,
     calcKnockbackVelocity,
     roarDamage,
+    monsterAnimTrack,
 } from './logic';
-
 // ─── Entity ──────────────────────────────────────────────────────────────
 
 export type MonsterState = 'idle' | 'chase' | 'attack' | 'dying';
@@ -157,6 +157,10 @@ export class Monster {
     hitboxBody?: MatterJS.BodyType;
     /** One-shot guard so the aggro growl only fires once per monster. */
     hasAggroed = false;
+    /** While `time < turnUntil` the monster is playing its `turn` track. */
+    turnUntil = 0;
+    /** Previous frame's chase flag, so the turn triggers on the transition only. */
+    wasChasing = false;
     /** Waypoints for pathfinding navigation. */
     path: { x: number; y: number }[] | null = null;
     currentWaypointIdx = 0;
@@ -962,7 +966,25 @@ export class MonsterController {
 
                 // Play corresponding animation track (idle / move / hit)
                 const isHit = time - m.lastHitAt < 250;
-                const animTrack = isHit ? 'hit' : m.state === 'chase' ? 'move' : 'idle';
+
+                // The `turn` track plays exactly once, on the idle -> chase
+                // transition: she notices you, turns, then runs. A monster whose
+                // YAML has no `turn` simply skips it, so nothing else changes.
+                const turnKey = animKey(m.spec, 'turn');
+                const hasTurn = this.scene.anims.exists(turnKey);
+                const chasing = m.state === 'chase';
+                if (hasTurn && chasing && !m.wasChasing) {
+                    m.turnUntil = time + (this.scene.anims.get(turnKey)?.duration ?? 0);
+                }
+                m.wasChasing = chasing;
+
+                const animTrack = monsterAnimTrack({
+                    isHit,
+                    hasTurn,
+                    turnUntil: m.turnUntil,
+                    now: time,
+                    chasing,
+                });
                 const currentTrackKey = animKey(m.spec, animTrack);
                 if (
                     this.scene.anims.exists(currentTrackKey) &&
