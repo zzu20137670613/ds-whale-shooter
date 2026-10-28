@@ -31,27 +31,28 @@ sfx:
     death: monster-death
     aggro: monster-aggro
 sprite:
-    # Placeholder: her playable sheet at 1.5x, so the fight already looks like a
-    # boss before the real art exists. 128px frame * 3 = 384px tall (the player
-    # renders at 256), i.e. exactly half a size up.
-    # When the 3096x3096 sheet lands, swap texture + grid and recompute scale:
-    #   a 4x4 grid (774px frames) -> scale 0.5   (774 * 0.5 = 387)
-    #   a single 3096 frame       -> scale 0.124 (3096 * 0.124 = 384)
-    texture: assets/image/characters/claude.png
+    # Her own sheet: 4x4, 256px frames, keyed off the magenta and re-gridded so
+    # every frame is centred and nothing is clipped (the raw art had 13px of
+    # layout drift per column).
+    # 256 * 1.5 = 384px on screen - one size above the player's 256, which is the
+    # "bigger, but still walk-around-able" the owner asked for.
+    texture: assets/image/monsters/claude-boss.png
     grid:
         rows: 4
         cols: 4
-    scale: 3
+    scale: 1.5
     offset:
         left: 0
         bottom: 0
 anims:
+    # Row 1: standing with the book. Row 3: walking. Row 4: the crouch (kept for
+    # the hit/death beats). Row 2 is a second standing set, unused for now.
     idle:
         frames: [0, 3]
         frameRate: 6
         repeat: -1
     move:
-        frames: [4, 7]
+        frames: [8, 11]
         frameRate: 10
         repeat: -1
     hit:

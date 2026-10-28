@@ -51,6 +51,27 @@ describe('arena boss wiring', () => {
         expect(spec.id).toBe('claude');
     });
 
+    it('wears her own sheet, one size above the player', () => {
+        const spec = parseMonsterYaml(
+            readFileSync(join(process.cwd(), 'public', 'data', 'monsters', 'claude.yaml'), 'utf8'),
+            'claude',
+        );
+        // Her art, not the playable character's: the keyed 4x4 sheet.
+        expect(spec.sprite?.texture).toBe('assets/image/monsters/claude-boss.png');
+        expect(spec.sprite?.grid).toEqual({ rows: 4, cols: 4 });
+        // 256px frames * 1.5 = 384px - the player renders at 256.
+        expect(spec.sprite?.scale).toBe(1.5);
+        // The sheet is 1024x1024, so a 4x4 grid gives 256px frames. If someone
+        // re-exports the art at another size, this catches the stale scale.
+        const sheet = join(process.cwd(), 'public', 'assets', 'image', 'monsters', 'claude-boss.png');
+        const buf = readFileSync(sheet);
+        const width = buf.readUInt32BE(16);
+        const height = buf.readUInt32BE(20);
+        expect(width).toBe(1024);
+        expect(height).toBe(1024);
+        expect(width / spec.sprite!.grid!.cols).toBe(256);
+    });
+
     it('freezes the arena behind a comic and hands over to the settlement', () => {
         // 34 pages, and a boss - the two pieces the ending depends on.
         expect(level.introComic?.pages).toBe(34);
