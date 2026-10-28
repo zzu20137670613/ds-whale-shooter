@@ -177,12 +177,13 @@ describe('applyWeaponUpgrade', () => {
         expect(spec.damage).toBe(5);
     });
 
-    it('leaves everything except damage alone', () => {
+    it('leaves everything except damage and reach alone', () => {
         const out = applyWeaponUpgrade(spec, 1);
 
         expect(out.clipSize).toBe(4);
         expect(out.cooldownMs).toBe(800);
-        expect(out.range).toBe(400);
+        // Reach is the one other stat the ladder moves (ranged only): 400 * 1.1.
+        expect(out.range).toBe(440);
     });
 });
 

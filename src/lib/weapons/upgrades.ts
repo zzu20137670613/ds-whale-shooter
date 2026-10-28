@@ -19,6 +19,7 @@
 
 import type { WeaponSpec } from './types';
 import { reserveMaxFor } from './ammo';
+import { isRangedWeapon, rangeAtLevel } from './range';
 
 /** Price charged per missing round when refilling the hotbar.
  *
@@ -63,7 +64,13 @@ export function applyWeaponUpgrade(spec: WeaponSpec, level: number): WeaponSpec 
           // rounding, so no level can silently buy nothing.
           Math.max(1, Math.round(ladder.damagePerLevel[lv] ?? spec.damage))
         : Math.max(1, Math.round(spec.damage * Math.pow(ladder.damageMulPerLevel ?? 1, lv)));
-    return { ...spec, damage };
+
+    // Ranged weapons also reach further: the boss fights are kiting fights, and a
+    // reach that never moves would leave the hardest fight fought at starting
+    // distance. Melee keeps its `range`, which positions the swing hitbox.
+    const range = isRangedWeapon(spec) ? Math.round(rangeAtLevel(spec.range, lv)) : spec.range;
+
+    return { ...spec, damage, range };
 }
 
 /**

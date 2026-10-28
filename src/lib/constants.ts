@@ -96,6 +96,14 @@ export const KEY_Q = 81;
  * one more, so the whale cannon walks 2/4 -> 2/6 -> 2/8 while its magazine stays
  * at 2. Only the reserve grows: buying firepower must not also buy a bigger clip.
  */
+/**
+ * Extra reach per weapon upgrade level, compounded: 1.1^5 = 1.61, so a maxed
+ * ranged weapon reaches ~61% further.
+ *
+ * Melee is excluded on purpose - a melee `range` positions the swing hitbox.
+ */
+export const WEAPON_RANGE_PER_LEVEL = 0.1;
+
 export const AMMO_RESERVE_BASE_CLIPS = 2;
 export const AMMO_RESERVE_CLIPS_PER_LEVEL = 1;
 
