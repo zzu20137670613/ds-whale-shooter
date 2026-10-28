@@ -451,14 +451,21 @@ export class CharacterController {
                 this.spec.skill,
                 this.skillRuntime,
                 this.scene.time.now,
+                -hpDelta,
+                this.skillCooldownMs(),
             );
             this.skillRuntime = routed.runtime;
-            if (routed.absorbed) {
-                if (routed.brokeHeadgear) {
-                    this.parts.sprite.clearTint();
-                    (this.parts.sprite as any).setTintMode?.(0);
-                    EventBus.emit('combat:headgear-broke', {});
-                }
+            if (routed.brokeHeadgear || routed.brokeShield) {
+                this.parts.sprite.clearTint();
+                (this.parts.sprite as any).setTintMode?.(0);
+                EventBus.emit('combat:headgear-broke', {});
+            }
+            // A ward that soaked the whole hit ends here; a nine-lives shield that
+            // broke lets the remainder through, so a big attack is not free.
+            if (Number.isFinite(routed.remainingDamage)) {
+                hpDelta = -routed.remainingDamage;
+                if (hpDelta >= 0) return;
+            } else if (routed.absorbed) {
                 return;
             }
         }
@@ -501,6 +508,24 @@ export class CharacterController {
         const taken = damageAfterArmor(damage, this.spec.armor ?? 0);
         if (taken <= 0) return;
         this.heal(-taken, 0);
+    }
+
+    /**
+     * The skill's cooldown as the armour ladder and the whale blessing leave it.
+     *
+     * Extracted because two places need the identical number: the press (`useSkill`)
+     * and the hit that breaks a ward (`absorbIncomingHit` starts its clock there).
+     */
+    private skillCooldownMs(): number {
+        const skill = this.spec.skill;
+        if (!skill) return 0;
+        const skillLevel = useGameStore.getState().upgradeLevels.armor ?? 0;
+        const scaled = scaledSkillCooldown(skill.cooldownMs, skillLevel);
+        const blessing = blessingApplies(
+            useGameStore.getState().selectedCharacterId ?? undefined,
+            useGameStore.getState().petBonus?.percent ?? 0,
+        );
+        return scaled * (blessing ? WHALE_BLESSING.cooldownMul : 1);
     }
 
     /** Add `fraction * currentWeaponClipSize` bullets to the active weapon. */
@@ -574,7 +599,7 @@ export class CharacterController {
         const skillLevel = useGameStore.getState().upgradeLevels.armor ?? 0;
         const spCost = scaledSkillSpCost(skillSpCost(skill, this.spec.sp), skillLevel);
         const signature = `${readyInMs > 0 ? 'cooling' : 'ready'}|${this.sp >= spCost}|${
-            this.skillRuntime.hitsLeft > 0
+            this.skillRuntime.hitsLeft > 0 || this.skillRuntime.shieldHp > 0
         }`;
         if (signature === this.lastSkillStatusSignature) return;
         this.lastSkillStatusSignature = signature;
@@ -583,6 +608,7 @@ export class CharacterController {
             sp: this.sp,
             spCost,
             wornHits: this.skillRuntime.hitsLeft,
+            wornShield: this.skillRuntime.shieldHp,
         });
     }
 
@@ -622,6 +648,8 @@ export class CharacterController {
                     )
                         ? WHALE_BLESSING.cooldownMul
                         : 1),
+                // 九命猫's shield scales with the same ladder the cost/cooldown do.
+                skillLevel,
             );
             if (used.used) {
                 this.skillRuntime = used.runtime;
@@ -701,7 +729,7 @@ export class CharacterController {
         // flash keeps its additive blow-out because it lasts three frames.
         const tint = pickBodyTint({
             hurtFlash: now < this.hurtFlashUntil,
-            headgearWorn: this.skillRuntime.hitsLeft > 0,
+            headgearWorn: this.skillRuntime.hitsLeft > 0 || this.skillRuntime.shieldHp > 0,
             headgearTint:
                 this.spec.skill?.kind === 'headgear'
                     ? (this.spec.skill.tintColor ?? HEADGEAR_DEFAULT_TINT)

@@ -25,5 +25,5 @@ weapons:
     - white-dragon-fangs # gpt     ranged
     - crane-fan         # qwen     melee  — the spread, now an arc
     - exorcism-talisman # qwen     ranged — 灭妖符; fires arcana-staff's shot
-    - frostmourne       # seed     melee  — easter egg
-    - assault-rifle     # seed     ranged — the upstream machine gun
+    - frostmourne       # gemini   melee  — easter egg
+    - assault-rifle     # gemini   ranged — the upstream machine gun

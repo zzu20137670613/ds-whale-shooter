@@ -1,6 +1,6 @@
 characters:
     # Five AI girls, one per model — ids and display names are the model
-    # names (deepseek, claude, gpt, qwen, seed) so the roster reads as one
+    # names (deepseek, claude, gpt, qwen, gemini) so the roster reads as one
     # set. Order is the tavern's seat order: tavern.yaml's npcSpawns are
     # positional (`npcSpawns[i]`), so the five seats stay put and only the
     # identities change.
@@ -8,4 +8,4 @@ characters:
     - claude
     - gpt
     - qwen
-    - seed
+    - gemini

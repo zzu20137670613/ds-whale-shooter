@@ -122,7 +122,7 @@ npcSpawns:
     - characterId: qwen
       x: 1630
       'y': 1250
-    - characterId: seed
+    - characterId: gemini
       x: 1995
       'y': 1220
     - characterId: deepseek

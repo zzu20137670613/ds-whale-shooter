@@ -91,6 +91,30 @@ const HeadgearSkillSchema = z
     })
     .strict();
 
+/**
+ * Nine Lives (九命猫) — a shield measured in HP, not in hits.
+ *
+ * The headgear soaks two whole hits whatever their size; this soaks a pool of damage
+ * instead, so a big telegraphed attack eats it and a stream of small ones nibbles it.
+ * Grant is `hpPerLevel * (level + 1)`: 15 at level 0 through 90 at level 5.
+ *
+ * Damage reaches the shield AFTER armour (see `CharacterController.hurt`), which is
+ * what the owner asked for: armour keeps working while the cat is out.
+ */
+const NineLivesSkillSchema = z
+    .object({
+        ...SkillNameFields,
+        kind: z.literal('nine-lives'),
+        /** Shield HP at level 0; each upgrade level adds this much again. */
+        hpPerLevel: z.number().int().gt(0),
+        /** Cooldown, started when the shield BREAKS (like the headgear). */
+        cooldownMs: z.number().int().gte(0),
+        spCost: z.number().int().gte(0).default(0),
+        /** Tint while the shield is up. Multiplied, never additive. */
+        tintColor: z.number().int().gte(0).optional(),
+    })
+    .strict();
+
 const DarkeningSkillSchema = z
     .object({
         ...SkillNameFields,
@@ -144,6 +168,7 @@ const DragonRoarSkillSchema = z
 
 export const SkillSchema = z.discriminatedUnion('kind', [
     HeadgearSkillSchema,
+    NineLivesSkillSchema,
     DarkeningSkillSchema,
     CriticalNextSkillSchema,
     DivineGuestSkillSchema,

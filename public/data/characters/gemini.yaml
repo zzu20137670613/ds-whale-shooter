@@ -1,23 +1,21 @@
-# Real art. She arrived as a proper 4x4, so the plate worked as intended; see the
-# provenance note on `sprite.script`. Ready to regenerate? The plate is
-# 底板F_Seed_4x4结构底_2048_品红底.png.
-id: seed
-name: Seed
-nameZh: "Seed"
+# Gemini — the fifth seat. Replaced Seed on the owner's call: Seed's art never sat
+# right beside the rest of the roster, Gemini does.
+#
+# Everything below is Seed's, unchanged: stats, the four ladders, dodge, SFX, the
+# hotbar (frostmourne + assault-rifle). Only the plate and the skill moved, which is
+# what "无缝替换" means here — the tavern seat, the spawn point and every animation
+# behave exactly as before.
+#
+# Art: 4x4 sheet, keyed off a magenta field and re-gridded so each frame is centred
+# (see tools notes in `key_gemini_art.py` at the workshop root).
+id: gemini
+name: Gemini
+nameZh: "Gemini"
 description: |
-    The one who keeps everyone else supplied. She wears the official mascot head as a helmet: on, and she is the brand; off, and she is herself, already handing you something you did not know you needed.
+    The other twin of the workshop. Nine lives, and she spends them so you do not have to: the cat that pads around her shoulders takes the hit first.
 descriptionZh: |
-    负责张罗大家的那个。她把官方吉祥物头套当头盔戴：戴上就是官方形象，摘了就是她自己——而她已经把你还不知道自己需要的东西递过来了。
+    作坊里的另一只双生子。九条命，她替你花——趴在她肩上的那只猫，永远先挨那一下。
 imageSize: 2048x2048
-prompt: |
-    The 11th Forest — Seed sprite sheet
-
-    Seed — support. The official mascot look becomes a wearable headgear (skill).
-
-    Layout and hard negatives follow the house format documented in
-    `deepseek.yaml`: 2048x2048, 4x4 grid, one flat continuous magenta field,
-    no grid lines, no text, no watermark, and the same character in all 16
-    cells — idle (row 1), walk (row 2), run (row 3), dodge (row 4).
 hp: 100
 armor: 0
 spRegenPerSec: 0.5
@@ -70,16 +68,17 @@ stats:
     vitality: 7
     spirit: 8
 skill:
-    # Mascot Head (头套): press E to put the official mascot head on. It soaks
-    # up the next few hits instead of her HP, then breaks and goes on cooldown
-    # — measured from the break, not from the press.
-    name: Mascot Head
-    nameZh: "头套"
-    kind: headgear
+    # Nine Lives (九命猫): press E and the cat takes the damage instead of her.
+    # A shield measured in HP, not in hits: 15 at level 0, +15 per upgrade level,
+    # 90 at level 5. It soaks damage AFTER armour, so armour keeps working while
+    # the shield is up, and it goes on cooldown when it BREAKS.
+    name: Nine Lives
+    nameZh: "九命猫"
+    kind: nine-lives
     spCost: 15
-    absorbHits: 2
+    hpPerLevel: 15
     cooldownMs: 30000
-    tintColor: 0xFFE9A8
+    tintColor: 0xC9A8FF
 sfx:
     dodge: dodge
     hurtFemale: player-hurt-female
@@ -90,24 +89,16 @@ sfx:
     lowHpThreshold: 0.3
     lowHpPulseMs: 900
 sprite:
-    texture: assets/image/characters/seed.png
+    texture: assets/image/characters/gemini.png
     grid:
         rows: 4
         cols: 4
-    # Visual scale tracks `body` against deepseek's 26x26 → 1.35, so the
-    # sprite and the physics box stay in proportion across the roster.
+    # Same proportion rule as the rest of the roster: the drawn body sits at
+    # ~1.45x her 28x28 physics box.
     scale: 1.45
     offset:
         left: -2
         bottom: -4
-    # Provenance for `texture`: raws/seed.png is the 1536x1536 4x4 sheet the model
-    # returned. It was de-watermarked, keyed at RGB distance 50, shrunk 2px, hole-
-    # filled and quantised to 32 colours by tools/split-sheet-pale.py, with frames
-    # bottom-aligned (sprite origin is (0.5, 1.0)).
-    script:
-        downsample: 3
-        colors: 32
-        pad: 2
 anims:
     idle:
         frames:

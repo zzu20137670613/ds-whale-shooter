@@ -25,6 +25,14 @@ import type { CharacterSkillSpec } from '@/lib/characters/types';
 export interface SkillRuntime {
     /** headgear: hits it can still soak up (0 = not worn). */
     hitsLeft: number;
+    /**
+     * nine-lives: shield HP still standing (0 = not up).
+     *
+     * Kept apart from `hitsLeft` rather than overloading it: one counts hits, the other
+     * counts damage, and a skill that silently switched meaning would break the HUD's
+     * "worn" test in a way nobody would notice until a boss hit vanished.
+     */
+    shieldHp: number;
     /** divine-guest: hits that deal no damage (0 = none left). */
     shieldLeft: number;
     /** One-shot damage multiplier for the next attack (1 = nothing armed). */
@@ -38,7 +46,15 @@ export interface SkillRuntime {
 }
 
 export function emptySkillRuntime(): SkillRuntime {
-    return { hitsLeft: 0, shieldLeft: 0, nextMul: 1, buffMul: 1, readyAt: 0, buffUntil: 0 };
+    return {
+        hitsLeft: 0,
+        shieldHp: 0,
+        shieldLeft: 0,
+        nextMul: 1,
+        buffMul: 1,
+        readyAt: 0,
+        buffUntil: 0,
+    };
 }
 
 /**
@@ -61,8 +77,9 @@ export function canUseSkill(
     maxSp: number,
 ): boolean {
     if (!skill) return false;
-    // A headgear that is still on cannot be put on again.
+    // A ward that is still standing cannot be raised again.
     if (skill.kind === 'headgear' && runtime.hitsLeft > 0) return false;
+    if (skill.kind === 'nine-lives' && runtime.shieldHp > 0) return false;
     if (now < runtime.readyAt) return false;
     return sp >= skillSpCost(skill, maxSp);
 }
@@ -76,6 +93,8 @@ export function useSkill(
     maxSp: number,
     /** Upgrade-scaled cooldown; defaults to the spec's own value. */
     cooldownMs?: number,
+    /** Character upgrade level (0..5) — what scales a nine-lives shield. */
+    skillLevel = 0,
 ): { runtime: SkillRuntime; used: boolean; spCost: number } {
     if (!skill || !canUseSkill(skill, runtime, now, sp, maxSp)) {
         return { runtime, used: false, spCost: 0 };
@@ -83,11 +102,17 @@ export function useSkill(
     const next: SkillRuntime = { ...runtime };
     // The headgear's clock starts when it breaks, in absorbIncomingHit.
     const effectiveCooldown = cooldownMs ?? skill.cooldownMs;
-    if (skill.kind !== 'headgear') next.readyAt = now + effectiveCooldown;
+    if (skill.kind !== 'headgear' && skill.kind !== 'nine-lives') {
+        next.readyAt = now + effectiveCooldown;
+    }
 
     switch (skill.kind) {
         case 'headgear':
             next.hitsLeft = skill.absorbHits;
+            break;
+        case 'nine-lives':
+            // Level 0 already grants one step: 15 / 30 / 45 / 60 / 75 / 90.
+            next.shieldHp = skill.hpPerLevel * (skillLevel + 1);
             break;
         case 'darkening':
             next.buffUntil = now + skill.buffMs;
@@ -123,9 +148,12 @@ export function skillBadgeTone(state: {
     sp: number;
     spCost: number;
     wornHits?: number;
+    /** nine-lives: shield HP still standing. */
+    wornShield?: number;
 }): SkillBadgeTone {
     if (state.readyInMs > 0) return 'cooling';
     if ((state.wornHits ?? 0) > 0) return 'cooling';
+    if ((state.wornShield ?? 0) > 0) return 'cooling';
     if (state.sp < state.spCost) return 'no-sp';
     return 'ready';
 }
@@ -150,14 +178,48 @@ export function absorbIncomingHit(
     skill: CharacterSkillSpec | undefined,
     runtime: SkillRuntime,
     now: number,
+    /**
+     * How much damage is arriving.
+     *
+     * Defaults to "one whole hit", which is what the older hit-counting kinds need and
+     * what their callers have always passed (nothing). A nine-lives shield subtracts it
+     * and hands the remainder on to HP.
+     */
+    damage = Number.POSITIVE_INFINITY,
     /** Upgrade-scaled cooldown; defaults to the spec's own value. */
     cooldownMs?: number,
-): { runtime: SkillRuntime; absorbed: boolean; brokeHeadgear: boolean } {
+): {
+    runtime: SkillRuntime;
+    absorbed: boolean;
+    brokeHeadgear: boolean;
+    brokeShield: boolean;
+    /** Damage left over for HP after the ward. Infinity means "not routed". */
+    remainingDamage: number;
+} {
     if (runtime.shieldLeft > 0) {
         return {
             runtime: { ...runtime, shieldLeft: runtime.shieldLeft - 1 },
             absorbed: true,
             brokeHeadgear: false,
+            brokeShield: false,
+            remainingDamage: 0,
+        };
+    }
+    if (skill?.kind === 'nine-lives' && runtime.shieldHp > 0) {
+        const absorbed = Math.min(runtime.shieldHp, damage);
+        const left = runtime.shieldHp - absorbed;
+        const broke = left <= 0;
+        return {
+            runtime: {
+                ...runtime,
+                shieldHp: broke ? 0 : left,
+                // Cooldown starts on the hit that breaks it, same as the headgear.
+                readyAt: broke ? now + (cooldownMs ?? skill.cooldownMs) : runtime.readyAt,
+            },
+            absorbed: true,
+            brokeHeadgear: false,
+            brokeShield: broke,
+            remainingDamage: Number.isFinite(damage) ? damage - absorbed : 0,
         };
     }
     if (skill?.kind === 'headgear' && runtime.hitsLeft > 0) {
@@ -171,7 +233,15 @@ export function absorbIncomingHit(
             },
             absorbed: true,
             brokeHeadgear: broke,
+            brokeShield: false,
+            remainingDamage: 0,
         };
     }
-    return { runtime, absorbed: false, brokeHeadgear: false };
+    return {
+        runtime,
+        absorbed: false,
+        brokeHeadgear: false,
+        brokeShield: false,
+        remainingDamage: damage,
+    };
 }
