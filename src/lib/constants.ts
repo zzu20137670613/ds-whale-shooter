@@ -104,6 +104,17 @@ export const KEY_Q = 81;
  */
 export const WEAPON_RANGE_PER_LEVEL = 0.1;
 
+/**
+ * Reload speed-up per weapon upgrade level, subtracted from the BASE: five levels
+ * = exactly half the reload time.
+ *
+ * Linear because the owner stated the target as a fact ("满级比初始快一倍").
+ * Compounding 0.9 five times would give 0.59, which is not "twice as fast".
+ */
+export const WEAPON_RELOAD_PER_LEVEL = 0.1;
+/** Never let a (future, longer) ladder reach an instant reload. */
+export const WEAPON_RELOAD_MIN_FACTOR = 0.3;
+
 export const AMMO_RESERVE_BASE_CLIPS = 2;
 export const AMMO_RESERVE_CLIPS_PER_LEVEL = 1;
 

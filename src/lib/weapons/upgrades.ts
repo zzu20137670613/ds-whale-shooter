@@ -20,6 +20,7 @@
 import type { WeaponSpec } from './types';
 import { reserveMaxFor } from './ammo';
 import { isRangedWeapon, rangeAtLevel } from './range';
+import { reloadTimeAtLevel } from './reload';
 
 /** Price charged per missing round when refilling the hotbar.
  *
@@ -70,7 +71,14 @@ export function applyWeaponUpgrade(spec: WeaponSpec, level: number): WeaponSpec 
     // distance. Melee keeps its `range`, which positions the swing hitbox.
     const range = isRangedWeapon(spec) ? Math.round(rangeAtLevel(spec.range, lv)) : spec.range;
 
-    return { ...spec, damage, range };
+    // Reload gets faster too: -10% of the base per level, so a maxed weapon reloads
+    // in half the time. Weapons with no reload (melee) keep theirs.
+    const reloadTimeMs =
+        spec.reloadTimeMs === undefined ? undefined : reloadTimeAtLevel(spec.reloadTimeMs, lv);
+
+    return reloadTimeMs === undefined
+        ? { ...spec, damage, range }
+        : { ...spec, damage, range, reloadTimeMs };
 }
 
 /**
