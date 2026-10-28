@@ -18,6 +18,7 @@ import {
     useSkill,
 } from '@/lib/characters/skill';
 import { damageAfterArmor } from '@/lib/characters/combat';
+import { scaledSkillSpCost } from '@/lib/characters/skill-scaling';
 
 const SKILL = {
     kind: 'nine-lives',
@@ -64,6 +65,41 @@ describe('the shield ladder', () => {
             'cooling',
         );
         expect(skillBadgeTone({ readyInMs: 0, sp: 200, spCost: 15, wornShield: 0 })).toBe('ready');
+    });
+});
+
+describe('the SP ladder', () => {
+    // The owner's rule for every character: +10 SP per upgrade level.
+    it('costs 15 at level 0 and 65 at level 5', () => {
+        for (const [level, expected] of [
+            [0, 15],
+            [1, 25],
+            [2, 35],
+            [3, 45],
+            [4, 55],
+            [5, 65],
+        ] as const) {
+            const cost = scaledSkillSpCost(15, level);
+            expect(cost, `level ${level}`).toBe(expected);
+            // The price is charged AND checked with the same number.
+            const result = useSkill(SKILL, emptySkillRuntime(), 0, 200, 200, undefined, level, cost);
+            expect(result.used, `level ${level}`).toBe(true);
+            expect(result.spCost, `level ${level}`).toBe(expected);
+        }
+    });
+
+    it('refuses the press when SP only covers the un-upgraded price', () => {
+        // 15 SP would pay for level 0, but level 5 costs 65 - the press must fail
+        // rather than drive the bar negative.
+        const cost = scaledSkillSpCost(15, 5);
+        const result = useSkill(SKILL, emptySkillRuntime(), 0, 15, 200, undefined, 5, cost);
+        expect(result.used).toBe(false);
+    });
+
+    it('shows the scaled price on the badge', () => {
+        const cost = scaledSkillSpCost(15, 5);
+        expect(skillBadgeTone({ readyInMs: 0, sp: 15, spCost: cost })).toBe('no-sp');
+        expect(skillBadgeTone({ readyInMs: 0, sp: 65, spCost: cost })).toBe('ready');
     });
 });
 

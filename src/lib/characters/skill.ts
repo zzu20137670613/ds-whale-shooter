@@ -75,13 +75,15 @@ export function canUseSkill(
     now: number,
     sp: number,
     maxSp: number,
+    /** Upgrade-scaled cost. Defaults to the spec's own; see `scaledSkillSpCost`. */
+    costOverride?: number,
 ): boolean {
     if (!skill) return false;
     // A ward that is still standing cannot be raised again.
     if (skill.kind === 'headgear' && runtime.hitsLeft > 0) return false;
     if (skill.kind === 'nine-lives' && runtime.shieldHp > 0) return false;
     if (now < runtime.readyAt) return false;
-    return sp >= skillSpCost(skill, maxSp);
+    return sp >= (costOverride ?? skillSpCost(skill, maxSp));
 }
 
 /** Returns the next runtime, whether anything was used, and what it cost. */
@@ -95,8 +97,16 @@ export function useSkill(
     cooldownMs?: number,
     /** Character upgrade level (0..5) — what scales a nine-lives shield. */
     skillLevel = 0,
+    /**
+     * The price actually charged, after the armour ladder's +10/level.
+     *
+     * Needed because the affordability check must use the same number: at level 5 a
+     * 15 SP skill costs 65, and checking the base 15 would let a press through that
+     * sends SP negative.
+     */
+    costOverride?: number,
 ): { runtime: SkillRuntime; used: boolean; spCost: number } {
-    if (!skill || !canUseSkill(skill, runtime, now, sp, maxSp)) {
+    if (!skill || !canUseSkill(skill, runtime, now, sp, maxSp, costOverride)) {
         return { runtime, used: false, spCost: 0 };
     }
     const next: SkillRuntime = { ...runtime };
@@ -130,7 +140,7 @@ export function useSkill(
             // Nothing to arm — the monster module resolves the roar itself.
             break;
     }
-    return { runtime: next, used: true, spCost: skillSpCost(skill, maxSp) };
+    return { runtime: next, used: true, spCost: costOverride ?? skillSpCost(skill, maxSp) };
 }
 
 /**

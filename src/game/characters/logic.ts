@@ -650,10 +650,14 @@ export class CharacterController {
                         : 1),
                 // 九命猫's shield scales with the same ladder the cost/cooldown do.
                 skillLevel,
+                // The price shown on the badge is the price charged: +10 SP per
+                // level, so the affordability check has to see the same number.
+                scaledSkillSpCost(skillSpCost(this.spec.skill, this.spec.sp), skillLevel),
             );
             if (used.used) {
                 this.skillRuntime = used.runtime;
-                this.sp -= scaledSkillSpCost(used.spCost, skillLevel);
+                // `used.spCost` is already the ladder-scaled price.
+                this.sp = Math.max(0, this.sp - used.spCost);
                 EventBus.emit('skill:used', { kind: this.spec.skill.kind });
                 if (this.spec.skill.kind === 'dragon-roar') {
                     EventBus.emit('skill:dragon-roar', { hpFraction: this.spec.skill.hpFraction });
