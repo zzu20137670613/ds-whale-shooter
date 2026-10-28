@@ -19,6 +19,7 @@
  */
 
 import type { CharacterSpec } from '@/lib/characters/types';
+import type { WeaponSpec } from '@/lib/weapons/types';
 
 /**
  * The only character the pet buffs.
@@ -48,6 +49,39 @@ export const PET_LUCK_LADDER = [
     { percentAtLeast: 30, luck: 1 },
     { percentAtLeast: 0, luck: 0 },
 ] as const;
+
+/**
+ * 鲸鲸祝福 — fused into the TOP pet tier, because the design was "满级桌宠 plus
+ * four extras". A lower-tier pet is a companion; the maxed one is the blessing.
+ */
+export const PET_BLESSING_PERCENT = 50;
+
+/** What the blessing adds on top of the panel percentages. */
+export const WHALE_BLESSING = {
+    /** Player damage multiplier. */
+    damageMul: 1.5,
+    /** Skill cooldown multiplier (halved). */
+    cooldownMul: 0.5,
+    /** HP restored per second, as a share of max HP. */
+    hpRegenPerSecPct: 0.02,
+    /** Extra SP per second, as a share of max SP, on top of the flat trickle. */
+    spRegenPerSecPct: 0.01,
+} as const;
+
+/** Is the blessing on? DeepSeek controlling, at the maxed pet tier. */
+export function blessingApplies(characterId: string | undefined, percent: number): boolean {
+    return petBonusAppliesTo(characterId) && percent >= PET_BLESSING_PERCENT;
+}
+
+/**
+ * A player weapon with the blessing's +50% damage baked in.
+ *
+ * Applied at resolve time, next to the upgrade ladder, so bullets, the HUD readout
+ * and the loot on the ground all see the same number.
+ */
+export function applyBlessingDamage(spec: WeaponSpec): WeaponSpec {
+    return { ...spec, damage: Math.max(1, Math.round(spec.damage * WHALE_BLESSING.damageMul)) };
+}
 
 /** Luck a given pet percentage adds. */
 export function petLuckBonus(percent: number): number {

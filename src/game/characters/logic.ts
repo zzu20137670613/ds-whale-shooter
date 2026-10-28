@@ -30,6 +30,7 @@ import {
 } from '@/lib/characters/skill';
 import { handUpOffset, pickBodyTint } from '@/lib/characters/hand';
 import { damageAfterArmor } from '@/lib/characters/combat';
+import { WHALE_BLESSING, blessingApplies } from '@/lib/pet/bonus';
 import { scaledSkillCooldown, scaledSkillSpCost } from '@/lib/characters/skill-scaling';
 import { SHOP_RESTORE_VITALS_EVENT } from '@/lib/characters/vitals';
 import {
@@ -606,7 +607,13 @@ export class CharacterController {
                 now,
                 this.sp,
                 this.spec.sp,
-                scaledSkillCooldown(this.spec.skill.cooldownMs, skillLevel),
+                scaledSkillCooldown(this.spec.skill.cooldownMs, skillLevel) *
+                    (blessingApplies(
+                        useGameStore.getState().selectedCharacterId ?? undefined,
+                        useGameStore.getState().petBonus?.percent ?? 0,
+                    )
+                        ? WHALE_BLESSING.cooldownMul
+                        : 1),
             );
             if (used.used) {
                 this.skillRuntime = used.runtime;
@@ -750,15 +757,30 @@ export class CharacterController {
         // themselves again. Rate is `spRegenPerSec` (0.5 base, up to 2.0 with a
         // fully upgraded spirit ladder), accumulated in seconds. HP still does
         // NOT regenerate - that part of the old rule stands.
-        const spRate = this.spec.spRegenPerSec ?? 0;
-        if (spRate > 0 && this.sp < this.spec.sp) {
-            if (this.lastSpRegenAt === 0) this.lastSpRegenAt = now;
-            const elapsedSec = (now - this.lastSpRegenAt) / 1000;
-            if (elapsedSec > 0) {
+        // 鲸鲸祝福 tops both pools up: +2% max HP/s and +1% max SP/s on top of
+        // the flat SP trickle. This is the one deliberate exception to "HP never
+        // regenerates" - it is DeepSeek's alone and only at the maxed pet tier.
+        const blessing = blessingApplies(
+            useGameStore.getState().selectedCharacterId ?? undefined,
+            useGameStore.getState().petBonus?.percent ?? 0,
+        );
+        let spRate = this.spec.spRegenPerSec ?? 0;
+        if (blessing) {
+            spRate += (this.spec.sp * WHALE_BLESSING.spRegenPerSecPct);
+        }
+        if (this.lastSpRegenAt === 0) this.lastSpRegenAt = now;
+        const elapsedSec = Math.max(0, (now - this.lastSpRegenAt) / 1000);
+        this.lastSpRegenAt = now;
+
+        if (elapsedSec > 0) {
+            if (spRate > 0 && this.sp < this.spec.sp) {
                 this.sp = Math.min(this.spec.sp, this.sp + elapsedSec * spRate);
             }
+            if (blessing && this.hp < this.spec.hp) {
+                const healPerSec = this.spec.hp * WHALE_BLESSING.hpRegenPerSecPct;
+                this.heal(Math.min(this.spec.hp - this.hp, elapsedSec * healPerSec), 0);
+            }
         }
-        this.lastSpRegenAt = now;
 
         // ── Footstep SFX (throttled; cadence from spec) ─────────────
         const moving = intent.vx !== 0 || intent.vy !== 0;

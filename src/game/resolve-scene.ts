@@ -22,7 +22,12 @@ import {
     fetchCharacterIndex,
     resolveRosterCharacterId,
 } from '@/lib/characters';
-import { applyPetBonus, petBonusAppliesTo } from '@/lib/pet/bonus';
+import {
+    applyBlessingDamage,
+    applyPetBonus,
+    blessingApplies,
+    petBonusAppliesTo,
+} from '@/lib/pet/bonus';
 import type { SceneAssets } from '@/game/scenes/scene';
 import { fetchDrop } from '@/lib/drops';
 import type { DropSpec } from '@/lib/drops';
@@ -206,6 +211,15 @@ export async function resolveScene(
         const spec = weaponsById.get(wid);
         const level = weaponLevels[wid] ?? 0;
         if (spec && level > 0) weaponsById.set(wid, applyWeaponUpgrade(spec, level));
+    }
+
+    // 鲸鲸祝福: +50% damage while DeepSeek holds the maxed pet. Same place and the
+    // same reason as the ladder above - one rescale, so every reader agrees.
+    if (blessingApplies(characterId, useGameStore.getState().petBonus?.percent ?? 0)) {
+        for (const wid of playerWeaponIds) {
+            const spec = weaponsById.get(wid);
+            if (spec) weaponsById.set(wid, applyBlessingDamage(spec));
+        }
     }
 
     const weapons = character.hotbar.map((wid) => weaponsById.get(wid)!).filter(Boolean);
