@@ -411,6 +411,14 @@ export const MUSIC_RESUME = 'music:resume';
 /** Default cross-fade when a music stop / switch lacks an explicit fadeOut. */
 export const AUDIO_DEFAULT_FADE_MS = 250;
 
+// ─── Saves: hotkeys & feedback ──────────────────────────────────────
+/** Quick save. F5 rather than Ctrl+S: the browser owns Ctrl+S. */
+export const KEY_QUICK_LOAD = 120; // F9
+/** Transient line shown after a save / load / import. */
+export const SAVE_TOAST_EVENT = 'save:toast';
+/** How long that line stays up. */
+export const SAVE_TOAST_MS = 2200;
+
 // ─── Aim: Directional (no magnetism) ────────────────────────────────
 /**
  * How far out along an eight-way direction the aim point is placed.

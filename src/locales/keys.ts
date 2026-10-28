@@ -40,6 +40,14 @@ export type CatalogSource = {
         loadFailed: string;
         hint: string;
         close: string;
+        tooEarly: string;
+        autoSaved: string;
+        exported: string;
+        imported: string;
+        exportFailed: string;
+        importFailed: string;
+        export_: string;
+        import_: string;
     };
     /** The corner chip that picks how you aim. */
     input: {

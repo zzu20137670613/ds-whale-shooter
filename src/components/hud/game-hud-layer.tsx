@@ -9,6 +9,8 @@ import { ComboOverlay } from './combo-overlay';
 import { HurtVignetteOverlay } from './hurt-vignette-overlay';
 import { LocaleToggle } from './locale-toggle';
 import { InputSchemeSwitch } from './input-scheme-switch';
+import { SaveHotkeys } from './save-hotkeys';
+import { SaveToast } from './save-toast';
 import { MoneyHud } from './money-hud';
 
 import { useHudScale } from '@/lib/use-hud-scale';
@@ -66,6 +68,8 @@ export const GameHUDLayer: React.FC = () => {
             <MoneyHud />
             <LocaleToggle />
             {hasFinePointer() && <InputSchemeSwitch />}
+            <SaveHotkeys />
+            <SaveToast />
             <SettingsOverlay />
             <DeathOverlay />
             <VictoryOverlay />

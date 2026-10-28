@@ -14,10 +14,10 @@
  */
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Download, Save, Trash2, X } from 'lucide-react';
+import { Download, Save, Trash2, Upload, X } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import { getPhaserGame, resolveAndRestart } from '@/lib/phaser-game';
+import { resolveAndRestart } from '@/lib/phaser-game';
 import {
     QUICK_SLOT_ID,
     SAVE_SLOT_IDS,
@@ -27,29 +27,17 @@ import {
     type SaveSlotId,
     type SaveSlotRecord,
 } from '@/lib/saves/slots';
+import {
+    applySaveFile,
+    buildSaveFile,
+    parseSaveFile,
+    saveFileName,
+} from '@/lib/saves/file';
+import { announceSave, captureThumbnail } from '@/lib/saves/quick';
 import { t } from '@/locales';
 import { useGameStore } from '@/store/game-store';
 
 import { CornerPixels, RETRO_BOX } from './retro-box';
-
-/** A small JPEG of the running scene, or undefined when the canvas cannot be read. */
-function captureThumbnail(): string | undefined {
-    try {
-        const canvas = getPhaserGame()?.canvas;
-        if (!canvas) return undefined;
-        // Half scale keeps a card-sized image around 20-40 KB in localStorage.
-        const thumb = document.createElement('canvas');
-        thumb.width = 160;
-        thumb.height = 90;
-        const ctx = thumb.getContext('2d');
-        if (!ctx) return undefined;
-        ctx.drawImage(canvas, 0, 0, thumb.width, thumb.height);
-        return thumb.toDataURL('image/jpeg', 0.6);
-    } catch {
-        // Tainted canvas or a lost context: the slot is still worth saving.
-        return undefined;
-    }
-}
 
 interface SaveSlotsPanelProps {
     onClose: () => void;
@@ -102,6 +90,45 @@ export function SaveSlotsPanel({ onClose }: SaveSlotsPanelProps) {
         // actually puts the player back in it.
         onClose();
         void resolveAndRestart(record.levelId);
+    }
+
+    function handleExport() {
+        try {
+            const file = buildSaveFile(window.localStorage);
+            const blob = new Blob([JSON.stringify(file, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = saveFileName();
+            link.click();
+            // Revoke on the next tick: Safari drops the download if the URL dies first.
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+            announceSave(t('saves.exported'));
+        } catch {
+            announceSave(t('saves.exportFailed'));
+        }
+    }
+
+    function handleImport(event: React.ChangeEvent<HTMLInputElement>) {
+        const input = event.target;
+        const file = input.files?.[0];
+        // Reset first, so picking the same file twice still fires a change.
+        input.value = '';
+        if (!file) return;
+
+        void file
+            .text()
+            .then((text) => {
+                const parsed = parseSaveFile(text);
+                if (!parsed.ok) {
+                    announceSave(t('saves.importFailed'));
+                    return;
+                }
+                const result = applySaveFile(window.localStorage, parsed.file);
+                refresh();
+                announceSave(`${t('saves.imported')} ×${result.slotsWritten}`);
+            })
+            .catch(() => announceSave(t('saves.importFailed')));
     }
 
     function handleDelete(id: SaveSlotId) {
@@ -209,6 +236,28 @@ export function SaveSlotsPanel({ onClose }: SaveSlotsPanelProps) {
                             </div>
                         );
                     })}
+                </div>
+
+                <div className="flex items-center gap-1">
+                    <Button
+                        type="button"
+                        onClick={handleExport}
+                        variant="outline"
+                        className="h-6 flex-1 border-stone-700 bg-stone-900/80 px-1 text-[10px] font-semibold text-stone-300 hover:bg-stone-800 hover:text-amber-300"
+                    >
+                        <Upload className="size-3" />
+                        {t('saves.export_')}
+                    </Button>
+                    <label className="flex h-6 flex-1 cursor-pointer items-center justify-center gap-1 rounded border border-stone-700 bg-stone-900/80 px-1 text-[10px] font-semibold text-stone-300 hover:bg-stone-800 hover:text-amber-300">
+                        <Download className="size-3" />
+                        {t('saves.import_')}
+                        <input
+                            type="file"
+                            accept="application/json,.json"
+                            onChange={handleImport}
+                            className="hidden"
+                        />
+                    </label>
                 </div>
 
                 <div className="flex items-center justify-between text-[9px] tracking-wider text-stone-500 uppercase">

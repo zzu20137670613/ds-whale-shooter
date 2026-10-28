@@ -63,6 +63,8 @@ import { MERCHANT_SHOP_EVENT, usesMerchant } from '@/lib/merchant/logic';
 import { releasableTextureKeys } from '@/lib/textures/release';
 import { tilemapResourcesFor } from '@/lib/tilemaps/resources';
 import { resolveAndRestart } from '@/lib/phaser-game';
+import { quickSave } from '@/lib/saves/quick';
+import { t } from '@/locales';
 import { InteractableController } from '@/game/scenes/interactable';
 import { useGameStore } from '@/store/game-store';
 import type { MusicSpec, SfxSpec, SoundSpec } from '@/lib/audios';
@@ -712,6 +714,11 @@ export class LoadScene extends Phaser.Scene {
             this.id,
             () => (this.character?.body?.position ? this.character.body.position : null),
             (spec) => isPortalArmed(spec, this.isLevelCleared()),
+            () => {
+                // Auto quick save: the player has left the portal they arrived on, so
+                // the snapshot is safe to reload without bouncing them back out.
+                quickSave(t('saves.autoSaved'));
+            },
         );
 
         // The mysterious merchant: shows up on the junction of the four painted

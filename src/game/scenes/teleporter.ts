@@ -102,15 +102,28 @@ export class TeleporterController {
      */
     private seededSpawnCooldowns = false;
 
+    /** The portal id this scene was entered through, if any. */
+    private arrivalId: string | null = null;
+
     constructor(
         private readonly scene: Phaser.Scene,
         teleporterSpecs: Teleporter[] | undefined,
         private readonly currentSceneId: string,
         private readonly getPlayerPos: () => { x: number; y: number } | null,
         private readonly isClearedGetter: (spec: Teleporter) => boolean = () => true,
+        /**
+         * Fired once per arrival, the moment the player walks out of the portal they
+         * came through.
+         *
+         * Deliberately not "on arrival": the auto quick save must not be written while
+         * the player is still standing on the arrival portal, because loading that
+         * save would place them on the portal and throw them straight back out again.
+         */
+        private readonly onArrivalCleared: () => void = () => {},
     ) {
         if (lastTriggeredFromId !== null) {
             this.cooldownIds.add(lastTriggeredFromId);
+            this.arrivalId = lastTriggeredFromId;
             lastTriggeredFromId = null;
         }
         if (teleporterSpecs && teleporterSpecs.length > 0) {
@@ -477,6 +490,9 @@ export class TeleporterController {
             if (view.spec.id && this.cooldownIds.has(view.spec.id)) {
                 if (!isInRadius) {
                     this.cooldownIds.delete(view.spec.id);
+                    // Player has stepped off an arrival portal: the safe moment to
+                    // write the auto save, and the only moment that cannot loop.
+                    if (view.spec.id === this.arrivalId) this.onArrivalCleared();
                 }
                 view.isActive = false;
                 continue;
