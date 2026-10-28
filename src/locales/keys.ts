@@ -22,6 +22,24 @@ export type CatalogSource = {
         resume: string;
         restart: string;
         restartHint: string;
+        /** Start over from the tavern, wiping the save. */
+        newGame: string;
+        /** Second click, because it is destructive. */
+        newGameConfirm: string;
+    };
+    /** The save rack: six slots, a quick slot, and the two-step overwrite. */
+    saves: {
+        title: string;
+        empty: string;
+        save: string;
+        load: string;
+        delete: string;
+        overwrite: string;
+        saved: string;
+        saveFailed: string;
+        loadFailed: string;
+        hint: string;
+        close: string;
     };
     /** The corner chip that picks how you aim. */
     input: {

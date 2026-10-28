@@ -14,14 +14,16 @@
  */
 
 import { useEffect, useRef, useState } from 'react';
-import { RotateCcw, Play, X } from 'lucide-react';
+import { RotateCcw, Play, X, FolderOpen, Sparkles } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { MUSIC_PAUSE, MUSIC_RESUME } from '@/lib/constants';
 import { EventBus } from '@/lib/events/bus';
 import { getPhaserGame, restartAtTavern } from '@/lib/phaser-game';
 import { t } from '@/locales';
+import { useGameStore } from '@/store/game-store';
 
+import { SaveSlotsPanel } from './save-slots-panel';
 import { CornerPixels, RETRO_BOX } from './retro-box';
 
 const REPO_URL = 'https://github.com/FireTable/the-11th-forest';
@@ -38,6 +40,11 @@ function GithubMark() {
 
 export function SettingsOverlay() {
     const [open, setOpen] = useState(false);
+    // The save rack draws over the settings panel rather than inside it: it needs
+    // more width than a pause menu, and it must not close when the panel does.
+    const [savesOpen, setSavesOpen] = useState(false);
+    // Destructive, so it takes two clicks: the first arms, the second wipes.
+    const [newGameArmed, setNewGameArmed] = useState(false);
     // The scene we paused, so resume hits the same one even if a
     // teleport registered another in the meantime.
     const paused = useRef<Phaser.Scene | null>(null);
@@ -55,6 +62,20 @@ export function SettingsOverlay() {
         paused.current = null;
         EventBus.emit(MUSIC_RESUME);
         setOpen(false);
+    }
+
+    function handleNewGame() {
+        if (!newGameArmed) {
+            setNewGameArmed(true);
+            return;
+        }
+        // Wipe the run and the world, then drop back to the tavern as if fresh.
+        useGameStore.getState().clearSaveData();
+        paused.current = null;
+        setOpen(false);
+        setNewGameArmed(false);
+        EventBus.emit(MUSIC_RESUME);
+        void restartAtTavern();
     }
 
     function handleRestart() {
@@ -185,6 +206,26 @@ export function SettingsOverlay() {
                                 <RotateCcw className="size-5" />
                                 {t('settings.restart')}
                             </Button>
+                            <Button
+                                onClick={handleNewGame}
+                                variant="outline"
+                                className={`h-9 w-full font-semibold ${
+                                    newGameArmed
+                                        ? 'border-red-700 bg-red-900/70 text-red-200 hover:bg-red-800'
+                                        : 'border-stone-700 bg-stone-900/80 text-stone-400 hover:bg-stone-800 hover:text-amber-300'
+                                }`}
+                            >
+                                <Sparkles className="size-5" />
+                                {newGameArmed ? t('settings.newGameConfirm') : t('settings.newGame')}
+                            </Button>
+                            <Button
+                                onClick={() => setSavesOpen(true)}
+                                variant="outline"
+                                className="h-9 w-full border-stone-700 bg-stone-900/80 font-semibold text-stone-300 hover:bg-stone-800 hover:text-amber-300"
+                            >
+                                <FolderOpen className="size-5" />
+                                {t('saves.title')}
+                            </Button>
                         </div>
 
                         <div className="text-[9px] tracking-wider text-stone-500 uppercase">
@@ -193,6 +234,8 @@ export function SettingsOverlay() {
                     </div>
                 </div>
             )}
+
+            {savesOpen && <SaveSlotsPanel onClose={() => setSavesOpen(false)} />}
         </>
     );
 }

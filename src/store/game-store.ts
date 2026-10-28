@@ -2,6 +2,15 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 import { setLocale as setLocaleRuntime, type LocaleCode } from '@/locales';
+import {
+    QUICK_SLOT_ID,
+    SAVE_SLOT_IDS,
+    SLOT_RECORD_VERSION,
+    isSaveSlotRecord,
+    saveSlotKey,
+    type SaveSlotId,
+    type SaveSlotRecord,
+} from '@/lib/saves/slots';
 import { reserveMaxFor } from '@/lib/weapons/ammo';
 import { addToInventory, emptyInventory, removeFromInventory } from '@/lib/inventory';
 import { bagSellValue } from '@/lib/inventory/sell';
@@ -332,6 +341,21 @@ export interface GameUIState {
      */
     clearSceneSnapshots: () => void;
     clearSaveData: () => void;
+
+    /**
+     * The six-slot rack plus the quick slot, as last written.
+     *
+     * Read lazily from localStorage rather than mirrored into state: a slot only
+     * changes when the player presses save, so caching it would just be a second
+     * source of truth to keep in sync.
+     */
+    listSaveSlots: () => Record<SaveSlotId, SaveSlotRecord | null>;
+    /** Write one slot. Returns the record written, or null if there was nothing to save. */
+    saveToSlot: (id: SaveSlotId, thumbnail?: string) => SaveSlotRecord | null;
+    /** Load one slot into the live store. False when the slot is empty or unreadable. */
+    loadFromSlot: (id: SaveSlotId) => boolean;
+    /** Remove one slot. */
+    deleteSaveSlot: (id: SaveSlotId) => void;
     setSelectedCharacterId: (id: string | null) => void;
     openComicIntro: (levelId: string) => void;
     openDevCabin: () => void;
@@ -424,6 +448,70 @@ export const initialGameState = {
     tavernCleared: false,
     tavernWeaponCount: 0,
 };
+
+/**
+ * The fields a slot carries over from the live state.
+ *
+ * These are exactly the persisted slice plus the two display lines a card shows;
+ * keeping the list literal (rather than spreading the whole state) is what stops a
+ * future UI flag from leaking into every old save.
+ */
+function buildSlotRecord(
+    state: GameUIState,
+    thumbnail: string | undefined,
+): SaveSlotRecord {
+    return {
+        version: SLOT_RECORD_VERSION,
+        savedAt: new Date().toISOString(),
+        levelTitle: state.levelTitle || state.currentLevelId,
+        levelId: state.currentLevelId,
+        characterName: state.characterName,
+        elapsedMs: state.levelElapsedMs,
+        money: state.money,
+        thumbnail,
+        data: {
+            currentLevelId: state.currentLevelId,
+            levelProgressMap: state.levelProgressMap,
+            characterName: state.characterName,
+            hp: state.hp,
+            maxHp: state.maxHp,
+            sp: state.sp,
+            maxSp: state.maxSp,
+            slots: state.slots,
+            inventory: state.inventory,
+            spawnedRegions: state.spawnedRegions,
+            activeWeaponIndex: state.activeWeaponIndex,
+            levelElapsedMs: state.levelElapsedMs,
+            playerSnapshot: state.playerSnapshot,
+            activeMonstersSnapshot: state.activeMonstersSnapshot,
+            groundDropsSnapshot: state.groundDropsSnapshot,
+            selectedCharacterId: state.selectedCharacterId,
+            tavernCleared: state.tavernCleared,
+            brokenProps: state.brokenProps,
+            usedTriggers: state.usedTriggers,
+            catShopGiftGiven: state.catShopGiftGiven,
+            money: state.money,
+            upgradeLevels: state.upgradeLevels,
+            weaponLevels: state.weaponLevels,
+            locale: state.locale,
+            inputScheme: state.inputScheme,
+        },
+    };
+}
+
+/** Read one slot, or null when it is empty, unparseable or from another version. */
+function readSlot(id: SaveSlotId): SaveSlotRecord | null {
+    try {
+        const raw = window.localStorage.getItem(saveSlotKey(id));
+        if (!raw) return null;
+        const parsed: unknown = JSON.parse(raw);
+        return isSaveSlotRecord(parsed) ? parsed : null;
+    } catch {
+        // Corrupt JSON or storage disabled: treat as empty rather than throw at a
+        // caller that is mid-menu.
+        return null;
+    }
+}
 
 export const useGameStore = create<GameUIState>()(
     persist(
@@ -714,6 +802,47 @@ export const useGameStore = create<GameUIState>()(
                     activeMonstersSnapshot: undefined,
                     groundDropsSnapshot: undefined,
                 })),
+
+            listSaveSlots: () => {
+                const slots = {} as Record<SaveSlotId, SaveSlotRecord | null>;
+                const all: SaveSlotId[] = [...SAVE_SLOT_IDS, QUICK_SLOT_ID];
+                for (const id of all) {
+                    slots[id] = readSlot(id);
+                }
+                return slots;
+            },
+
+            saveToSlot: (id, thumbnail) => {
+                const state = get();
+                // Nothing worth saving before the first level: a slot holding an
+                // empty character would load into a black screen.
+                if (!state.currentLevelId) return null;
+                const record = buildSlotRecord(state, thumbnail);
+                try {
+                    window.localStorage.setItem(saveSlotKey(id), JSON.stringify(record));
+                } catch {
+                    // Quota or a locked-down browser: the caller shows the failure.
+                    return null;
+                }
+                return record;
+            },
+
+            loadFromSlot: (id) => {
+                const record = readSlot(id);
+                if (!record) return false;
+                // The payload is the same slice the autosave persists, so applying
+                // it is one setState; the scene restarts from it.
+                set(() => ({ ...(record.data as Partial<GameUIState>) }));
+                return true;
+            },
+
+            deleteSaveSlot: (id) => {
+                try {
+                    window.localStorage.removeItem(saveSlotKey(id));
+                } catch {
+                    // Nothing to undo if the browser refused the read.
+                }
+            },
 
             clearSaveData: () => {
                 try {
