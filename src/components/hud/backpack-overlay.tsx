@@ -148,7 +148,13 @@ export function BackpackOverlay() {
                                     <>
                                         {/* The item's own art, cropped out of its sheet.
                                             A colour chip told you nothing about what you
-                                            were about to drink. */}
+                                            were about to drink.
+
+                                            Weapons never reach this list - a weapon
+                                            pickup goes straight to the hotbar - so the
+                                            fallback below only guards a future drop that
+                                            ships without a sprite block. Every drop that
+                                            can enter the bag today has art. */}
                                         {entry.icon ? (
                                             <span
                                                 aria-hidden
