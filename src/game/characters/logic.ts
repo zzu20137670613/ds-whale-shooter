@@ -1056,7 +1056,6 @@ export class CharacterController {
         const walkKey = animKey(this.spec, 'walk');
         const runKey = animKey(this.spec, 'run');
         const dodgeKey = animKey(this.spec, 'dodge');
-        const idleKey = animKey(this.spec, 'idle');
         const cur = sprite.anims.currentAnim?.key ?? null;
         // `anims.stop()` leaves `currentAnim` pointing at the animation that just
         // stopped, so a frozen pose still reports "walk". Compare the playing flag too,
@@ -1089,10 +1088,9 @@ export class CharacterController {
             // "facing the front"; the lean of the walk cycle is the only art that reads as
             // a side. Freeze on that instead of snapping back to centred.
             const pose = idlePoseFor(this.facing, this.spec.anims?.walk?.frames?.[0]);
-            if (pose.anim === 'idle') {
-                if (needsAnimPlay(cur, idleKey, playing) && this.scene.anims.exists(idleKey)) {
-                    sprite.anims.play(idleKey, true);
-                }
+            const poseKey = pose.anim ? animKey(this.spec, pose.anim) : null;
+            if (poseKey && this.scene.anims.exists(poseKey)) {
+                if (needsAnimPlay(cur, poseKey, playing)) sprite.anims.play(poseKey, true);
             } else if (pose.frame !== null) {
                 if (playing) sprite.anims.stop();
                 if (sprite.frame.name !== String(pose.frame)) sprite.setFrame(pose.frame);

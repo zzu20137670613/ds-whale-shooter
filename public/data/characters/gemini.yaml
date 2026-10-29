@@ -109,6 +109,16 @@ anims:
             - 0
         frameRate: 1
         repeat: -1
+    # 侧向待机：走路帧里那一对（4/7）放慢到 3fps 轻轻摆，而不是硬邦邦冻在半截
+    # 步子上。朝左右停下时用它——正面待机帧镜像后跟"面朝前"没区别，只有走路帧
+    # 的倾斜能读出方向。
+    idleSide:
+        frames:
+            - 4
+            - 7
+        frameRate: 3
+        repeat: -1
+
     walk:
         frames:
             - 4
