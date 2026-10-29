@@ -54,6 +54,14 @@ export interface PlayerSnapshot {
 export interface MonsterEntitySnapshot {
     specId: string;
     hp: number;
+    /**
+     * Which boss phase this body is in (0 = phase 1). Ordinary monsters omit it.
+     *
+     * Saved because a boss's health bar belongs to its phase: restoring 3000 HP into
+     * a phase-1 body would draw a 3000/4000 bar and then refuse to advance, because
+     * the pool it is measured against is the wrong one.
+     */
+    phaseIndex?: number;
     x: number;
     y: number;
     waveId?: string;

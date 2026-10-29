@@ -215,3 +215,50 @@ describe('the health lock', () => {
         expect(applyBossHit(3, 50, 2000)).toEqual({ hp: 0, died: true });
     });
 });
+
+describe('a whole descent', () => {
+    it('walks all five phases and ends on the fifth', () => {
+        // The controller's loop, reduced to the parts that are testable: empty a bar,
+        // advance, refill to the new pool, repeat. This is the shape the fight has to
+        // have or the ladder is decorative.
+        const authored = { hp: 4000, moveSpeed: 7, damage: 130 };
+        let phaseIndex = 0;
+        const pools: number[] = [];
+
+        for (;;) {
+            const phase = phaseAt(phaseIndex);
+            const stats = scaleForPhase(authored, phase);
+            pools.push(stats.hp);
+
+            // Empty the bar with honest hits of 130 damage, capped per hit.
+            let hp = stats.hp;
+            let hits = 0;
+            while (hp > 0) {
+                hp = applyBossHit(hp, 130, stats.hp).hp;
+                hits += 1;
+                if (hits > 5000) throw new Error('the bar never emptied');
+            }
+
+            const upcoming = nextPhase(phaseIndex);
+            if (!upcoming) break;
+            phaseIndex += 1;
+            expect(upcoming.id).toBe(phaseIndex + 1);
+        }
+
+        expect(phaseIndex).toBe(4);
+        expect(pools).toEqual([4000, 6000, 3200, 2000, 2000]);
+    });
+
+    it('never lets a phase take fewer than ten hits, even from absurd damage', () => {
+        for (let index = 0; index < BOSS_PHASES.length; index += 1) {
+            const stats = scaleForPhase({ hp: 4000, moveSpeed: 7, damage: 1 }, phaseAt(index));
+            let hp = stats.hp;
+            let hits = 0;
+            while (hp > 0) {
+                hp = applyBossHit(hp, 1e9, stats.hp).hp;
+                hits += 1;
+            }
+            expect(hits, `phase ${index + 1}`).toBeGreaterThanOrEqual(10);
+        }
+    });
+});

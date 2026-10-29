@@ -33,6 +33,7 @@ import {
     DEPTH,
     MONSTER_DEATH_FADE_MS,
     SFX_EVENT,
+    BOSS_PHASE_TRANSITION_MS,
 } from '@/lib/constants';
 import { damageAfterArmor } from '@/lib/characters/combat';
 import { getCheats } from '@/lib/dev/cheats';
@@ -65,6 +66,13 @@ import {
     roarDamage,
     monsterAnimTrack,
 } from './logic';
+import {
+    clampBossDamage,
+    phaseAt,
+    nextPhase,
+    scaleForPhase,
+    type BossPhase,
+} from '@/lib/bosses/phases';
 // ─── Entity ──────────────────────────────────────────────────────────────
 
 export type MonsterState = 'idle' | 'chase' | 'attack' | 'dying';
@@ -147,6 +155,18 @@ export class Monster {
      * the controller is still callable for animation triggers (swing). */
     readonly weaponVisual: WeaponVisualController;
     hp: number;
+    /**
+     * Which rung of the boss ladder this monster is on (0 = phase 1).
+     *
+     * Always 0 for ordinary monsters; their health bar is `spec.hp` either way, so
+     * the only observable difference is that a boss's `phaseMaxHp` moves while a
+     * drone's does not.
+     */
+    phaseIndex = 0;
+    /** The health pool of the CURRENT phase. Equals `hp` when the phase begins. */
+    phaseMaxHp: number;
+    /** Frozen and unattackable until this timestamp (phase transition beat). */
+    invulnerableUntil = 0;
     state: MonsterState = 'idle';
     lastAttackAt = 0;
     lastHitAt = 0;
@@ -195,6 +215,7 @@ export class Monster {
         this.spec = spec;
         this.weapon = weapon;
         this.hp = spec.hp;
+        this.phaseMaxHp = spec.hp;
         this.stuckCheckPos = { x, y };
         this.waveId = waveId;
 
@@ -477,6 +498,13 @@ export class MonsterController {
                         snap.waveId,
                     );
                     monster.hp = snap.hp;
+                    if (monster.spec.boss && typeof snap.phaseIndex === 'number') {
+                        monster.phaseIndex = snap.phaseIndex;
+                        monster.phaseMaxHp = scaleForPhase(
+                            { hp: monster.spec.hp, moveSpeed: monster.spec.moveSpeed, damage: 1 },
+                            phaseAt(snap.phaseIndex),
+                        ).hp;
+                    }
                     this.monsters.push(monster);
                 }
             }
@@ -548,6 +576,9 @@ export class MonsterController {
                 x: m.body.position.x,
                 y: m.body.position.y,
                 waveId: m.waveId,
+                // Only bosses carry a phase; leaving it off keeps ordinary
+                // monsters' snapshots byte-identical to before.
+                ...(m.spec.boss ? { phaseIndex: m.phaseIndex } : {}),
             }));
         const pendingSpawnIndices = this.pendingSpawns.map((p) => p.pending.index);
         return {
@@ -718,7 +749,7 @@ export class MonsterController {
                 this.matter.Body.setVelocity(m.body, { x: 0, y: 0 });
                 if (m.statusHud) {
                     const halfH = m.sprite ? m.sprite.displayHeight / 2 : m.spec.body.halfH;
-                    m.statusHud.update({ hp: 0, maxHp: m.spec.hp, showHpBar: false }, time, halfH);
+                    m.statusHud.update({ hp: 0, maxHp: m.phaseMaxHp, showHpBar: false }, time, halfH);
                 }
                 continue;
             }
@@ -834,7 +865,7 @@ export class MonsterController {
                 const isFollowingPath = !!m.path && m.currentWaypointIdx < m.path.length;
 
                 // Base chase vector
-                const cv = chaseVelocity(targetDir, m.spec.moveSpeed);
+                const cv = chaseVelocity(targetDir, this.phaseSpeed(m));
                 desiredVx = cv.vx;
                 desiredVy = cv.vy;
 
@@ -846,7 +877,7 @@ export class MonsterController {
                 // cells; off-path straight-line chases get a small
                 // separation force to stop identical-position overlap.
                 if (!isFollowingPath) {
-                    const sep = calcSeparationForce(m, this.monsters, 32, m.spec.moveSpeed * 0.4);
+                    const sep = calcSeparationForce(m, this.monsters, 32, this.phaseSpeed(m) * 0.4);
                     desiredVx += sep.x;
                     desiredVy += sep.y;
                 }
@@ -863,8 +894,8 @@ export class MonsterController {
                         if (dot > 0.6 && (ally.state === 'attack' || ally.state === 'idle')) {
                             // Tangential detour vector perpendicular to targetDir
                             const sign = i % 2 === 0 ? 1 : -1;
-                            const detourX = -targetDir.y * sign * m.spec.moveSpeed * 0.6;
-                            const detourY = targetDir.x * sign * m.spec.moveSpeed * 0.6;
+                            const detourX = -targetDir.y * sign * this.phaseSpeed(m) * 0.6;
+                            const detourY = targetDir.x * sign * this.phaseSpeed(m) * 0.6;
                             desiredVx += detourX;
                             desiredVy += detourY;
                             break;
@@ -881,7 +912,7 @@ export class MonsterController {
 
                 // Cap total desired velocity to preserve move speed limit
                 const speed = Math.hypot(desiredVx, desiredVy);
-                const maxAllowedSpeed = m.spec.moveSpeed * 1.15;
+                const maxAllowedSpeed = this.phaseSpeed(m) * 1.15;
                 if (speed > maxAllowedSpeed) {
                     desiredVx = (desiredVx / speed) * maxAllowedSpeed;
                     desiredVy = (desiredVy / speed) * maxAllowedSpeed;
@@ -907,7 +938,16 @@ export class MonsterController {
             }
 
             // ── Attack tick ──────────────────────────────────────────
-            if (m.state === 'attack' && time - m.lastAttackAt >= m.weapon.cooldownMs) {
+            // A boss swings on its phase's rhythm: never faster than the weapon
+            // allows, never faster than the gap the design table gives it.
+            const attackGap = m.spec.boss
+                ? Math.max(m.weapon.cooldownMs, this.phaseOf(m).gapMs)
+                : m.weapon.cooldownMs;
+            if (
+                m.state === 'attack' &&
+                this.isVulnerable(m, time) &&
+                time - m.lastAttackAt >= attackGap
+            ) {
                 this.performAttack(m, dirToPlayer, footY);
                 m.lastAttackAt = time;
             }
@@ -952,7 +992,7 @@ export class MonsterController {
                 // Update status HUD above monster Red Hitbox top edge
                 const topOffset = m.hitboxHeight / 2;
                 m.statusHud.update(
-                    { name: m.spec.name, hp: m.hp, maxHp: m.spec.hp, showHpBar: true },
+                    { name: m.spec.name, hp: m.hp, maxHp: m.phaseMaxHp, showHpBar: true },
                     time,
                     topOffset,
                 );
@@ -995,7 +1035,7 @@ export class MonsterController {
             } else {
                 m.debugHitboxRect.setPosition(mp.x, mp.y);
                 const halfH = m.spec.body.halfH;
-                m.statusHud.update({ hp: m.hp, maxHp: m.spec.hp, showHpBar: true }, time, halfH);
+                m.statusHud.update({ hp: m.hp, maxHp: m.phaseMaxHp, showHpBar: true }, time, halfH);
                 if (dist > 1) {
                     m.debugHitboxRect.setRotation(Math.atan2(dirToPlayer.y, dirToPlayer.x));
                 }
@@ -1100,7 +1140,12 @@ export class MonsterController {
                   : bulletDamage;
             // Boss armour soaks flat, after the crit multiplier: a crit still hits
             // the same armour, it just arrives bigger.
-            const finalDamage = damageAfterArmor(rawDamage, target.spec.armor ?? 0);
+            let finalDamage = damageAfterArmor(rawDamage, target.spec.armor ?? 0);
+            // A boss shrugs off a tenth at most: no edited save or tuned weapon can
+            // skip a phase of the descent.
+            if (target.spec.boss) {
+                finalDamage = clampBossDamage(finalDamage, target.phaseMaxHp);
+            }
             if (finalDamage <= 0) return;
             target.hp -= finalDamage;
             target.lastHitAt = this.scene.time.now;
@@ -1184,7 +1229,10 @@ export class MonsterController {
                             otherM.spec.armor ?? 0,
                         );
                         if (splashDamage <= 0) continue;
-                        otherM.hp -= splashDamage;
+                        const splashed = otherM.spec.boss
+                            ? clampBossDamage(splashDamage, otherM.phaseMaxHp)
+                            : splashDamage;
+                        otherM.hp -= splashed;
                         otherM.lastHitAt = this.scene.time.now;
                         otherM.hitFlashUntil = this.scene.time.now + COMBAT_HIT_FLASH_MS;
                         if (otherM.sprite) {
@@ -1192,7 +1240,7 @@ export class MonsterController {
                             (otherM.sprite as any).setTintMode?.(2);
                         }
                         otherM.weaponVisual?.setHitFlash(true);
-                        otherM.statusHud.showFloatingNumber(splashDamage, 'damage');
+                        otherM.statusHud.showFloatingNumber(splashed, 'damage');
                         const outDir = dirTo(hitPos, otherM.body.position);
                         this.matter.Body.setVelocity(otherM.body, {
                             x: outDir.x * 1.5,
@@ -1200,6 +1248,10 @@ export class MonsterController {
                         });
                         otherM.hitStunUntil = this.scene.time.now + COMBAT_HIT_STUN_MS;
                         if (otherM.hp <= 0) {
+                            if (otherM.spec.boss) {
+                                this.advancePhase(otherM);
+                                continue;
+                            }
                             this.kill(otherM);
                         }
                     }
@@ -1207,7 +1259,12 @@ export class MonsterController {
             }
 
             if (target.hp <= 0) {
-                this.kill(target);
+                // Bosses climb a rung instead of dying; everyone else dies here.
+                if (target.spec.boss) {
+                    this.advancePhase(target);
+                } else {
+                    this.kill(target);
+                }
             }
         }
     }
@@ -1233,7 +1290,8 @@ export class MonsterController {
             const { x, y } = m.body.position;
             if (!view.contains(x, y)) continue;
 
-            const amount = roarDamage(m.spec.hp, hpFraction);
+            const rolled = roarDamage(m.spec.hp, hpFraction);
+            const amount = m.spec.boss ? clampBossDamage(rolled, m.phaseMaxHp) : rolled;
             m.hp -= amount;
             m.lastHitAt = this.scene.time.now;
             m.hitFlashUntil = this.scene.time.now + COMBAT_HIT_FLASH_MS;
@@ -1243,7 +1301,13 @@ export class MonsterController {
             }
             m.weaponVisual?.setHitFlash(true);
             m.statusHud.showFloatingNumber(amount, 'damage');
-            if (m.hp <= 0) this.kill(m);
+            if (m.hp <= 0) {
+                if (m.spec.boss) {
+                    this.advancePhase(m);
+                } else {
+                    this.kill(m);
+                }
+            }
         }
 
         // One hit for the whole room, throttled under a single key so a screen
@@ -1277,6 +1341,59 @@ export class MonsterController {
 
     // ─── internals ──────────────────────────────────────────────────────
 
+    /** The rung this monster is standing on. Always phase 1 for non-bosses. */
+    private phaseOf(m: Monster): BossPhase {
+        return m.spec.boss ? phaseAt(m.phaseIndex) : phaseAt(0);
+    }
+
+    /** Chase speed for the current phase. Unscaled for ordinary monsters. */
+    private phaseSpeed(m: Monster): number {
+        return m.spec.moveSpeed * this.phaseOf(m).moveScale;
+    }
+
+    /** Attack damage for the current phase. */
+    private phaseDamage(m: Monster, base: number): number {
+        return base * this.phaseOf(m).damageScale;
+    }
+
+    /**
+     * Emptying a boss's bar does not end the fight - it ends the PHASE.
+     *
+     * The new form arrives with a full pool, an invulnerable beat in which she plays
+     * her turn animation, and no attack of her own. Only the last rung is fatal.
+     */
+    private advancePhase(m: Monster): void {
+        const upcoming = nextPhase(m.phaseIndex);
+        if (!upcoming) {
+            this.kill(m);
+            return;
+        }
+
+        m.phaseIndex += 1;
+        const stats = scaleForPhase(
+            { hp: m.spec.hp, moveSpeed: m.spec.moveSpeed, damage: 1 },
+            upcoming,
+        );
+        m.phaseMaxHp = stats.hp;
+        m.hp = stats.hp;
+        m.invulnerableUntil = this.scene.time.now + BOSS_PHASE_TRANSITION_MS;
+        m.lastAttackAt = m.invulnerableUntil;
+        m.hitStunUntil = m.invulnerableUntil;
+
+        // The turn track is the one animation every boss sheet already has, so the
+        // transformation reads even before bespoke phase art exists.
+        if (m.sprite && this.scene.anims.exists(animKey(m.spec, 'turn'))) {
+            m.sprite.play(animKey(m.spec, 'turn'));
+            m.turnUntil = m.invulnerableUntil;
+        }
+        EventBus.emit('boss:phase', { id: m.spec.id, phase: upcoming.id });
+    }
+
+    /** Whether a hit may land right now. */
+    private isVulnerable(m: Monster, time: number): boolean {
+        return time >= m.invulnerableUntil;
+    }
+
     private performAttack(m: Monster, dirToPlayer: { x: number; y: number }, footY: number): void {
         const weapon = m.weapon;
         const projectile = weapon.projectile;
@@ -1305,7 +1422,7 @@ export class MonsterController {
                 range,
                 hitWidth: weapon.hitWidth ?? range,
                 hitHeight: weapon.hitHeight ?? range,
-                damage: weapon.damage,
+                damage: this.phaseDamage(m, weapon.damage),
                 texture: weapon.bullet?.texture,
                 scale: weapon.bullet?.scale ?? 0.2,
                 rotationOffset: weapon.bullet?.rotationOffset,
@@ -1342,7 +1459,7 @@ export class MonsterController {
                 category: CAT.MONSTER_PROJECTILE,
                 mask: PROJECTILE_MONSTER_MASK,
                 speed,
-                damage: weapon.damage,
+                damage: this.phaseDamage(m, weapon.damage),
                 size,
                 // Render bullet as a sprite when the weapon spec has one —
                 // matches how player bullets look (e.g. assault-bullet.png).
@@ -1696,7 +1813,7 @@ export class MonsterController {
             escapeX = 0;
             escapeY = 0;
         }
-        const escapeSpeed = monster.spec.moveSpeed * 1.5;
+        const escapeSpeed = this.phaseSpeed(monster) * 1.5;
         this.matter.Body.setVelocity(monster.body, {
             x: escapeX * escapeSpeed,
             y: escapeY * escapeSpeed,

@@ -501,3 +501,8 @@ export const PIXEL_LIGHTING_CONFIG = {
 } as const;
 
 export { BOOT_LOADING } from '@/lib/boot-loading/config';
+
+// ─── Boss phases ─────────────────────────────────────────────────────────
+/** Invulnerable beat while a boss climbs the ladder. Long enough to read the new
+ *  form, short enough that it never feels like a pause. */
+export const BOSS_PHASE_TRANSITION_MS = 2000;

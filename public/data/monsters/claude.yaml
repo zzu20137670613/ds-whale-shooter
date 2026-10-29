@@ -14,6 +14,9 @@ name: Claude
 nameZh: '克劳德（占位）'
 # 阶段 1 · 灭世：主人定的基准值。其余阶段按倍率算
 # （神 150% → HP 6000 / 护甲 30；半神 80% → 护甲 16；半神半人 50% → 护甲 10）。
+# Five phases, not one health bar: the ladder lives in
+# src/lib/bosses/phases.ts.
+boss: true
 hp: 4000
 armor: 20
 money: 0

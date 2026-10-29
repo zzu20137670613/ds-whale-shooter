@@ -140,6 +140,15 @@ export const MonsterSpecSchema = z
          *  that conceals the hidden level 1 entrance. Optional, so every
          *  existing monster spec keeps its creature behaviour. */
         prop: z.boolean().optional(),
+        /**
+         * A boss fights in phases rather than dying once.
+         *
+         * Its health bar is emptied per phase, and the controller walks the ladder in
+         * `src/lib/bosses/phases.ts`: new full bar, scaled stats, a short invulnerable
+         * beat, and only the LAST phase ends the fight. Single hits are also capped at
+         * a tenth of the phase's health, so a modified number cannot skip the descent.
+         */
+        boss: z.boolean().optional(),
         weaponId: z.string().min(1),
         drops: z.array(DropRefSchema).default([]),
         /** SFX ids to play on hit / death / aggro. Each field optional;
