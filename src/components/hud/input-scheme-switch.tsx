@@ -18,7 +18,11 @@ import { Keyboard, MousePointer2 } from 'lucide-react';
 import { useGameStore } from '@/store/game-store';
 import { t } from '@/locales';
 
-export const InputSchemeSwitch: React.FC = () => {
+/**
+ * `inline` drops the absolute corner placement so a parent can build one row of
+ * controls (the settings cluster) instead of stacking chips in the corner.
+ */
+export const InputSchemeSwitch: React.FC<{ inline?: boolean }> = ({ inline = false }) => {
     const scheme = useGameStore((s) => s.inputScheme);
     const setScheme = useGameStore((s) => s.setInputScheme);
 
@@ -28,7 +32,12 @@ export const InputSchemeSwitch: React.FC = () => {
     ];
 
     return (
-        <div className="pointer-events-auto absolute right-3 top-16 flex gap-1 rounded-md border border-white/20 bg-black/35 px-1 py-1 backdrop-blur-sm">
+        <div
+            className={[
+                'pointer-events-auto flex gap-1 rounded-md border border-white/20 bg-black/35 px-1 py-1 backdrop-blur-sm',
+                inline ? '' : 'absolute right-3 top-16',
+            ].join(' ')}
+        >
             {options.map(({ id, label, Icon }) => {
                 const active = scheme === id;
                 return (

@@ -133,12 +133,21 @@ export const CharacterHUDOverlay: React.FC = () => {
 
             {/* Key hints live outside the card: inside, they read as a second
                 skill key and crowd the E badge. */}
-            <div className="flex items-center gap-1.5">
-                <span className="text-[9px] bg-stone-900/85 text-sky-300 px-1.5 py-1 border border-stone-600 rounded-[2px] leading-none tracking-tight">
+            <div className="flex flex-wrap items-center gap-1.5">
+                <span className="text-[11px] bg-stone-900/85 text-sky-300 px-1.5 py-1 border border-stone-600 rounded-[2px] leading-none tracking-tight">
                     {t('hud.spaceKey')}
                 </span>
-                <span className="text-[9px] bg-stone-900/85 text-amber-300 px-1.5 py-1 border border-stone-600 rounded-[2px] leading-none tracking-tight">
+                <span className="text-[11px] bg-stone-900/85 text-amber-300 px-1.5 py-1 border border-stone-600 rounded-[2px] leading-none tracking-tight">
                     {t('hud.reloadKey')}
+                </span>
+                <span className="text-[11px] bg-stone-900/85 text-violet-300 px-1.5 py-1 border border-stone-600 rounded-[2px] leading-none tracking-tight">
+                    {t('hud.skillKey')}
+                </span>
+                <span className="text-[11px] bg-stone-900/85 text-rose-300 px-1.5 py-1 border border-stone-600 rounded-[2px] leading-none tracking-tight">
+                    {t('hud.attackKey')}
+                </span>
+                <span className="text-[11px] bg-stone-900/85 text-emerald-300 px-1.5 py-1 border border-stone-600 rounded-[2px] leading-none tracking-tight">
+                    {t('hud.bagKey')}
                 </span>
             </div>
         </div>

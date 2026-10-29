@@ -447,6 +447,27 @@ export class WeaponController {
         return isMelee ? false : slot.reloading;
     }
 
+    /** Everything the ammo debug readout needs, in one call. */
+    getAmmoDebug(): {
+        ammo: number;
+        reserve: number;
+        clipSize: number;
+        reloading: boolean;
+        reloadStartedAt: number;
+        reloadTimeMs: number;
+    } | null {
+        const slot = this.slots[this.currentIndex];
+        if (!slot) return null;
+        return {
+            ammo: slot.ammo,
+            reserve: slot.reserve,
+            clipSize: slot.spec.clipSize ?? 1,
+            reloading: slot.reloading,
+            reloadStartedAt: slot.reloadStartedAt,
+            reloadTimeMs: slot.spec.reloadTimeMs ?? 0,
+        };
+    }
+
     getReloadProgress(time: number): number {
         if (this.slots.length === 0) return 0;
         const s = this.slots[this.currentIndex];

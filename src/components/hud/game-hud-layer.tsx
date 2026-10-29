@@ -8,7 +8,6 @@ import { SceneHubOverlay } from './scene-hub-overlay';
 import { ComboOverlay } from './combo-overlay';
 import { HurtVignetteOverlay } from './hurt-vignette-overlay';
 import { LocaleToggle } from './locale-toggle';
-import { InputSchemeSwitch } from './input-scheme-switch';
 import { SaveHotkeys } from './save-hotkeys';
 import { SaveToast } from './save-toast';
 import { MoneyHud } from './money-hud';
@@ -29,19 +28,6 @@ import { useHudScale } from '@/lib/use-hud-scale';
  * Being inside `#app` means the forced-landscape rotation is inherited
  * for free — `appViewport()` already reports the rotated dimensions.
  */
-/**
- * Desktop check for the corner chip.
- *
- * On a touch screen the walk direction is the only sensible aim, so there is nothing
- * to switch and the chip would be a lie. `pointer: coarse` is the media query browsers
- * use for "thumb, not mouse" — a touchscreen laptop still reports fine for its mouse,
- * which is the right answer here.
- */
-function hasFinePointer(): boolean {
-    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return true;
-    return !window.matchMedia('(pointer: coarse)').matches;
-}
-
 export const GameHUDLayer: React.FC = () => {
     const { scale, width, height, left, top } = useHudScale();
 
@@ -67,7 +53,6 @@ export const GameHUDLayer: React.FC = () => {
             <WeaponHUDOverlay />
             <MoneyHud />
             <LocaleToggle />
-            {hasFinePointer() && <InputSchemeSwitch />}
             <SaveHotkeys />
             <SaveToast />
             <SettingsOverlay />

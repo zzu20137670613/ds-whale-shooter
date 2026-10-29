@@ -10,6 +10,15 @@ export class WeaponHud {
     }
 
     draw(weapons: WeaponController, time: number): void {
+        // ?ammoDebug=1 in the URL publishes the live reload state for the corner
+        // readout. The owner can then tell a dead counter from a dead reload without
+        // opening devtools.
+        if (typeof window !== 'undefined' && window.location.search.includes('ammoDebug')) {
+            (window as unknown as { __weaponDebug?: unknown }).__weaponDebug = {
+                now: time,
+                ...(weapons.getAmmoDebug?.() ?? {}),
+            };
+        }
         const activeIdx = weapons.getActiveIndex();
         const active = weapons.getActive();
         const ammo = weapons.getAmmo();

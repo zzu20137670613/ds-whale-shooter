@@ -23,6 +23,38 @@ const SLOT_GAP_PX = 6;
 // of breathing room between the strip bottom and the FIRE button top.
 const SLOT_BOTTOM_PX = 168;
 
+/**
+ * Live reload state, only when the URL asks for it (`?ammoDebug=1`).
+ *
+ * A screenshot of the card alone cannot tell "the counter is dead" from "the reload
+ * never started", and those need different fixes. This prints the controller's own
+ * numbers next to them.
+ */
+const AmmoDebugReadout: React.FC = () => {
+    const [snap, setSnap] = React.useState<Record<string, unknown>>({});
+    React.useEffect(() => {
+        if (!window.location.search.includes('ammoDebug')) return;
+        const id = window.setInterval(() => {
+            const live = (window as unknown as { __weaponDebug?: Record<string, unknown> })
+                .__weaponDebug;
+            if (live) setSnap({ ...live });
+        }, 200);
+        return () => window.clearInterval(id);
+    }, []);
+    if (!window.location.search.includes('ammoDebug')) return null;
+    const entries = Object.entries(snap);
+    if (entries.length === 0) return null;
+    return (
+        <div className="pointer-events-none absolute top-24 left-3 z-40 border border-lime-600 bg-black/85 px-2 py-1 font-mono text-[10px] leading-tight text-lime-300">
+            {entries.map(([k, v]) => (
+                <div key={k}>
+                    {k}={String(v)}
+                </div>
+            ))}
+        </div>
+    );
+};
+
 export const WeaponHUDOverlay: React.FC = () => {
     const { activeWeaponIndex, activeWeaponName, isReloading, reloadProgress, slots, hubsVisible } =
         useGameStore();
@@ -31,7 +63,9 @@ export const WeaponHUDOverlay: React.FC = () => {
     // Show whenever the character has weapons. Tavern phase 1
     // placeholder has no WeaponHud so the store has no slots; that
     // case naturally short-circuits on `slots.length === 0`.
-    if (!hubsVisible || !activeWeaponName || slots.length === 0) return null;
+    if (!hubsVisible || !activeWeaponName || slots.length === 0) {
+        return <AmmoDebugReadout />;
+    }
 
     if (mobile) {
         const handleSwitch = (index: number): void => {

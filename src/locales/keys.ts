@@ -64,6 +64,12 @@ export type CatalogSource = {
         spaceKey: string;
         /** Keycap next to the ammo readout. */
         reloadKey: string;
+        /** Keycap for the skill badge. */
+        skillKey: string;
+        /** Keycap for the attack key. */
+        attackKey: string;
+        /** Keycap for the backpack. */
+        bagKey: string;
         /** Suffix on the combo counter ("12 HITS"). */
         hits: string;
     };
@@ -71,6 +77,7 @@ export type CatalogSource = {
     backpack: {
         title: string;
         hint: string;
+        close: string;
         empty: string;
         material: string;
         count: string;

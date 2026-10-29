@@ -23,10 +23,13 @@ import { getPhaserGame, restartAtTavern } from '@/lib/phaser-game';
 import { t } from '@/locales';
 import { useGameStore } from '@/store/game-store';
 
+import { InputSchemeSwitch } from './input-scheme-switch';
 import { SaveSlotsPanel } from './save-slots-panel';
 import { CornerPixels, RETRO_BOX } from './retro-box';
 
-const REPO_URL = 'https://github.com/FireTable/the-11th-forest';
+// The owner's own repository. The old URL pointed at the upstream project this
+// was forked from, which is not where the game lives.
+const REPO_URL = 'https://github.com/zzu20137670613/ds-whale-shooter';
 
 /** lucide 1.x dropped brand icons, so the mark is inlined rather than
  *  pulling in a whole brand-icon package for one glyph. */
@@ -102,7 +105,9 @@ export function SettingsOverlay() {
 
     return (
         <>
-            <div className="pointer-events-auto absolute top-6 right-6 z-30 flex items-center gap-3 select-none">
+            <div className="pointer-events-auto absolute top-6 right-6 z-30 flex items-center gap-2 select-none">
+                {/* Aim scheme sits in the same row, to the left of the source link. */}
+                <InputSchemeSwitch inline />
                 <a
                     href={REPO_URL}
                     target="_blank"

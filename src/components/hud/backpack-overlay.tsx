@@ -105,7 +105,18 @@ export function BackpackOverlay() {
                     <span className="text-sm font-bold tracking-wider text-amber-200 uppercase drop-shadow-[1px_1px_0px_#000]">
                         {t('backpack.title')}
                     </span>
-                    <span className="text-[10px] text-stone-400">{t('backpack.hint')}</span>
+                    <div className="flex items-center gap-2">
+                        <span className="text-[10px] text-stone-400">{t('backpack.hint')}</span>
+                        <button
+                            type="button"
+                            onClick={resumeGame}
+                            aria-label={t('backpack.close')}
+                            title={t('backpack.close')}
+                            className="-mr-1 flex size-6 items-center justify-center border border-stone-600 bg-stone-900 text-[13px] leading-none text-stone-300 transition-colors hover:border-amber-600 hover:text-amber-300"
+                        >
+                            ✕
+                        </button>
+                    </div>
                 </div>
 
                 <div
@@ -156,24 +167,32 @@ export function BackpackOverlay() {
                                             ships without a sprite block. Every drop that
                                             can enter the bag today has art. */}
                                         {entry.icon ? (
+                                            /* One cell of the sheet, cropped by an oversized
+                                               <img> inside a clipping box. Background-position
+                                               percentages land differently in every engine; an
+                                               offset img is arithmetic and always shows.
+                                               Cell display size is 26px. */
                                             <span
                                                 aria-hidden
-                                                className="size-6 bg-no-repeat"
-                                                style={{
-                                                    backgroundImage: `url(${entry.icon.path})`,
-                                                    backgroundSize: `${entry.icon.cols * 100}% ${entry.icon.rows * 100}%`,
-                                                    backgroundPosition: `${
-                                                        entry.icon.cols > 1
-                                                            ? (entry.icon.frame % entry.icon.cols) * 100
-                                                            : 0
-                                                    }% ${
-                                                        entry.icon.cols > 1 && entry.icon.rows > 1
-                                                            ? Math.floor(entry.icon.frame / entry.icon.cols) * 100
-                                                            : 0
-                                                    }%`,
-                                                    imageRendering: 'pixelated',
-                                                }}
-                                            />
+                                                className="relative size-[26px] overflow-hidden"
+                                            >
+                                                <img
+                                                    src={entry.icon.path}
+                                                    alt=""
+                                                    draggable={false}
+                                                    className="absolute max-w-none"
+                                                    style={{
+                                                        width: `${entry.icon.cols * 26}px`,
+                                                        height: `${entry.icon.rows * 26}px`,
+                                                        left: `${-(entry.icon.frame % entry.icon.cols) * 26}px`,
+                                                        top: `${
+                                                            -Math.floor(entry.icon.frame / entry.icon.cols) *
+                                                            26
+                                                        }px`,
+                                                        imageRendering: 'pixelated',
+                                                    }}
+                                                />
+                                            </span>
                                         ) : (
                                             <span
                                                 className="size-3 border border-black/60"
