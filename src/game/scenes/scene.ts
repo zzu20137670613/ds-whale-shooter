@@ -1012,16 +1012,20 @@ export class LoadScene extends Phaser.Scene {
 
         const result = giveCatGift({
             weaponsById: this.assets.weaponsById,
-            weapons: this.character.weapons ?? null,
-            pickUp: (id) => this.character.pickUpWeapon(id),
+            // Adds to the next empty slot. `pickUpWeapon` only switches to a weapon she
+            // already carries - it was the reason this gift did nothing at all.
+            addWeapon: (id) => this.character.tryPickupWeaponById(id, this.assets.weaponsById),
             refresh: () => this.character.refreshHud(),
             warn: (message, detail) => console.warn(`[cat-shop] ${message}`, detail),
         });
+
+        const gift = this.assets.weaponsById.get(CAT_SHOP_GIFT_WEAPON_ID);
+        const giftName = gift ? pickText(gift.name, gift.nameZh) : '突击步枪';
+        // Whatever happened, say it. A silent gift is indistinguishable from a broken one.
         if (result === 'granted') {
-            // Nothing the game does to her unasked should be invisible.
-            const gift = this.assets.weaponsById.get(CAT_SHOP_GIFT_WEAPON_ID);
-            const giftName = gift ? pickText(gift.name, gift.nameZh) : '突击步枪';
             useGameStore.getState().showNotice(`猫塞给你一把${giftName}`);
+        } else if (result === 'capped') {
+            useGameStore.getState().showNotice(`猫叼来了${giftName}，可你手上拿不下了`);
         }
     }
 

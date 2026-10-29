@@ -3,10 +3,14 @@
  * --------------------------------------------------------------------------
  * The cabin cat's rifle, as a function that can be tested.
  *
- * The gift went three rounds without arriving because it lived inside a Phaser scene method
- * with five preconditions, and nothing exercised it. Pulling the decision out means the
- * awkward cases (spec not loaded, hotbar full, already held) are covered by tests instead
- * of by the owner walking to the cat again.
+ * Three rounds of "the cat gave me nothing" ended here. The last one was the cause: the
+ * scene called `pickUpWeapon`, which only *switches to* a weapon already in the hotbar
+ * ("no-op if not present"). The rifle was never in her hotbar, so the call did nothing,
+ * the slot count never changed, and the gift looked like a dead cat.
+ *
+ * `tryPickupWeaponById` is the call that actually adds a weapon, and it reports
+ * 'added' / 'capped' / 'unknown' instead of a bare boolean - which is what lets the HUD say
+ * "your hands are full" instead of staying silent.
  */
 
 import type { WeaponSpec } from '@/lib/weapons';
@@ -14,53 +18,44 @@ import type { WeaponSpec } from '@/lib/weapons';
 /** What the cabin cat hands over. */
 export const CAT_GIFT_WEAPON_ID = 'assault-rifle';
 
+export type PickupOutcome = 'added' | 'capped' | 'unknown';
+
 export interface CatGiftDeps {
     /** Every weapon the current scene loaded. */
     weaponsById: ReadonlyMap<string, WeaponSpec>;
-    /** `null` on the tavern placeholder. */
-    weapons: { getSlotCount(): number } | null;
-    pickUp: (weaponId: string) => unknown;
+    /** `character.tryPickupWeaponById` - adds the weapon to the next empty slot. */
+    addWeapon: (weaponId: string) => PickupOutcome;
     /** Push HP / SP / ammo into the HUD; a no-op on the placeholder. */
     refresh: () => void;
     /** Reports a real failure; the gift is silent no more. */
     warn: (message: string, detail: unknown) => void;
 }
 
-export type CatGiftResult = 'granted' | 'spec-missing' | 'not-added';
+export type CatGiftResult = 'granted' | 'capped' | 'unknown';
 
 /**
  * Hand the rifle over.
  *
- * Returns what happened so the caller can log it, and so a test can tell "must pick it up"
- * from "could not" without watching a screen.
+ * Returns what happened so the caller can say it out loud, and so a test can tell
+ * "it landed in her hands" from "her hands were full" without watching a screen.
  */
 export function giveCatGift(deps: CatGiftDeps): CatGiftResult {
-    const weapon = deps.weaponsById.get(CAT_GIFT_WEAPON_ID);
-    if (!weapon) {
+    if (!deps.weaponsById.has(CAT_GIFT_WEAPON_ID)) {
         deps.warn('the rifle spec is not loaded in this scene', {
             giftId: CAT_GIFT_WEAPON_ID,
             loaded: [...deps.weaponsById.keys()],
         });
-        return 'spec-missing';
+        return 'unknown';
     }
 
-    // No weapons module at all (tavern placeholder): nothing to measure, so trust the
-    // pickup call rather than reporting a failure that cannot be verified.
-    if (!deps.weapons) {
-        deps.pickUp(CAT_GIFT_WEAPON_ID);
-        deps.refresh();
-        return 'granted';
-    }
-
-    const before = deps.weapons.getSlotCount();
-    deps.pickUp(CAT_GIFT_WEAPON_ID);
-    const after = deps.weapons.getSlotCount();
+    const outcome = deps.addWeapon(CAT_GIFT_WEAPON_ID);
     deps.refresh();
 
-    if (after === before) {
-        // Already carrying it, or the hotbar is full.
-        deps.warn('rifle not added (already held, or hotbar full)', { before, after });
-        return 'not-added';
+    if (outcome === 'added') return 'granted';
+    if (outcome === 'capped') {
+        deps.warn('hotbar full, the rifle did not fit', { giftId: CAT_GIFT_WEAPON_ID });
+        return 'capped';
     }
-    return 'granted';
+    deps.warn('the character refused the rifle', { giftId: CAT_GIFT_WEAPON_ID, outcome });
+    return 'unknown';
 }
