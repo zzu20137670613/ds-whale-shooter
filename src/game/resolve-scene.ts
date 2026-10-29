@@ -247,7 +247,8 @@ export async function resolveScene(
                     tint: spec.visual.tint,
                     icon: spec.sprite
                         ? {
-                              path: `/${spec.sprite.texture.replace(/^\//, '')}`,
+                              // Relative, like every other texture path in the game.
+                              path: spec.sprite.texture.replace(/^\//, ''),
                               rows: spec.sprite.grid?.rows ?? 1,
                               cols: spec.sprite.grid?.cols ?? 1,
                               frame: spec.anims?.idle?.frames?.[0] ?? 0,

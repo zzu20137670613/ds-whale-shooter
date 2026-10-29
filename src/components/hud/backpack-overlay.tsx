@@ -23,6 +23,7 @@ import { getPhaserGame } from '@/lib/phaser-game';
 import { pickText, t } from '@/locales';
 import { useGameStore } from '@/store/game-store';
 
+import { DropIcon } from './drop-icon';
 import { CornerPixels, RETRO_BOX } from './retro-box';
 
 export function BackpackOverlay() {
@@ -166,43 +167,8 @@ export function BackpackOverlay() {
                                             fallback below only guards a future drop that
                                             ships without a sprite block. Every drop that
                                             can enter the bag today has art. */}
-                                        {entry.icon ? (
-                                            /* One cell of the sheet, cropped by an oversized
-                                               <img> inside a clipping box. Background-position
-                                               percentages land differently in every engine; an
-                                               offset img is arithmetic and always shows.
-                                               Cell display size is 26px. */
-                                            <span
-                                                aria-hidden
-                                                className="relative size-[26px] overflow-hidden"
-                                            >
-                                                <img
-                                                    src={entry.icon.path}
-                                                    alt=""
-                                                    draggable={false}
-                                                    className="absolute max-w-none"
-                                                    style={{
-                                                        width: `${entry.icon.cols * 26}px`,
-                                                        height: `${entry.icon.rows * 26}px`,
-                                                        left: `${-(entry.icon.frame % entry.icon.cols) * 26}px`,
-                                                        top: `${
-                                                            -Math.floor(entry.icon.frame / entry.icon.cols) *
-                                                            26
-                                                        }px`,
-                                                        imageRendering: 'pixelated',
-                                                    }}
-                                                />
-                                            </span>
-                                        ) : (
-                                            <span
-                                                className="size-3 border border-black/60"
-                                                style={{
-                                                    backgroundColor: `#${entry.tint
-                                                        .toString(16)
-                                                        .padStart(6, '0')}`,
-                                                }}
-                                            />
-                                        )}
+                                        <DropIcon icon={entry.icon} tint={entry.tint} label={label} />
+
                                         <span className="mt-0.5 max-w-full truncate px-0.5">
                                             {label}
                                         </span>
