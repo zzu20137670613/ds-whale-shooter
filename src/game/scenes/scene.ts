@@ -57,6 +57,7 @@ import { maxWeaponUpgradeLevel } from '@/lib/weapons/upgrades';
 import { setBootProgress } from '@/lib/boot-loading/progress';
 import { setCurrentLevel } from '@/lib/levels/current-level';
 import { actorScaleFor } from '@/lib/levels/actor-scale';
+import { CAT_SHOP_GIFT_DROP_ID, CAT_SHOP_GIFT_WEAPON_ID } from '@/lib/levels/easter-eggs';
 import { fetchLevelIndex } from '@/lib/levels/loader';
 import { groundLayers, isPortalArmed, propKey, spawnsWithoutBrokenProps } from '@/lib/levels/logic';
 import { MERCHANT_SHOP_EVENT, usesMerchant } from '@/lib/merchant/logic';
@@ -523,7 +524,7 @@ export class LoadScene extends Phaser.Scene {
                             // before swapping, so the old gun lands
                             // behind the player as the new one slots
                             // in.
-                            const dropSpec = this.assets.dropSpecs.get('weapon-drop');
+                            const dropSpec = this.assets.dropSpecs.get(CAT_SHOP_GIFT_DROP_ID);
                             const charPos = this.character.body?.position;
                             if (dropSpec && charPos) {
                                 this.dropSystem?.spawnWeapon(
@@ -993,7 +994,7 @@ export class LoadScene extends Phaser.Scene {
         if (!firstOfSave) return;
 
         const dropSpec = this.assets.dropSpecs.get('weapon-drop');
-        const weaponSpec = this.assets.weaponsById.get('assault-rifle');
+        const weaponSpec = this.assets.weaponsById.get(CAT_SHOP_GIFT_WEAPON_ID);
         const zone = this.level.interactables?.find((item) => item.action === 'cat-shop')?.zones[0];
         if (!dropSpec || !weaponSpec || !zone) {
             console.warn('[cat-shop] gift skipped: drop, weapon or zone missing');

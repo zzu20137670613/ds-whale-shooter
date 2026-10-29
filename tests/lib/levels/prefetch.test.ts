@@ -19,6 +19,22 @@ function level(partial: Partial<Level> = {}): Level {
 }
 
 describe('collectDropIds', () => {
+    it('pulls in the cat shop gift even though no level row names it', () => {
+        // The gift's drop id lives only in `scene.openCatShop`; without this the spec
+        // is missing when the cat is clicked and the rifle never appears.
+        const levelWithCat = level({
+            interactables: [
+                { id: 'cat-shop', action: 'cat-shop', zones: [{ x: 0, y: 0, width: 10, height: 10 }] },
+            ],
+        });
+        expect([...collectDropIds(levelWithCat, new Map())]).toContain('weapon-drop');
+    });
+
+    it('does not load the gift for levels without the cat', () => {
+        expect([...collectDropIds(level({}), new Map())]).not.toContain('weapon-drop');
+    });
+
+
     it('returns only static dropSpawns when no monsters', () => {
         const ids = collectDropIds(
             level({ dropSpawns: [{ type: 'hp-shard', x: 1, y: 2 }] }),

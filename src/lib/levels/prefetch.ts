@@ -10,6 +10,7 @@
  * its drop table references ids that were never loaded.
  */
 
+import { CAT_SHOP_ACTION, CAT_SHOP_GIFT_DROP_ID } from './easter-eggs';
 import type { Level } from './types';
 import type { MonsterSpec } from '@/lib/monsters';
 
@@ -21,6 +22,12 @@ export function collectDropIds(level: Level, monsterSpecs: Map<string, MonsterSp
     level.triggers?.forEach((t) => {
         // Only a spawn trigger names a drop; a travel trigger is a door.
         if ('spawn' in t) ids.add(t.spawn.type);
+    });
+    // The cabin cat's gift is launched from `scene.openCatShop`, whose drop id is not
+    // named anywhere else in the level data. Without this the spec is missing at click
+    // time and the rifle never appears.
+    level.interactables?.forEach((item) => {
+        if (item.action === CAT_SHOP_ACTION) ids.add(CAT_SHOP_GIFT_DROP_ID);
     });
     monsterSpecs.forEach((spec) => {
         for (const ref of spec.drops ?? []) ids.add(ref.dropId);

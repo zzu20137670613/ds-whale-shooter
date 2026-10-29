@@ -15,7 +15,7 @@
 
 import type * as Phaser from 'phaser';
 
-import { SFX_EVENT } from '@/lib/constants';
+import { RELOAD_AUTO_REARM_MS, SFX_EVENT } from '@/lib/constants';
 import { EventBus } from '@/lib/events/bus';
 import type { WeaponSpec } from '@/lib/weapons';
 
@@ -451,9 +451,11 @@ export class WeaponController {
             for (let i = 0; i < this.slots.length; i++) {
                 const slot = this.slots[i];
                 const reloadTimeMs = slot.spec.reloadTimeMs ?? 0;
-                if (slot.reloading && reloadTimeMs > 0) {
+                if (slot.reloading) {
+                    // A zero reload time means "instant", not "never finishes" - the
+                    // old guard left such a weapon stuck reloading for good.
                     const elapsed = time - slot.reloadStartedAt;
-                    if (elapsed >= reloadTimeMs) {
+                    if (elapsed >= Math.max(1, reloadTimeMs)) {
                         // Rounds come out of the reserve. A reserve that cannot
                         // fill the magazine just gives what it has.
                         const filled = reloadFromReserve(
@@ -486,7 +488,10 @@ export class WeaponController {
             } else if (
                 canReloadFromReserve(active.ammo, active.reserve, active.spec.clipSize ?? 1) &&
                 !active.reloading &&
-                active.justCompletedAt === 0
+                // The completion flash used to block auto-reload outright, so an empty
+                // magazine could sit there dry-firing forever after one reload. Time is
+                // what it actually meant: let the flash play, then re-arm.
+                time - active.justCompletedAt > RELOAD_AUTO_REARM_MS
             ) {
                 active.reloading = true;
                 active.reloadStartedAt = time;

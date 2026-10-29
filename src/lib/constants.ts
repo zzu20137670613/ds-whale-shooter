@@ -506,3 +506,8 @@ export { BOOT_LOADING } from '@/lib/boot-loading/config';
 /** Invulnerable beat while a boss climbs the ladder. Long enough to read the new
  *  form, short enough that it never feels like a pause. */
 export const BOSS_PHASE_TRANSITION_MS = 2000;
+
+// ─── Weapons: reload ─────────────────────────────────────────────────────
+/** How long after a completed reload auto-reload may fire again. Long enough to let
+ *  the "Full" flash read, short enough that an empty magazine re-arms itself. */
+export const RELOAD_AUTO_REARM_MS = 400;

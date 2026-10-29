@@ -82,22 +82,22 @@ export function DevCabinPanel() {
     return (
         <div
             data-testid="dev-cabin-panel"
-            className="absolute inset-0 z-[10002] flex items-center justify-center bg-black/70 backdrop-blur-[2px]"
+            className="absolute inset-0 z-[10002] flex items-center justify-center bg-black/45 backdrop-blur-[2px]"
             onClick={close}
         >
             <div
                 onClick={(e) => e.stopPropagation()}
-                className="w-[440px] max-w-[92vw] border border-white/15 bg-[#14161c] shadow-[0_30px_80px_rgba(0,0,0,0.6)]"
+                className="w-[440px] max-w-[92vw] border border-white/25 bg-[#1b1f27] shadow-[0_30px_80px_rgba(0,0,0,0.6)]"
             >
                 {/* Title bar: an OS window that belongs to someone else. */}
                 <div className="flex items-center justify-between border-b border-white/10 px-3 py-2">
-                    <span className="font-mono text-[10px] tracking-[0.25em] text-white/40">
+                    <span className="font-mono text-[10px] tracking-[0.25em] text-white/65">
                         {phase === 'login' ? 'MAIL — 登录' : 'MAIL — 新邮件'}
                     </span>
                     <button
                         type="button"
                         onClick={close}
-                        className="font-mono text-[11px] text-white/35 transition-colors hover:text-white"
+                        className="font-mono text-[11px] text-white/55 transition-colors hover:text-white"
                     >
                         ✕
                     </button>
@@ -111,7 +111,7 @@ export function DevCabinPanel() {
                             setPhase('compose');
                         }}
                     >
-                        <p className="font-mono text-[11px] leading-relaxed text-white/35">
+                        <p className="font-mono text-[11px] leading-relaxed text-white/55">
                             这台电脑不是你的。
                             <br />
                             不过既然进来了。
@@ -124,7 +124,7 @@ export function DevCabinPanel() {
                                 value={account}
                                 onChange={(e) => setAccount(e.target.value)}
                                 placeholder="随便填"
-                                className="border border-white/12 bg-black/40 px-2 py-1.5 font-mono text-[12px] text-white/80 outline-none focus:border-white/35"
+                                className="border border-white/12 bg-white/8 px-2 py-1.5 font-mono text-[12px] text-white/90 outline-none focus:border-white/35"
                             />
                         </label>
                         <label className="flex flex-col gap-1">
@@ -136,7 +136,7 @@ export function DevCabinPanel() {
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 placeholder="随便填"
-                                className="border border-white/12 bg-black/40 px-2 py-1.5 font-mono text-[12px] text-white/80 outline-none focus:border-white/35"
+                                className="border border-white/12 bg-white/8 px-2 py-1.5 font-mono text-[12px] text-white/90 outline-none focus:border-white/35"
                             />
                         </label>
                         <button
@@ -156,14 +156,14 @@ export function DevCabinPanel() {
                             value={letter.handle}
                             onChange={(e) => setLetter({ ...letter, handle: e.target.value })}
                             placeholder="署名（可以不填）"
-                            className="border border-white/12 bg-black/40 px-2 py-1.5 font-mono text-[12px] text-white/80 outline-none focus:border-white/35"
+                            className="border border-white/12 bg-white/8 px-2 py-1.5 font-mono text-[12px] text-white/90 outline-none focus:border-white/35"
                         />
                         <div>
                             <input
                                 value={letter.reply}
                                 onChange={(e) => setLetter({ ...letter, reply: e.target.value })}
                                 placeholder="回信地址（可以不填）"
-                                className="w-full border border-white/12 bg-black/40 px-2 py-1.5 font-mono text-[12px] text-white/80 outline-none focus:border-white/35"
+                                className="w-full border border-white/12 bg-white/8 px-2 py-1.5 font-mono text-[12px] text-white/90 outline-none focus:border-white/35"
                             />
                             {touched && errors.reply && (
                                 <p className="mt-1 font-mono text-[10px] text-amber-300/70">
@@ -178,7 +178,7 @@ export function DevCabinPanel() {
                                 onChange={(e) => setLetter({ ...letter, message: e.target.value })}
                                 placeholder="想说什么都行。"
                                 rows={7}
-                                className="w-full resize-none border border-white/12 bg-black/40 px-2 py-1.5 font-mono text-[12px] leading-relaxed text-white/80 outline-none focus:border-white/35"
+                                className="w-full resize-none border border-white/12 bg-white/8 px-2 py-1.5 font-mono text-[12px] leading-relaxed text-white/90 outline-none focus:border-white/35"
                             />
                             <div className="mt-1 flex items-center justify-between">
                                 {touched && errors.message ? (
