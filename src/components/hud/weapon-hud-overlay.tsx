@@ -111,7 +111,7 @@ export const WeaponHUDOverlay: React.FC = () => {
                             {/* Reload progress overlay (active slot only) */}
                             {showReloading && (
                                 <div
-                                    className="absolute inset-x-0 bottom-0 h-1 bg-amber-400/80 pointer-events-none"
+                                    className="absolute inset-x-0 bottom-0 h-1.5 bg-amber-400 pointer-events-none"
                                     style={{
                                         width: `${Math.max(
                                             0,
