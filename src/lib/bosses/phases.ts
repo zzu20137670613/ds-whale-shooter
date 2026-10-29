@@ -174,3 +174,39 @@ export const ENTROPY_GROWTH_PER_WAVE = 1.05;
 export function entropyRadius(baseRadius: number, waves: number): number {
     return baseRadius * Math.pow(ENTROPY_GROWTH_PER_WAVE, Math.max(0, Math.floor(waves)));
 }
+// ─── The health lock ─────────────────────────────────────────────────────
+//
+// Bosses are where a modified number hurts most: a save edited, a weapon tuning
+// pass, a debug key, and the five-phase descent becomes a one-frame death. So a
+// single hit may never take more than this fraction of the CURRENT phase's health,
+// which turns "instantly dead" into "at least ten hits" no matter what the numbers
+// upstream say.
+
+export const BOSS_MAX_HIT_FRACTION = 0.1;
+
+/**
+ * Cap one hit against a phase's health pool.
+ *
+ * The cap is a fraction of the phase maximum, not of what is left, so a nearly-dead
+ * boss still dies to a normal hit instead of becoming immortal at 1 HP.
+ */
+export function clampBossDamage(damage: number, phaseMaxHp: number): number {
+    const cap = Math.max(1, Math.ceil(phaseMaxHp * BOSS_MAX_HIT_FRACTION));
+    return Math.min(Math.max(0, damage), cap);
+}
+
+/**
+ * Apply a hit, with the lock in force.
+ *
+ * Returns the new HP and whether this killed her FOR THIS PHASE - the caller then
+ * either advances the ladder or ends the fight.
+ */
+export function applyBossHit(
+    hp: number,
+    damage: number,
+    phaseMaxHp: number,
+): { hp: number; died: boolean } {
+    const taken = clampBossDamage(damage, phaseMaxHp);
+    const left = Math.max(0, hp - taken);
+    return { hp: left, died: left <= 0 };
+}

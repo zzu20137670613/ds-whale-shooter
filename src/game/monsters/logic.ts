@@ -953,20 +953,22 @@ export function monsterAnimTrack(input: {
  * module scope drags a Phaser canvas with it, which makes the roller untestable in a
  * plain node environment.
  *
- * `amount` copies of a successful row are emitted as separate pickups — nothing
- * downstream counts items on the ground.
+ * Each drop is ONE draw against nested tiers, highest first: inside `chance3` pays
+ * three, inside `chance2` pays two, inside `chance` pays one, past that pays nothing.
+ * `amount` copies become separate pickups - nothing downstream counts stacks.
  */
 export function rollDrops(
-    table: { dropId: string; chance: number; amount?: number }[],
+    table: { dropId: string; chance: number; chance2?: number; chance3?: number }[],
     byId: (id: string) => unknown,
 ): { dropId: string; spec: unknown }[] {
     const out: { dropId: string; spec: unknown }[] = [];
     for (const entry of table) {
-        if (Math.random() < entry.chance) {
-            const count = entry.amount ?? 1;
-            for (let i = 0; i < count; i += 1) {
-                out.push({ dropId: entry.dropId, spec: byId(entry.dropId) });
-            }
+        const roll = Math.random();
+        const chance3 = entry.chance3 ?? 0;
+        const chance2 = entry.chance2 ?? 0;
+        const count = roll < chance3 ? 3 : roll < chance2 ? 2 : roll < entry.chance ? 1 : 0;
+        for (let i = 0; i < count; i += 1) {
+            out.push({ dropId: entry.dropId, spec: byId(entry.dropId) });
         }
     }
     return out;

@@ -12,9 +12,12 @@ sfx:
     death: monster-death
     aggro: monster-aggro
 drops:
-    # 怪物掉落表（表·2026-10-29 定稿）：每一行独立摇一次。
+    # 怪物掉落表（表·2026-10-29 定稿）：一行一次抽，档位从高往低套。
+    # 藤壶 = 1个100% / 2个50% / 3个20%（命中高档就吃掉低档）。
     - dropId: barnacle
       chance: 1
+      chance2: 0.5
+      chance3: 0.2
     - dropId: hp-shard
       chance: 0.5
     - dropId: sp-fragment

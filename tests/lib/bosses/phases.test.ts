@@ -12,8 +12,11 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+    BOSS_MAX_HIT_FRACTION,
     BOSS_PHASES,
+    applyBossHit,
     attacksForPhase,
+    clampBossDamage,
     entropyRadius,
     nextPhase,
     phaseAt,
@@ -175,5 +178,40 @@ describe('entropy', () => {
 
     it('ignores a negative wave count', () => {
         expect(entropyRadius(100, -4)).toBe(100);
+    });
+});
+describe('the health lock', () => {
+    it('caps one hit at a tenth of the phase health', () => {
+        expect(BOSS_MAX_HIT_FRACTION).toBe(0.1);
+        // Phase 5 is authored at 4000 * 0.5 = 2000.
+        expect(clampBossDamage(99_999, 2000)).toBe(200);
+    });
+
+    it('lets an honest hit through untouched', () => {
+        expect(clampBossDamage(105, 2000)).toBe(105);
+    });
+
+    it('never caps to zero, so a tiny boss is still killable', () => {
+        expect(clampBossDamage(50, 5)).toBe(1);
+    });
+
+    it('ignores negative damage', () => {
+        expect(clampBossDamage(-30, 2000)).toBe(0);
+    });
+
+    it('turns an edited one-shot into at least ten hits', () => {
+        // 2000 HP, a bogus 999999 damage swing: nine hits leave her standing...
+        let hp = 2000;
+        for (let i = 0; i < 9; i += 1) {
+            const result = applyBossHit(hp, 999_999, 2000);
+            expect(result.died).toBe(false);
+            hp = result.hp;
+        }
+        // ...and the tenth finally ends the phase.
+        expect(applyBossHit(hp, 999_999, 2000).died).toBe(true);
+    });
+
+    it('still kills a nearly-dead boss with a normal hit', () => {
+        expect(applyBossHit(3, 50, 2000)).toEqual({ hp: 0, died: true });
     });
 });

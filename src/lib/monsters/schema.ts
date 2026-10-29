@@ -11,21 +11,35 @@
 
 import { z } from 'zod';
 
+/**
+ * One item in a monster's drop table, with up to three nested tiers.
+ *
+ * The design table reads like a payout ladder: "藤壶 100% one, 50% two, 20% three".
+ * Those are tiers, not independent rolls - a three-hit eats the two and the one. So a
+ * row is `chance` (one), `chance2` (two) and `chance3` (three), and the tiers must be
+ * nested: you cannot be more likely to get three than to get two.
+ *
+ * Every copy is its own pickup on the ground; the drop system has no stack count.
+ */
 export const DropRefSchema = z
     .object({
         dropId: z.string().min(1),
+        /** Chance of the one-copy tier. 1 means "at least one, always". */
         chance: z.number().gte(0).lte(1),
-        /**
-         * How many of this drop to scatter when the roll succeeds.
-         *
-         * Defaults to 1 so every spec written before the design table grew a 数量
-         * column still parses. Each copy is its own pickup on the ground - the drop
-         * system has no stack count, and a stack would need a HUD element nobody
-         * asked for.
-         */
-        amount: z.number().int().gte(1).default(1),
+        /** Chance of the two-copy tier. 0 by default: most rows never pay two. */
+        chance2: z.number().gte(0).lte(1).default(0),
+        /** Chance of the three-copy tier. 0 by default. */
+        chance3: z.number().gte(0).lte(1).default(0),
     })
-    .strict();
+    .strict()
+    .refine((row) => row.chance2 <= row.chance, {
+        message: 'chance2 must not exceed chance: the tiers have to nest',
+        path: ['chance2'],
+    })
+    .refine((row) => row.chance3 <= row.chance2, {
+        message: 'chance3 must not exceed chance2: the tiers have to nest',
+        path: ['chance3'],
+    });
 
 const BodySchema = z
     .object({
