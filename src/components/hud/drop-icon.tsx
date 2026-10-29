@@ -58,6 +58,7 @@ export const DropIcon: React.FC<DropIconProps> = ({ icon, tint, label }) => {
         );
     }
 
+    const chipColor = `#${tint.toString(16).padStart(6, '0')}`;
     const cols = Math.max(1, icon.cols);
     const rows = Math.max(1, icon.rows);
     const frame = Math.max(0, icon.frame);
@@ -70,8 +71,10 @@ export const DropIcon: React.FC<DropIconProps> = ({ icon, tint, label }) => {
             style={{ width: DROP_ICON_CELL_PX, height: DROP_ICON_CELL_PX }}
             title={label}
         >
-            {/* Floor: the item's own colour, so a broken path is a chip, not a hole. */}
-            <span aria-hidden className="absolute inset-0" style={{ background: 'rgba(0,0,0,0.35)' }} />
+            {/* Floor: the item's own colour, so a broken or slow path is a chip, not a
+                hole. It used to be near-black, which is exactly what an empty cell looks
+                like on this panel. */}
+            <span aria-hidden className="absolute inset-0" style={{ backgroundColor: chipColor }} />
             <img
                 src={icon.path}
                 alt={label ?? ''}

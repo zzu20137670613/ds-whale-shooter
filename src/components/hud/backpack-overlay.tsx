@@ -184,6 +184,19 @@ export function BackpackOverlay() {
                     })}
                 </div>
 
+                {typeof window !== 'undefined' && window.location.search.includes('bagDebug') && (
+                    <div className="mt-1 border border-lime-700 bg-black/85 px-1 py-0.5 font-mono text-[10px] leading-tight text-lime-300">
+                        inventory={inventory.length} catalog={Object.keys(catalog).length}{' '}
+                        {inventory.map((s, i) => {
+                            const e = catalog[s.dropId];
+                            return (
+                                <span key={i}>
+                                    [{s.dropId}×{s.count}{e ? '' : ' NO-ENTRY'}{e?.icon ? '' : ' NO-ICON'}]
+                                </span>
+                            );
+                        })}
+                    </div>
+                )}
                 <div className="mt-2 border-t border-stone-800 pt-1 text-[11px] text-stone-400">
                     {inventory.length === 0
                         ? t('backpack.empty')
