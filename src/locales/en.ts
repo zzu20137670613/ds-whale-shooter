@@ -44,7 +44,7 @@ const en: CatalogSource = {
         directional: 'Keyboard',
     },
     hud: {
-        spaceKey: 'SPACE/K · Dodge',
+        spaceKey: 'K/SPACE · Dodge',
         reloadKey: 'F/R · Reload',
         skillKey: 'E · Skill',
         attackKey: 'J · Attack',

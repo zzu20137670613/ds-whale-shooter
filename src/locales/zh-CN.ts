@@ -44,7 +44,7 @@ const zhCN: CatalogSource = {
         directional: '键盘操作',
     },
     hud: {
-        spaceKey: '空格/K 闪避',
+        spaceKey: 'K/空格 闪避',
         reloadKey: 'F/R 换弹',
         skillKey: 'E 技能',
         attackKey: 'J 攻击',
