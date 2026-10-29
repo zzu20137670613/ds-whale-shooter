@@ -18,6 +18,7 @@
  * fires on click.
  */
 
+import { safeRemoveBody } from '@/lib/physics/safe-remove';
 import * as Phaser from 'phaser';
 
 import {
@@ -360,9 +361,12 @@ export class Monster {
     }
 
     destroy(scene: Phaser.Scene): void {
-        scene.matter.world.remove(this.body);
+        // The Matter world can already be gone when this runs during scene shutdown;
+        // throwing here used to abort the shutdown and leave a black screen.
+        const world = scene?.matter?.world ?? null;
+        safeRemoveBody(world, this.body);
         if (this.hitboxBody) {
-            scene.matter.world.remove(this.hitboxBody);
+            safeRemoveBody(world, this.hitboxBody);
         }
         this.debugBodyRect?.destroy();
         this.debugHitboxRect?.destroy();
@@ -1365,7 +1369,7 @@ export class MonsterController {
         this.roarCleanup = undefined;
         for (const m of this.monsters) m.destroy(this.scene);
         for (const p of this.projectiles) {
-            this.scene.matter.world.remove(p.body);
+            safeRemoveBody(this.scene?.matter?.world ?? null, p.body);
             p.rect.destroy();
         }
         this.monsters.length = 0;
