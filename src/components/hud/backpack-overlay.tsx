@@ -89,6 +89,11 @@ export function BackpackOverlay() {
         EventBus.emit(INVENTORY_USE_EVENT, { index });
     };
 
+    // Drop ids that are in the bag but absent from the catalog (no name, no art).
+    const missing = Array.from(
+        new Set(inventory.filter((s) => s && !catalog[s.dropId]).map((s) => s.dropId)),
+    );
+
     // 60 cells, positional: slot i draws at cell i.
     const cells = Array.from({ length: INVENTORY_SLOTS }, (_, index) => inventory[index]);
 
@@ -178,6 +183,13 @@ export function BackpackOverlay() {
                                             </span>
                                         )}
                                     </>
+                                ) : slot ? (
+                                    /* The item is in the bag but the catalog has no entry for
+                                       it, so there is nothing to draw. Scream the id instead of
+                                       leaving a blank cell that reads like a rendering bug. */
+                                    <span className="px-0.5 text-center text-[8px] leading-none break-all text-rose-400">
+                                        {slot.dropId}
+                                    </span>
                                 ) : null}
                             </button>
                         );
@@ -195,6 +207,11 @@ export function BackpackOverlay() {
                                 </span>
                             );
                         })}
+                    </div>
+                )}
+                {missing.length > 0 && (
+                    <div className="mt-1 border border-rose-800 bg-black/85 px-1 py-0.5 font-mono text-[10px] leading-tight text-rose-300">
+                        目录缺失: {missing.join(' / ')}
                     </div>
                 )}
                 <div className="mt-2 border-t border-stone-800 pt-1 text-[11px] text-stone-400">
