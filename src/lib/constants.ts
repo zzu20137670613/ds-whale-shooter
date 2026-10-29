@@ -248,14 +248,14 @@ export const DROP_FULL_RESTORE_AMOUNT = 9999;
 export const HEADGEAR_DEFAULT_TINT = 0xffe9a8;
 
 /**
- * Where along a character's drawn height the held weapon should sit, measured
- * from the feet up. 0.5 puts it at chest height - high enough to read as "held",
- * low enough that a tall sprite's gun does not float over her head.
+ * Where along a character's drawn height the held weapon sits, measured from the
+ * feet up.
  *
- * The old code used the physics box (`-halfH` from the body centre) instead,
- * which is roughly knee height on a sprite this tall; see `handUpOffset`.
+ * 0.5 landed at the chest, which reads wrong: her arms hang, so a gun held at chest
+ * height looks strapped on. 0.44 sits it at the belt line - where a hand that is not
+ * raised actually is. See `handUpOffset`.
  */
-export const HAND_HEIGHT_RATIO = 0.5;
+export const HAND_HEIGHT_RATIO = 0.44;
 
 // ─── Tint modes (Phaser 4 `Phaser.TintModes`) ──────────────────────────────
 // Copied as numbers so `lib/` stays engine-free. Verified against

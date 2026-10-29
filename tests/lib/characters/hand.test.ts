@@ -11,21 +11,26 @@
 
 import { describe, expect, it } from 'vitest';
 
+import { HAND_HEIGHT_RATIO } from '@/lib/constants';
 import { handUpOffset, pickBodyTint } from '@/lib/characters/hand';
 import { TINT_MODE_ADD, TINT_MODE_MULTIPLY } from '@/lib/constants';
 
 describe('handUpOffset', () => {
     it('puts the hands half way up the drawn sprite, measured from her feet', () => {
         // 185.6px tall, feet 32px above the body centre (Seed's real numbers).
-        expect(handUpOffset(185.6, 32)).toBeCloseTo(60.8, 1);
+        expect(handUpOffset(185.6, 32)).toBeCloseTo(185.6 * HAND_HEIGHT_RATIO - 32, 1);
     });
 
-    it('sits higher than the physics box ever did on a tall sprite', () => {
+    it('sits above the physics box, but below her chest', () => {
         const spriteUp = handUpOffset(185.6, 32);
         const boxUp = 28; // the old `halfH` the weapon was orbiting around
+        // Above the old orbit: the gun was at her knees.
         expect(spriteUp).toBeGreaterThan(boxUp);
-        // A ~33px difference is exactly "the gun is at her knees".
-        expect(spriteUp - boxUp).toBeGreaterThan(30);
+        // Below half her drawn height: her arms hang, so a chest-high gun reads as
+        // strapped on. The owner's note - "should be at the lower belly".
+        expect(185.6 * HAND_HEIGHT_RATIO).toBeLessThan(185.6 * 0.5);
+        expect(HAND_HEIGHT_RATIO).toBeGreaterThan(0.35);
+        expect(HAND_HEIGHT_RATIO).toBeLessThan(0.5);
     });
 
     it('scales with the sprite, so a short character is not left aiming at the floor', () => {
