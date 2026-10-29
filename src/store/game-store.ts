@@ -348,7 +348,15 @@ export interface GameUIState {
      * to-scene) so picked-up weapons survive the cut.
      */
     clearSceneSnapshots: () => void;
-    clearSaveData: () => void;
+    /**
+     * Wipe the run.
+     *
+     * `wipeWorld` also forgets the level furniture the player has broken - which is
+     * what a NEW GAME means. Death and a tavern restart leave it alone: re-shooting
+     * the tavern ornament after every death was the reason it was kept in the first
+     * place. Pass nothing and the world survives.
+     */
+    clearSaveData: (options?: { wipeWorld?: boolean }) => void;
 
     /**
      * The six-slot rack plus the quick slot, as last written.
@@ -852,17 +860,20 @@ export const useGameStore = create<GameUIState>()(
                 }
             },
 
-            clearSaveData: () => {
+            clearSaveData: (options) => {
                 try {
                     useGameStore.persist?.clearStorage();
                 } catch {
                     // Fallback
                 }
-                // The world outlives the run: everything else reset here is run
-                // state (money, weapons, the picked character), but a prop the
-                // player shot open is level furniture. Re-locking the tavern
-                // ornament would mean re-shooting it after every death.
-                const { brokenProps } = useGameStore.getState();
+                // The world outlives the RUN - but not a brand-new game. A prop the
+                // player shot open stays open across deaths and tavern restarts, so
+                // the hidden entrance is not re-locked every time she falls; asking
+                // for a new game instead puts the furniture back, which is what
+                // "新游戏" has to mean or the hidden level starts unlocked.
+                const { brokenProps } = options?.wipeWorld
+                    ? { brokenProps: [] as string[] }
+                    : useGameStore.getState();
                 set(() => ({
                     ...initialGameState,
                     tavernCleared: false,

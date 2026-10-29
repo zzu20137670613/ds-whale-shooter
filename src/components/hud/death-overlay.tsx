@@ -36,19 +36,19 @@ export function DeathOverlay() {
         >
             <div
                 key={locale}
-                className={`${RETRO_BOX} relative flex flex-col items-center gap-4 px-10 py-8 font-['Silkscreen',monospace] min-w-[260px]`}
+                className={`${RETRO_BOX} relative flex flex-col items-center gap-4 px-10 py-8 font-['Silkscreen',monospace] min-w-[340px]`}
             >
                 <CornerPixels />
 
                 {/* Icon — large raw glyph, no container box */}
                 <Skull
-                    className="size-10 text-red-500"
+                    className="size-12 text-red-500"
                     style={{ filter: 'drop-shadow(0 0 8px rgba(239,68,68,0.7))' }}
                 />
 
                 {/* Title + decorative divider */}
                 <div className="flex flex-col items-center gap-1.5 w-full">
-                    <div className="text-2xl font-bold tracking-[0.25em] text-red-400 drop-shadow-[2px_2px_0px_#000] uppercase">
+                    <div className="text-3xl font-bold tracking-[0.22em] text-red-400 drop-shadow-[2px_2px_0px_#000] uppercase">
                         {t('death.title')}
                     </div>
                     <div className="flex items-center gap-2 w-full">

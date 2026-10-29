@@ -479,7 +479,13 @@ export function ShopPanel() {
                     <button
                         type="button"
                         data-testid="shop-return-home"
-                        onClick={() => EventBus.emit(RETURN_TO_PAVILION_EVENT)}
+                        onClick={() => {
+                            // Close first: the walk home is a scene change, and a
+                            // panel left mounted would ride along and sit on top
+                            // of the pavilion until closed by hand.
+                            setOpen(false);
+                            EventBus.emit(RETURN_TO_PAVILION_EVENT);
+                        }}
                         className="mt-3 flex w-full items-center justify-center gap-1.5 border border-amber-700 py-1.5 text-[11px] font-bold uppercase tracking-widest text-amber-300 hover:bg-amber-900/40"
                     >
                         <Home className="size-3" />

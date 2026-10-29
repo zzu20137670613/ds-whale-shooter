@@ -74,7 +74,7 @@ export function SettingsOverlay() {
             return;
         }
         // Wipe the run and the world, then drop back to the tavern as if fresh.
-        useGameStore.getState().clearSaveData();
+        useGameStore.getState().clearSaveData({ wipeWorld: true });
         paused.current = null;
         setOpen(false);
         setNewGameArmed(false);
@@ -153,7 +153,7 @@ export function SettingsOverlay() {
                 >
                     <div
                         onClick={(e) => e.stopPropagation()}
-                        className={`${RETRO_BOX} relative flex w-72 flex-col items-center gap-5 px-8 py-7 font-['Silkscreen',monospace]`}
+                        className={`${RETRO_BOX} relative flex w-96 flex-col items-center gap-4 px-7 py-6 font-['Silkscreen',monospace]`}
                     >
                         <CornerPixels />
                         <button
@@ -189,7 +189,7 @@ export function SettingsOverlay() {
                                 </span>
                                 <span className="flex-1 h-px bg-amber-800/50" />
                             </div>
-                            <div className="text-[8px] tracking-[0.3em] text-stone-500 uppercase">
+                            <div className="text-[11px] tracking-[0.24em] text-stone-400 uppercase">
                                 — paused —
                             </div>
                         </div>
@@ -197,7 +197,7 @@ export function SettingsOverlay() {
                         {/* Aiming is a setting, not an action: it sits above the
                             buttons and shows the current choice inline. */}
                         <div className="flex w-full flex-col gap-1">
-                            <span className="text-[9px] tracking-[0.3em] text-stone-500 uppercase">
+                            <span className="text-[12px] tracking-[0.22em] text-stone-400 uppercase">
                                 {t('settings.controlScheme')}
                             </span>
                             <div className="flex gap-1">
@@ -212,7 +212,7 @@ export function SettingsOverlay() {
                                         type="button"
                                         onClick={() => setInputScheme(id)}
                                         aria-pressed={inputScheme === id}
-                                        className={`h-7 flex-1 rounded border text-[10px] font-semibold tracking-wider transition-colors ${
+                                        className={`h-9 flex-1 rounded border text-[12px] font-semibold tracking-wider transition-colors ${
                                             inputScheme === id
                                                 ? 'border-amber-500 bg-amber-500 text-black'
                                                 : 'border-stone-700 bg-stone-900/80 text-stone-400 hover:bg-stone-800 hover:text-amber-300'
@@ -227,7 +227,7 @@ export function SettingsOverlay() {
                         <div className="flex w-full flex-col gap-2">
                             <Button
                                 onClick={resumeGame}
-                                className="h-9 w-full bg-amber-500 font-semibold text-black hover:bg-amber-400"
+                                className="h-11 w-full text-[13px] bg-amber-500 font-semibold text-black hover:bg-amber-400"
                             >
                                 <Play className="size-5" />
                                 {t('settings.resume')}
@@ -235,7 +235,7 @@ export function SettingsOverlay() {
                             <Button
                                 onClick={handleRestart}
                                 variant="outline"
-                                className="h-9 w-full border-stone-700 bg-stone-900/80 font-semibold text-stone-300 hover:bg-stone-800 hover:text-amber-300"
+                                className="h-11 w-full text-[13px] border-stone-700 bg-stone-900/80 font-semibold text-stone-300 hover:bg-stone-800 hover:text-amber-300"
                             >
                                 <RotateCcw className="size-5" />
                                 {t('settings.restart')}
@@ -243,7 +243,7 @@ export function SettingsOverlay() {
                             <Button
                                 onClick={handleNewGame}
                                 variant="outline"
-                                className={`h-9 w-full font-semibold ${
+                                className={`h-11 w-full text-[13px] font-semibold ${
                                     newGameArmed
                                         ? 'border-red-700 bg-red-900/70 text-red-200 hover:bg-red-800'
                                         : 'border-stone-700 bg-stone-900/80 text-stone-400 hover:bg-stone-800 hover:text-amber-300'
@@ -255,7 +255,7 @@ export function SettingsOverlay() {
                             <Button
                                 onClick={() => setSavesOpen(true)}
                                 variant="outline"
-                                className="h-9 w-full border-stone-700 bg-stone-900/80 font-semibold text-stone-300 hover:bg-stone-800 hover:text-amber-300"
+                                className="h-11 w-full text-[13px] border-stone-700 bg-stone-900/80 font-semibold text-stone-300 hover:bg-stone-800 hover:text-amber-300"
                             >
                                 <FolderOpen className="size-5" />
                                 {t('saves.title')}

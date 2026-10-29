@@ -51,12 +51,12 @@ import {
     PIXEL_LIGHTING_CONFIG,
     RENDER_CAMERA_LERP,
     SFX_EVENT,
-    TAVERN_ACTOR_SCALE,
 } from '@/lib/constants';
 import { EventBus } from '@/lib/events/bus';
 import { maxWeaponUpgradeLevel } from '@/lib/weapons/upgrades';
 import { setBootProgress } from '@/lib/boot-loading/progress';
 import { setCurrentLevel } from '@/lib/levels/current-level';
+import { actorScaleFor } from '@/lib/levels/actor-scale';
 import { fetchLevelIndex } from '@/lib/levels/loader';
 import { groundLayers, isPortalArmed, propKey, spawnsWithoutBrokenProps } from '@/lib/levels/logic';
 import { MERCHANT_SHOP_EVENT, usesMerchant } from '@/lib/merchant/logic';
@@ -314,6 +314,9 @@ export class LoadScene extends Phaser.Scene {
             {
                 placeholder: this.level.tavern === true,
                 weaponsById: this.assets.weaponsById,
+                // Rooms drawn around a much larger human need a larger sprite, or
+                // she reads as a doll on the stage. See lib/levels/actor-scale.
+                spriteScaleMultiplier: actorScaleFor(this.id),
                 // 1-to-1 pairing: arriving through a portal puts the player
                 // next to the partner portal instead of the level's own spawn.
                 spawnOverride: consumeTeleportArrival(this.id) ?? undefined,
@@ -819,7 +822,7 @@ export class LoadScene extends Phaser.Scene {
                 });
                 this.character = loadCharacter(this, this.level, pickedSpec, this.assets.weapons, {
                     weaponsById: this.assets.weaponsById,
-                    spriteScaleMultiplier: TAVERN_ACTOR_SCALE,
+                    spriteScaleMultiplier: actorScaleFor(this.id),
                     // Walking back into the tavern through its paired portal
                     // keeps the character and lands by that portal.
                     spawnOverride: consumeTeleportArrival(this.id) ?? undefined,
@@ -869,7 +872,7 @@ export class LoadScene extends Phaser.Scene {
                             {
                                 weaponsById: this.assets.weaponsById,
                                 spawnOverride: spawnPos,
-                                spriteScaleMultiplier: TAVERN_ACTOR_SCALE,
+                                spriteScaleMultiplier: actorScaleFor(this.id),
                             },
                         );
                         // Rewire subsystems to the freshly-spawned

@@ -28,7 +28,7 @@ export const InputSchemeSwitch: React.FC = () => {
     ];
 
     return (
-        <div className="pointer-events-auto absolute right-3 top-3 flex gap-1 rounded-md border border-white/20 bg-black/35 px-1 py-1 backdrop-blur-sm">
+        <div className="pointer-events-auto absolute right-3 top-16 flex gap-1 rounded-md border border-white/20 bg-black/35 px-1 py-1 backdrop-blur-sm">
             {options.map(({ id, label, Icon }) => {
                 const active = scheme === id;
                 return (
