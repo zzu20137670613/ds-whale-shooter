@@ -945,3 +945,29 @@ export function monsterAnimTrack(input: {
     if (input.hasTurn && input.now < input.turnUntil) return 'turn';
     return input.chasing ? 'move' : 'idle';
 }
+
+/**
+ * Roll a monster's drop table.
+ *
+ * Pure, and therefore here rather than in `monster.ts`: importing the controller at
+ * module scope drags a Phaser canvas with it, which makes the roller untestable in a
+ * plain node environment.
+ *
+ * `amount` copies of a successful row are emitted as separate pickups — nothing
+ * downstream counts items on the ground.
+ */
+export function rollDrops(
+    table: { dropId: string; chance: number; amount?: number }[],
+    byId: (id: string) => unknown,
+): { dropId: string; spec: unknown }[] {
+    const out: { dropId: string; spec: unknown }[] = [];
+    for (const entry of table) {
+        if (Math.random() < entry.chance) {
+            const count = entry.amount ?? 1;
+            for (let i = 0; i < count; i += 1) {
+                out.push({ dropId: entry.dropId, spec: byId(entry.dropId) });
+            }
+        }
+    }
+    return out;
+}

@@ -47,7 +47,7 @@ import {
     type PendingSpawn,
 } from '@/game/monsters/spawn-queue';
 import type { MonsterTrigger } from '@/lib/levels';
-import type { DropRef, MonsterSpec } from '@/lib/monsters';
+import type { MonsterSpec } from '@/lib/monsters';
 import { StatusHud } from '@/game/hubs/status-hud';
 import { useGameStore, type MonsterSystemSnapshot } from '@/store/game-store';
 
@@ -346,16 +346,9 @@ export interface RolledDrop {
     spec: unknown; // DropSpec — resolved at the call site
 }
 
-/** Roll each entry independently; return all that succeed. */
-export function rollDrops(table: DropRef[], byId: (id: string) => unknown): RolledDrop[] {
-    const out: RolledDrop[] = [];
-    for (const entry of table) {
-        if (Math.random() < entry.chance) {
-            out.push({ dropId: entry.dropId, spec: byId(entry.dropId) });
-        }
-    }
-    return out;
-}
+// `rollDrops` lives in `./logic` so it can be tested without pulling a Phaser canvas
+// into the module graph; re-exported here for the callers that already import it.
+export { rollDrops } from './logic';
 
 // ─── Controller ──────────────────────────────────────────────────────────
 

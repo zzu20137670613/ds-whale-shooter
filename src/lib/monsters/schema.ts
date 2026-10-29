@@ -15,6 +15,15 @@ export const DropRefSchema = z
     .object({
         dropId: z.string().min(1),
         chance: z.number().gte(0).lte(1),
+        /**
+         * How many of this drop to scatter when the roll succeeds.
+         *
+         * Defaults to 1 so every spec written before the design table grew a 数量
+         * column still parses. Each copy is its own pickup on the ground - the drop
+         * system has no stack count, and a stack would need a HUD element nobody
+         * asked for.
+         */
+        amount: z.number().int().gte(1).default(1),
     })
     .strict();
 

@@ -40,7 +40,7 @@ describe('collectDropIds', () => {
                     moveSpeed: 4,
                     body: { halfW: 14, halfH: 14 },
                     weaponId: 'drone-claws',
-                    drops: [{ dropId: 'hp-shard', chance: 0.4 }],
+                    drops: [{ dropId: 'hp-shard', chance: 0.4, amount: 1 }],
                 },
             ],
             [
@@ -54,7 +54,7 @@ describe('collectDropIds', () => {
                     moveSpeed: 3,
                     body: { halfW: 14, halfH: 14 },
                     weaponId: 'gunner-blast',
-                    drops: [{ dropId: 'ammo-cache', chance: 0.5 }],
+                    drops: [{ dropId: 'ammo-cache', chance: 0.5, amount: 1 }],
                 },
             ],
         ]);
@@ -75,7 +75,7 @@ describe('collectDropIds', () => {
                     moveSpeed: 4,
                     body: { halfW: 14, halfH: 14 },
                     weaponId: 'drone-claws',
-                    drops: [{ dropId: 'hp-shard', chance: 1 }],
+                    drops: [{ dropId: 'hp-shard', chance: 1, amount: 1 }],
                 },
             ],
         ]);

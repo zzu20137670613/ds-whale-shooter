@@ -20,7 +20,7 @@ drops:
         expect(m.hp).toBe(30);
         expect(m.moveSpeed).toBe(4);
         expect(m.weaponId).toBe('drone-claws');
-        expect(m.drops).toEqual([{ dropId: 'hp-shard', chance: 0.4 }]);
+        expect(m.drops).toEqual([{ dropId: 'hp-shard', chance: 0.4, amount: 1 }]);
     });
 
     it('parses a ranged monster (weapon references ranged weapon)', () => {
