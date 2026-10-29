@@ -144,6 +144,11 @@ describe('the damage table', () => {
         expect(BOSS_ATTACKS.wrath.damage).toBe(180);
     });
 
+    it('hits as hard per bullet as the cannon does', () => {
+        // The owner's rule: the barrage is the same shell, fired from every direction.
+        expect(BOSS_ATTACKS.barrage.damage).toBe(BOSS_ATTACKS['triple-cannon'].damage);
+    });
+
     it('gives every attack a windup, so none of them is instant', () => {
         for (const [id, spec] of Object.entries(BOSS_ATTACKS)) {
             expect(spec.windupMs, id).toBeGreaterThan(0);

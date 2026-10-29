@@ -46,16 +46,16 @@ export interface BossAttackSpec {
 }
 
 /**
- * Phase-1 damage per attack. These are the owner's numbers, scaled per phase by the
- * controller.
+ * Phase-1 damage per attack, scaled per phase by the controller.
  *
- * The barrage's damage is the one value the design doc left 待定; 100 is a placeholder
- * chosen to be survivable at max armour (25 → 75 through) without being free.
+ * The barrage hits for exactly what one cannon shell hits for (the owner's call,
+ * 2026-10-29): same armour maths, same feel per bullet, just sixteen of them arriving
+ * from every direction instead of nine down one line.
  */
 export const BOSS_ATTACKS: Record<'triple-cannon' | 'melee' | 'barrage' | 'wrath', BossAttackSpec> = {
     'triple-cannon': { damage: 130, windupMs: 260 },
     melee: { damage: 140, windupMs: 180 },
-    barrage: { damage: 100, windupMs: 420 },
+    barrage: { damage: 130, windupMs: 420 },
     wrath: { damage: 180, windupMs: 500 },
 };
 
