@@ -30,6 +30,7 @@ import {
 } from '@/lib/pet/bonus';
 import type { SceneAssets } from '@/game/scenes/scene';
 import { fetchDrop } from '@/lib/drops';
+import { mergeDropCatalog } from '@/lib/drops/catalog';
 import type { DropSpec } from '@/lib/drops';
 import { collectDropIds, fetchLevel, fetchLevelIndex } from '@/lib/levels';
 import { CAT_SHOP_ACTION, CAT_SHOP_GIFT_WEAPON_ID } from '@/lib/levels/easter-eggs';
@@ -235,8 +236,11 @@ export async function resolveScene(
 
     // The backpack draws names, prices and a colour block per item; hand it the
     // drop specs once, here, where every spec is already resolved.
+    // Merge, don't replace: the bag is global and keeps items picked up in other scenes.
     useGameStore.getState().setDropCatalog(
-        Object.fromEntries(
+        mergeDropCatalog(
+            useGameStore.getState().dropCatalog,
+            Object.fromEntries(
             dropEntries.map(([id, spec]) => [
                 id,
                 {
@@ -256,6 +260,7 @@ export async function resolveScene(
                         : undefined,
                 },
             ]),
+            ),
         ),
     );
 
