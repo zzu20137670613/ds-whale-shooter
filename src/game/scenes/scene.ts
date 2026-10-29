@@ -18,6 +18,8 @@ import {
     rollDrops,
 } from '@/game/monsters/monster';
 
+
+
 async function getMonsterSpriteCellDims(
     spec: MonsterSpec,
 ): Promise<{ width: number; height: number }> {
@@ -57,6 +59,7 @@ import { maxWeaponUpgradeLevel } from '@/lib/weapons/upgrades';
 import { setBootProgress } from '@/lib/boot-loading/progress';
 import { setCurrentLevel } from '@/lib/levels/current-level';
 import { actorScaleFor } from '@/lib/levels/actor-scale';
+import { startingWeaponsFor } from '@/lib/characters/starting-weapons';
 import { CAT_SHOP_GIFT_DROP_ID, CAT_SHOP_GIFT_WEAPON_ID } from '@/lib/levels/easter-eggs';
 import { fetchLevelIndex } from '@/lib/levels/loader';
 import { groundLayers, isPortalArmed, propKey, spawnsWithoutBrokenProps } from '@/lib/levels/logic';
@@ -821,13 +824,19 @@ export class LoadScene extends Phaser.Scene {
                     activeMonstersSnapshot: undefined,
                     groundDropsSnapshot: undefined,
                 });
-                this.character = loadCharacter(this, this.level, pickedSpec, this.assets.weapons, {
-                    weaponsById: this.assets.weaponsById,
-                    spriteScaleMultiplier: actorScaleFor(this.id),
-                    // Walking back into the tavern through its paired portal
-                    // keeps the character and lands by that portal.
-                    spawnOverride: consumeTeleportArrival(this.id) ?? undefined,
-                });
+                this.character = loadCharacter(
+                    this,
+                    this.level,
+                    pickedSpec,
+                    startingWeaponsFor(pickedSpec, this.assets.weaponsById),
+                    {
+                        weaponsById: this.assets.weaponsById,
+                        spriteScaleMultiplier: actorScaleFor(this.id),
+                        // Walking back into the tavern through its paired portal
+                        // keeps the character and lands by that portal.
+                        spawnOverride: consumeTeleportArrival(this.id) ?? undefined,
+                    },
+                );
                 this.monsterSystem.setPlayerBody(this.character.body);
                 this.monsterSystem.setPlayerLuck(pickedSpec.luck ?? 1);
                 this.dropSystem.setCharacter(this.character);
@@ -865,11 +874,14 @@ export class LoadScene extends Phaser.Scene {
                                 height: 128,
                             };
                         }
+                        // HER hotbar, not the scene's. `this.assets.weapons` is the
+                        // tavern's default girl (DeepSeek), so passing it handed every
+                        // picked character the whale cannon.
                         this.character = loadCharacter(
                             this,
                             this.level,
                             selectedSpec,
-                            this.assets.weapons,
+                            startingWeaponsFor(selectedSpec, this.assets.weaponsById),
                             {
                                 weaponsById: this.assets.weaponsById,
                                 spawnOverride: spawnPos,
