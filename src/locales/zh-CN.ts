@@ -53,7 +53,7 @@ const zhCN: CatalogSource = {
     },
     backpack: {
         title: '背包',
-        hint: 'B 关闭 · 点道具使用',
+        hint: 'B 关闭 点击道具使用',
         close: '关闭',
         empty: '空',
         material: '材料 · 可出售',

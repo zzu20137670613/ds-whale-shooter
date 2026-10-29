@@ -106,7 +106,7 @@ export function BackpackOverlay() {
                         {t('backpack.title')}
                     </span>
                     <div className="flex items-center gap-2">
-                        <span className="text-[10px] text-stone-400">{t('backpack.hint')}</span>
+                        <span className="text-[11px] text-stone-400">{t('backpack.hint')}</span>
                         <button
                             type="button"
                             onClick={resumeGame}
@@ -218,7 +218,7 @@ export function BackpackOverlay() {
                     })}
                 </div>
 
-                <div className="mt-2 border-t border-stone-800 pt-1 text-[9px] text-stone-500">
+                <div className="mt-2 border-t border-stone-800 pt-1 text-[11px] text-stone-400">
                     {inventory.length === 0
                         ? t('backpack.empty')
                         : `${t('backpack.count')} ${inventory.reduce((n, s) => n + s.count, 0)} / ${
