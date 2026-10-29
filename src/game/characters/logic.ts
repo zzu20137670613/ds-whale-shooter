@@ -30,6 +30,12 @@ import {
 } from '@/lib/characters/skill';
 import { handUpOffset, pickBodyTint } from '@/lib/characters/hand';
 import { damageAfterArmor } from '@/lib/characters/combat';
+import {
+    facingFromMotion,
+    facingFromSpawn,
+    flipXForFacing,
+    type Facing,
+} from '@/lib/characters/facing';
 import { WHALE_BLESSING, blessingApplies } from '@/lib/pet/bonus';
 import { scaledSkillCooldown, scaledSkillSpCost } from '@/lib/characters/skill-scaling';
 import { aimFromIntent, aimPointFrom } from '@/lib/input/aim';
@@ -338,6 +344,11 @@ export class CharacterController {
     // instead of immediately snapping to wherever the cursor happens to be.
     private targetX: number | null = null;
     private targetY: number | null = null;
+    /**
+     * Which way she is drawn. Set from the spawn facing and then only changed by
+     * walking - see `facingFromMotion`. Aiming never touches it.
+     */
+    private facing: Facing = 'right';
     // Mobile touch state — written by EventBus listeners from
     // TouchControls.tsx, merged into the keyboard intent on each tick.
     // null pointer id == joystick not held.
@@ -364,10 +375,13 @@ export class CharacterController {
 
     constructor(
         scene: Phaser.Scene,
-        _level: Level,
+        level: Level,
         spec: CharacterSpec,
         parts: CharacterRuntimeParts,
     ) {
+        // Start facing the way the level spawned her; walking takes over from there.
+        this.facing = facingFromSpawn(level.characterSpawn?.facing);
+
         this.scene = scene;
         this.spec = spec;
         this.parts = parts;
@@ -791,14 +805,16 @@ export class CharacterController {
             );
             this.parts.debugHitboxRect.setDepth(footY + 2);
         }
-        // Sprite faces the cursor (mouse-aimed top-down shooter). The
-        // controller already maintains `targetX` / `targetY` from pointer
-        // events, so the weapon aim and the sprite facing stay aligned.
-        // Until the first real pointermove arrives we leave the flipX that
-        // loadCharacter() set from level.characterSpawn.facing — comparing
-        // `null < pos.x` would always be true and flip the sprite on the
-        // very first tick, undoing the spawn-time facing.
-        if (this.targetX !== null) sprite.setFlipX(this.targetX < pos.x);
+        // Facing follows her feet, not the cursor.
+        //
+        // It used to be `sprite.setFlipX(cursorX < herX)` every frame: with the pointer
+        // resting near her own x the comparison alternated and the sprite twitched left
+        // and right. Aim still drives the weapon; the body only turns when she walks -
+        // and walking straight up keeps whatever she was facing, so a lane change does
+        // not spin her around.
+        const bodyVelocity = this.parts.body.velocity;
+        this.facing = facingFromMotion(bodyVelocity.x, bodyVelocity.y, this.facing);
+        sprite.setFlipX(flipXForFacing(this.facing));
 
         // Cursor aiming only while the mouse scheme is live. Under the directional
         // scheme the arrows own the aim and the cursor is ignored, so a moving mouse
