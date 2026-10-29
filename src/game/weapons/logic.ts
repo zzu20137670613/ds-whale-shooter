@@ -16,7 +16,6 @@
 import type * as Phaser from 'phaser';
 
 import {
-    RELOAD_AUTO_REARM_MS,
     SFX_EVENT,
     WEAPONS_REFILL_ALL_EVENT,
     WEAPONS_REFILL_ONE_EVENT,
@@ -498,7 +497,12 @@ export class WeaponController {
                     // A zero reload time means "instant", not "never finishes" - the
                     // old guard left such a weapon stuck reloading for good.
                     const elapsed = time - slot.reloadStartedAt;
-                    if (elapsed >= Math.max(1, reloadTimeMs)) {
+                    // Self-heal: a reload that has been running for three times its
+                    // own duration is stuck (a clock jump, a scene that paused mid-way,
+                    // a spec edited live). Finish it rather than leave the player with a
+                    // gun that can neither fire nor reload - which is exactly the
+                    // "00 / 25 and nothing happens" report.
+                    if (elapsed >= Math.max(1, reloadTimeMs) || elapsed > reloadTimeMs * 3 + 2000) {
                         // Rounds come out of the reserve. A reserve that cannot
                         // fill the magazine just gives what it has.
                         const filled = reloadFromReserve(
@@ -534,11 +538,7 @@ export class WeaponController {
                 // auto-reload is for.
                 active.ammo === 0 &&
                 canReloadFromReserve(active.ammo, active.reserve, active.spec.clipSize ?? 1) &&
-                !active.reloading &&
-                // The completion flash used to block auto-reload outright, so an empty
-                // magazine could sit there dry-firing forever after one reload. Time is
-                // what it actually meant: let the flash play, then re-arm.
-                time - active.justCompletedAt > RELOAD_AUTO_REARM_MS
+                !active.reloading
             ) {
                 active.reloading = true;
                 active.reloadStartedAt = time;
