@@ -17,6 +17,7 @@
 import {
     type PetDeps,
     PET_FALLBACK_BONUS_PERCENT,
+    PET_SUSPEND_GRACE_MS,
     probePet,
     resumePet,
     suspendPet,
@@ -31,6 +32,8 @@ export interface PetBonus {
 }
 
 let suspendedByUs = false;
+/** When we sent `suspend`, for the grace window below. 0 = never. */
+let suspendedAt = 0;
 
 /** Whether this page hid the pet and therefore owes it a `resume`. */
 export function hasSuspendedPet(): boolean {
@@ -40,6 +43,7 @@ export function hasSuspendedPet(): boolean {
 /** Tests only — the real app never needs to forget this. */
 export function resetPetLifetime(): void {
     suspendedByUs = false;
+    suspendedAt = 0;
 }
 
 /**
@@ -66,6 +70,7 @@ export async function beginPetSession(deps: PetDeps): Promise<PetBonus> {
 
     const suspended = await suspendPet(deps);
     suspendedByUs = suspended;
+    suspendedAt = suspended ? Date.now() : 0;
 
     return {
         percent: probe.level.bonusPercent,
@@ -81,10 +86,20 @@ export async function beginPetSession(deps: PetDeps): Promise<PetBonus> {
  */
 export async function endPetSession(deps: PetDeps): Promise<boolean> {
     if (!suspendedByUs) return false;
+
+    // Still inside her 1.4s line: leave her alone. Waking her now would cut the sentence
+    // off and shove the window back in the player's face. She auto-resumes on her own
+    // (ten-minute timer, plus the tray icon), so skipping costs nothing but a rare wait.
+    if (suspendedAt > 0 && Date.now() - suspendedAt < PET_SUSPEND_GRACE_MS) {
+        suspendedByUs = false;
+        suspendedAt = 0;
+        return false;
+    }
     const ok = await resumePet(deps);
     // Clear the flag either way: if the call failed, her ten-minute auto-resume
     // and the tray icon are the safety net, and retrying forever would keep
     // firing requests at a closed port.
     suspendedByUs = false;
+    suspendedAt = 0;
     return ok;
 }

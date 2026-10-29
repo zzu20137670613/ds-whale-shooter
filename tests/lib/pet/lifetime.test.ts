@@ -11,7 +11,13 @@
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { PET_FALLBACK_BONUS_PERCENT, PET_PROTOCOL, suspendPet, resumePet } from '@/lib/pet/bridge';
+import {
+    PET_FALLBACK_BONUS_PERCENT,
+    PET_PROTOCOL,
+    PET_SUSPEND_GRACE_MS,
+    resumePet,
+    suspendPet,
+} from '@/lib/pet/bridge';
 import {
     beginPetSession,
     endPetSession,
@@ -50,6 +56,23 @@ function recordingDeps(ping: unknown, level: unknown) {
         return json({ ok: true });
     });
     return { deps: { fetcher: fetcher as never }, calls };
+}
+
+
+/**
+ * Pretend the player actually played for a while.
+ *
+ * `endPetSession` deliberately does nothing inside her 1.4s goodbye line, and every test
+ * here starts and ends a session in the same millisecond - so the ones that expect a
+ * `resume` have to move the clock past the grace first.
+ */
+function afterTheGrace<T>(run: () => Promise<T>): Promise<T> {
+    const realNow = Date.now;
+    const base = realNow();
+    Date.now = () => base + PET_SUSPEND_GRACE_MS + 1;
+    return run().finally(() => {
+        Date.now = realNow;
+    });
 }
 
 beforeEach(() => resetPetLifetime());
@@ -99,7 +122,7 @@ describe('endPetSession', () => {
     it('resumes the pet we hid', async () => {
         const { deps, calls } = recordingDeps(PING, levelAt(10, 50, true));
         await beginPetSession(deps);
-        const resumed = await endPetSession(deps);
+        const resumed = await afterTheGrace(() => endPetSession(deps));
 
         expect(resumed).toBe(true);
         expect(calls).toContain('POST resume');
@@ -118,7 +141,7 @@ describe('endPetSession', () => {
     it('does not resume twice when the game unmounts twice', async () => {
         const { deps, calls } = recordingDeps(PING, levelAt(5, 20));
         await beginPetSession(deps);
-        await endPetSession(deps);
+        await afterTheGrace(() => endPetSession(deps));
         await endPetSession(deps); // e.g. pagehide then unload
         expect(calls.filter((c) => c === 'POST resume')).toHaveLength(1);
     });
@@ -155,5 +178,28 @@ describe('the raw calls', () => {
         });
         expect(await suspendPet({ fetcher: fetcher as never })).toBe(false);
         expect(await resumePet({ fetcher: fetcher as never })).toBe(false);
+    });
+});
+
+describe('the 1.4s she spends saying goodbye', () => {
+    it('does not wake her while she is still talking', async () => {
+        // 第七世: `suspend` starts a 1.4s line; her window hides after it. Waking her
+        // inside that window cuts the sentence and pops the window back up.
+        const { deps, calls } = recordingDeps(PING, levelAt(10, 50, true));
+        await beginPetSession(deps);
+        const resumed = await endPetSession(deps);
+
+        expect(resumed).toBe(false);
+        expect(calls).not.toContain('POST resume');
+        // The flag is cleared: this page owes her nothing any more.
+        expect(hasSuspendedPet()).toBe(false);
+    });
+
+    it('wakes her normally once the grace has passed', async () => {
+        const { deps, calls } = recordingDeps(PING, levelAt(10, 50, true));
+        await beginPetSession(deps);
+
+        expect(await afterTheGrace(() => endPetSession(deps))).toBe(true);
+        expect(calls).toContain('POST resume');
     });
 });

@@ -12,6 +12,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { installPetExitHooks, resetPetBridgeForTests, startPetBridge } from '@/lib/pet/boot';
+import { PET_SUSPEND_GRACE_MS } from '@/lib/pet/bridge';
 import { resetPetLifetime } from '@/lib/pet/lifetime';
 
 const json = (body: unknown) => ({ ok: true, json: async () => body }) as unknown as Response;
@@ -47,6 +48,23 @@ beforeEach(() => {
 });
 afterEach(() => vi.restoreAllMocks());
 
+
+/**
+ * Move the clock past her 1.4s goodbye line.
+ *
+ * `suspend` starts a spoken line and her window hides when it ends; waking her inside that
+ * window cuts it off, so `endPetSession` refuses to. A real player quits minutes later -
+ * these tests quit in the same millisecond, so they have to say so.
+ */
+function skipHerGoodbyeLine(): void {
+    const realNow = Date.now;
+    const base = realNow();
+    Date.now = () => base + PET_SUSPEND_GRACE_MS + 1;
+    setTimeout(() => {
+        Date.now = realNow;
+    }, 0);
+}
+
 describe('startPetBridge', () => {
     it('reports the pet tier to the store', async () => {
         const { deps: d } = deps();
@@ -69,6 +87,7 @@ describe('installPetExitHooks', () => {
         await startPetBridge(d);
         const stop = installPetExitHooks(d);
 
+        skipHerGoodbyeLine();
         window.dispatchEvent(new Event('pagehide'));
         await vi.waitFor(() => expect(routes).toContain('POST resume'));
         stop();
@@ -79,6 +98,7 @@ describe('installPetExitHooks', () => {
         await startPetBridge(d);
         const stop = installPetExitHooks(d);
 
+        skipHerGoodbyeLine();
         window.dispatchEvent(new Event('pagehide'));
         window.dispatchEvent(new Event('beforeunload'));
         await vi.waitFor(() => expect(routes).toContain('POST resume'));
@@ -90,6 +110,7 @@ describe('installPetExitHooks', () => {
         const { deps: d, routes } = deps();
         await startPetBridge(d);
         const stop = installPetExitHooks(d);
+        skipHerGoodbyeLine();
         stop(); // fires once on teardown
         await vi.waitFor(() => expect(routes).toContain('POST resume'));
 

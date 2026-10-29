@@ -43,6 +43,15 @@ export const PET_PROTOCOL = 1;
  */
 export const PET_FALLBACK_BONUS_PERCENT = 20;
 
+/**
+ * How long her window keeps talking after we hide her, in ms.
+ *
+ * 第七世 (2026-10-26): `suspend` starts a 1.4s line - "我去游戏里了，打完记得叫我。"
+ * - and only then does her window `hide()`. Sending `resume` inside that window cuts her
+ * off mid-sentence and pops the window back up in front of the player.
+ */
+export const PET_SUSPEND_GRACE_MS = 1400;
+
 /** How long any single bridge call may take before it is treated as absent. */
 export const PET_TIMEOUT_MS = 900;
 
