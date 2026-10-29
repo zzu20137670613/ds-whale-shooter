@@ -8,6 +8,7 @@ import { SceneHubOverlay } from './scene-hub-overlay';
 import { ComboOverlay } from './combo-overlay';
 import { HurtVignetteOverlay } from './hurt-vignette-overlay';
 import { DebugReadout } from './debug-readout';
+import { HudErrorBoundary } from './hud-error-boundary';
 import { LocaleToggle } from './locale-toggle';
 import { SaveHotkeys } from './save-hotkeys';
 import { SaveToast } from './save-toast';
@@ -47,19 +48,48 @@ export const GameHUDLayer: React.FC = () => {
 
     return (
         <div style={style} className="pointer-events-none overflow-hidden z-10">
-            <HurtVignetteOverlay />
-            <SceneHubOverlay />
-            <ComboOverlay />
-            <CharacterHUDOverlay />
-            <WeaponHUDOverlay />
-            <MoneyHud />
-            <LocaleToggle />
-            <DebugReadout flag="spriteDebug" globalKey="__spriteDebug" />
-            <SaveHotkeys />
-            <SaveToast />
-            <SettingsOverlay />
-            <DeathOverlay />
-            <VictoryOverlay />
+            {/* Each overlay is isolated: a render crash in one costs that panel, not
+                the whole screen. A black page caused by a missing import is how this
+                earned its place. */}
+            <HudErrorBoundary name="hurt-vignette">
+                <HurtVignetteOverlay />
+            </HudErrorBoundary>
+            <HudErrorBoundary name="scene-hub">
+                <SceneHubOverlay />
+            </HudErrorBoundary>
+            <HudErrorBoundary name="combo">
+                <ComboOverlay />
+            </HudErrorBoundary>
+            <HudErrorBoundary name="character">
+                <CharacterHUDOverlay />
+            </HudErrorBoundary>
+            <HudErrorBoundary name="weapon">
+                <WeaponHUDOverlay />
+            </HudErrorBoundary>
+            <HudErrorBoundary name="money">
+                <MoneyHud />
+            </HudErrorBoundary>
+            <HudErrorBoundary name="locale">
+                <LocaleToggle />
+            </HudErrorBoundary>
+            <HudErrorBoundary name="debug">
+                <DebugReadout flag="spriteDebug" globalKey="__spriteDebug" />
+            </HudErrorBoundary>
+            <HudErrorBoundary name="save-hotkeys">
+                <SaveHotkeys />
+            </HudErrorBoundary>
+            <HudErrorBoundary name="save-toast">
+                <SaveToast />
+            </HudErrorBoundary>
+            <HudErrorBoundary name="settings">
+                <SettingsOverlay />
+            </HudErrorBoundary>
+            <HudErrorBoundary name="death">
+                <DeathOverlay />
+            </HudErrorBoundary>
+            <HudErrorBoundary name="victory">
+                <VictoryOverlay />
+            </HudErrorBoundary>
         </div>
     );
 };
