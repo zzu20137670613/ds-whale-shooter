@@ -60,11 +60,7 @@ import { setBootProgress } from '@/lib/boot-loading/progress';
 import { setCurrentLevel } from '@/lib/levels/current-level';
 import { actorScaleFor } from '@/lib/levels/actor-scale';
 import { startingWeaponsFor } from '@/lib/characters/starting-weapons';
-import {
-    CAT_SHOP_ACTION,
-    CAT_SHOP_GIFT_DROP_ID,
-    CAT_SHOP_GIFT_WEAPON_ID,
-} from '@/lib/levels/easter-eggs';
+import { CAT_SHOP_GIFT_DROP_ID, CAT_SHOP_GIFT_WEAPON_ID } from '@/lib/levels/easter-eggs';
 import { fetchLevelIndex } from '@/lib/levels/loader';
 import { groundLayers, isPortalArmed, propKey, spawnsWithoutBrokenProps } from '@/lib/levels/logic';
 import { MERCHANT_SHOP_EVENT, usesMerchant } from '@/lib/merchant/logic';
@@ -998,9 +994,11 @@ export class LoadScene extends Phaser.Scene {
     /**
      * 猫猫商店 — the cabin cat opens the very same shop the merchant carries.
      *
-     * The first click of a save also hands over an assault rifle: it pops out of
-     * the cats and arcs down to the player's feet, the same flight the lounger's
-     * iced juice uses, retargeted at wherever the player happens to stand.
+     * The first click of a save also hands over an assault rifle. It goes straight into
+     * her hands: the arc-delivery version needed five things to line up at once (drop
+     * spec, weapon spec, click zone, a sprite on the spawned drop, and a pickup after
+     * landing) and did nothing at all whenever one was missing. The rifle is the easter
+     * egg; the flight was decoration.
      */
     private openCatShop(): void {
         const state = useGameStore.getState();
@@ -1009,33 +1007,26 @@ export class LoadScene extends Phaser.Scene {
         EventBus.emit(MERCHANT_SHOP_EVENT);
         if (!firstOfSave) return;
 
-        const dropSpec = this.assets.dropSpecs.get(CAT_SHOP_GIFT_DROP_ID);
         const weaponSpec = this.assets.weaponsById.get(CAT_SHOP_GIFT_WEAPON_ID);
-        const zone = this.level.interactables?.find(
-            (item) => item.action === CAT_SHOP_ACTION,
-        )?.zones[0];
-        const { x, y } = this.character.body.position;
-
-        if (dropSpec && weaponSpec && zone) {
-            const from = { x: zone.x + zone.width / 2, y: zone.y + zone.height / 2 };
-            try {
-                this.triggerSystem.launch(dropSpec, from, { x, y }, 130, 800, weaponSpec);
-                return;
-            } catch (error) {
-                // Never lose the gift to an animation problem.
-                console.error('[cat-shop] gift launch failed, handing it over directly', error);
-            }
-        } else {
-            console.error('[cat-shop] gift prerequisites missing', {
-                dropSpec: Boolean(dropSpec),
-                weaponSpec: Boolean(weaponSpec),
-                zone: Boolean(zone),
+        if (!weaponSpec) {
+            console.error('[cat-shop] the rifle spec is not loaded in this scene', {
+                giftId: CAT_SHOP_GIFT_WEAPON_ID,
+                loaded: [...this.assets.weaponsById.keys()],
             });
+            return;
         }
 
-        // Fallback: straight into her hands. The rifle is the point of the easter egg;
-        // the arc is only how it arrives.
+        const before = this.character.weapons?.getSlotCount() ?? 0;
         this.character.pickUpWeapon(CAT_SHOP_GIFT_WEAPON_ID);
+        const after = this.character.weapons?.getSlotCount() ?? 0;
+        if (after === before) {
+            // Already carrying it, or the hotbar is full - say so instead of pretending.
+            console.warn('[cat-shop] rifle not added (already held, or hotbar full)', {
+                before,
+                after,
+            });
+        }
+        this.character.refreshHud();
     }
 
     shutdown(): void {
