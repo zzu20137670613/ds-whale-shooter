@@ -12,18 +12,18 @@ sfx:
     death: monster-death
     aggro: monster-aggro
 drops:
-    # 怪物掉落表（表·2026-10-29 定稿）：每一行独立摇一次。
+    # 怪物掉落表（表·2026-10-29 定稿）：一行一次抽，档位从高往低套。
+    # 掉3个 命中就吃掉 掉2个 和 概率%，都没中才掉 1 个或 0 个。
     - dropId: hp-shard
       chance: 1
+      chance2: 0.2
     - dropId: sp-fragment
       chance: 0.4
     - dropId: ammo-cache
       chance: 0.3
+      chance2: 0.01
     - dropId: overcharge-core
       chance: 0.15
-
-# Reuses the base drone sprite at 1.4x scale — no separate AI art needed.
-# Visual size scales the Phaser sprite; physics body still uses halfW/halfH above.
 sprite:
     texture: assets/image/monsters/drone.png
     grid: { rows: 4, cols: 4 }

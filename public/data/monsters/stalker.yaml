@@ -13,11 +13,11 @@ sfx:
     aggro: monster-aggro
 drops:
     # 怪物掉落表（表·2026-10-29 定稿）：一行一次抽，档位从高往低套。
-    # 藤壶 = 1个100% / 2个50% / 3个20%（命中高档就吃掉低档）。
+    # 掉3个 命中就吃掉 掉2个 和 概率%，都没中才掉 1 个或 0 个。
     - dropId: barnacle
       chance: 1
       chance2: 0.5
-      chance3: 0.2
+      chance3: 0.05
     - dropId: hp-shard
       chance: 0.5
     - dropId: sp-fragment
