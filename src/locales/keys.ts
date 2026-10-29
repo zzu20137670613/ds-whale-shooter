@@ -70,6 +70,8 @@ export type CatalogSource = {
         attackKey: string;
         /** Keycap for the backpack. */
         bagKey: string;
+        /** Keycap for cycling the hotbar. */
+        switchKey: string;
         /** Suffix on the combo counter ("12 HITS"). */
         hits: string;
     };

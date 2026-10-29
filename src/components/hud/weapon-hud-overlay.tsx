@@ -3,6 +3,7 @@ import React from 'react';
 import { useGameStore } from '@/store/game-store';
 import { EventBus } from '@/lib/events/bus';
 import { useIsMobile } from '@/lib/use-is-mobile';
+import { t } from '@/locales';
 
 import { CornerPixels } from './retro-box';
 
@@ -175,6 +176,12 @@ export const WeaponHUDOverlay: React.FC = () => {
              *  pops in front of the others. z-index decreases with
              *  |offset| so closer cards overlap farther ones, the
              *  same way a hand stacks. */}
+            {/* Keycap above the fan, matching the skill chips bottom-left. */}
+            <div className="mb-1 flex justify-end">
+                <span className="rounded-[2px] border border-stone-600 bg-stone-900/85 px-1.5 py-1 text-[11px] leading-none tracking-tight text-amber-300">
+                    {t('hud.switchKey')}
+                </span>
+            </div>
             <div className="relative h-[200px]">
                 {slots.map((slot, index) => {
                     const isActive = index === activeWeaponIndex;

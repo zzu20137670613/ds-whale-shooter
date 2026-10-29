@@ -49,6 +49,7 @@ const en: CatalogSource = {
         skillKey: 'E · Skill',
         attackKey: 'J · Attack',
         bagKey: 'B · Backpack',
+        switchKey: 'Q · Switch weapon',
         hits: 'HITS',
     },
     backpack: {

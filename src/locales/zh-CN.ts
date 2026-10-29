@@ -49,6 +49,7 @@ const zhCN: CatalogSource = {
         skillKey: 'E 技能',
         attackKey: 'J 攻击',
         bagKey: 'B 背包',
+        switchKey: 'Q 切换武器',
         hits: '连击',
     },
     backpack: {
