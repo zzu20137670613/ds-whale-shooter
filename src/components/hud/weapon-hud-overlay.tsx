@@ -290,12 +290,22 @@ export const WeaponHUDOverlay: React.FC = () => {
                                     >
                                         {slot.name}
                                     </span>
+                                    {/* Magazine / reserve. The right-hand number used to be
+                                        `clipSize`, which is a constant - it read exactly like a
+                                        reserve that never moved, and that is the "备弹一直是 25"
+                                        report. The real reserve is what the player spends. */}
                                     <span
-                                        className={`text-[10px] font-mono leading-none tabular-nums drop-shadow-[1px_1px_0px_#000] ${isActive ? 'text-amber-300' : 'text-stone-500'}`}
+                                        className={`text-[10px] font-mono leading-none tabular-nums drop-shadow-[1px_1px_0px_#000] ${
+                                            isActive
+                                                ? (slot.reserve ?? 0) > 0
+                                                    ? 'text-amber-300'
+                                                    : 'text-rose-400'
+                                                : 'text-stone-500'
+                                        }`}
                                     >
                                         {String(slot.ammo).padStart(2, '0')}
                                         <span className="text-stone-500"> / </span>
-                                        {String(slot.clipSize).padStart(2, '0')}
+                                        {String(slot.reserve ?? 0).padStart(2, '0')}
                                     </span>
                                 </div>
                             </div>
@@ -303,7 +313,7 @@ export const WeaponHUDOverlay: React.FC = () => {
                             {/* Reload progress overlay (active slot only). */}
                             {showReloading && (
                                 <div
-                                    className="absolute bottom-0 left-0 right-0 h-1 bg-amber-400/80 pointer-events-none z-10"
+                                    className="absolute bottom-0 left-0 right-0 h-1.5 bg-amber-400 pointer-events-none z-10"
                                     style={{
                                         width: `${Math.max(
                                             0,
