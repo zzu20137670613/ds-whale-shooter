@@ -32,6 +32,7 @@ import type { SceneAssets } from '@/game/scenes/scene';
 import { fetchDrop } from '@/lib/drops';
 import type { DropSpec } from '@/lib/drops';
 import { collectDropIds, fetchLevel, fetchLevelIndex } from '@/lib/levels';
+import { CAT_SHOP_ACTION, CAT_SHOP_GIFT_WEAPON_ID } from '@/lib/levels/easter-eggs';
 import type { MonsterSpec } from '@/lib/monsters';
 import { fetchMonster } from '@/lib/monsters';
 import type { WeaponSpec } from '@/lib/weapons';
@@ -187,6 +188,14 @@ export async function resolveScene(
     // persisted player pickups. These get their in-hand texture
     // loaded because the player holds them and they're rendered as
     // drops on the ground.
+    // The cat's gift hands over a rifle the picked character may not carry, so the
+    // id has to be loaded for ANY character - otherwise `weaponsById.get()` misses it
+    // at click time and the gift silently does nothing (GPT never had an assault rifle
+    // in her hotbar, which is exactly how this stayed broken).
+    if (level.interactables?.some((item) => item.action === CAT_SHOP_ACTION)) {
+        spawnWeaponIds.add(CAT_SHOP_GIFT_WEAPON_ID);
+    }
+
     const playerWeaponIds = new Set<string>([
         ...character.hotbar,
         ...spawnWeaponIds,

@@ -529,6 +529,10 @@ export class WeaponController {
                 active.ammo = 1;
                 active.reloading = false;
             } else if (
+                // ONLY an empty magazine re-arms itself. Reloading with rounds still
+                // in the clip interrupted sustained fire, which is the opposite of what
+                // auto-reload is for.
+                active.ammo === 0 &&
                 canReloadFromReserve(active.ammo, active.reserve, active.spec.clipSize ?? 1) &&
                 !active.reloading &&
                 // The completion flash used to block auto-reload outright, so an empty
