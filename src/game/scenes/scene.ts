@@ -60,7 +60,8 @@ import { setBootProgress } from '@/lib/boot-loading/progress';
 import { setCurrentLevel } from '@/lib/levels/current-level';
 import { actorScaleFor } from '@/lib/levels/actor-scale';
 import { startingWeaponsFor } from '@/lib/characters/starting-weapons';
-import { CAT_SHOP_GIFT_DROP_ID, CAT_SHOP_GIFT_WEAPON_ID } from '@/lib/levels/easter-eggs';
+import { giveCatGift } from '@/lib/levels/cat-gift';
+import { CAT_SHOP_GIFT_DROP_ID } from '@/lib/levels/easter-eggs';
 import { fetchLevelIndex } from '@/lib/levels/loader';
 import { groundLayers, isPortalArmed, propKey, spawnsWithoutBrokenProps } from '@/lib/levels/logic';
 import { MERCHANT_SHOP_EVENT, usesMerchant } from '@/lib/merchant/logic';
@@ -1007,26 +1008,13 @@ export class LoadScene extends Phaser.Scene {
         EventBus.emit(MERCHANT_SHOP_EVENT);
         if (!firstOfSave) return;
 
-        const weaponSpec = this.assets.weaponsById.get(CAT_SHOP_GIFT_WEAPON_ID);
-        if (!weaponSpec) {
-            console.error('[cat-shop] the rifle spec is not loaded in this scene', {
-                giftId: CAT_SHOP_GIFT_WEAPON_ID,
-                loaded: [...this.assets.weaponsById.keys()],
-            });
-            return;
-        }
-
-        const before = this.character.weapons?.getSlotCount() ?? 0;
-        this.character.pickUpWeapon(CAT_SHOP_GIFT_WEAPON_ID);
-        const after = this.character.weapons?.getSlotCount() ?? 0;
-        if (after === before) {
-            // Already carrying it, or the hotbar is full - say so instead of pretending.
-            console.warn('[cat-shop] rifle not added (already held, or hotbar full)', {
-                before,
-                after,
-            });
-        }
-        this.character.refreshHud();
+        giveCatGift({
+            weaponsById: this.assets.weaponsById,
+            weapons: this.character.weapons ?? null,
+            pickUp: (id) => this.character.pickUpWeapon(id),
+            refresh: () => this.character.refreshHud(),
+            warn: (message, detail) => console.warn(`[cat-shop] ${message}`, detail),
+        });
     }
 
     shutdown(): void {
