@@ -60,7 +60,11 @@ import { setBootProgress } from '@/lib/boot-loading/progress';
 import { setCurrentLevel } from '@/lib/levels/current-level';
 import { actorScaleFor } from '@/lib/levels/actor-scale';
 import { startingWeaponsFor } from '@/lib/characters/starting-weapons';
-import { CAT_SHOP_GIFT_DROP_ID, CAT_SHOP_GIFT_WEAPON_ID } from '@/lib/levels/easter-eggs';
+import {
+    CAT_SHOP_ACTION,
+    CAT_SHOP_GIFT_DROP_ID,
+    CAT_SHOP_GIFT_WEAPON_ID,
+} from '@/lib/levels/easter-eggs';
 import { fetchLevelIndex } from '@/lib/levels/loader';
 import { groundLayers, isPortalArmed, propKey, spawnsWithoutBrokenProps } from '@/lib/levels/logic';
 import { MERCHANT_SHOP_EVENT, usesMerchant } from '@/lib/merchant/logic';
@@ -1005,16 +1009,33 @@ export class LoadScene extends Phaser.Scene {
         EventBus.emit(MERCHANT_SHOP_EVENT);
         if (!firstOfSave) return;
 
-        const dropSpec = this.assets.dropSpecs.get('weapon-drop');
+        const dropSpec = this.assets.dropSpecs.get(CAT_SHOP_GIFT_DROP_ID);
         const weaponSpec = this.assets.weaponsById.get(CAT_SHOP_GIFT_WEAPON_ID);
-        const zone = this.level.interactables?.find((item) => item.action === 'cat-shop')?.zones[0];
-        if (!dropSpec || !weaponSpec || !zone) {
-            console.warn('[cat-shop] gift skipped: drop, weapon or zone missing');
-            return;
-        }
-        const from = { x: zone.x + zone.width / 2, y: zone.y + zone.height / 2 };
+        const zone = this.level.interactables?.find(
+            (item) => item.action === CAT_SHOP_ACTION,
+        )?.zones[0];
         const { x, y } = this.character.body.position;
-        this.triggerSystem.launch(dropSpec, from, { x, y }, 130, 800, weaponSpec);
+
+        if (dropSpec && weaponSpec && zone) {
+            const from = { x: zone.x + zone.width / 2, y: zone.y + zone.height / 2 };
+            try {
+                this.triggerSystem.launch(dropSpec, from, { x, y }, 130, 800, weaponSpec);
+                return;
+            } catch (error) {
+                // Never lose the gift to an animation problem.
+                console.error('[cat-shop] gift launch failed, handing it over directly', error);
+            }
+        } else {
+            console.error('[cat-shop] gift prerequisites missing', {
+                dropSpec: Boolean(dropSpec),
+                weaponSpec: Boolean(weaponSpec),
+                zone: Boolean(zone),
+            });
+        }
+
+        // Fallback: straight into her hands. The rifle is the point of the easter egg;
+        // the arc is only how it arrives.
+        this.character.pickUpWeapon(CAT_SHOP_GIFT_WEAPON_ID);
     }
 
     shutdown(): void {
