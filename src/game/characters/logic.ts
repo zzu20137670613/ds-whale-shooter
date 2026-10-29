@@ -29,6 +29,7 @@ import {
     useSkill,
 } from '@/lib/characters/skill';
 import { handUpOffset, pickBodyTint } from '@/lib/characters/hand';
+import { idlePoseFor } from '@/lib/characters/idle-pose';
 import { damageAfterArmor } from '@/lib/characters/combat';
 import {
     facingFromMotion,
@@ -1056,8 +1057,20 @@ export class CharacterController {
             if (cur !== walkKey && this.scene.anims.exists(walkKey)) {
                 sprite.anims.play(walkKey, true);
             }
-        } else if (cur !== idleKey && this.scene.anims.exists(idleKey)) {
-            sprite.anims.play(idleKey, true);
+        } else {
+            // Standing still keeps her direction. Every frame on these sheets is drawn
+            // front-on, so a symmetric idle pose mirrored for "left" looks identical to
+            // "facing the front"; the lean of the walk cycle is the only art that reads as
+            // a side. Freeze on that instead of snapping back to centred.
+            const pose = idlePoseFor(this.facing, this.spec.anims?.walk?.frames?.[0]);
+            if (pose.anim === 'idle') {
+                if (cur !== idleKey && this.scene.anims.exists(idleKey)) {
+                    sprite.anims.play(idleKey, true);
+                }
+            } else if (pose.frame !== null) {
+                if (cur !== null) sprite.anims.stop();
+                if (sprite.frame.name !== String(pose.frame)) sprite.setFrame(pose.frame);
+            }
         }
     }
 
