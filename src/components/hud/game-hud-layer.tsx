@@ -7,6 +7,7 @@ import { WeaponHUDOverlay } from './weapon-hud-overlay';
 import { SceneHubOverlay } from './scene-hub-overlay';
 import { ComboOverlay } from './combo-overlay';
 import { HurtVignetteOverlay } from './hurt-vignette-overlay';
+import { DebugReadout } from './debug-readout';
 import { LocaleToggle } from './locale-toggle';
 import { SaveHotkeys } from './save-hotkeys';
 import { SaveToast } from './save-toast';
@@ -53,6 +54,7 @@ export const GameHUDLayer: React.FC = () => {
             <WeaponHUDOverlay />
             <MoneyHud />
             <LocaleToggle />
+            <DebugReadout flag="spriteDebug" globalKey="__spriteDebug" />
             <SaveHotkeys />
             <SaveToast />
             <SettingsOverlay />

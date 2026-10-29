@@ -16,7 +16,7 @@ hitWidth: 130
 hitHeight: 120
 visual:
     texture: assets/image/weapons/rune-shield.png
-    scale: 0.16
+    scale: 1.00
     orbitRadius: 14
     anchor: [0.2, 0.5]
     swingAngle: 200

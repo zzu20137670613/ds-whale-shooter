@@ -17,7 +17,9 @@ hitWidth: 130
 hitHeight: 110
 visual:
     texture: assets/image/weapons/nashors-tooth.png
-    scale: 0.2
+    # 56px on screen read as a dagger; 0.42 puts it at ~118px, in line with the
+    # other held blades.
+    scale: 0.42
     orbitRadius: 12
     anchor: [0.1, 0.5]
     swingAngle: 170

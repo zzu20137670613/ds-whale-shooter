@@ -349,6 +349,17 @@ export class CharacterController {
      * walking - see `facingFromMotion`. Aiming never touches it.
      */
     private facing: Facing = 'right';
+    /** `?spriteDebug=1` publishes per-frame sprite state for the corner readout. */
+    private readonly debugSprite =
+        typeof window !== 'undefined' && window.location.search.includes('spriteDebug');
+    private dbgFlipCount = 0;
+    private dbgAnimCount = 0;
+    private dbgFrameCount = 0;
+    private dbgLastFlip = false;
+    private dbgLastAnim: string | null = null;
+    private dbgLastFrame = -1;
+    private dbgWindowStart = 0;
+    private dbgRates = { flips: 0, anims: 0, frames: 0 };
     // Mobile touch state — written by EventBus listeners from
     // TouchControls.tsx, merged into the keyboard intent on each tick.
     // null pointer id == joystick not held.
@@ -613,6 +624,60 @@ export class CharacterController {
      * from the backpack while the game is paused used to change her real HP and leave
      * the bar still, so the heal looked like it only landed when the bag closed.
      */
+    /**
+     * Count how often the flip / animation key / frame changes, once a second, and
+     * publish it. "The sprite twitches" is one of three different bugs and this is the
+     * cheapest way to tell which one the player is looking at.
+     */
+    private publishSpriteDebug(
+        sprite: Phaser.GameObjects.Sprite,
+        velocity: { x: number; y: number },
+    ): void {
+        if (!this.debugSprite) return;
+        const now = this.scene.time.now;
+        const flip = sprite.flipX;
+        const anim = sprite.anims?.currentAnim?.key ?? '';
+        const frame = sprite.anims?.currentFrame?.index ?? -1;
+
+        if (flip !== this.dbgLastFlip) {
+            this.dbgFlipCount += 1;
+            this.dbgLastFlip = flip;
+        }
+        if (anim !== this.dbgLastAnim) {
+            this.dbgAnimCount += 1;
+            this.dbgLastAnim = anim;
+        }
+        if (frame !== this.dbgLastFrame) {
+            this.dbgFrameCount += 1;
+            this.dbgLastFrame = frame;
+        }
+        if (this.dbgWindowStart === 0) this.dbgWindowStart = now;
+        if (now - this.dbgWindowStart >= 1000) {
+            this.dbgRates = {
+                flips: this.dbgFlipCount,
+                anims: this.dbgAnimCount,
+                frames: this.dbgFrameCount,
+            };
+            this.dbgFlipCount = 0;
+            this.dbgAnimCount = 0;
+            this.dbgFrameCount = 0;
+            this.dbgWindowStart = now;
+        }
+
+        const round = (n: number): number => Math.round(n * 100) / 100;
+        (window as unknown as Record<string, unknown>).__spriteDebug = {
+            facing: this.facing,
+            flip,
+            anim,
+            frame,
+            vx: round(velocity.x),
+            vy: round(velocity.y),
+            flipsPerSec: this.dbgRates.flips,
+            animSwitchesPerSec: this.dbgRates.anims,
+            frameChangesPerSec: this.dbgRates.frames,
+        };
+    }
+
     refreshHud(): void {
         this.parts.hud?.update(this.spec, this.hp, this.sp);
         if (this.parts.weapons && this.parts.weaponHud) {
@@ -815,6 +880,7 @@ export class CharacterController {
         const bodyVelocity = this.parts.body.velocity;
         this.facing = facingFromMotion(bodyVelocity.x, bodyVelocity.y, this.facing);
         sprite.setFlipX(flipXForFacing(this.facing));
+        this.publishSpriteDebug(sprite, bodyVelocity);
 
         // Cursor aiming only while the mouse scheme is live. Under the directional
         // scheme the arrows own the aim and the cursor is ignored, so a moving mouse

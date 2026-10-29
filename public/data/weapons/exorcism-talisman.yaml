@@ -18,7 +18,7 @@ ammoPrice: { price: 1, perRounds: 1 }
 reloadTimeMs: 2600
 visual:
     texture: assets/image/weapons/rune-shield.png
-    scale: 0.16
+    scale: 1.10
     orbitRadius: 20
     anchor: [0.3, 0.5]
     recoilDistance: 10
