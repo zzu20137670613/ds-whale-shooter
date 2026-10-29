@@ -116,10 +116,13 @@ sprite:
         pad: 2
 anims:
     idle:
+        # Static, on purpose. The four idle frames were generated separately, so they are
+        # near-identical poses a few pixels apart - looping them read as a twitch, worst on
+        # the pale characters. Walking, running and dodging still animate.
         frames:
             - 0
-            - 3
-        frameRate: 6
+            - 0
+        frameRate: 1
         repeat: -1
     walk:
         frames:
