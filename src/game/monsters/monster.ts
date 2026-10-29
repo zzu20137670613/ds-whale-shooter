@@ -76,6 +76,7 @@ import {
     type BossAttackId,
     scaleForPhase,
     type BossPhase,
+    spriteHeightForPhase,
 } from '@/lib/bosses/phases';
 import {
     BOSS_ATTACKS,
@@ -342,6 +343,11 @@ export class Monster {
             if (spec.sprite.scale) {
                 spriteObj.setScale(spec.sprite.scale);
             }
+            // A boss is sized by her phase, not by the authored scale: the first three
+            // forms stand 198px, phase four shrinks to 186, the last to the player's 173.
+            if (spec.boss && spriteObj.frame?.height) {
+                spriteObj.setScale(phaseSpriteScale(spriteObj.frame.height, 0));
+            }
 
             const idleKey = animKey(spec, 'idle');
             if (scene.anims.exists(idleKey)) {
@@ -376,6 +382,16 @@ export class Monster {
         this.weaponVisual?.destroy?.();
         this.dead = true;
     }
+}
+
+/**
+ * Sprite scale that draws a boss at the height her phase asks for.
+ *
+ * The sheet's cell size differs from the characters' (256 vs 192), so a plain `scale` in
+ * the YAML cannot express "198px tall" across sheets - it has to be computed.
+ */
+function phaseSpriteScale(cellHeight: number, phaseIndex: number): number {
+    return spriteHeightForPhase(phaseAt(phaseIndex)) / cellHeight;
 }
 
 // ─── Drop roller ─────────────────────────────────────────────────────────
@@ -518,6 +534,11 @@ export class MonsterController {
                     monster.hp = snap.hp;
                     if (monster.spec.boss && typeof snap.phaseIndex === 'number') {
                         monster.phaseIndex = snap.phaseIndex;
+                        if (monster.sprite?.frame?.height) {
+                            monster.sprite.setScale(
+                                phaseSpriteScale(monster.sprite.frame.height, snap.phaseIndex),
+                            );
+                        }
                         monster.phaseMaxHp = scaleForPhase(
                             { hp: monster.spec.hp, moveSpeed: monster.spec.moveSpeed, damage: 1 },
                             phaseAt(snap.phaseIndex),
@@ -1407,6 +1428,9 @@ export class MonsterController {
         }
 
         m.phaseIndex += 1;
+        if (m.sprite?.frame?.height) {
+            m.sprite.setScale(phaseSpriteScale(m.sprite.frame.height, m.phaseIndex));
+        }
         const stats = scaleForPhase(
             { hp: m.spec.hp, moveSpeed: m.spec.moveSpeed, damage: 1 },
             upcoming,

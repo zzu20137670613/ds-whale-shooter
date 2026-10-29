@@ -59,8 +59,10 @@ describe('arena boss wiring', () => {
         // Her art, not the playable character's: the keyed 4x4 sheet.
         expect(spec.sprite?.texture).toBe('assets/image/monsters/claude-boss.png');
         expect(spec.sprite?.grid).toEqual({ rows: 4, cols: 4 });
-        // 256px frames * 1.5 = 384px - the player renders at 256.
-        expect(spec.sprite?.scale).toBe(1.5);
+        // 256px frames at 0.7734 = 198px on screen: her first three forms stand one size
+        // above the player's 173. Later phases shrink (see `spriteHeightForPhase`), so the
+        // authored scale is only the phase-1 default.
+        expect(spec.sprite?.scale).toBeCloseTo(198 / 256, 4);
         // The sheet is 1024x1024, so a 4x4 grid gives 256px frames. If someone
         // re-exports the art at another size, this catches the stale scale.
         const sheet = join(process.cwd(), 'public', 'assets', 'image', 'monsters', 'claude-boss.png');

@@ -102,7 +102,7 @@ sprite:
     # scale 1.55 and read as blurry - it was upscaling its own art.
     # Visual scale tracks `body` against deepseek's 26x26 → 1.35, so the
     # sprite and the physics box stay in proportion across the roster.
-    scale: 1.55
+    scale: 0.901
     offset:
         left: -2
         bottom: -4

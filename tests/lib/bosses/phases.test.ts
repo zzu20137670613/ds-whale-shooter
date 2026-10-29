@@ -11,6 +11,8 @@
 
 import { describe, expect, it } from 'vitest';
 
+import { spriteHeightForPhase } from '@/lib/bosses/phases';
+
 import {
     BOSS_MAX_HIT_FRACTION,
     BOSS_PHASES,
@@ -259,6 +261,27 @@ describe('a whole descent', () => {
                 hits += 1;
             }
             expect(hits, `phase ${index + 1}`).toBeGreaterThanOrEqual(10);
+        }
+    });
+});
+
+describe('boss sprite height per phase', () => {
+    it('stands full size for the first three forms', () => {
+        expect([1, 2, 3].map((n) => spriteHeightForPhase(phaseAt(n - 1)))).toEqual([198, 198, 198]);
+    });
+
+    it('drops to 186 for the half-mortal form', () => {
+        expect(spriteHeightForPhase(phaseAt(3))).toBe(186);
+    });
+
+    it("ends at the player's own 173", () => {
+        expect(spriteHeightForPhase(phaseAt(4))).toBe(173);
+    });
+
+    it('shrinks monotonically - she never grows back', () => {
+        const heights = [0, 1, 2, 3, 4].map((n) => spriteHeightForPhase(phaseAt(n)));
+        for (let i = 1; i < heights.length; i++) {
+            expect(heights[i]).toBeLessThanOrEqual(heights[i - 1]);
         }
     });
 });

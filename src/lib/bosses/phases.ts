@@ -29,6 +29,14 @@ export interface BossPhase {
     gapMs: number;
     /** Only 神·Claude calls down 天谴轰炸. */
     allowsWrath: boolean;
+    /**
+     * How tall she is drawn in this phase, in screen pixels.
+     *
+     * The owner's ladder: full size for the first three forms, one notch down at phase
+     * four (186px), and back to the player's own 173px for the last one. Height is the
+     * number he thinks in - the sprite scale follows from her cell size.
+     */
+    spritePx: number;
 }
 
 /**
@@ -45,6 +53,7 @@ export const BOSS_PHASES: readonly BossPhase[] = [
         damageScale: 1,
         gapMs: 1500,
         allowsWrath: false,
+        spritePx: 198,
     },
     {
         id: 2,
@@ -54,6 +63,7 @@ export const BOSS_PHASES: readonly BossPhase[] = [
         damageScale: 1.5,
         gapMs: 1000,
         allowsWrath: true,
+        spritePx: 198,
     },
     {
         id: 3,
@@ -63,6 +73,7 @@ export const BOSS_PHASES: readonly BossPhase[] = [
         damageScale: 0.8,
         gapMs: 2000,
         allowsWrath: false,
+        spritePx: 198,
     },
     {
         id: 4,
@@ -72,6 +83,7 @@ export const BOSS_PHASES: readonly BossPhase[] = [
         damageScale: 0.5,
         gapMs: 2000,
         allowsWrath: false,
+        spritePx: 186,
     },
     {
         id: 5,
@@ -81,6 +93,7 @@ export const BOSS_PHASES: readonly BossPhase[] = [
         damageScale: 0.5,
         gapMs: 5000,
         allowsWrath: false,
+        spritePx: 173,
     },
 ] as const;
 
@@ -209,4 +222,9 @@ export function applyBossHit(
     const taken = clampBossDamage(damage, phaseMaxHp);
     const left = Math.max(0, hp - taken);
     return { hp: left, died: left <= 0 };
+}
+
+/** On-screen sprite height for a phase, in px. */
+export function spriteHeightForPhase(phase: BossPhase): number {
+    return phase.spritePx;
 }

@@ -95,7 +95,7 @@ sprite:
         cols: 4
     # Same proportion rule as the rest of the roster: the drawn body sits at
     # ~1.45x her 28x28 physics box.
-    scale: 1.45
+    scale: 1.3516
     offset:
         left: -2
         bottom: -4

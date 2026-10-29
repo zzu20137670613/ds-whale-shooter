@@ -103,7 +103,7 @@ sprite:
     # sprite and the physics box stay in proportion across the roster.
     # 1.35, in line with DeepSeek and Qwen. She shipped at 1.15 and read half a
     # head shorter than the rest of the roster on the same floor.
-    scale: 1.35
+    scale: 0.901
     offset:
         left: -2
         bottom: -4

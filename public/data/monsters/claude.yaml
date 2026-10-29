@@ -43,7 +43,7 @@ sprite:
     grid:
         rows: 4
         cols: 4
-    scale: 1.5
+    scale: 0.7734
     offset:
         left: 0
         bottom: 0
