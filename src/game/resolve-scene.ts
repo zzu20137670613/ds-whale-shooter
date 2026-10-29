@@ -197,11 +197,24 @@ export async function resolveScene(
         spawnWeaponIds.add(CAT_SHOP_GIFT_WEAPON_ID);
     }
 
+    // Tavern mode: every selectable character must be loadable, both so the NPC sprites
+    // can be drawn and because the picked girl brings HER hotbar - not the default
+    // character's. Without these ids `startingWeaponsFor` drops every weapon she owns and
+    // the player spawns with an empty hotbar and no weapon panel at all.
+    let allCharacters: CharacterSpec[] | undefined;
+    if (level.tavern) {
+        const charIndex = await fetchCharacterIndex();
+        allCharacters = await Promise.all(charIndex.characters.map((cid) => fetchCharacter(cid)));
+    }
+
     const playerWeaponIds = new Set<string>([
         ...character.hotbar,
         ...spawnWeaponIds,
         ...savedSlotIds,
     ]);
+    for (const c of allCharacters ?? []) {
+        for (const wid of c.hotbar ?? []) playerWeaponIds.add(wid);
+    }
     // Monster weapons: only need their bullet texture loaded, never
     // held by the player. Kept out of the player set so the loader
     // skips `visual.texture` for them.
@@ -276,15 +289,6 @@ export async function resolveScene(
 
     const spriteCell = await getSpriteCellDims(character);
 
-    // Tavern mode: also load every available character so NPC sprites
-    // can be spawned for selection. fetchCharacterIndex is cheap (cached
-    // by the browser after the first call).
-    let allCharacters: CharacterSpec[] | undefined;
-    if (level.tavern) {
-        const charIndex = await fetchCharacterIndex();
-        const specs = await Promise.all(charIndex.characters.map((cid) => fetchCharacter(cid)));
-        allCharacters = specs;
-    }
 
     return {
         id,
