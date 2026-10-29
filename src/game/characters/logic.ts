@@ -360,6 +360,8 @@ export class CharacterController {
     private dbgLastFrame = -1;
     private dbgWindowStart = 0;
     private dbgRates = { flips: 0, anims: 0, frames: 0 };
+    /** Last handful of sprite states, oldest first - tells idle flicker from state flapping. */
+    private dbgHistory: string[] = [];
     // Mobile touch state — written by EventBus listeners from
     // TouchControls.tsx, merged into the keyboard intent on each tick.
     // null pointer id == joystick not held.
@@ -646,6 +648,8 @@ export class CharacterController {
         if (anim !== this.dbgLastAnim) {
             this.dbgAnimCount += 1;
             this.dbgLastAnim = anim;
+            this.dbgHistory.push(`${Math.round(now)}ms ${anim || '(none)'}`);
+            if (this.dbgHistory.length > 6) this.dbgHistory.shift();
         }
         if (frame !== this.dbgLastFrame) {
             this.dbgFrameCount += 1;
@@ -675,6 +679,7 @@ export class CharacterController {
             flipsPerSec: this.dbgRates.flips,
             animSwitchesPerSec: this.dbgRates.anims,
             frameChangesPerSec: this.dbgRates.frames,
+            history: this.dbgHistory.join(' | '),
         };
     }
 
