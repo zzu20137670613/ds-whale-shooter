@@ -8,10 +8,13 @@ export const LAYER_RECT = {
     bg: { x: 0, y: 0, w: 1920, h: 1072 },
     chars: { x: 487, y: 481, w: 970, h: 495 },
     fg: { x: 0, y: 739, w: 1920, h: 333 },
-    // The wordmark, extracted from the key art itself (its alpha was unmixed
-    // against a title-free plate of the same illustration), so bg + title
-    // re-stack to the key art. Spans the whole wordmark, unlike the upstream
-    // 809x317 pixel-title asset that used to live here.
+    // The wordmark: a separate transparent layer, so bg + title still re-stack to
+    // the key art (which is why `key.webp` is rebuilt whenever the title changes).
+    //
+    // It says 深海回响 · 枪火柔情 and is rendered type, not the painted wordmark the
+    // plate originally carried - the owner replaced the repo-name title on
+    // 2026-10-29. Swap this PNG again if the painted one is ever redrawn; the box
+    // below is the only thing that has to keep matching.
     title: { x: 235, y: 168, w: 1536, h: 190 },
 } as const satisfies Record<string, Rect>;
 
