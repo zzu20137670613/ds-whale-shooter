@@ -489,6 +489,27 @@ describe('public/data integrity', () => {
         expect(bad, `hotbars longer than their slot cap:\n${bad.join('\n')}`).toEqual([]);
     });
 
+    it('every monster that renders carries a sprite and its anims', () => {
+        // A monster without `sprite` is legal YAML and silently invisible in game -
+        // which is exactly how eight monsters lost their art to a bad regex once and
+        // every test stayed green. Props are allowed to skip `anims` (they do not
+        // animate), everything else must have both.
+        const specDir = join(process.cwd(), 'public', 'data', 'monsters');
+        const files = readdirSync(specDir).filter(
+            (file) => file.endsWith('.yaml') && file !== 'index.yaml',
+        );
+        expect(files.length).toBeGreaterThan(0);
+
+        for (const file of files) {
+            const id = file.replace(/\.yaml$/, '');
+            const spec = parseMonsterYaml(readFileSync(join(specDir, file), 'utf8'), id);
+            expect(spec.sprite, `${id} has no sprite`).toBeDefined();
+            if (!spec.prop) {
+                expect(spec.anims, `${id} has no anims`).toBeDefined();
+            }
+        }
+    });
+
     it('every asset path a spec names resolves under public/', () => {
         // An asset path is a plain string the schema happily accepts, so a typo
         // is silent: no sprite in the hand, no error in the console, nothing in
