@@ -1,8 +1,16 @@
-# Claude — slow, heavy, and it leaves a mark.
-# PLACEHOLDER ART — reuses the rocket-launcher.png / rocket-missile.png sprites until Inkwell Mortar art
-# exists. Stats and behaviour are final; only the textures are borrowed.
-name: Inkwell Mortar
-nameZh: "墨壶迫击"
+# 物理超度 — Claude's mortar, and the best argument for never judging a book by its
+# cover: a saint in a white dress who answers questions with a 90-radius blast.
+#
+# 物理超度 is a pun on the Buddhist 超度 (to ferry a soul onward). Prefixing it with
+# 物理 ("physical", i.e. force) turns a rite into a delivery method.
+#
+# The id stays `inkwell-mortar` on purpose: it is written into save files, and a
+# rename would orphan every existing save's equipped weapon for the sake of a label.
+#
+# PLACEHOLDER ART — reuses the rocket-launcher.png / rocket-missile.png sprites until
+# bespoke art exists. Stats and behaviour are final; only the textures are borrowed.
+name: Physical Salvation
+nameZh: "物理超度"
 damage: 70
 cooldownMs: 1500
 range: 700
