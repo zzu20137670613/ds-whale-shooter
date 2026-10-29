@@ -8,6 +8,7 @@ import { SceneHubOverlay } from './scene-hub-overlay';
 import { ComboOverlay } from './combo-overlay';
 import { HurtVignetteOverlay } from './hurt-vignette-overlay';
 import { DebugReadout } from './debug-readout';
+import { NoticeToast } from './notice-toast';
 import { HudErrorBoundary } from './hud-error-boundary';
 import { LocaleToggle } from './locale-toggle';
 import { SaveHotkeys } from './save-hotkeys';
@@ -77,6 +78,9 @@ export const GameHUDLayer: React.FC = () => {
             </HudErrorBoundary>
             <HudErrorBoundary name="save-hotkeys">
                 <SaveHotkeys />
+            </HudErrorBoundary>
+            <HudErrorBoundary name="notice">
+                <NoticeToast />
             </HudErrorBoundary>
             <HudErrorBoundary name="save-toast">
                 <SaveToast />

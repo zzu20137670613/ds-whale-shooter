@@ -310,6 +310,14 @@ export interface GameUIState {
     consumeInventorySlot: (index: number) => string | null;
     /** Publish the drop specs the current scene loaded (names, prices, usability). */
     setDropCatalog: (entries: Record<string, DropCatalogEntry>) => void;
+    /**
+     * A short line the game puts on screen ("the cat hands you an assault rifle").
+     * `noticeId` bumps on every call so the toast restarts even for identical text.
+     */
+    notice: string | null;
+    noticeId: number;
+    showNotice: (text: string) => void;
+    clearNotice: () => void;
     setBackpackOpen: (open: boolean) => void;
     /** Record that a quadrant's wave fired. */
     markRegionSpawned: (key: string) => void;
@@ -441,6 +449,8 @@ export const initialGameState = {
     money: 0,
     inventory: emptyInventory(),
     dropCatalog: {} as Record<string, DropCatalogEntry>,
+    notice: null,
+    noticeId: 0,
     backpackOpen: false,
     spawnedRegions: [] as string[],
     // World state, not run state — `clearSaveData` deliberately keeps it.
@@ -698,6 +708,9 @@ export const useGameStore = create<GameUIState>()(
             },
 
             setDropCatalog: (entries) => set({ dropCatalog: entries }),
+
+            showNotice: (text) => set((state) => ({ notice: text, noticeId: state.noticeId + 1 })),
+            clearNotice: () => set({ notice: null }),
 
             setBackpackOpen: (open) => set({ backpackOpen: open }),
 

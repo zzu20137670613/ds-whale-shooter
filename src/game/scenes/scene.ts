@@ -61,6 +61,7 @@ import { setCurrentLevel } from '@/lib/levels/current-level';
 import { actorScaleFor } from '@/lib/levels/actor-scale';
 import { startingWeaponsFor } from '@/lib/characters/starting-weapons';
 import { giveCatGift } from '@/lib/levels/cat-gift';
+import { CAT_SHOP_GIFT_WEAPON_ID } from '@/lib/levels/easter-eggs';
 import { CAT_SHOP_GIFT_DROP_ID } from '@/lib/levels/easter-eggs';
 import { fetchLevelIndex } from '@/lib/levels/loader';
 import { groundLayers, isPortalArmed, propKey, spawnsWithoutBrokenProps } from '@/lib/levels/logic';
@@ -1008,13 +1009,19 @@ export class LoadScene extends Phaser.Scene {
         EventBus.emit(MERCHANT_SHOP_EVENT);
         if (!firstOfSave) return;
 
-        giveCatGift({
+        const result = giveCatGift({
             weaponsById: this.assets.weaponsById,
             weapons: this.character.weapons ?? null,
             pickUp: (id) => this.character.pickUpWeapon(id),
             refresh: () => this.character.refreshHud(),
             warn: (message, detail) => console.warn(`[cat-shop] ${message}`, detail),
         });
+        if (result === 'granted') {
+            // Nothing the game does to her unasked should be invisible.
+            const gift = this.assets.weaponsById.get(CAT_SHOP_GIFT_WEAPON_ID);
+            const giftName = gift ? pickText(gift.name, gift.nameZh) : '突击步枪';
+            useGameStore.getState().showNotice(`猫塞给你一把${giftName}`);
+        }
     }
 
     shutdown(): void {
