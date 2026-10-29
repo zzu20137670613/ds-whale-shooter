@@ -1,7 +1,7 @@
 # PLACEHOLDER ART - borrows hp-shard's atlas cell and the pickup-hp sound until a
 # drink sprite exists. The effect and the placement are final.
-name: Beach Drink
-nameZh: "海滩特饮"
+name: Deep Sea Drink
+nameZh: "海底特饮"
 sellPrice: 0
 kind: static
 sfx: pickup-hp

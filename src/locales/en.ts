@@ -16,6 +16,7 @@ const en: CatalogSource = {
         restartHint: 'Restart returns to the tavern',
         newGame: 'New Game',
         newGameConfirm: 'Erase save?',
+        controlScheme: 'Aiming',
     },
     saves: {
         title: 'SAVES',

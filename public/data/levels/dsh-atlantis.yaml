@@ -2720,16 +2720,9 @@ characterSpawn:
     x: 1600
     'y': 4700
     facing: right
-monsters:
-    - type: drone
-      x: 900
-      'y': 3900
-    - type: gunner
-      x: 7000
-      'y': 1200
-    - type: stalker
-      x: 9000
-      'y': 4200
+# No hand-placed monsters: the whole level is follow-spawn only (owner's call
+# 2026-10-29), so the three leftovers from the old draft are gone.
+monsters: []
 spawner:
     # 进入前 3 个象限各刷一波 9 只：近处 2 近战 + 2 远程，远处 2 近战 + 3 远程。
     delayMs: 2000

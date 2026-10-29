@@ -26,6 +26,8 @@ export type CatalogSource = {
         newGame: string;
         /** Second click, because it is destructive. */
         newGameConfirm: string;
+        /** Label for the aim-mode row. */
+        controlScheme: string;
     };
     /** The save rack: six slots, a quick slot, and the two-step overwrite. */
     saves: {

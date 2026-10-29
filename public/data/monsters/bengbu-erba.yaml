@@ -16,35 +16,10 @@ sfx:
     death: monster-death
     aggro: monster-aggro
 drops:
-    - dropId: hp-shard
+    # 怪物掉落表（表·2026-10-29 定稿）：每一行独立摇一次。
+    - dropId: ammo-cache
       chance: 0.6
-    - dropId: sp-fragment
-      chance: 0.4
     - dropId: overcharge-core
-      chance: 0.3
-sprite:
-    texture: assets/image/monsters/stalker.png
-    grid: { rows: 4, cols: 4 }
-    scale: 1.5
-    offset: { left: 0, bottom: 4 }
-    script:
-        downsample: 4
-        colors: 32
-        pad: 2
-anims:
-    idle:
-        frames: [0, 3]
-        frameRate: 6
-        repeat: -1
-    move:
-        frames: [4, 7]
-        frameRate: 10
-        repeat: -1
-    hit:
-        frames: [8, 11]
-        frameRate: 12
-        repeat: -1
-    death:
-        frames: [12, 14]
-        frameRate: 10
-        repeat: 0
+      chance: 0.4
+    - dropId: beach-drink
+      chance: 0.15

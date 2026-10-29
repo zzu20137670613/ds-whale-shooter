@@ -16,6 +16,7 @@ const zhCN: CatalogSource = {
         restartHint: '重新开始会回到海边亭台',
         newGame: '新游戏',
         newGameConfirm: '确认清档',
+        controlScheme: '操作方式',
     },
     saves: {
         title: '存档读档',

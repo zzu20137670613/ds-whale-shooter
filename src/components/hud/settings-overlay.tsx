@@ -45,6 +45,10 @@ export function SettingsOverlay() {
     const [savesOpen, setSavesOpen] = useState(false);
     // Destructive, so it takes two clicks: the first arms, the second wipes.
     const [newGameArmed, setNewGameArmed] = useState(false);
+    // Which half of the input redesign is live. Same field the corner chip writes -
+    // one source of truth, two doors into it.
+    const inputScheme = useGameStore((s) => s.inputScheme);
+    const setInputScheme = useGameStore((s) => s.setInputScheme);
     // The scene we paused, so resume hits the same one even if a
     // teleport registered another in the meantime.
     const paused = useRef<Phaser.Scene | null>(null);
@@ -187,6 +191,36 @@ export function SettingsOverlay() {
                             </div>
                             <div className="text-[8px] tracking-[0.3em] text-stone-500 uppercase">
                                 — paused —
+                            </div>
+                        </div>
+
+                        {/* Aiming is a setting, not an action: it sits above the
+                            buttons and shows the current choice inline. */}
+                        <div className="flex w-full flex-col gap-1">
+                            <span className="text-[9px] tracking-[0.3em] text-stone-500 uppercase">
+                                {t('settings.controlScheme')}
+                            </span>
+                            <div className="flex gap-1">
+                                {(
+                                    [
+                                        ['mouse', t('input.mouse')],
+                                        ['directional', t('input.directional')],
+                                    ] as const
+                                ).map(([id, label]) => (
+                                    <button
+                                        key={id}
+                                        type="button"
+                                        onClick={() => setInputScheme(id)}
+                                        aria-pressed={inputScheme === id}
+                                        className={`h-7 flex-1 rounded border text-[10px] font-semibold tracking-wider transition-colors ${
+                                            inputScheme === id
+                                                ? 'border-amber-500 bg-amber-500 text-black'
+                                                : 'border-stone-700 bg-stone-900/80 text-stone-400 hover:bg-stone-800 hover:text-amber-300'
+                                        }`}
+                                    >
+                                        {label}
+                                    </button>
+                                ))}
                             </div>
                         </div>
 
