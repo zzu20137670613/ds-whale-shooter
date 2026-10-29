@@ -7,7 +7,7 @@
 <p align="center"><b>深海回响 · 枪火柔情</b></p>
 
 <p align="center">
-  <b>A top-down anime pixel shooter: five girls, one beach, one boss — the shooter chapter of the Deep Echo series</b>
+  <b>Five AI girls, one beach, one hidden-map boss — the shooter chapter of the Deep Echo series</b>
 </p>
 
 <p align="center">

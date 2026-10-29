@@ -1,11 +1,11 @@
 <p align="center">
-  <img src="public/favicon.png" width="64" height="64" alt="第十一号森林 Icon" style="border-radius: 8px;" />
+  <img src="public/favicon.png" width="64" height="64" alt="深海回响 · 枪火柔情 Icon" style="border-radius: 8px;" />
 </p>
 
 <h1 align="center">深海回响 · 枪火柔情</h1>
 
 <p align="center">
-  <b>基于 Phaser 4 + React 19 的 AI 游戏制作探索项目与可视化关卡编辑器</b>
+  <b>五个AI娘 · 一片海滩 · 一个隐藏地图的Boss，深海回响系列的射击篇章</b>
 </p>
 
 <p align="center">
