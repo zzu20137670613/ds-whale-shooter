@@ -115,6 +115,7 @@ export interface SceneAssets {
     playerWeaponIds: Set<string>;
     /** Tavern mode only: all playable characters for NPC display + selection. */
     allCharacters?: CharacterSpec[];
+    characterCells?: Record<string, { width: number; height: number }>;
 }
 
 /**
@@ -221,7 +222,10 @@ export class LoadScene extends Phaser.Scene {
             // for the selection UI.
             const allChars = this.assets.allCharacters ?? [];
             for (const spec of allChars) {
-                loadCharacterAssets(this, spec, 128, 128);
+                // Per-character cell, read from her own PNG. A flat 128 used to crop the
+                // 768 sheets to their top-left corner.
+                const cell = this.cellFor(spec.id);
+                loadCharacterAssets(this, spec, cell.width, cell.height);
             }
         }
 
@@ -815,7 +819,7 @@ export class LoadScene extends Phaser.Scene {
                 this.character.destroy();
                 (this.assets as any).character = pickedSpec;
                 if (pickedSpec.sprite) {
-                    (this.assets as any).spriteCell = { width: 128, height: 128 };
+                    (this.assets as any).spriteCell = this.cellFor(pickedSpec.id);
                 }
                 // Clear only monster / drop snapshots — DO NOT clear
                 // playerSnapshot. loadCharacter() reads it to restore
@@ -871,10 +875,7 @@ export class LoadScene extends Phaser.Scene {
                         this.character.destroy();
                         (this.assets as any).character = selectedSpec;
                         if (selectedSpec.sprite) {
-                            (this.assets as any).spriteCell = {
-                                width: 128,
-                                height: 128,
-                            };
+                            (this.assets as any).spriteCell = this.cellFor(selectedSpec.id);
                         }
                         // HER hotbar, not the scene's. `this.assets.weapons` is the
                         // tavern's default girl (DeepSeek), so passing it handed every
@@ -1022,6 +1023,11 @@ export class LoadScene extends Phaser.Scene {
             const giftName = gift ? pickText(gift.name, gift.nameZh) : '突击步枪';
             useGameStore.getState().showNotice(`猫塞给你一把${giftName}`);
         }
+    }
+
+    /** Real cell size for a character id, falling back to the scene's own. */
+    private cellFor(characterId: string): { width: number; height: number } {
+        return this.assets.characterCells?.[characterId] ?? this.assets.spriteCell;
     }
 
     shutdown(): void {

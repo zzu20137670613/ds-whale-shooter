@@ -67,6 +67,14 @@ export interface ResolvedScene {
     playerWeaponIds: Set<string>;
     /** Tavern mode only: all available characters for NPC display + selection. */
     allCharacters?: CharacterSpec[];
+    /**
+     * Real cell size per character id, read from each PNG.
+     *
+     * Sheets are not all the same resolution (768 for the rebuilt ones, 512 for the rest),
+     * so a hardcoded 128 slices the bigger ones into a top-left crop - which is exactly how
+     * Claude and GPT ended up cut in half in the tavern.
+     */
+    characterCells?: Record<string, { width: number; height: number }>;
 }
 
 /** Most-recently-resolved scene bundle. Set by main.ts after the initial
@@ -202,9 +210,17 @@ export async function resolveScene(
     // character's. Without these ids `startingWeaponsFor` drops every weapon she owns and
     // the player spawns with an empty hotbar and no weapon panel at all.
     let allCharacters: CharacterSpec[] | undefined;
+  let characterCells: Record<string, { width: number; height: number }> | undefined;
     if (level.tavern) {
         const charIndex = await fetchCharacterIndex();
         allCharacters = await Promise.all(charIndex.characters.map((cid) => fetchCharacter(cid)));
+    characterCells = Object.fromEntries(
+        await Promise.all(
+            allCharacters
+                .filter((c) => c.sprite)
+                .map(async (c) => [c.id, await getSpriteCellDims(c)] as const),
+        ),
+    );
     }
 
     const playerWeaponIds = new Set<string>([
@@ -297,6 +313,7 @@ export async function resolveScene(
         weaponsById,
         character,
         spriteCell,
+        ...(characterCells ? { characterCells } : {}),
         monsters: monsterSpecMap,
         drops: new Map(dropEntries),
         sfx,
@@ -363,6 +380,7 @@ export function toSceneAssets(resolved: ResolvedScene): SceneAssets {
         weaponsById: resolved.weaponsById,
         character: resolved.character,
         spriteCell: resolved.spriteCell,
+        ...(resolved.characterCells ? { characterCells: resolved.characterCells } : {}),
         monsterSpecs: resolved.monsters,
         dropSpecs: resolved.drops,
         sfxSpecs: resolved.sfx,
