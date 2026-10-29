@@ -11,6 +11,8 @@ import {
     type SaveSlotId,
     type SaveSlotRecord,
 } from '@/lib/saves/slots';
+import { WEAPONS_REFILL_ALL_EVENT, WEAPONS_REFILL_ONE_EVENT } from '@/lib/constants';
+import { EventBus } from '@/lib/events/bus';
 import { reserveMaxFor } from '@/lib/weapons/ammo';
 import { addToInventory, emptyInventory, removeFromInventory } from '@/lib/inventory';
 import { bagSellValue } from '@/lib/inventory/sell';
@@ -37,8 +39,14 @@ export interface DropCatalogEntry {
     usable: boolean;
     /** Coins per unit when sold; 0 for items the shop will not buy yet. */
     sellPrice: number;
-    /** The colour the drop drew itself with; the bag draws a block of it. */
+    /** The colour the drop drew itself with; the fallback block when there is no art. */
     tint: number;
+    /**
+     * The drop's own sprite, so the bag can show the real item instead of a colour
+     * chip. `path` is the public URL, `rows/cols` the atlas grid, `frame` the cell
+     * drawn on the ground (the first idle frame).
+     */
+    icon?: { path: string; rows: number; cols: number; frame: number };
 }
 
 export interface LevelWaveProgress {
@@ -736,7 +744,8 @@ export const useGameStore = create<GameUIState>()(
                 return earned;
             },
 
-            refillWeaponAmmo: (weaponId) =>
+            refillWeaponAmmo: (weaponId) => {
+                EventBus.emit(WEAPONS_REFILL_ONE_EVENT, { weaponId });
                 set((state) => {
                     const level = state.weaponLevels[weaponId] ?? 0;
                     const slots = state.slots.map((slot) =>
@@ -754,9 +763,12 @@ export const useGameStore = create<GameUIState>()(
                         activeAmmo: active ? active.ammo : state.activeAmmo,
                         activeMaxAmmo: active ? active.clipSize : state.activeMaxAmmo,
                     };
-                }),
+                });
+            },
 
-            refillAmmo: () =>
+            refillAmmo: () => {
+                // The live controller holds the real guns; tell it to fill them.
+                EventBus.emit(WEAPONS_REFILL_ALL_EVENT);
                 set((state) => {
                     const slots = state.slots.map((slot) => ({
                         ...slot,
@@ -777,7 +789,8 @@ export const useGameStore = create<GameUIState>()(
                         activeAmmo: active ? active.ammo : state.activeAmmo,
                         activeMaxAmmo: active ? active.clipSize : state.activeMaxAmmo,
                     };
-                }),
+                });
+            },
 
             setPetBonus: (bonus) => set({ petBonus: bonus }),
             setInputScheme: (inputScheme) => set({ inputScheme }),

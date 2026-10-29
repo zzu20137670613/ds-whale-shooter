@@ -511,3 +511,12 @@ export const BOSS_PHASE_TRANSITION_MS = 2000;
 /** How long after a completed reload auto-reload may fire again. Long enough to let
  *  the "Full" flash read, short enough that an empty magazine re-arms itself. */
 export const RELOAD_AUTO_REARM_MS = 400;
+
+// ─── Weapons: store → live controller ────────────────────────────────────
+/**
+ * The store owns the numbers the shop sells; the live `WeaponController` owns the
+ * guns in her hands. These two used to sync only on the next scene load, so buying
+ * ammo or an upgrade changed the card and nothing else.
+ */
+export const WEAPONS_REFILL_ALL_EVENT = 'weapons:refill-all';
+export const WEAPONS_REFILL_ONE_EVENT = 'weapons:refill-one';

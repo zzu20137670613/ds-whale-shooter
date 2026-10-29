@@ -679,6 +679,9 @@ export class DropController {
         const sfxId = spec.sfx ?? 'pickup-generic';
         EventBus.emit(SFX_EVENT(sfxId), { key: `drop:${slot.dropId}`, throttleMs: spec.throttleMs });
         planDropEffect(spec, this.effectSinks());
+        // The scene is paused while the bag is open, so nothing would repaint the HUD
+        // until it closes. Push the new numbers now.
+        this.character.refreshHud();
         return true;
     }
 

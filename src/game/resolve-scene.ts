@@ -236,6 +236,14 @@ export async function resolveScene(
                     usable: spec.effect.type !== 'material' && spec.effect.type !== 'weapon',
                     sellPrice: spec.sellPrice ?? 0,
                     tint: spec.visual.tint,
+                    icon: spec.sprite
+                        ? {
+                              path: `/${spec.sprite.texture.replace(/^\//, '')}`,
+                              rows: spec.sprite.grid?.rows ?? 1,
+                              cols: spec.sprite.grid?.cols ?? 1,
+                              frame: spec.anims?.idle?.frames?.[0] ?? 0,
+                          }
+                        : undefined,
                 },
             ]),
         ),

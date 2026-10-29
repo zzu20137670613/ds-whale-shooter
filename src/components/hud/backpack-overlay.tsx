@@ -146,14 +146,38 @@ export function BackpackOverlay() {
                             >
                                 {slot && entry ? (
                                     <>
-                                        <span
-                                            className="size-3 border border-black/60"
-                                            style={{
-                                                backgroundColor: `#${entry.tint
-                                                    .toString(16)
-                                                    .padStart(6, '0')}`,
-                                            }}
-                                        />
+                                        {/* The item's own art, cropped out of its sheet.
+                                            A colour chip told you nothing about what you
+                                            were about to drink. */}
+                                        {entry.icon ? (
+                                            <span
+                                                aria-hidden
+                                                className="size-6 bg-no-repeat"
+                                                style={{
+                                                    backgroundImage: `url(${entry.icon.path})`,
+                                                    backgroundSize: `${entry.icon.cols * 100}% ${entry.icon.rows * 100}%`,
+                                                    backgroundPosition: `${
+                                                        entry.icon.cols > 1
+                                                            ? (entry.icon.frame % entry.icon.cols) * 100
+                                                            : 0
+                                                    }% ${
+                                                        entry.icon.cols > 1 && entry.icon.rows > 1
+                                                            ? Math.floor(entry.icon.frame / entry.icon.cols) * 100
+                                                            : 0
+                                                    }%`,
+                                                    imageRendering: 'pixelated',
+                                                }}
+                                            />
+                                        ) : (
+                                            <span
+                                                className="size-3 border border-black/60"
+                                                style={{
+                                                    backgroundColor: `#${entry.tint
+                                                        .toString(16)
+                                                        .padStart(6, '0')}`,
+                                                }}
+                                            />
+                                        )}
                                         <span className="mt-0.5 max-w-full truncate px-0.5">
                                             {label}
                                         </span>

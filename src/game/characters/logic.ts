@@ -592,6 +592,20 @@ export class CharacterController {
      * enough: the tone bucket, whether SP covers the cost, and the headgear's
      * worn flag.
      */
+    /**
+     * Push the current HP / SP / ammo to the React HUD right now.
+     *
+     * The per-frame tick does this, but a paused scene has no tick: drinking a potion
+     * from the backpack while the game is paused used to change her real HP and leave
+     * the bar still, so the heal looked like it only landed when the bag closed.
+     */
+    refreshHud(): void {
+        this.parts.hud?.update(this.spec, this.hp, this.sp);
+        if (this.parts.weapons && this.parts.weaponHud) {
+            this.parts.weaponHud.draw(this.parts.weapons, this.scene.time.now);
+        }
+    }
+
     private publishSkillStatus(now: number): void {
         const skill = this.spec.skill;
         if (!skill) return;

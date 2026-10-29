@@ -15,7 +15,12 @@
 
 import type * as Phaser from 'phaser';
 
-import { RELOAD_AUTO_REARM_MS, SFX_EVENT } from '@/lib/constants';
+import {
+    RELOAD_AUTO_REARM_MS,
+    SFX_EVENT,
+    WEAPONS_REFILL_ALL_EVENT,
+    WEAPONS_REFILL_ONE_EVENT,
+} from '@/lib/constants';
 import { EventBus } from '@/lib/events/bus';
 import type { WeaponSpec } from '@/lib/weapons';
 
@@ -189,6 +194,9 @@ export class WeaponController {
                 }
             }
         });
+
+        // Fill requests from the shop / store arrive as events.
+        this.bindRefillEvents();
     }
 
     /** 1/2/3 — switch active slot. Cancels any in-progress reload. */
@@ -242,6 +250,41 @@ export class WeaponController {
         const clipSize = slot.spec.clipSize ?? 1;
         const add = Math.round(clipSize * fraction);
         slot.reserve = addReserve(slot.reserve, add, reserveMaxFor(clipSize));
+    }
+
+    /**
+     * Fill every magazine and reserve - the shop's "补充弹药", and the free refill
+     * that comes with buying a weapon upgrade.
+     *
+     * The store already models this, but the store is a mirror: the guns in her hands
+     * are THIS object. Before these handlers existed, buying ammo changed the card and
+     * nothing else until the next scene load.
+     */
+    private readonly handleRefillAll = (): void => {
+        this.applyRefill(undefined);
+    };
+
+    private readonly handleRefillOne = (payload: { weaponId: string }): void => {
+        this.applyRefill(payload.weaponId);
+    };
+
+    /** Called once the controller exists: the store may already be listening. */
+    private bindRefillEvents(): void {
+        EventBus.on(WEAPONS_REFILL_ALL_EVENT, this.handleRefillAll);
+        EventBus.on(WEAPONS_REFILL_ONE_EVENT, this.handleRefillOne);
+    }
+
+    private applyRefill(weaponId: string | undefined): void {
+        const levels = useGameStore.getState().weaponLevels;
+        for (const slot of this.slots) {
+            if (weaponId && slot.spec.id !== weaponId) continue;
+            const isMelee = slot.spec.bullet?.type === 'melee' || slot.spec.hitWidth !== undefined;
+            if (isMelee) continue;
+            const clipSize = slot.spec.clipSize ?? 1;
+            slot.ammo = clipSize;
+            slot.reserve = reserveMaxFor(clipSize, levels[slot.spec.id ?? ''] ?? 0);
+            slot.reloading = false;
+        }
     }
 
     /** True when this weapon id already sits in the hotbar. */
@@ -559,6 +602,10 @@ export class WeaponController {
     }
 
     destroy(): void {
+        // The store outlives this controller; without the off() the next scene's
+        // refill would fill guns that no longer exist.
+        EventBus.removeListener(WEAPONS_REFILL_ALL_EVENT, this.handleRefillAll);
+        EventBus.removeListener(WEAPONS_REFILL_ONE_EVENT, this.handleRefillOne);
         this.trailGraphics.destroy();
         this.visualController.destroy();
         for (const b of this.bullets) {

@@ -63,6 +63,8 @@ export interface CharacterRuntime {
     heal(hpDelta: number, spDelta: number): void;
     /** Add `fraction * currentWeaponClipSize` bullets to the active weapon. */
     refillAmmo(fraction: number): void;
+    /** Push HP / SP / ammo into the React HUD now, even while the scene is paused. */
+    refreshHud(): void;
     /** Apply a world hit; flat armour is subtracted inside the character. */
     hurt(damage: number): void;
     /** Switch to a named weapon if it's in the hotbar. No-op if not present.
@@ -326,6 +328,9 @@ export function loadCharacter(
             refillAmmo: () => {
                 /* placeholder: no controller */
             },
+            refreshHud: () => {
+                /* placeholder: no controller */
+            },
             hurt: () => {
                 /* placeholder: no controller */
             },
@@ -498,6 +503,7 @@ export function loadCharacter(
         debugHitboxRect,
         heal: (hp, sp) => controller.heal(hp, sp),
         refillAmmo: (f) => controller.refillAmmo(f),
+        refreshHud: () => controller.refreshHud(),
         hurt: (damage) => controller.hurt(damage),
         pickUpWeapon: (id) => controller.pickUpWeapon(id),
         tryPickupWeaponById: (id, byId) => controller.tryPickupWeaponById(id, byId),
