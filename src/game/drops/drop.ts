@@ -9,6 +9,7 @@
  *     collisionstart. Pure effect dispatch lives in `./logic.ts`.
  */
 
+import { HP_SHARD_HEAL, HP_SHARD_ID, shouldAutoUseHpShard } from '@/lib/drops/auto-use';
 import * as Phaser from 'phaser';
 
 import type { CharacterRuntime } from '@/game/characters/character';
@@ -712,6 +713,23 @@ export class DropController {
         // Weapons still go to the hotbar directly: a hotbar slot is not a
         // backpack slot. Everything else is picked *up*, not used - the player
         // decides when to open the bag and click it.
+        // 生命碎片 auto-drinks when a full shard would not be wasted: it heals on the
+        // spot instead of taking a bag slot. Anything less goes in the bag to be saved.
+        if (
+            spec.id === HP_SHARD_ID &&
+            spec.effect.type === 'instant' &&
+            shouldAutoUseHpShard(
+                this.character.vitals().hp,
+                this.character.vitals().maxHp,
+                spec.effect.hp ?? HP_SHARD_HEAL,
+            )
+        ) {
+            playPickupSfx();
+            planDropEffect(spec, this.effectSinks());
+            this.character.refreshHud();
+            return true;
+        }
+
         if (effectiveSpec.effect.type !== 'weapon') {
             const dropKey = spec.id ?? 'unknown';
             const added = useGameStore.getState().addInventoryItem(dropKey, 1);

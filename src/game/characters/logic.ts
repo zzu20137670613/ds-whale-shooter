@@ -685,6 +685,11 @@ export class CharacterController {
         };
     }
 
+    /** Current HP / SP pools. Used by pickup rules (the HP shard auto-drinks). */
+    vitals(): { hp: number; maxHp: number; sp: number; maxSp: number } {
+        return { hp: this.hp, maxHp: this.spec.hp, sp: this.sp, maxSp: this.spec.sp };
+    }
+
     refreshHud(): void {
         this.parts.hud?.update(this.spec, this.hp, this.sp);
         if (this.parts.weapons && this.parts.weaponHud) {

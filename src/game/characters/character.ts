@@ -65,6 +65,8 @@ export interface CharacterRuntime {
     refillAmmo(fraction: number): void;
     /** Push HP / SP / ammo into the React HUD now, even while the scene is paused. */
     refreshHud(): void;
+    /** Current pools, for rules that ask "how hurt is she right now". */
+    vitals(): { hp: number; maxHp: number; sp: number; maxSp: number };
     /** Apply a world hit; flat armour is subtracted inside the character. */
     hurt(damage: number): void;
     /** Switch to a named weapon if it's in the hotbar. No-op if not present.
@@ -331,6 +333,7 @@ export function loadCharacter(
             refreshHud: () => {
                 /* placeholder: no controller */
             },
+            vitals: () => ({ hp: 0, maxHp: spec.hp, sp: 0, maxSp: spec.sp }),
             hurt: () => {
                 /* placeholder: no controller */
             },
@@ -504,6 +507,7 @@ export function loadCharacter(
         heal: (hp, sp) => controller.heal(hp, sp),
         refillAmmo: (f) => controller.refillAmmo(f),
         refreshHud: () => controller.refreshHud(),
+        vitals: () => controller.vitals(),
         hurt: (damage) => controller.hurt(damage),
         pickUpWeapon: (id) => controller.pickUpWeapon(id),
         tryPickupWeaponById: (id, byId) => controller.tryPickupWeaponById(id, byId),
