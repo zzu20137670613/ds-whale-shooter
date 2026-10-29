@@ -176,8 +176,10 @@ export const WeaponHUDOverlay: React.FC = () => {
              *  pops in front of the others. z-index decreases with
              *  |offset| so closer cards overlap farther ones, the
              *  same way a hand stacks. */}
-            {/* Keycap above the fan, matching the skill chips bottom-left. */}
-            <div className="mb-1 flex justify-end">
+            {/* Keycap above the fan, matching the skill chips bottom-left.
+                Centred, because the fan anchors every card at the strip's centre
+                (`left: 50%`); right-aligning it put the chip above the outermost card. */}
+            <div className="mb-1 flex justify-center">
                 <span className="rounded-[2px] border border-stone-600 bg-stone-900/85 px-1.5 py-1 text-[11px] leading-none tracking-tight text-amber-300">
                     {t('hud.switchKey')}
                 </span>
