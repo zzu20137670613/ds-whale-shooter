@@ -29,6 +29,7 @@ import {
     useSkill,
 } from '@/lib/characters/skill';
 import { handUpOffset, pickBodyTint } from '@/lib/characters/hand';
+import { needsAnimPlay } from '@/lib/characters/anim-state';
 import { idlePoseFor } from '@/lib/characters/idle-pose';
 import { damageAfterArmor } from '@/lib/characters/combat';
 import {
@@ -1036,10 +1037,14 @@ export class CharacterController {
         const dodgeKey = animKey(this.spec, 'dodge');
         const idleKey = animKey(this.spec, 'idle');
         const cur = sprite.anims.currentAnim?.key ?? null;
+        // `anims.stop()` leaves `currentAnim` pointing at the animation that just
+        // stopped, so a frozen pose still reports "walk". Compare the playing flag too,
+        // or moving off a still pose never restarts the cycle and she slides.
+        const playing = sprite.anims.isPlaying;
 
         if (isDodging && this.scene.anims.exists(dodgeKey)) {
             // Active dodge window — start the roll if not already running.
-            if (cur !== dodgeKey) sprite.anims.play(dodgeKey, true);
+            if (needsAnimPlay(cur, dodgeKey, playing)) sprite.anims.play(dodgeKey, true);
             return;
         }
         if (cur === dodgeKey) {
@@ -1050,11 +1055,11 @@ export class CharacterController {
         }
         const state = resolveLocomotion(isMovingInput, isSprinting);
         if (state === 'run' && this.scene.anims.exists(runKey)) {
-            if (cur !== runKey) sprite.anims.play(runKey, true);
+            if (needsAnimPlay(cur, runKey, playing)) sprite.anims.play(runKey, true);
         } else if (state !== 'idle') {
             // A character that declares no `run` anim still sprints — it just
             // keeps the walk cycle while it does.
-            if (cur !== walkKey && this.scene.anims.exists(walkKey)) {
+            if (needsAnimPlay(cur, walkKey, playing) && this.scene.anims.exists(walkKey)) {
                 sprite.anims.play(walkKey, true);
             }
         } else {
@@ -1064,11 +1069,11 @@ export class CharacterController {
             // a side. Freeze on that instead of snapping back to centred.
             const pose = idlePoseFor(this.facing, this.spec.anims?.walk?.frames?.[0]);
             if (pose.anim === 'idle') {
-                if (cur !== idleKey && this.scene.anims.exists(idleKey)) {
+                if (needsAnimPlay(cur, idleKey, playing) && this.scene.anims.exists(idleKey)) {
                     sprite.anims.play(idleKey, true);
                 }
             } else if (pose.frame !== null) {
-                if (cur !== null) sprite.anims.stop();
+                if (playing) sprite.anims.stop();
                 if (sprite.frame.name !== String(pose.frame)) sprite.setFrame(pose.frame);
             }
         }
