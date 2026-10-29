@@ -96,6 +96,10 @@ sprite:
     grid:
         rows: 4
         cols: 4
+    # 768 sheet (192px cells) built straight from `raws/claude.png` (1536, 4x4): magenta
+    # keyed, edge fringe cleaned, LANCZOS to 768, alpha forced hard, then 32 colours to
+    # match the rest of the roster. The old 512 sheet (128px cells) was drawn at
+    # scale 1.55 and read as blurry - it was upscaling its own art.
     # Visual scale tracks `body` against deepseek's 26x26 → 1.35, so the
     # sprite and the physics box stay in proportion across the roster.
     scale: 1.55
