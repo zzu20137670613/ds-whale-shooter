@@ -28,7 +28,7 @@ moveSpeed: 7
 body:
     halfW: 45
     halfH: 51
-weaponId: rune-shield
+weaponId: physical-salvation-boss
 sfx:
     hit: monster-hit
     death: monster-death

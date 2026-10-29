@@ -12,6 +12,7 @@ import { describe, expect, it } from 'vitest';
 
 import {
     BARRAGE_RINGS,
+    BOSS_MELEE_REACH,
     BARRAGE_SECTORS,
     BOSS_ATTACKS,
     BOSS_BULLET_SIZE_MULTIPLIER,
@@ -153,5 +154,12 @@ describe('the damage table', () => {
         for (const [id, spec] of Object.entries(BOSS_ATTACKS)) {
             expect(spec.windupMs, id).toBeGreaterThan(0);
         }
+    });
+});
+describe('melee reach', () => {
+    it('is arm\'s length, not the weapon range', () => {
+        // Her mortar reaches 700. A swing must not, or she swings across the room.
+        expect(BOSS_MELEE_REACH).toBe(96);
+        expect(BOSS_MELEE_REACH).toBeLessThan(700);
     });
 });

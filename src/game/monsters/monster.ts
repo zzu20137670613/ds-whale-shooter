@@ -76,7 +76,12 @@ import {
     scaleForPhase,
     type BossPhase,
 } from '@/lib/bosses/phases';
-import { BOSS_ATTACKS, WRATH_CIRCLES, WRATH_CIRCLES_LOW_HP } from '@/lib/bosses/attacks';
+import {
+    BOSS_ATTACKS,
+    BOSS_MELEE_REACH,
+    WRATH_CIRCLES,
+    WRATH_CIRCLES_LOW_HP,
+} from '@/lib/bosses/attacks';
 import { castWrath, fireBarrage, fireCannon } from './boss-attacks';
 // ─── Entity ──────────────────────────────────────────────────────────────
 
@@ -1435,12 +1440,13 @@ export class MonsterController {
         dirToPlayer: { x: number; y: number },
         footY: number,
         damage: number,
+        rangeOverride?: number,
     ): void {
         const weapon = m.weapon;
         m.weaponVisual.triggerSwing();
         const swingSfx = weapon.sfx?.shoot;
         if (swingSfx) EventBus.emit(SFX_EVENT(swingSfx));
-        const range = weapon.range;
+        const range = rangeOverride ?? weapon.range;
         const originX = m.body.position.x;
         const originY = m.body.position.y;
         const dx = dirToPlayer.x;
@@ -1485,11 +1491,17 @@ export class MonsterController {
     ): void {
         const phase = this.phaseOf(m);
         const distance = Math.hypot(dirToPlayer.x, dirToPlayer.y);
-        const meleeReach = (m.weapon.range ?? 0) + 40;
+        const meleeReach = BOSS_MELEE_REACH;
 
         if (distance <= meleeReach) {
             m.lastBossAttack = 'melee';
-            this.performMelee(m, dirToPlayer, footY, BOSS_ATTACKS.melee.damage * phase.damageScale);
+            this.performMelee(
+                m,
+                dirToPlayer,
+                footY,
+                BOSS_ATTACKS.melee.damage * phase.damageScale,
+                BOSS_MELEE_REACH,
+            );
             return;
         }
 

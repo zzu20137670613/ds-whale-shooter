@@ -39,6 +39,15 @@ export const WRATH_BASE_RADIUS = 64;
 export const WRATH_MIN_DISTANCE = 48;
 export const WRATH_MAX_DISTANCE = 150;
 
+/**
+ * How close the player has to be for the boss to swing instead of shoot.
+ *
+ * Not the weapon's `range`: her weapon is a mortar with 700 range, and using that as
+ * the melee trigger would have her swinging a hitbox across the room. A swing is a
+ * swing - arm's length, whatever she is holding.
+ */
+export const BOSS_MELEE_REACH = 96;
+
 export interface BossAttackSpec {
     damage: number;
     /** Milliseconds the attack animation holds before it resolves. */

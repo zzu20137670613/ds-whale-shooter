@@ -20,7 +20,8 @@ weapons:
     # tests/data-integrity.test.ts); the melee column is the roster's close
     # game. Placeholder art throughout except nashors-tooth — see each YAML.
     - scripture         # claude   melee  — the book, swung shut
-    - inkwell-mortar    # claude   ranged
+    - inkwell-mortar
+    - physical-salvation-boss  # boss only: Claude's copy, pinned to the design table    # claude   ranged
     - nashors-tooth     # gpt      melee  — easter egg, real art
     - white-dragon-fangs # gpt     ranged
     - crane-fan         # qwen     melee  — the spread, now an arc
