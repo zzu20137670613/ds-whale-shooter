@@ -61,3 +61,13 @@ describe('giveCatGift', () => {
         expect(d.refresh).toHaveBeenCalledTimes(1);
     });
 });
+
+describe('the gift she already carries', () => {
+    it('reports a merge instead of a duplicate rifle', () => {
+        // Gemini's hotbar already holds the assault rifle, so the cat's gift used to leave
+        // her carrying two of them. Adding must fuse them (+1 level) instead.
+        const d = deps({ addWeapon: vi.fn(() => 'merged' as const) });
+        expect(giveCatGift(d)).toBe('merged');
+        expect(d.warn).not.toHaveBeenCalled();
+    });
+});

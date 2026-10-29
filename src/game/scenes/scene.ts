@@ -1021,11 +1021,14 @@ export class LoadScene extends Phaser.Scene {
 
         const gift = this.assets.weaponsById.get(CAT_SHOP_GIFT_WEAPON_ID);
         const giftName = gift ? pickText(gift.name, gift.nameZh) : '突击步枪';
+        const say = (line: string) => useGameStore.getState().showNotice(line);
         // Whatever happened, say it. A silent gift is indistinguishable from a broken one.
         if (result === 'granted') {
-            useGameStore.getState().showNotice(`猫塞给你一把${giftName}`);
+            say(`猫猫塞给你一把${giftName}`);
+        } else if (result === 'merged') {
+            say(`猫猫又塞给你一把${giftName}，两把合成一把（+1 级）`);
         } else if (result === 'capped') {
-            useGameStore.getState().showNotice(`猫叼来了${giftName}，可你手上拿不下了`);
+            say(`猫猫叼来了${giftName}，可你手上拿不下了`);
         }
     }
 

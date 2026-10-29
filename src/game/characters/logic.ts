@@ -71,9 +71,11 @@ import {
     KEY_TWO,
     KEY_W,
     SFX_EVENT,
+    WEAPONS_REFILL_ONE_EVENT,
 } from '@/lib/constants';
 import { getCheats } from '@/lib/dev/cheats';
 import { EventBus } from '@/lib/events/bus';
+import { maxWeaponUpgradeLevel } from '@/lib/weapons/upgrades';
 import { appRect, toAppPoint } from '@/lib/mobile';
 import type { CharacterSpec } from '@/lib/characters';
 import type { Level } from '@/lib/levels/types';
@@ -271,6 +273,8 @@ export interface WeaponsLike {
     manualReload(): void;
     refillActiveAmmo(fraction: number): void;
     swapToWeapon(weaponId: string): boolean;
+    /** True when this weapon id already sits in the hotbar. */
+    hasWeapon(weaponId: string): boolean;
     getActiveSlotState(): StatusHudState;
     tryPickupWeapon(spec: import('@/lib/weapons').WeaponSpec): 'added' | 'capped';
     replaceSlot(slotIndex: number, spec: import('@/lib/weapons').WeaponSpec): void;
@@ -576,9 +580,21 @@ export class CharacterController {
     tryPickupWeaponById(
         weaponId: string,
         weaponsById: ReadonlyMap<string, import('@/lib/weapons').WeaponSpec>,
-    ): 'added' | 'capped' | 'unknown' {
+    ): 'added' | 'capped' | 'unknown' | 'merged' {
         const spec = weaponsById.get(weaponId);
         if (!spec) return 'unknown';
+
+        // Already carrying it: merge the two into one instead of taking a second slot.
+        // Gemini already owns an assault rifle, so the cat's gift used to leave her with
+        // two of them; the same happened to GPT at the dragon throne.
+        if (this.parts.weapons.hasWeapon(weaponId)) {
+            useGameStore.getState().mergeOwnedWeapon(weaponId, maxWeaponUpgradeLevel(spec));
+            // The store is a mirror - the guns in her hands are THIS object, so the
+            // refill has to reach the live slots too.
+            EventBus.emit(WEAPONS_REFILL_ONE_EVENT, { weaponId });
+            return 'merged';
+        }
+
         return this.parts.weapons.tryPickupWeapon(spec);
     }
 

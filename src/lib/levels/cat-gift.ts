@@ -18,7 +18,7 @@ import type { WeaponSpec } from '@/lib/weapons';
 /** What the cabin cat hands over. */
 export const CAT_GIFT_WEAPON_ID = 'assault-rifle';
 
-export type PickupOutcome = 'added' | 'capped' | 'unknown';
+export type PickupOutcome = 'added' | 'capped' | 'unknown' | 'merged';
 
 export interface CatGiftDeps {
     /** Every weapon the current scene loaded. */
@@ -31,7 +31,7 @@ export interface CatGiftDeps {
     warn: (message: string, detail: unknown) => void;
 }
 
-export type CatGiftResult = 'granted' | 'capped' | 'unknown';
+export type CatGiftResult = 'granted' | 'merged' | 'capped' | 'unknown';
 
 /**
  * Hand the rifle over.
@@ -52,6 +52,8 @@ export function giveCatGift(deps: CatGiftDeps): CatGiftResult {
     deps.refresh();
 
     if (outcome === 'added') return 'granted';
+    // She already had one: the pair fused into a level-up, which is also a gift landing.
+    if (outcome === 'merged') return 'merged';
     if (outcome === 'capped') {
         deps.warn('hotbar full, the rifle did not fit', { giftId: CAT_GIFT_WEAPON_ID });
         return 'capped';

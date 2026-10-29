@@ -77,6 +77,8 @@ export interface CharacterRuntime {
      *   - `'added'`   on success (the new weapon becomes active)
      *   - `'capped'`  when the hotbar is at `weaponMax` (caller should
      *                  surface a replace-HUD instead of consuming the drop)
+     *   - `'merged'`  when she already carries it: the two fuse into one (+1 level,
+     *                  full magazine) instead of taking a second slot
      *   - `'unknown'` when no `WeaponSpec` with that id was registered
      *
      * `weaponsById` is the scene-level lookup shared with DropController;
@@ -85,7 +87,7 @@ export interface CharacterRuntime {
     tryPickupWeaponById(
         weaponId: string,
         weaponsById: ReadonlyMap<string, import('@/lib/weapons').WeaponSpec>,
-    ): 'added' | 'capped' | 'unknown';
+    ): 'added' | 'capped' | 'unknown' | 'merged';
     /** Replace the weapon in `slotIndex` with `weaponId`'s spec. No-op
      *  when the index is out of range or the id isn't registered. */
     replaceWeaponSlot(

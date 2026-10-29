@@ -23,7 +23,7 @@ export const NoticeView: React.FC<{ text: string | null }> = ({ text }) => {
             className="pointer-events-none absolute inset-x-0 top-20 z-30 flex justify-center"
             data-testid="notice-toast"
         >
-            <div className="border-2 border-amber-500/80 bg-stone-950/90 px-3 py-1.5 font-['Silkscreen',monospace] text-[12px] leading-none tracking-wide text-amber-200 shadow-[0_4px_16px_rgba(0,0,0,0.55)]">
+            <div className="border-2 border-amber-500/80 bg-stone-950/90 px-3 py-1.5 font-mono text-[13px] leading-relaxed text-amber-200 shadow-[0_4px_16px_rgba(0,0,0,0.55)]">
                 {text}
             </div>
         </div>
