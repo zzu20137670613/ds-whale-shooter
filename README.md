@@ -1,11 +1,13 @@
 <p align="center">
-  <img src="public/favicon.png" width="64" height="64" alt="The 11th Forest Icon" style="border-radius: 8px;" />
+  <img src="public/favicon.png" width="64" height="64" alt="Deep Echo · Tender Gunfire icon" style="border-radius: 8px;" />
 </p>
 
-<h1 align="center">The 11th Forest</h1>
+<h1 align="center">Deep Echo · Tender Gunfire</h1>
+
+<p align="center"><b>深海回响 · 枪火柔情</b></p>
 
 <p align="center">
-  <b>A Top-Down Gothic Anime Pixel Shooter & Visual Level Editor exploring AI Game Development Pipelines</b>
+  <b>A top-down anime pixel shooter: five girls, one beach, one boss — the shooter chapter of the Deep Echo series</b>
 </p>
 
 <p align="center">
@@ -29,7 +31,7 @@
 
 ## 📖 Overview
 
-**The 11th Forest** is a top-down pixel action shooter combining hand-crafted gothic garden aesthetics with a strictly typed data-driven architecture built on Phaser 4 + React 19, inspired by titles like _Brotato_ and _Vampire Survivors_.
+**深海回响 · 枪火柔情** (Deep Echo · Tender Gunfire) is a top-down pixel action shooter built on Phaser 4 + React 19 with a strictly typed, data-driven architecture. Five characters — DeepSeek, Claude, GPT, Qwen and Gemini — each carry their own weapons, upgrade ladders and one active skill; you pick one, clear the beach, and spend what you earn in the tavern.
 
 You play a lone hunter drawn into a forest that shouldn't exist — a place where roses shoot back and the trees remember every name spoken under their shade.
 

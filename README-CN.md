@@ -2,7 +2,7 @@
   <img src="public/favicon.png" width="64" height="64" alt="第十一号森林 Icon" style="border-radius: 8px;" />
 </p>
 
-<h1 align="center">第十一号森林 · The 11th Forest</h1>
+<h1 align="center">深海回响 · 枪火柔情</h1>
 
 <p align="center">
   <b>基于 Phaser 4 + React 19 的 AI 游戏制作探索项目与可视化关卡编辑器</b>
@@ -22,7 +22,7 @@
 
 ## 📖 项目简介 (Overview)
 
-**第十一号森林 (The 11th Forest)** 是一款融合哥特庭院美术风与数据驱动架构的俯视角像素动作射击游戏，灵感灵感来源于 _Brotato (土豆兄弟)_、_Vampire Survivors (吸血鬼幸存者)_ 等经典俯视角射击作品。
+**深海回响 · 枪火柔情** 是「深海回响」系列的射击篇章：五位角色（DeepSeek、Claude、GPT、Qwen、Gemini）各带自己的武器、升级梯和主动技能，选一位下海滩清场，赚到的钱回酒馆花。基于 Phaser 4 + React 19，数据全部走 YAML，引擎层面严格类型化。
 
 玩家扮演一名被召唤至不该存在之地的孤独猎人，在被诅咒的森林庭园中穿行与战斗 —— 玫瑰会还击，大树记得你讲过的每一个名字。
 
