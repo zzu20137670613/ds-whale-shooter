@@ -67,12 +67,17 @@ import {
     monsterAnimTrack,
 } from './logic';
 import {
+    BOSS_PHASES,
     clampBossDamage,
     phaseAt,
     nextPhase,
+    pickNextAttack,
+    type BossAttackId,
     scaleForPhase,
     type BossPhase,
 } from '@/lib/bosses/phases';
+import { BOSS_ATTACKS, WRATH_CIRCLES, WRATH_CIRCLES_LOW_HP } from '@/lib/bosses/attacks';
+import { castWrath, fireBarrage, fireCannon } from './boss-attacks';
 // ─── Entity ──────────────────────────────────────────────────────────────
 
 export type MonsterState = 'idle' | 'chase' | 'attack' | 'dying';
@@ -167,6 +172,10 @@ export class Monster {
     phaseMaxHp: number;
     /** Frozen and unattackable until this timestamp (phase transition beat). */
     invulnerableUntil = 0;
+    /** Boss only: the attack she used last, so she never repeats it twice in a row. */
+    lastBossAttack: BossAttackId | null = null;
+    /** Boss only: wrath waves fired this phase - what entropy counts. */
+    wrathWaves = 0;
     state: MonsterState = 'idle';
     lastAttackAt = 0;
     lastHitAt = 0;
@@ -992,7 +1001,15 @@ export class MonsterController {
                 // Update status HUD above monster Red Hitbox top edge
                 const topOffset = m.hitboxHeight / 2;
                 m.statusHud.update(
-                    { name: m.spec.name, hp: m.hp, maxHp: m.phaseMaxHp, showHpBar: true },
+                    {
+                        name: m.spec.name,
+                        hp: m.hp,
+                        maxHp: m.phaseMaxHp,
+                        showHpBar: true,
+                        ...(m.spec.boss
+                            ? { phaseIndex: m.phaseIndex, phaseCount: BOSS_PHASES.length }
+                            : {}),
+                    },
                     time,
                     topOffset,
                 );
@@ -1035,7 +1052,18 @@ export class MonsterController {
             } else {
                 m.debugHitboxRect.setPosition(mp.x, mp.y);
                 const halfH = m.spec.body.halfH;
-                m.statusHud.update({ hp: m.hp, maxHp: m.phaseMaxHp, showHpBar: true }, time, halfH);
+                m.statusHud.update(
+                    {
+                        hp: m.hp,
+                        maxHp: m.phaseMaxHp,
+                        showHpBar: true,
+                        ...(m.spec.boss
+                            ? { phaseIndex: m.phaseIndex, phaseCount: BOSS_PHASES.length }
+                            : {}),
+                    },
+                    time,
+                    halfH,
+                );
                 if (dist > 1) {
                     m.debugHitboxRect.setRotation(Math.atan2(dirToPlayer.y, dirToPlayer.x));
                 }
@@ -1379,6 +1407,9 @@ export class MonsterController {
         m.invulnerableUntil = this.scene.time.now + BOSS_PHASE_TRANSITION_MS;
         m.lastAttackAt = m.invulnerableUntil;
         m.hitStunUntil = m.invulnerableUntil;
+        // Entropy resets per phase; so does "do not repeat that attack".
+        m.lastBossAttack = null;
+        m.wrathWaves = 0;
 
         // The turn track is the one animation every boss sheet already has, so the
         // transformation reads even before bespoke phase art exists.
@@ -1394,7 +1425,137 @@ export class MonsterController {
         return time >= m.invulnerableUntil;
     }
 
+    /**
+     * One melee swing: the animation, the sound, and the sensor hitbox in front of the
+     * body. Shared by ordinary monsters and by the boss, which is why `damage` is a
+     * parameter instead of being read from the weapon.
+     */
+    private performMelee(
+        m: Monster,
+        dirToPlayer: { x: number; y: number },
+        footY: number,
+        damage: number,
+    ): void {
+        const weapon = m.weapon;
+        m.weaponVisual.triggerSwing();
+        const swingSfx = weapon.sfx?.shoot;
+        if (swingSfx) EventBus.emit(SFX_EVENT(swingSfx));
+        const range = weapon.range;
+        const originX = m.body.position.x;
+        const originY = m.body.position.y;
+        const dx = dirToPlayer.x;
+        const dy = dirToPlayer.y;
+        const len = Math.hypot(dx, dy);
+        const angle = len > 0 ? Math.atan2(dy, dx) : 0;
+        spawnMeleeHitbox(this.scene, this.matter, {
+            origin: { x: originX, y: originY },
+            angle,
+            range,
+            hitWidth: weapon.hitWidth ?? range,
+            hitHeight: weapon.hitHeight ?? range,
+            damage,
+            texture: weapon.bullet?.texture,
+            scale: weapon.bullet?.scale ?? 0.2,
+            rotationOffset: weapon.bullet?.rotationOffset,
+            swingAngle: weapon.visual?.swingAngle,
+            category: CAT.MONSTER_PROJECTILE,
+            mask: PROJECTILE_MONSTER_MASK,
+            label: 'monster-melee',
+            // Stack the swing in front of the monster's sprite
+            // (sprite < bullet < weapon, mirroring the player's
+            // CHARACTER < BULLET < WEAPON depth stack). The +10
+            // offset matches DEPTH.BULLET - DEPTH.CHARACTER for
+            // the flat layer so a melee arc never draws over its
+            // owner's body but always draws under the weapon.
+            depth: footY + 10,
+        });
+    }
+
+    /**
+     * Pick and run one boss attack.
+     *
+     * Melee is positional rather than random: if the player is inside the swing she
+     * swings, because a god who backs off to shoot while you hug her reads as broken.
+     * Everything else comes from the phase's pool with the anti-repeat rules applied.
+     */
+    private performBossAttack(
+        m: Monster,
+        dirToPlayer: { x: number; y: number },
+        footY: number,
+    ): void {
+        const phase = this.phaseOf(m);
+        const distance = Math.hypot(dirToPlayer.x, dirToPlayer.y);
+        const meleeReach = (m.weapon.range ?? 0) + 40;
+
+        if (distance <= meleeReach) {
+            m.lastBossAttack = 'melee';
+            this.performMelee(m, dirToPlayer, footY, BOSS_ATTACKS.melee.damage * phase.damageScale);
+            return;
+        }
+
+        const kind = pickNextAttack(phase, m.lastBossAttack, Math.random);
+        m.lastBossAttack = kind;
+
+        const aim = Math.atan2(dirToPlayer.y, dirToPlayer.x);
+        const player = this.playerBody
+            ? { x: this.playerBody.position.x, y: this.playerBody.position.y }
+            : {
+                  x: m.body.position.x + dirToPlayer.x,
+                  y: m.body.position.y + dirToPlayer.y,
+              };
+
+        const ctx = {
+            scene: this.scene,
+            matter: this.matter,
+            actor: {
+                x: m.body.position.x,
+                y: m.body.position.y,
+                projectile: m.weapon.projectile
+                    ? {
+                          speed: m.weapon.projectile.speed,
+                          radius: m.weapon.projectile.visual?.radius ?? 9,
+                          width: m.weapon.projectile.visual?.width ?? 18,
+                          height: m.weapon.projectile.visual?.height ?? 18,
+                          color: m.weapon.projectile.visual?.color,
+                          texture: m.weapon.bullet?.texture,
+                          scale: m.weapon.bullet?.scale,
+                      }
+                    : undefined,
+            },
+            aim,
+            damageScale: phase.damageScale,
+            wrathWaves: m.wrathWaves,
+            player,
+            damageAt: (x: number, y: number, radius: number, damage: number) => {
+                const body = this.playerBody;
+                if (!body) return;
+                // Generous by the player's own radius, so a circle that LOOKS like a
+                // hit really is one.
+                if (Math.hypot(body.position.x - x, body.position.y - y) <= radius + 16) {
+                    this.cb.onPlayerHit(damage);
+                }
+            },
+        };
+
+        if (kind === 'barrage') {
+            fireBarrage(ctx);
+            return;
+        }
+        if (kind === 'wrath') {
+            m.wrathWaves += 1;
+            const atHalf = m.hp <= m.phaseMaxHp * 0.5;
+            castWrath(ctx, atHalf ? WRATH_CIRCLES_LOW_HP : WRATH_CIRCLES);
+            return;
+        }
+        fireCannon(ctx);
+    }
+
     private performAttack(m: Monster, dirToPlayer: { x: number; y: number }, footY: number): void {
+        if (m.spec.boss) {
+            this.performBossAttack(m, dirToPlayer, footY);
+            return;
+        }
+
         const weapon = m.weapon;
         const projectile = weapon.projectile;
         const isMelee = projectile === undefined;
@@ -1406,38 +1567,7 @@ export class MonsterController {
         // as a fallback for the rare case where the player walks into the
         // monster between swings.
         if (isMelee) {
-            m.weaponVisual.triggerSwing();
-            const swingSfx = weapon.sfx?.shoot;
-            if (swingSfx) EventBus.emit(SFX_EVENT(swingSfx));
-            const range = weapon.range;
-            const originX = m.body.position.x;
-            const originY = m.body.position.y;
-            const dx = dirToPlayer.x;
-            const dy = dirToPlayer.y;
-            const len = Math.hypot(dx, dy);
-            const angle = len > 0 ? Math.atan2(dy, dx) : 0;
-            spawnMeleeHitbox(this.scene, this.matter, {
-                origin: { x: originX, y: originY },
-                angle,
-                range,
-                hitWidth: weapon.hitWidth ?? range,
-                hitHeight: weapon.hitHeight ?? range,
-                damage: this.phaseDamage(m, weapon.damage),
-                texture: weapon.bullet?.texture,
-                scale: weapon.bullet?.scale ?? 0.2,
-                rotationOffset: weapon.bullet?.rotationOffset,
-                swingAngle: weapon.visual?.swingAngle,
-                category: CAT.MONSTER_PROJECTILE,
-                mask: PROJECTILE_MONSTER_MASK,
-                label: 'monster-melee',
-                // Stack the swing in front of the monster's sprite
-                // (sprite < bullet < weapon, mirroring the player's
-                // CHARACTER < BULLET < WEAPON depth stack). The +10
-                // offset matches DEPTH.BULLET - DEPTH.CHARACTER for
-                // the flat layer so a melee arc never draws over its
-                // owner's body but always draws under the weapon.
-                depth: footY + 10,
-            });
+            this.performMelee(m, dirToPlayer, footY, this.phaseDamage(m, weapon.damage));
             return;
         }
 

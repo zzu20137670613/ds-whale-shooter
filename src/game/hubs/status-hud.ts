@@ -61,6 +61,10 @@ export interface StatusHudState {
     dodgeCooldownStartedAt?: number;
     dodgeCooldownTimeMs?: number;
     barWidth?: number;
+    /** Boss only: which rung of the ladder is lit (0-based). */
+    phaseIndex?: number;
+    /** Boss only: how many rungs there are. Drives the pip count. */
+    phaseCount?: number;
 }
 
 interface FloatingText {
@@ -252,6 +256,25 @@ export class StatusHud extends BaseHud {
             if (hpFrac > 0) {
                 const fillW = Math.max(2, BAR_W * hpFrac);
                 this.hpFill.fillRoundedRect(cx - BAR_W / 2, cy, fillW, BAR_H, RADIUS);
+            }
+        }
+
+        // 3b. Boss phase pips: one dot per rung, lit up to the current one.
+        //     Drawn under the bar so reading the health never competes with them.
+        if (state.phaseCount && state.phaseCount > 1) {
+            const count = state.phaseCount;
+            const current = state.phaseIndex ?? 0;
+            const gap = 5;
+            const dot = 3;
+            const totalW = count * dot + (count - 1) * gap;
+            const startX = cx - totalW / 2 + dot / 2;
+            for (let i = 0; i < count; i += 1) {
+                const x = startX + i * (dot + gap);
+                const y = cy + totalHeight + 4;
+                // Passed rungs stay lit; the current one is brighter and wider.
+                const lit = i <= current;
+                this.bg.fillStyle(lit ? (i === current ? 0xfbbf24 : 0xfde68a) : 0x334155, lit ? 1 : 0.9);
+                this.bg.fillCircle(x, y, i === current ? dot : dot - 1);
             }
         }
 
