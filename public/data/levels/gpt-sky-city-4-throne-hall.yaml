@@ -1,0 +1,349 @@
+title: GPT's Sky City · Throne Hall
+titleZh: 'GPT的天空之城·王厅'
+
+# 2x2 拆分：本关是原来 11008x6144 地图的一块 5504x3072。
+# 碰撞墙来自主人 2026-11-11 的按块标注（红=不可达），128px 网格合并成矩形。
+background: assets/image/scenes/gpt-sky-city/sky-city-4-throne.png
+imageSize: 5504x3072
+# 旧 4x4 版这张图就是 pixelLighting: false（差分光效会把画面压暗，
+# 主人报过「月桥色调明显偏暗」）；拆开后每块都要带上这一行。
+pixelLighting: false
+# 天空之城底图偏亮，词元盾光柱改用深色（主人 2026-11-12）。
+tokenPillarTone: dark
+
+airWalls:
+    # 20 段红区 + 4 段边界兜底。
+    - id: border-top
+      kind: short
+      points:
+          - - 48
+            - 48
+          - - 5456
+            - 48
+          - - 5456
+            - 56
+          - - 48
+            - 56
+    - id: border-bottom
+      kind: short
+      points:
+          - - 48
+            - 3016
+          - - 5456
+            - 3016
+          - - 5456
+            - 3024
+          - - 48
+            - 3024
+    - id: border-left
+      kind: short
+      points:
+          - - 48
+            - 48
+          - - 56
+            - 48
+          - - 56
+            - 3024
+          - - 48
+            - 3024
+    - id: border-right
+      kind: short
+      points:
+          - - 5448
+            - 48
+          - - 5456
+            - 48
+          - - 5456
+            - 3024
+          - - 5448
+            - 3024
+    - id: blocked-01
+      kind: short
+      points:
+          - - 3968
+            - 0
+          - - 5504
+            - 0
+          - - 5504
+            - 256
+          - - 3968
+            - 256
+    - id: blocked-02
+      kind: short
+      points:
+          - - 4096
+            - 256
+          - - 5504
+            - 256
+          - - 5504
+            - 384
+          - - 4096
+            - 384
+    - id: blocked-03
+      kind: short
+      points:
+          - - 4352
+            - 384
+          - - 5504
+            - 384
+          - - 5504
+            - 512
+          - - 4352
+            - 512
+    - id: blocked-04
+      kind: short
+      points:
+          - - 4480
+            - 512
+          - - 5504
+            - 512
+          - - 5504
+            - 640
+          - - 4480
+            - 640
+    - id: blocked-05
+      kind: short
+      points:
+          - - 4608
+            - 640
+          - - 5504
+            - 640
+          - - 5504
+            - 768
+          - - 4608
+            - 768
+    - id: blocked-06
+      kind: short
+      points:
+          - - 2560
+            - 768
+          - - 2944
+            - 768
+          - - 2944
+            - 1408
+          - - 2560
+            - 1408
+    - id: blocked-07
+      kind: short
+      points:
+          - - 4864
+            - 768
+          - - 5504
+            - 768
+          - - 5504
+            - 896
+          - - 4864
+            - 896
+    - id: blocked-08
+      kind: short
+      points:
+          - - 2944
+            - 896
+          - - 3072
+            - 896
+          - - 3072
+            - 1152
+          - - 2944
+            - 1152
+    - id: blocked-09
+      kind: short
+      points:
+          - - 4992
+            - 896
+          - - 5504
+            - 896
+          - - 5504
+            - 1024
+          - - 4992
+            - 1024
+    - id: blocked-10
+      kind: short
+      points:
+          - - 5120
+            - 1024
+          - - 5504
+            - 1024
+          - - 5504
+            - 1280
+          - - 5120
+            - 1280
+    - id: blocked-11
+      kind: short
+      points:
+          - - 5248
+            - 1280
+          - - 5504
+            - 1280
+          - - 5504
+            - 1408
+          - - 5248
+            - 1408
+    - id: blocked-12
+      kind: short
+      points:
+          - - 5376
+            - 1408
+          - - 5504
+            - 1408
+          - - 5504
+            - 3072
+          - - 5376
+            - 3072
+    - id: blocked-13
+      kind: short
+      points:
+          - - 5248
+            - 1792
+          - - 5376
+            - 1792
+          - - 5376
+            - 3072
+          - - 5248
+            - 3072
+    - id: blocked-14
+      kind: short
+      points:
+          - - 5120
+            - 1920
+          - - 5248
+            - 1920
+          - - 5248
+            - 3072
+          - - 5120
+            - 3072
+    - id: blocked-15
+      kind: short
+      points:
+          - - 4992
+            - 2176
+          - - 5120
+            - 2176
+          - - 5120
+            - 3072
+          - - 4992
+            - 3072
+    - id: blocked-16
+      kind: short
+      points:
+          - - 4864
+            - 2304
+          - - 4992
+            - 2304
+          - - 4992
+            - 3072
+          - - 4864
+            - 3072
+    - id: blocked-17
+      kind: short
+      points:
+          - - 4736
+            - 2432
+          - - 4864
+            - 2432
+          - - 4864
+            - 3072
+          - - 4736
+            - 3072
+    - id: blocked-18
+      kind: short
+      points:
+          - - 4608
+            - 2560
+          - - 4736
+            - 2560
+          - - 4736
+            - 3072
+          - - 4608
+            - 3072
+    - id: blocked-19
+      kind: short
+      points:
+          - - 4480
+            - 2688
+          - - 4608
+            - 2688
+          - - 4608
+            - 3072
+          - - 4480
+            - 3072
+    - id: blocked-20
+      kind: short
+      points:
+          - - 4352
+            - 2816
+          - - 4480
+            - 2816
+          - - 4480
+            - 3072
+          - - 4352
+            - 3072
+
+characterSpawn:
+    x: 700
+    'y': 1600
+    facing: right
+
+monsters: []
+spawner:
+    # 单块 5504x3072 内部分成 2x2 象限，玩家第一次踏入某个象限刷一波。
+    # 波数沿用图书馆：入口 1 / 第二关 2 / 第三关 2 / 第四关 3。每次进入都重刷。
+    delayMs: 2000
+    waves: 3
+    near: { count: 4, minDistance: 300, maxDistance: 900 }
+    far: { count: 5, edgeInset: 480 }
+    exclude:
+        # 从旧 4x4 spawner 搬来的禁刷矩形（本地坐标）：屋顶、王座高台、
+        # 以及海边那条窄条，都是美术上不可站人的地方。
+        - { x: 592, y: 704, width: 3616, height: 2368 }
+        - { x: 3504, y: 1552, width: 2000, height: 1520 }
+    # 主人 2026-11-12 定的最后一波（第三波）配比：
+    # 天空之城·王厅：远处边缘 1 只龙城守卫换 Bunny，2 只云海德鲁伊换钢铁典狱长。
+    # 前两波不动；`far` 一项一只怪，按顺序占远处边缘的槽位。
+    finalWave:
+        far:
+            - warden
+            - drone-ultra
+            - warden
+            - drone-ultra
+            - bunny
+    pool:
+        melee: [keeper]
+        ranged: [drone-ultra]
+
+dropSpawns: []
+materials: []
+
+triggers:
+    # 龙王宝座彩蛋：撞一下靠背，白龙獠牙从顶上飞出来落在座位上。谁都能触发，每人一句台词，
+    # 每次存档只给一次。旧方案里这块在世界坐标 (5504,3072) 起，减掉原点就是下面的本地坐标。
+    - id: dragon-throne-fangs
+      # The seat plus its approach. It used to be a 110px strip hugging the wall,
+      # so standing half a step low missed it entirely (`在龙王王座上没有掉下白龙獠牙`).
+      zone: { x: 2446, y: 1358, width: 720, height: 360 }
+      line:
+          default: '哇！GPT藏起来的白龙獠牙，好漂亮的枪！'
+          gpt: '还好还好~藏起来的獠牙还在！'
+      # 过场：獠牙一蹦出来就播《一夜鱼龙舞》（主人的素材，7.1 MB）。
+      video: assets/video/night-of-dragons.mp4
+      spawn:
+          type: weapon-drop
+          weaponId: white-dragon-fangs
+          from: { x: 2778, y: 488 }
+          to: { x: 2778, y: 1548 }
+          lift: 120
+          durationMs: 750
+
+teleporters:
+    # 位置来自主人的绿圈，半径统一 200（2x2 规则）。
+    - id: from-great-tome
+      x: 2727
+      'y': 227
+      targetScene: gpt-sky-city-3-great-tome
+      targetPortalId: to-throne-hall
+      radius: 200
+    - id: to-atlantis
+      x: 2834
+      'y': 2702
+      targetScene: dsh-atlantis-1-entrance
+      targetPortalId: from-sky-city
+      radius: 200

@@ -1,0 +1,26 @@
+One image, four separate full-body frames of the same chibi whale-girl maid, left to right, slow walk cycle.
+
+CHARACTER: long navy hair with cyan gradient, blue eyes, whale-fin ears, white frilly maid headdress, navy maid dress with white frills, white apron with a tiny blue whale on it, white socks, navy shoes, a whale tail with a fin behind her.
+
+LEGS — the previous attempt was rejected because the legs crossed into an X:
+- Two separate parallel leg columns. Never cross, never touch, never form an X or K.
+- At least 6 px of background between the legs from skirt hem to floor, in every frame.
+- Straight vertical shins, knees forward. Both shoes flat on the floor, >=26 px wide each.
+- Skirt hem ends at the knee; shins, socks and shoes stay visible. No skirt over the legs.
+- Both soles on ONE horizontal line; same ground line in all four frames.
+
+WALK CYCLE:
+1. contact — left foot forward, right foot back, both flat, clear stride.
+2. passing — feet closer, rear foot lifting, body 1-2 px higher.
+3. contact — right foot forward, left foot back (mirror of frame 1).
+4. passing — the other foot lifting (mirror of frame 2).
+Alternate the lead leg: left leads in 1, right leads in 3.
+
+VIEW: three-quarter front view walking towards the viewer's right, so the leg split reads clearly. Never from behind, never a side profile.
+
+FRAMING:
+- Flat solid #FF00FF background, no gradient, no ground shadow.
+- Four characters, same height, evenly spaced.
+- At least 40 px of flat magenta between neighbours: arms and tails must not touch or overlap. Each figure a separate complete silhouette.
+- No text, logo, watermark, laptop, props or extra objects.
+- Pixel art, crisp chunky pixels, same palette and line weight as above.

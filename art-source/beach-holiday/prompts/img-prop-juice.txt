@@ -1,0 +1,40 @@
+# Prop prompt — the iced juice glass (region-trigger reward)
+#
+# What it is for: the beach lounger easter egg. Stepping on the lounger pops a
+# glass of iced juice out of the seat; it arcs onto the side table and waits
+# there. Walking into it refills HP and SP.
+#
+# Where it goes when it arrives: public/assets/image/drops/iced-juice.png,
+# wired by a new `public/data/drops/iced-juice.yaml` + one line in
+# public/data/drops/index.yaml, and then `triggers[0].spawn.type` in
+# public/data/levels/beach-holiday.yaml switches from `beach-drink` to
+# `iced-juice`. Until that art exists the egg borrows `beach-drink`'s cell,
+# which is a documented placeholder (a blue shard, not a drink).
+#
+# Rules learned from the other prop prompts in this folder:
+#   - ONE object, dead centre, small in frame, generous flat margin around it.
+#   - Straight top-down, as if seen from directly overhead. The game's beach
+#     art is strictly plan view: no visible sides, no signature perspective.
+#     A glass is mostly rim + liquid from above — that is the whole read.
+#   - Flat single-colour background (a mid grey), no shadow on it, no props.
+#   - Square, 512x512. The game draws it at `visual.size` px on a body that is
+#     60 px wide, so fine interior detail is lost — silhouette first.
+#
+# --- prompt ---
+#
+# A single tall glass of iced juice, seen from DIRECTLY overhead, straight
+# top-down orthographic view, no perspective, no visible side of the glass.
+# Clear glass rim as a thin bright circle, filled with bright orange juice,
+# two or three pale ice cubes floating on the surface, one thin straw leaning
+# across the rim, a small green mint leaf and half a slice of orange resting on
+# the rim as a garnish. Anime pixel-art style, clean 1-2 px outline, warm
+# orange highlights, soft cel shading, palette matching a sunny tropical beach
+# (#ff9d3d juice, #ffe6b8 ice, #3fa9a0 mint). The glass is centred, occupying
+# about 60% of the frame, with a generous flat margin of plain mid-grey
+# (#808080) around it. Flat neutral background, no cast shadow, no other
+# objects, no text, no watermark.
+#
+# --- negative ---
+#
+# side view, three-quarter view, tilted camera, perspective, visible glass
+# wall, table, hand, multiple glasses, splash, text, watermark, busy background

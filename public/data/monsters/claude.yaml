@@ -1,0 +1,84 @@
+# Claude in the Warhammer line - the hidden level's boss.
+#
+# The five phases ARE implemented: `src/lib/bosses/phases.ts` holds the ladder, and
+# `src/game/monsters/monster.ts` runs the phase swap (fresh bar, scaled damage, shorter
+# gap), the attack rotation and the wrath waves. This file still called itself a placeholder
+# long after that landed, and the owner read `克劳德（占位）` over her head in the fight and
+# reported exactly that: `跳过之后看到的Claude还是占位，没有真正使用我们设计的boss版Claude`.
+#
+# Numbers here are PHASE 1 - the other four phases are multipliers of these
+# (see the ladder: 神 150% -> HP 6000 / armour 30; 半神 80% -> armour 16; 半神半人 50% -> armour 10).
+# The sheet is her boss art: 4x4, 256px frames, drawn for this fight, not her playable row.
+name: Claude
+# The owner, on every rung of the ladder: `都改Claude，灭世·Claude / 神·Claude / 半神·Claude /
+# 半神半人·Claude`. The Chinese catalogue keeps the English name here - the character's own
+# name is a proper noun, and `克劳德` was only ever a transliteration nobody asked for.
+nameZh: 'Claude'
+# 阶段 1 · 灭世：主人定的基准值。其余阶段按倍率算
+# （神 150% → HP 6000 / 护甲 30；半神 80% → 护甲 16；半神半人 50% → 护甲 10）。
+# Five phases, not one health bar: the ladder lives in
+# src/lib/bosses/phases.ts.
+boss: true
+hp: 4000
+armor: 20
+money: 100
+# 7.0 -> 3.0 (owner, 2026-11-14, 手机实测「boss战太难」). The four phases scale this base by
+# 1.0 / 1.5 / 0.8 / 0.5, so she used to run at 7.0 / 10.5 / 5.6 / 3.5 while the player walks at
+# 5.0 and needs the sprint key (x1.4) to keep up - and touch controls have no sprint key at all.
+# Base 3.0 puts every phase at or below the player's walking speed: 3.0 / 4.5 / 2.4 / 1.5.
+moveSpeed: 3.0
+# Collision body scaled 1.5x with the art: the player's is 60x60, so at 90x102
+# she reads as "one size bigger" without becoming a wall you cannot walk around.
+# Keep the body-to-sprite ratio when the real boss sheet arrives
+# (102 / 384 = 26.6%, the same share the placeholder has today).
+body:
+    halfW: 45
+    halfH: 51
+weaponId: physical-salvation-boss
+sfx:
+    hit: monster-hit
+    death: monster-death
+    aggro: monster-aggro
+sprite:
+    # Her own sheet: 4x4, 256px frames, keyed off the magenta and re-gridded so
+    # every frame is centred and nothing is clipped (the raw art had 13px of
+    # layout drift per column).
+    # 256 * 1.5 = 384px on screen - one size above the player's 256, which is the
+    # "bigger, but still walk-around-able" the owner asked for.
+    texture: assets/image/monsters/claude-boss.png
+    grid:
+        rows: 4
+        cols: 4
+    scale: 0.7734
+    offset:
+        left: 0
+        bottom: 0
+anims:
+    # Row 1: standing with the book.
+    idle:
+        frames: [0, 3]
+        frameRate: 6
+        repeat: -1
+    # Row 2: the turn-in. Played once when she notices the player, then `move`.
+    # There is no left-facing copy of the art: the sprite flips on the X axis, so
+    # this one turn serves both directions.
+    turn:
+        frames: [4, 7]
+        frameRate: 12
+        repeat: 0
+    # Row 3: the stride.
+    move:
+        frames: [8, 11]
+        frameRate: 10
+        repeat: -1
+    # Row 4: the crouch. The owner's call - this is her wind-up/cast, not a hit
+    # reaction. `hit` is deliberately absent: getting shot flashes the sprite and
+    # leaves the animation alone.
+    cast:
+        frames: [12, 15]
+        frameRate: 8
+        repeat: 0
+    death:
+        frames: [12, 15]
+        frameRate: 10
+        repeat: 0

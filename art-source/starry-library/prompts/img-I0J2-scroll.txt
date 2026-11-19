@@ -1,0 +1,34 @@
+Top-down orthographic view, camera looking straight down, flat perspective, no horizon.
+Soft semi-realistic anime background painting, painterly, clean readable shapes, night scene.
+
+PALETTE (measured from the reference sheets): deep indigo void #101a2e to #1e2e4d; cool ivory
+marble #f0ece7 highlight / #c7c1cf mid / #9e9fb8 shadow; warm lamp glow #e9d8bf; warm wood
+#48312c dark / #865340 mid / #bc8b6c lit; pale sky blue #78aad5; paper white #f2eee9.
+
+A flooded stone vault seen from directly above, on the south-west side of a magical library
+floating in a starfield. This is the deepest and coldest area of the level: deep blue, almost
+monochrome.
+
+THE WATER: a floor of mirror-calm black water that reflects the stars (#101a2e with #1e2e4d and
+scattered small star reflections). Standing in the water are narrow pale stone walkways laid out
+in a loose grid, with worn stone kerbs, a few short flights of steps, and a handful of low stone
+slabs rising out of the water.
+
+LANDMARK (keep it well inside the image, never touching an edge): a colossal unfurled scroll of
+ivory paper (#f2eee9) lies across the scene like a fallen tower, its long paper body acting as a
+wall, one end still rolled into a thick cylinder. The paper surface carries blank, illegible rows
+of marks — no readable letters at all — and a single empty horizontal signature line near one
+end, with a fountain pen resting beside it.
+
+LIGHTING: the whole area is deep blue and dim. A single narrow beam of warm light falls only on
+that signature line, making it the one warm accent in the image. Everything else is cold.
+
+RULES
+- Top-down only. No horizon line, no perspective, no side view, no ceiling.
+- Every material, wall, floor and light source must run straight off the image edge. Nothing
+  may stop at the edge, fade out at the edge, or be centred on the edge.
+- No characters, no people, no creatures, no text, no letters, no numbers, no legible writing,
+  no UI, no watermark, no frame, no border, no vignette, no signature.
+- Keep the composition generic and continuous; the one landmark above is the only focal point.
+- All four edges must be plain continuing terrain: a neighbouring image continues the same
+  water, walkways and kerbs on every side.

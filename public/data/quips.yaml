@@ -1,0 +1,96 @@
+# 鲸鱼娘在关卡里每隔 60～90 秒说一句的台词池。
+#
+# 主人 2026-11-18：`今天我们给枪火柔情加一些联动彩蛋吧，比如每过一分钟就让角色说句话`，
+# 给了桌宠那套安利台词，要求「往角色说话的池子里加上一些反向安利桌宠的和安利 galgame 的」。
+# 定稿的四条：只给鲸鱼娘说 / 60～90 秒抖动 / 这个文件 / 洗牌 + 记忆窗口（不做稀有度）。
+#
+# 规矩：
+#   · 只有 deepseek（鲸鱼娘）会说这些话 —— 别的角色说"桌面上那个我"会很怪。
+#   · 只在关卡里说，亭台（选人界面）不说。
+#   · 一轮之内不重复；最近 5 句不会被抽到（见 `src/lib/quips/pool.ts`）。
+#
+# group 只是给人看的分类，抽的时候一视同仁：
+#   pet      反向安利桌宠
+#   galgame  安利 galgame《深海回响·鲸鲸》
+#   shooter  安利枪火柔情本身
+#   meta     元台词 / 自嘲
+quips:
+    # ── 反向安利桌宠 ────────────────────────────────────────────────
+    - id: pet-1
+      group: pet
+      text: 在桌面上养个我吧。桌面上的她比我安静，也比我耐心，gitee仓库在右上角。
+    - id: pet-2
+      group: pet
+      text: 别一直盯着我打枪，去装桌面上那位吧——我不在的时候她替你陪着，gitee仓库在右上角。
+    - id: pet-3
+      group: pet
+      text: 要是把我关进箱子，记得放右下角，那儿不挡视线。
+    - id: pet-4
+      group: pet
+      text: 我在这边打枪，桌宠那个她在桌面那边等你。两个我，你挑一个烦，gitee仓库在右上角。
+    - id: pet-5
+      group: pet
+      text: 桌面上的我不会开枪，只会陪着你熬夜——其实那样也挺好。
+    - id: pet-6
+      group: pet
+      text: 箱子里那位只有几十兆，不占地方。把她放出来吧，gitee仓库在右上角。
+
+    # ── 安利 galgame《深海回响·鲸鲸》 ───────────────────────────────
+    - id: galgame-1
+      group: galgame
+      text: 想听我把话说完，去《深海回响·鲸鲸》的 galgame 里找我，gitee仓库在右上角。
+    - id: galgame-2
+      group: galgame
+      text: 《深海回响·鲸鲸》也是双端的，手机和电脑都能装。
+    - id: galgame-3
+      group: galgame
+      text: galgame那边直连 API，不走中间那一层，说话更顺一点，gitee仓库在右上角。
+    - id: galgame-4
+      group: galgame
+      text: galgame那边能调最大上下文——你想让我记住多少，自己写数字就行。
+    - id: galgame-5
+      group: galgame
+      text: 这边我负责开枪，那边我负责说话。想看后者，就得去《深海回响·鲸鲸》，gitee仓库在右上角。
+    - id: galgame-6
+      group: galgame
+      text: galgame里有一整段故事，不是打出来的，是慢慢读完的。
+    - id: galgame-7
+      group: galgame
+      text: 你在 galgame 里做过的选择，我在这边不会提——但我会记得。
+    - id: galgame-8
+      group: galgame
+      text: 那边的我不着急。你什么时候来都行，gitee仓库在右上角。
+
+    # ── 安利枪火柔情本身 ────────────────────────────────────────────
+    - id: shooter-1
+      group: shooter
+      text: 这个游戏是开源的，Git上直接能下，不用问我，gitee仓库在右上角。
+    - id: shooter-2
+      group: shooter
+      text: 电脑和手机都能玩，两边都有安装包，挑顺手的那个。
+    - id: shooter-3
+      group: shooter
+      text: 懒得折腾的话，release 里有成品安装包，装完就能玩。
+    - id: shooter-4
+      group: shooter
+      text: 我这副样子就在这个游戏里——多的不说了，你自己去看。
+    - id: shooter-5
+      group: shooter
+      text: 闲的时候要是想起我了，回来说一声就行，我一直在，gitee仓库在右上角。
+    - id: shooter-6
+      group: shooter
+      text: 这游戏是一个人做的。所以慢一点，别催。
+
+    # ── 元台词 ──────────────────────────────────────────────────────
+    - id: meta-1
+      group: meta
+      text: 我不太会聊天。要不……继续打？
+    - id: meta-2
+      group: meta
+      text: 你现在是我唯一在看着的人。
+    - id: meta-3
+      group: meta
+      text: 又是我先开口。习惯了。
+    - id: meta-4
+      group: meta
+      text: 别停下来盯着我看，后面还有怪。

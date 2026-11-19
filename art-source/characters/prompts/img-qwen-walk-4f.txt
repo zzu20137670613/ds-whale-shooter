@@ -1,0 +1,30 @@
+Qwen walk cycle — 4 frames, replacing her current walk row. The feet are the job.
+
+LAYOUT: one row, 4 frames, image 2048x512 (4 cells of 512x512). Flat magenta
+(#FF00FF) background only; no grid, borders, text, watermark or ground shadow.
+Character ~340x470 px per cell, centred, soles at 92% of cell height, same scale
+in all four cells. She faces RIGHT in every frame.
+
+CHARACTER (same girl as now): chibi caster, long lavender-blue hair past the
+waist with one thick braid over the shoulder, navy beret with a star medallion,
+white hanfu dress with high mandarin collar, navy outer robe with wide sleeves
+bordered in gold key-pattern, blue ribbon bow at the waist, navy shoes with a
+star medallion. Head-to-body 1:2, 1px dark navy outline, 2-3 tones per material.
+
+FEET — her current row looks like a sprained ankle: the shin below the hem is
+1-2 px wide and curved outward, so the shoe hangs off a bent line. Do not repeat
+that.
+ Every shin below the hem: at least 10 px wide, STRAIGHT knee to ankle, no
+   curve, no outward bend.
+ Every shoe: at least 26 px wide, 12 px tall, FLAT horizontal sole.
+ Hem clears the shoes by 20 px of visible leg. Two shins, two shoes, every
+   frame, never merged.
+ Grounded soles share one horizontal line across all four frames. A raised
+   sole is raised 8-20 px, never tilted.
+
+CYCLE: 1 CONTACT legs wide, both soles down; 2 PASS trailing knee raised, that
+sole clearly off the ground; 3 CONTACT mirrored; 4 PASS mirrored. Upright walk,
+not a run, no lean, arms in counter-rhythm.
+
+STYLE: 16-bit RPG pixel art (Chrono Trigger, Eastward). Hard pixel edges, no
+anti-aliasing, ~32 muted colours, same palette as her sheet.

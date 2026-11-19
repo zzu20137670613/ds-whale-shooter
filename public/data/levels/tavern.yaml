@@ -1,0 +1,188 @@
+title: Seaside Pavilion
+titleZh: "海边亭台"
+background: assets/image/scenes/tavern/tavern.png
+imageSize: 2752x1536
+airWalls:
+    - id: wall-1
+      kind: short
+      points:
+          - - 588
+            - -24
+          - - 652
+            - -24
+          - - 652
+            - 1560
+          - - 588
+            - 1560
+    - id: wall-2
+      kind: short
+      points:
+          - - 652
+            - -24
+          - - 2560
+            - -24
+          - - 2560
+            - 440
+          - - 652
+            - 440
+    # wall-3 is split around the hidden level 1 doorway. The ornament at
+    # x 2614..2720, y 838..952 covers a real opening, so the player can walk into
+    # the black hole it leaves behind and stand where the portal is. wall-3c is
+    # the back of that alcove. A dynamic body ought to seal the opening until the
+    # ornament breaks — that belongs to the breakable feature, not to this file,
+    # so for now the doorway is walkable and the portal inside it is live.
+    - id: wall-3a
+      kind: short
+      points:
+          - - 2556
+            - 440
+          - - 2760
+            - 440
+          - - 2760
+            - 838
+          - - 2556
+            - 838
+    - id: wall-3b
+      kind: short
+      points:
+          - - 2556
+            - 952
+          - - 2760
+            - 952
+          - - 2760
+            - 1560
+          - - 2556
+            - 1560
+    - id: wall-3c
+      kind: short
+      points:
+          - - 2680
+            - 838
+          - - 2760
+            - 838
+          - - 2760
+            - 952
+          - - 2680
+            - 952
+    - id: wall-4
+      kind: short
+      points:
+          - - 2425
+            - 430
+          - - 2560
+            - 430
+          - - 2560
+            - 752
+          - - 2425
+            - 752
+    - id: wall-5
+      kind: short
+      points:
+          - - 2370
+            - 1235
+          - - 2760
+            - 1235
+          - - 2760
+            - 1560
+          - - 2370
+            - 1560
+    - id: wall-6
+      kind: short
+      points:
+          - - 588
+            - 1478
+          - - 2760
+            - 1478
+          - - 2760
+            - 1560
+          - - 588
+            - 1560
+music: forest-ambient
+# The pavilion is a bright midday scene, and its art is photographic rather
+# than pixel art. The default pixel-lighting pass multiplies the background
+# by a twilight tint (0x6c7c8c, i.e. x0.48) and adds a 32-step quantise
+# filter — on this background that reads as "why is the pretty picture so
+# dark in game". Off, so the art arrives as drawn.
+pixelLighting: false
+tavern: true
+npcSpawns:
+    # The five seats sit in the LOWER half of the deck on purpose. The
+    # selection card is pinned above the character's head, and it is
+    # ~400px tall (HUD art space) — with the head near the top of this
+    # 2752x1536 frame the card ran off the top of the screen. Feet at
+    # y 1150-1250 leave room for the whole card at every window shape
+    # the game is played at. x is spaced 365 apart because the actors
+    # are drawn at TAVERN_ACTOR_SCALE (1.8), so claude is ~357px wide.
+    - characterId: claude
+      x: 900
+      'y': 1150
+    - characterId: gpt
+      x: 1265
+      'y': 1210
+    - characterId: qwen
+      x: 1630
+      'y': 1250
+    - characterId: gemini
+      x: 1995
+      'y': 1220
+    - characterId: deepseek
+      x: 2360
+      'y': 1180
+# The wall ornament is a monster, not a breakable material: it carries the sprite cut
+# from the original art, so killing it makes the sprite vanish and the black cover
+# baked into tavern.png appear. Its weapon is ranged with range 1, which keeps it from
+# ever entering the attack state and exempts it from contact damage. While the "dummy
+# prop" flag does not exist yet this thing still shows an HP bar, floats damage numbers
+# and creeps toward the player at moveSpeed, and the engine mirrors its sprite by
+# facing — the sprite art is pre-mirrored to compensate.
+monsters:
+    # The original wall ornament. Our own picture was tried here first and
+    # reverted: the black alcove baked into tavern.png is about 130x170 and the
+    # picture only covered 106x114, so a black border showed around it and it
+    # read as a photo taped to a black board. Keep the ornament until a picture
+    # is cut to the alcove's exact size.
+    - type: hollow-emblem
+      x: 2642
+      'y': 896
+materials: []
+teleporters:
+    # 隐藏地图入口。主人圈的圆心 ≈ (1918, 402)，半径 60 —— 和 `tavern-exit`
+    # 去海滩假日那个一样大。只在 galgame 封档密钥（deepseek1314）填进昵称框之后
+    # 才存在：解锁前不画、也踩不进去。
+    - id: hidden-whale-entrance
+      x: 1918
+      # 主人圈的圆心在 y≈402，那一带是 wall-2（吧台碰撞区，y -24..440）。
+      # 往下挪 118px 落在空地，x 不变。
+      'y': 520
+      targetScene: hidden-whale
+      targetPortalId: hidden-whale-exit
+      requiresClear: false
+      hiddenUnlessUnlocked: true
+      radius: 60
+    - id: tavern-exit
+      x: 1355
+      'y': 1425
+      targetScene: beach-holiday
+        # The one tavern portal that must never be gated: the player has to
+      # be able to leave. Every other portal here defaults to gated, which
+      # is what makes the ornament's hole and its portal appear together.
+      targetPortalId: tavern-return
+      requiresClear: false
+      radius: 60
+    # Hidden level 3 (dev-cabin). The picture at x 2614..2720, y 838..952 is a
+    # prop monster: shoot it and its sprite vanishes, revealing the black hole
+    # baked into tavern.png. This portal stays dark until then, because the
+    # tavern's only monster is that picture and the portal is gated on the
+    # monster clear, so the hole and the portal appear together. wall-3a/3b/3c
+    # form the doorway around it; radius 90 keeps the trigger inside the alcove,
+    # so the player has to step into the hole rather than brush past the wall
+    # from the deck.
+    - id: hidden-1-entrance
+      x: 2667
+      'y': 895
+      targetScene: dev-cabin
+      # Paired with the cabin's exit, so coming back puts the player in the hole
+      # they crawled out of rather than at the tavern's spawn point.
+      targetPortalId: dev-cabin-exit
+      requiresClear: true
+      radius: 90

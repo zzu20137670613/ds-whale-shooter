@@ -1,0 +1,413 @@
+title: Beach Holiday
+titleZh: '海滩假日'
+# The world is 2x2 screens. The one-screen painting was cut into four tiles,
+# upscaled 2x each, stitched back to 5504x3072, and the beach camp (lounger,
+# parasol, side table) was composited into the north-west palm shade. Every
+# coordinate below is the pre-doubling value times two; radii and timers are
+# player-relative and deliberately unchanged.
+background: assets/image/scenes/beach-holiday/beach-holiday.png
+imageSize: 5504x3072
+airWalls:
+    # Collision authored against the art, then doubled with the world: the
+    # water's edge sits at x=1206 in the 5504x3072 image. Each palm trunk and
+    # rock pile gets one small octagon,
+    # kind: short like the hand-drawn forest walls. Fronds and their long
+    # shadows do NOT collide - walking under a canopy is the point.
+    #
+    # The sea is wadeable for its inner third and solid beyond that: real
+    # shores shoal, so the player may walk out to x=804 and no further. 804 is
+    # two thirds of the 1206px sea, and it lands mid-gradient against the art's
+    # own colours (deep teal 36,152,155 at x=0 lightening to 176,198,180 at the
+    # shore), so the wadeable band reads as shallows rather than open water.
+    # `top` and `bottom` start at the same x, so wading keeps the same 48px
+    # inset from the painting's edge as the dry beach does.
+    - id: deep-water
+      kind: short
+      points:
+          - - 756
+            - 0
+          - - 804
+            - 0
+          - - 804
+            - 3072
+          - - 756
+            - 3072
+    - id: top
+      kind: short
+      points:
+          - - 804
+            - 0
+          - - 5504
+            - 0
+          - - 5504
+            - 48
+          - - 804
+            - 48
+    - id: right
+      kind: short
+      points:
+          - - 5456
+            - 0
+          - - 5504
+            - 0
+          - - 5504
+            - 3072
+          - - 5456
+            - 3072
+    - id: bottom
+      kind: short
+      points:
+          - - 804
+            - 3024
+          - - 5504
+            - 3024
+          - - 5504
+            - 3072
+          - - 804
+            - 3072
+    - id: palm-nw-a
+      kind: short
+      points:
+          - - 1810
+            - 606
+          - - 1774
+            - 694
+          - - 1686
+            - 730
+          - - 1598
+            - 694
+          - - 1562
+            - 606
+          - - 1598
+            - 518
+          - - 1686
+            - 482
+          - - 1774
+            - 518
+    - id: palm-nw-b
+      kind: short
+      points:
+          - - 2248
+            - 520
+          - - 2214
+            - 602
+          - - 2132
+            - 636
+          - - 2050
+            - 602
+          - - 2016
+            - 520
+          - - 2050
+            - 438
+          - - 2132
+            - 404
+          - - 2214
+            - 438
+    - id: rock-nw
+      kind: short
+      points:
+          - - 2530
+            - 832
+          - - 2484
+            - 942
+          - - 2374
+            - 988
+          - - 2264
+            - 942
+          - - 2218
+            - 832
+          - - 2264
+            - 722
+          - - 2374
+            - 676
+          - - 2484
+            - 722
+    - id: palm-ne-a
+      kind: short
+      points:
+          - - 4626
+            - 416
+          - - 4590
+            - 500
+          - - 4506
+            - 536
+          - - 4422
+            - 500
+          - - 4386
+            - 416
+          - - 4422
+            - 332
+          - - 4506
+            - 296
+          - - 4590
+            - 332
+    - id: palm-ne-b
+      kind: short
+      points:
+          - - 4928
+            - 520
+          - - 4896
+            - 600
+          - - 4816
+            - 632
+          - - 4736
+            - 600
+          - - 4704
+            - 520
+          - - 4736
+            - 440
+          - - 4816
+            - 408
+          - - 4896
+            - 440
+    - id: drift-ne
+      kind: short
+      points:
+          - - 4364
+            - 762
+          - - 4326
+            - 856
+          - - 4232
+            - 894
+          - - 4138
+            - 856
+          - - 4100
+            - 762
+          - - 4138
+            - 668
+          - - 4232
+            - 630
+          - - 4326
+            - 668
+    - id: palm-e
+      kind: short
+      points:
+          - - 5242
+            - 1526
+          - - 5208
+            - 1608
+          - - 5126
+            - 1642
+          - - 5044
+            - 1608
+          - - 5010
+            - 1526
+          - - 5044
+            - 1444
+          - - 5126
+            - 1410
+          - - 5208
+            - 1444
+    - id: rock-se
+      kind: short
+      points:
+          - - 4636
+            - 2428
+          - - 4588
+            - 2544
+          - - 4472
+            - 2592
+          - - 4356
+            - 2544
+          - - 4308
+            - 2428
+          - - 4356
+            - 2312
+          - - 4472
+            - 2264
+          - - 4588
+            - 2312
+    - id: drift-s
+      kind: short
+      points:
+          - - 2256
+            - 2704
+          - - 2220
+            - 2792
+          - - 2132
+            - 2828
+          - - 2044
+            - 2792
+          - - 2008
+            - 2704
+          - - 2044
+            - 2616
+          - - 2132
+            - 2580
+          - - 2220
+            - 2616
+pixelLighting: false
+characterSpawn:
+    x: 2698
+    'y': 400
+    facing: right
+monsters:
+    # 第一波：5 只藤壶寄生者，从左右两侧与沙滩中段同时压上来。
+    - type: stalker
+      x: 2354
+      'y': 556
+      waveId: wave-1
+      trigger:
+          kind: time
+          delayMs: 1500
+    - type: stalker
+      x: 3124
+      'y': 804
+      waveId: wave-1
+      trigger:
+          kind: time
+          delayMs: 1500
+    - type: stalker
+      x: 1560
+      'y': 1180
+      waveId: wave-1
+      trigger:
+          kind: time
+          delayMs: 1500
+    - type: stalker
+      x: 4020
+      'y': 1420
+      waveId: wave-1
+      trigger:
+          kind: time
+          delayMs: 1500
+    - type: stalker
+      x: 2720
+      'y': 1072
+      waveId: wave-1
+      trigger:
+          kind: time
+          delayMs: 1500
+    # 第二波：3 只寄生者贴脸 + 2 只炮手在后排压枪。
+    - type: stalker
+      x: 3472
+      'y': 1126
+      waveId: wave-2
+      trigger:
+          kind: clear
+          delayMs: 500
+          waveId: wave-1
+    - type: stalker
+      x: 2604
+      'y': 2270
+      waveId: wave-2
+      trigger:
+          kind: clear
+          delayMs: 500
+          waveId: wave-1
+    - type: stalker
+      x: 1704
+      'y': 1898
+      waveId: wave-2
+      trigger:
+          kind: clear
+          delayMs: 500
+          waveId: wave-1
+    - type: gunner
+      x: 2100
+      'y': 2480
+      waveId: wave-2
+      trigger:
+          kind: clear
+          delayMs: 500
+          waveId: wave-1
+    - type: gunner
+      x: 3600
+      'y': 2520
+      waveId: wave-2
+      trigger:
+          kind: clear
+          delayMs: 500
+          waveId: wave-1
+    # 第三波：1 只寄生者打头阵，4 只炮手拉开成一条横线。
+    - type: stalker
+      x: 2900
+      'y': 1900
+      waveId: wave-3
+      trigger:
+          kind: clear
+          delayMs: 500
+          waveId: wave-2
+    - type: gunner
+      x: 2450
+      'y': 1300
+      waveId: wave-3
+      trigger:
+          kind: clear
+          delayMs: 500
+          waveId: wave-2
+    - type: gunner
+      x: 3250
+      'y': 1600
+      waveId: wave-3
+      trigger:
+          kind: clear
+          delayMs: 500
+          waveId: wave-2
+    - type: gunner
+      x: 1900
+      'y': 2200
+      waveId: wave-3
+      trigger:
+          kind: clear
+          delayMs: 500
+          waveId: wave-2
+    - type: gunner
+      x: 4380
+      'y': 2100
+      waveId: wave-3
+      trigger:
+          kind: clear
+          delayMs: 500
+          waveId: wave-2
+dropSpawns:
+    # 礁石上那杯深海特饮。
+    #
+    # 它最初被写成"本关的开场礼物"，后来开场礼物换成了踩沙滩椅弹出来的冰镇果汁
+    # （见下面的 `lounger-juice` trigger），这一处没人删，注释也没跟着改。
+    # 而它落脚的 (2480,500) 恰好压在一块画出来的礁石上 —— 没有碰撞体，所以能走过去捡。
+    #
+    # 三件事碰巧叠在一起，看着就像刻意埋的彩蛋。主人 2026-11-17 看过之后决定**保留**：
+    #   `初始关出现深海特饮是一个美妙的偶然因素叠加起来的bug，当作刻意保留的彩蛋（2026-11-17 确认）`
+    # 另外 `onceKey` 让它跟加冕之冠一样只给一次（他是这么要求的）。
+    - type: beach-drink
+      x: 2480
+      'y': 500
+      onceKey: beach-holiday:rock-drink
+materials: []
+triggers:
+    # Step on the lounger and a glass of iced juice pops out, arcs onto the
+    # side table and waits there; walking into it refills HP and SP. Once per
+    # run, so a fresh run earns a fresh glass.
+    #
+    # The zone is the lounger's seat, not its bounding box. Measured against
+    # the composited art the old 359x328 box was only 62% chair, so walking in
+    # from the north crossed bare sand and spent the egg before the player
+    # reached the chair. This 200x220 box is 94% chair-and-table and sits on
+    # the seat, and tavern-return's arrival point (2700,800) stays outside it.
+    - id: lounger-juice
+      # The seat, not the whole lounger: the tavern-return portal drops the
+      # player at (2700,800), on the lounger's head end, and arriving from the
+      # tavern must not spend the egg before they walk onto the seat.
+      zone: { x: 2600, y: 880, width: 200, height: 220 }
+      spawn:
+          type: iced-juice
+          from: { x: 2699, y: 993 }
+          # The table top, measured at world (2755..2827, 874..950). The old
+          # (2946,903) was 155px east of it, on sand beside the parasol pole.
+          to: { x: 2790, y: 908 }
+          lift: 120
+          durationMs: 800
+teleporters:
+    - id: tavern-return
+      x: 5131
+      'y': 1029
+      targetScene: tavern
+      targetPortalId: tavern-exit
+      radius: 200
+    - id: teleporter-msfmft58
+      x: 1467
+      'y': 2801
+      targetScene: starry-library-1-entrance
+      targetPortalId: to-beach
+      radius: 200

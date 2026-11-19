@@ -1,0 +1,193 @@
+title: Starry Library · Terrace
+titleZh: 'Claude的星空图书馆·露台'
+
+# 2x2 拆分：本关是原来 11008x6144 地图的一块 5504x3072。
+# 碰撞墙与传送阵由主人 2026-11-11 的标注图生成（红=不可达，绿=传送阵），
+# 生成脚本把红区栅格化后合并成矩形，所以边界是 128px 的整数倍。
+background: assets/image/scenes/starry-library/starry-library-3-terrace.png
+imageSize: 5504x3072
+# 主人 2026-11-12：图书馆词元盾光柱用深金色。
+tokenPillarTone: gold
+
+airWalls:
+    # 红区矩形 9 段（覆盖率阈值 0.35，宁可多挡不留缝）+ 4 段边界。
+    - id: border-top
+      kind: short
+      points:
+          - - 48
+            - 48
+          - - 5456
+            - 48
+          - - 5456
+            - 56
+          - - 48
+            - 56
+    - id: border-bottom
+      kind: short
+      points:
+          - - 48
+            - 3016
+          - - 5456
+            - 3016
+          - - 5456
+            - 3024
+          - - 48
+            - 3024
+    - id: border-left
+      kind: short
+      points:
+          - - 48
+            - 48
+          - - 56
+            - 48
+          - - 56
+            - 3024
+          - - 48
+            - 3024
+    - id: border-right
+      kind: short
+      points:
+          - - 5448
+            - 48
+          - - 5456
+            - 48
+          - - 5456
+            - 3024
+          - - 5448
+            - 3024
+    - id: blocked-01
+      kind: short
+      points:
+          - - 4864
+            - 0
+          - - 5504
+            - 0
+          - - 5504
+            - 640
+          - - 4864
+            - 640
+    - id: blocked-02
+      kind: short
+      points:
+          - - 4992
+            - 640
+          - - 5504
+            - 640
+          - - 5504
+            - 1664
+          - - 4992
+            - 1664
+    - id: blocked-03
+      kind: short
+      points:
+          - - 2560
+            - 1152
+          - - 2944
+            - 1152
+          - - 2944
+            - 1792
+          - - 2560
+            - 1792
+    - id: blocked-04
+      kind: short
+      points:
+          - - 2432
+            - 1280
+          - - 2560
+            - 1280
+          - - 2560
+            - 1792
+          - - 2432
+            - 1792
+    - id: blocked-05
+      kind: short
+      points:
+          - - 2944
+            - 1280
+          - - 3072
+            - 1280
+          - - 3072
+            - 1792
+          - - 2944
+            - 1792
+    - id: blocked-06
+      kind: short
+      points:
+          - - 5120
+            - 1664
+          - - 5504
+            - 1664
+          - - 5504
+            - 2688
+          - - 5120
+            - 2688
+    - id: blocked-07
+      kind: short
+      points:
+          - - 2688
+            - 1792
+          - - 2816
+            - 1792
+          - - 2816
+            - 1920
+          - - 2688
+            - 1920
+    - id: blocked-08
+      kind: short
+      points:
+          - - 5248
+            - 2688
+          - - 5504
+            - 2688
+          - - 5504
+            - 3072
+          - - 5248
+            - 3072
+    - id: blocked-09
+      kind: short
+      points:
+          - - 0
+            - 2816
+          - - 5248
+            - 2816
+          - - 5248
+            - 3072
+          - - 0
+            - 3072
+
+characterSpawn:
+    x: 1280
+    'y': 1280
+    facing: right
+
+monsters: []
+spawner:
+    # 单块 5504x3072 内部再四等分成 2x2 象限，玩家第一次踏入某个象限时刷一波。
+    # 波次：入口 1 / 柜台 2 / 露台 2 / 卷轴 3。每次进入都重新刷（不再读存档）。
+    delayMs: 2000
+    waves: 2
+    near: { count: 4, minDistance: 300, maxDistance: 900 }
+    far: { count: 5, edgeInset: 420 }
+    # 血量倍数：拆分后按关卡重调，等主人给数值。
+    pool:
+        melee: [drone]     # 星穹潜行者
+        ranged: [sniper]   # 星海狙手
+
+dropSpawns: []
+materials: []
+
+teleporters:
+    # 位置来自主人的绿色圆形标注；radius 就是画出来的圆半径。
+    # 传送阵清怪后才会淡入（见 teleporter.ts 的 appearAlpha）。
+    - id: from-counter
+      x: 2871
+      'y': 196
+      targetScene: starry-library-2-counter
+      targetPortalId: to-terrace
+      radius: 200
+    - id: to-scroll
+      x: 201
+      'y': 1550
+      targetScene: starry-library-4-scroll
+      targetPortalId: from-terrace
+      radius: 200

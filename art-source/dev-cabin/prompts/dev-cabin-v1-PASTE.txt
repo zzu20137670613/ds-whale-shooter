@@ -1,0 +1,19 @@
+2D top-down game map asset seen from DIRECTLY ABOVE (90 degrees, plan view), one cozy cabin room. The worn plank floor fills the whole frame and runs past ALL FOUR edges: no rim, no border, no vignette. Flat cel shading, thin ink outlines, large smooth fills - NOT painterly, NOT photoreal.
+
+NO standing walls, no ceiling, no roof beams, no window in elevation: the room's edges are flat wooden bands and rails only.
+
+FURNITURE, all touching the edges, never the middle: along the TOP EDGE a long worktable seen from above; LEFT EDGE a low shelf with books and a whiteboard; RIGHT EDGE the corner of a bunk bed and a beanbag.
+
+ON THE TABLE, the centrepiece: an OPEN LAPTOP seen from above with its lid tilted toward the camera, so the glowing screen is clearly visible - a bright cyan-white panel with faint lines of code. Beside it a small flat monitor, a keyboard, a mouse, a mug, noodle cups, a rubber duck, sticky notes along the table edge, a tangle of cables.
+
+ONE PERSON, small: seen from above and behind, hunched at the table on an office chair, back to the camera, one hand on the mouse. Face hidden by hair and the chair back. Dark hoodie, headphones. One readable silhouette, no detail.
+
+FLAT PROPS on the planks: printed pages, a whale plush on the shelf, an energy drink, a plush cat asleep on the beanbag, a whiteboard with a rough diagram, a potted plant.
+
+LIGHT: 3am. A warm desk lamp pool over the table, cold screen glow spilling onto the planks, the rest of the room in deep blue shadow, rain at the very edge. Long soft shadows.
+
+Palette: warm oak #8A5A33, plank shadow #4A2E1C, screen cyan #7FE6F0, lamp gold #F0B45C, deep night blue #1A2233, dust grey #9A9186.
+
+Size: 16:9, full bleed, composed for a 2752x1536 canvas (readable inside the central 90%).
+
+Negative: isometric, three-quarter, perspective, vanishing point, walls standing, ceiling, roof, window frame in elevation, horizon, crowd, text, letters, watermark, logo, clutter in the centre, daylight, painterly.

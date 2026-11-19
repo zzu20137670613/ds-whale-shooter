@@ -1,0 +1,47 @@
+# Reserved for hidden level 1 — a ranged single shot.
+# Damage and upgrade numbers below are the upstream placeholder values:
+# they are not final until that level is designed.
+name: Arcana Staff
+nameZh: "秘法法杖"
+damage: 40
+cooldownMs: 500
+range: 1000
+upgrades:
+    # Tavern weapon ladder. `costs.length` IS the max level.
+    costs: [40, 90, 160, 250, 360]
+    damagePerLevel: [40, 47, 53, 62, 70, 80]
+clipSize: 8
+ammoPrice: { price: 1, perRounds: 1 }
+reloadTimeMs: 1800
+bulletsPerShot: 1
+# 主人：`秘法杖改为连锁攻击…第一只100%，第二只70%，第三只40%`。
+chain:
+    count: 2
+    scales: [0.7, 0.4]
+    # 主人：`最多跳大约一半屏幕宽度的距离（两段加起来）`，定为 1500。
+    maxDistance: 1500
+visual:
+    texture: assets/image/weapons/arcana-staff.png
+    scale: 0.16
+    orbitRadius: 22
+    anchor: [0.45, 0.5]
+    recoilDistance: 20
+    recoilDuration: 1000
+bullet:
+    texture: assets/image/weapons/arcana-orb.png
+    type: projectile
+    scale: 0.08
+    anchor: [0.5, 0.5]
+projectile:
+    speed: 16
+    visual:
+        radius: 8
+        width: 8
+        height: 8
+        color: 0x23C9D0
+sfx:
+    shoot: arcana-staff-shoot
+    dryFire: dry-fire
+    bulletWall: bullet-wall
+    reloadStart: reload-start
+    reloadFinish: reload-finish

@@ -1,0 +1,50 @@
+name: Kitty
+nameZh: "Kitty"
+hp: 2000
+money: 100
+moveSpeed: 2.6
+body:
+    halfW: 11
+    halfH: 11
+# 招式：半神·Claude 的墨壶迫击三连击，只有这一种（主人 2026-11-12）。
+weaponId: physical-salvation-boss
+bossAttack: triple-cannon
+bossAttackDamageScale: 0.8
+sfx:
+    hit: monster-hit
+    death: monster-death
+    aggro: monster-aggro
+drops:
+    # 主人定的掉落：1 个词元盾 + 2 个弹药箱 + 2 个生命碎片。
+    - dropId: token-shield
+      chance: 1
+    - dropId: ammo-cache
+      chance: 1
+      chance2: 1
+    - dropId: sp-fragment
+      chance: 1
+      chance2: 1
+sprite:
+    texture: assets/image/monsters/kitty.png
+    grid: { rows: 4, cols: 4 }
+    # 主人 2026-11-12：`Kitty 大的有些过分了，把宽高都缩减一半`。
+    scale: 0.5
+    offset: { left: 0, bottom: 0 }
+
+anims:
+    idle:
+        frames: [0, 3]
+        frameRate: 6
+        repeat: -1
+    move:
+        frames: [4, 7]
+        frameRate: 10
+        repeat: -1
+    hit:
+        frames: [8, 11]
+        frameRate: 12
+        repeat: -1
+    death:
+        frames: [12, 14]
+        frameRate: 10
+        repeat: 0

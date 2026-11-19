@@ -1,0 +1,35 @@
+# Claude — the scholar closes her book on the room. Melee: the arc is a tome
+# swung shut, and a tome has no bullet count (see docs/WEAPONS.md).
+# ART: a real 教典 - brown leather, gold filigree, an embossed orange bloom on the cover.
+# The owner's pick. The source is a product photo on white with a soft drop shadow, so the
+# cut-out keys anything light AND colourless from the borders inwards (that is background and
+# shadow together), then eats the halo back four passes. The book is turned a quarter turn so
+# its long edge - spine to fore-edge - lies along her aim, like every other held weapon.
+# Numbers are placeholders: the whole ladder gets re-tuned in the numeric pass.
+name: Scripture
+nameZh: "教典"
+damage: 60
+cooldownMs: 900
+range: 180
+upgrades:
+    # Tavern weapon ladder. `costs.length` IS the max level.
+    costs: [45, 100, 175, 270, 390]
+    damagePerLevel: [60, 69, 79, 92, 104, 120]
+hitWidth: 130
+hitHeight: 120
+visual:
+    texture: assets/image/weapons/scripture-tome.png
+    # 398px art x 0.352 = ~140px of book out in front of her hand.
+    scale: 0.352
+    orbitRadius: 14
+    anchor: [0.12, 0.5]
+    swingAngle: 200
+    rotationOffset: 0
+bullet:
+    texture: assets/image/weapons/plasma-slash-arc.png
+    type: melee
+    scale: 0.32
+    anchor: [0.5, 0.5]
+    rotationOffset: 0
+sfx:
+    shoot: plasma-sword-shoot

@@ -1,0 +1,385 @@
+/**
+ * src/lib/characters/schema.ts
+ * --------------------------------------------------------------------------
+ * Zod schema for the characters module.
+ *
+ * `sprite` and `anims` are optional — a character may run with a debug
+ * rectangle instead of a sprite sheet. `body`, `dodge`, `hotbar` are
+ * required. `frames` is a 2-tuple [start, end] with end >= start.
+ *
+ * Single source of truth — `./types.ts` derives types via `z.infer`.
+ */
+
+import { z } from 'zod';
+
+const BodySchema = z
+    .object({
+        halfW: z.number().gt(0),
+        halfH: z.number().gt(0),
+    })
+    .strict();
+
+const DodgeSchema = z
+    .object({
+        spCost: z.number().gte(0),
+        speed: z.number().gt(0),
+        durationMs: z.number().gt(0),
+        cooldownMs: z.number().gt(0),
+    })
+    .strict();
+
+const SpriteGridSchema = z
+    .object({
+        rows: z.number().gt(0),
+        cols: z.number().gt(0),
+    })
+    .strict();
+
+const SpriteOffsetSchema = z
+    .object({
+        left: z.number().optional(),
+        bottom: z.number().optional(),
+        x: z.number().optional(),
+        y: z.number().optional(),
+    })
+    .strict()
+    .optional();
+
+/**
+ * A character skill — one per character, all driven by `lib/characters/skill`.
+ *
+ * Every kind must carry a display name pair (`name` / `nameZh`), same rule as
+ * weapons: the id and the English name are English, `nameZh` is what the
+ * Chinese UI shows. Names are required, not optional — a skill with no name
+ * would have nothing to show the player.
+ *
+ *   headgear       Seed: press the key to put the mascot head on; it soaks up
+ *                  the next few HITS (not HP, so the value reads as "how many
+ *                  mistakes it forgives"), then breaks and goes on cooldown —
+ *                  cooldown measured from the break, not the press.
+ *   darkening      Claude: a timed damage multiplier, cooldown on use.
+ *   critical-next  DeepSeek: the next attack crits; firing spends it whether
+ *                  or not it connects.
+ *   divine-guest   Qwen: the next hit is free, plus a timed damage multiplier.
+ *   dragon-roar    GPT: costs a fraction of the SP pool and halves the HP of
+ *                  every monster on screen (monsters own that effect).
+ */
+const SkillNameFields = {
+    /** English display name — the English UI shows this. */
+    name: z.string().min(1),
+    /** Chinese display name — the Chinese UI shows this. */
+    nameZh: z.string().min(1),
+};
+
+const HeadgearSkillSchema = z
+    .object({
+        ...SkillNameFields,
+        kind: z.literal('headgear'),
+        /** Hits soaked up before it breaks. */
+        absorbHits: z.number().int().gt(0),
+        /** Cooldown before a broken headgear can be worn again. */
+        cooldownMs: z.number().int().gte(0),
+        /**
+         * SP paid when the headgear is put on. Optional with a default of 0 so
+         * older specs still parse - but 0 means the skill is free, which is how
+         * Seed ended up casting it forever on a full bar (the owner's report:
+         * "释放技能没扣蓝").
+         */
+        spCost: z.number().int().gte(0).default(0),
+        /** Tint colour while worn. Multiplied, never additive - see pickBodyTint. */
+        tintColor: z.number().int().gte(0).optional(),
+    })
+    .strict();
+
+/**
+ * Nine Lives (九命猫) — a shield measured in HP, not in hits.
+ *
+ * The headgear soaks two whole hits whatever their size; this soaks a pool of damage
+ * instead, so a big telegraphed attack eats it and a stream of small ones nibbles it.
+ * Grant is `hpPerLevel * (level + 1)`: 15 at level 0 through 90 at level 5.
+ *
+ * Damage reaches the shield AFTER armour (see `CharacterController.hurt`), which is
+ * what the owner asked for: armour keeps working while the cat is out.
+ */
+const NineLivesSkillSchema = z
+    .object({
+        ...SkillNameFields,
+        kind: z.literal('nine-lives'),
+        /** Shield HP at level 0; each upgrade level adds this much again. */
+        hpPerLevel: z.number().int().gt(0),
+        /** Cooldown, started when the shield BREAKS (like the headgear). */
+        cooldownMs: z.number().int().gte(0),
+        spCost: z.number().int().gte(0).default(0),
+        /** Tint while the shield is up. Multiplied, never additive. */
+        tintColor: z.number().int().gte(0).optional(),
+    })
+    .strict();
+
+const DarkeningSkillSchema = z
+    .object({
+        ...SkillNameFields,
+        kind: z.literal('darkening'),
+        /** SP paid per use. */
+        spCost: z.number().int().gte(0),
+        /** Cooldown, starting the moment it is used. */
+        cooldownMs: z.number().int().gte(0),
+        /** How long the multiplier lasts. */
+        buffMs: z.number().int().gt(0),
+        /** Attack damage multiplier while the buff runs. */
+        damageMul: z.number().gt(0),
+    })
+    .strict();
+
+const CriticalNextSkillSchema = z
+    .object({
+        ...SkillNameFields,
+        kind: z.literal('critical-next'),
+        spCost: z.number().int().gte(0),
+        cooldownMs: z.number().int().gte(0),
+        /** Multiplier applied to the next attack, then spent. */
+        damageMul: z.number().gt(0),
+    })
+    .strict();
+
+const DivineGuestSkillSchema = z
+    .object({
+        ...SkillNameFields,
+        kind: z.literal('divine-guest'),
+        spCost: z.number().int().gte(0),
+        cooldownMs: z.number().int().gte(0),
+        buffMs: z.number().int().gt(0),
+        damageMul: z.number().gt(0),
+        /** Hits that deal no damage before the blessing lapses. */
+        shieldHits: z.number().int().gt(0),
+    })
+    .strict();
+
+const DragonRoarSkillSchema = z
+    .object({
+        ...SkillNameFields,
+        kind: z.literal('dragon-roar'),
+        /**
+         * Flat SP price. Preferred: a share of the pool silently re-prices the skill whenever
+         * the pool changes (80 -> 180 made one roar cost 180 without touching the skill).
+         */
+        spCost: z.number().int().gte(0).optional(),
+        /** Legacy share of the SP pool, e.g. 0.8. Used when `spCost` is absent. */
+        spCostFraction: z.number().gt(0).lte(1).optional(),
+        cooldownMs: z.number().int().gte(0),
+        /** Share of each monster's MAX HP the roar takes, e.g. 0.5. */
+        hpFraction: z.number().gt(0).lte(1),
+    })
+    .strict();
+
+export const SkillSchema = z.discriminatedUnion('kind', [
+    HeadgearSkillSchema,
+    NineLivesSkillSchema,
+    DarkeningSkillSchema,
+    CriticalNextSkillSchema,
+    DivineGuestSkillSchema,
+    DragonRoarSkillSchema,
+]);
+
+const SpriteSchema = z
+    .object({
+        texture: z.string().min(1),
+        grid: SpriteGridSchema,
+        scale: z.number().gt(0),
+        offset: SpriteOffsetSchema,
+        script: z
+            .object({
+                downsample: z.number().int().gt(0).optional(),
+                colors: z.number().int().gt(0).optional(),
+                pad: z.number().int().gte(0).optional(),
+            })
+            .strict()
+            .optional(),
+    })
+    .strict();
+
+const AnimSpecSchema = z
+    .object({
+        frames: z.tuple([z.number().int().gte(0), z.number().int().gte(0)]),
+        frameRate: z.number().gt(0),
+        repeat: z.number().int(),
+        /**
+         * Whether the sprite flips on a left/right move while this track plays.
+         *
+         * Default true - profile art needs it. A front-facing walk sets it to false: flipping
+         * a front view only swaps her hair and tail, which reads as a turn, not a step
+         * (the owner's `左右反了`).
+         */
+        mirror: z.boolean().optional(),
+        /**
+         * Explicit cell order, for a cycle whose range plays out of phase.
+         *
+         * DeepSeek's walk was reported as `向前走，但动作是倒退的` - the four
+         * poses are fine, the sequence is not. Naming the cells here turns the
+         * cycle around without redrawing anything. Every value must sit inside
+         * `frames`; the gap is caught below rather than producing a blank cell.
+         */
+        order: z.array(z.number().int().gte(0)).optional(),
+    })
+    .strict()
+    .refine((v) => v.frames[1] >= v.frames[0], {
+        message: 'frames[1] must be >= frames[0]',
+    })
+    .refine((v) => !v.order || v.order.every((c) => c >= v.frames[0] && c <= v.frames[1]), {
+        message: 'order cells must sit inside frames',
+    });
+
+const AnimsSchema = z.record(z.string(), AnimSpecSchema);
+
+/** Per-character audio identity. SFX ids are required when the
+ *  corresponding event applies; tuning knobs (throttle / threshold /
+ *  pulse) are optional and fall back to controller defaults when
+ *  omitted. */
+export const CharacterSfxSchema = z
+    .object({
+        dodge: z.string().min(1).optional(),
+        hurt: z.string().min(1).optional(),
+        /** SFX id for the male variant of `hurt`. Picked when
+         *  CharacterSpec.gender === 'male' and this field is set. */
+        hurtMale: z.string().min(1).optional(),
+        /** SFX id for the female variant of `hurt`. Picked when
+         *  CharacterSpec.gender === 'female' and this field is set. */
+        hurtFemale: z.string().min(1).optional(),
+        footstep: z.string().min(1).optional(),
+        footstepThrottleMs: z.number().gt(0).optional(),
+        lowHpHeartbeat: z.string().min(1).optional(),
+        lowHpThreshold: z.number().gt(0).lte(1).optional(),
+        lowHpPulseMs: z.number().gt(0).optional(),
+        /** Per-character throttle on the `hurt` SFX variants so
+         *  repeated damage events don't stack overlapping scream
+         *  instances. Keyed per-character. */
+        throttleMs: z.number().gt(0).optional(),
+    })
+    .strict();
+
+/** One tavern upgrade ladder.
+ *
+ *  The number of entries in `costs` IS the maximum level — a ladder can
+ *  then never disagree with its own cap, and there is no second field to
+ *  keep in sync. `effect` says which base stat the level moves and how,
+ *  so `applyUpgrades` needs no per-upgrade branch: adding a whole new
+ *  upgrade is a YAML edit, not a code edit. */
+export const CharacterUpgradeSchema = z
+    .object({
+        /** Price of each successive level; `costs[0]` buys level 1. */
+        costs: z.array(z.number().gte(0)).min(1),
+        /** One or more stat shifts. A list rather than a single effect
+         *  because `spirit` moves both the SP pool and the regen rate. */
+        effects: z
+            .array(
+                z
+                    .object({
+                        stat: z.enum([
+                            'hp',
+                            'sp',
+                            'moveSpeed',
+                            'spRegenMs',
+                            'spRegenPerSec',
+                            'armor',
+                            'luck',
+                        ]),
+                        /** `mul` compounds per level, `add` is flat per level. */
+                        mode: z.enum(['mul', 'add']),
+                        perLevel: z.number(),
+                    })
+                    .strict(),
+            )
+            .min(1),
+    })
+    .strict();
+
+const UpgradesSchema = z.record(z.string(), CharacterUpgradeSchema);
+
+export const CharacterSpecSchema = z
+    .object({
+        // YAML `id` is required and must match the filename-derived id;
+        // the parser enforces that invariant after safeParse. Required
+        // (not optional) so downstream code can rely on spec.id being a
+        // string in the output type.
+        id: z.string().min(1),
+        name: z.string().min(1),
+        /** Chinese name — the data half of the bilingual mechanism. Resolved
+         *  by `pickText()` at the point the spec reaches a HUD. Optional:
+         *  absent just means the English name shows. */
+        nameZh: z.string().min(1).optional(),
+        // Self-contained doc fields — accepted on input for YAML
+        // readability but not surfaced on the runtime spec.
+        imageSize: z
+            .string()
+            .regex(/^\d+x\d+$/)
+            .optional(),
+        prompt: z.string().optional(),
+        /** Free-form description shown on the tavern character-select
+         *  HUD (a few sentences — who they are, lore, role). Pure UI;
+         *  not consumed by gameplay. Optional so existing characters
+         *  without one still load. */
+        description: z.string().min(1).optional(),
+        /** Chinese counterpart of `description` (tavern select HUD). */
+        descriptionZh: z.string().min(1).optional(),
+        hp: z.number().gte(0),
+        sp: z.number().gte(0),
+        moveSpeed: z.number().gt(0),
+        /** Flat damage soaked per hit. 0 = no armour; upgraded to 25. */
+        armor: z.number().gte(0).default(0),
+        /**
+         * Passive SP per second. Replaces the old `spRegenMs` interval, which the
+         * game stopped reading when passive regen was removed; the trickle is back
+         * now, and a rate is the unit the design is written in.
+         */
+        spRegenPerSec: z.number().gte(0).default(0.5),
+        /** Deprecated: kept so old YAML and the editor still load. Unused. */
+        spRegenMs: z.number().gt(0).optional(),
+        /** Voice identity for the `hurt` SFX. When set, CharacterController
+         *  picks `sfx.hurtFemale` / `sfx.hurtMale`; otherwise falls back to
+         *  the gender-neutral `sfx.hurt`. */
+        gender: z.enum(['male', 'female']).optional(),
+        body: BodySchema,
+        dodge: DodgeSchema,
+        hotbar: z.array(z.string().min(1)),
+        /** Maximum weapons the character may carry at once. Defaults
+         *  to 3 when omitted — applied at runtime by the loadCharacter
+         *  consumer (not the parser, so the type stays `number | undefined`).
+         *  Phase-2 tavern pickups are gated by this value; the
+         *  `tavernWeaponCount` HUD reads it directly from the spec. */
+        weaponMax: z.number().int().gt(0).lte(8).optional(),
+        /** Critical hit chance driver. Range 1–10; maps linearly to
+         *  critChance = luck/10 (10 % – 100 %). Applied in
+         *  `MonsterController.applyBulletDamage` when the player hits a
+         *  monster. Defaults to 1 at runtime when omitted. */
+        luck: z.number().int().gte(1).lte(10).optional(),
+        /** Per-character audio identity — SFX ids + tuning knobs for
+         *  dodge / hurt / footstep / low-HP heartbeat. All optional. */
+        skill: SkillSchema.optional(),
+        sfx: CharacterSfxSchema.optional(),
+        sprite: SpriteSchema.optional(),
+        anims: AnimsSchema.optional(),
+        /** Tavern upgrade ladders, keyed by upgrade id. Optional: a
+         *  character with no block simply has no upgrades to sell. */
+        upgrades: UpgradesSchema.optional(),
+        /** Display-only stats shown in the tavern character-selection HUD.
+         *  1–10 scale per dimension; do not affect gameplay values. */
+        stats: z
+            .object({
+                /** Physical attack power */
+                strength: z.number().int().gte(1).lte(10),
+                /** Movement and dodge speed */
+                agility: z.number().int().gte(1).lte(10),
+                /** Max HP and resilience */
+                vitality: z.number().int().gte(1).lte(10),
+                /** Max SP and skill potency */
+                spirit: z.number().int().gte(1).lte(10),
+            })
+            .strict()
+            .optional(),
+    })
+    .strict();
+
+export const CharacterIndexSchema = z
+    .object({
+        characters: z.array(z.string().min(1)),
+    })
+    .strict();

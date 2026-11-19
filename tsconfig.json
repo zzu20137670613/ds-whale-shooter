@@ -1,0 +1,35 @@
+{
+    "compilerOptions": {
+        /* ES2022: `tests/` uses `Array.prototype.at`. `noEmit` is on and the
+           real transpile target lives in vite/config.*.mjs (esbuild), so this
+           only widens type-checking — it changes no shipped output. */
+        "target": "ES2022",
+        "useDefineForClassFields": true,
+        "lib": ["ES2022", "DOM", "DOM.Iterable"],
+        "module": "ESNext",
+        "skipLibCheck": true,
+
+        /* Bundler mode */
+        "moduleResolution": "bundler",
+        "allowImportingTsExtensions": true,
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "noEmit": true,
+        "jsx": "react-jsx",
+
+        /* Linting */
+        "strict": true,
+        "strictPropertyInitialization": false,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "noFallthroughCasesInSwitch": true,
+
+        /* Path aliases — see vite/config.*.mjs for the runtime mirror */
+        "baseUrl": ".",
+        "paths": {
+            "@/*": ["src/*"]
+        }
+    },
+    "include": ["src", "tests", "scripts"],
+    "references": [{ "path": "./tsconfig.node.json" }]
+}

@@ -1,0 +1,53 @@
+# Qwen — a paper charm that holds the room still. Her shot is arcana-staff's:
+# one cyan orb per press, not a spread. Damage / cooldown / range / AoE are
+# still hers; only the projectile is borrowed.
+# ART: a real 黄符, the owner's pick - two photographed talismans, one kept. The paper is
+# white-backed, so the background was flood-filled out from the borders (interior white stays)
+# and the halo that leaves behind was eaten back three passes. The sheet is 4:1 flat, rotated
+# from upright so the charm's long axis points where she aims, like every other held weapon.
+name: Exorcism Talisman
+nameZh: "灭妖符"
+damage: 40
+# 主人：`灭妖符改为扇形的5发（霰弹型）`。
+bulletsPerShot: 5
+spreadDeg: 40
+cooldownMs: 450
+range: 600
+aoeRadius: 70
+upgrades:
+    # Tavern weapon ladder. `costs.length` IS the max level.
+    costs: [42, 94, 164, 254, 368]
+    damagePerLevel: [40, 46, 52, 60, 68, 78]
+clipSize: 9
+ammoPrice: { price: 1, perRounds: 1 }
+reloadTimeMs: 2600
+visual:
+    texture: assets/image/weapons/exorcism-talisman.png
+    # The owner: `将qwen的灭妖符在身上显示的立绘长度缩减一半，宽度缩减1/3`. Both halves are
+    # baked into the PNG (233x89 instead of 466x133), so the scale stays put and the change is
+    # visible without a second scale axis.
+    scale: 0.279
+    # 卡片上等比缩小，别压到名字。
+    cardScale: 0.72
+    orbitRadius: 20
+    anchor: [0.1, 0.5]
+    recoilDistance: 10
+    recoilDuration: 140
+bullet:
+    # 黄色，不是别的角色的青色光球（主人：`将打出去的子弹颜色改为黄色`）。
+    texture: assets/image/weapons/exorcism-orb.png
+    type: projectile
+    # The owner's call: the charm read smaller than the whale cannon's shell, so the scale is
+    # the MEAN of the two - (0.08 + 0.13) / 2. On screen that is 366x223 x 0.105 = 38x23 px,
+    # between Qwen's old 29x18 and the cannon's 76x24. Hit radius is untouched (see below).
+    scale: 0.105
+    anchor: [0.5, 0.5]
+projectile:
+    speed: 16
+    visual:
+        radius: 8
+        width: 8
+        height: 8
+        color: 0x23C9D0
+sfx:
+    shoot: arcana-staff-shoot

@@ -1,0 +1,29 @@
+Whale-girl (DeepSeek) walk cycle — 4 frames, replacing her current walk row.
+
+LAYOUT: one row, 4 frames, image 2048x512 (4 cells of 512x512). Flat magenta
+(#FF00FF) background only; no grid lines, no borders, no text, no watermark, no
+shadow on the ground. Character ~360x460 px per cell, centred, soles at 92% of
+cell height, same scale in all four cells. She faces RIGHT in every frame.
+
+CHARACTER (same girl as now, do not redesign): chibi whale-girl, short deep-blue
+hair fading to white tips, two whale-fluke hair ornaments, white belly patch at
+the collar, tiny whale tail at the lower back, navy-and-white maid dress with
+pale apron, short puffed sleeves, white thigh-highs, dark rounded shoes. One arm
+hugs a small round whale plush to her chest in every frame. Head-to-body 1:2.
+1px dark navy outline, pixel-art shading, 2-3 tones per material, no gradients.
+
+THE WALK CYCLE IS THE WHOLE JOB — her current row is nearly the same pose four
+times and she slides instead of walking:
+ frame 1 CONTACT: legs wide apart, front leg forward and planted, back leg
+   extended behind, both soles flat on the ground.
+ frame 2 PASS: back leg swings through, knee raised, that sole clearly off the
+   ground (visible gap under the shoe).
+ frame 3 CONTACT: mirror of frame 1, other leg forward.
+ frame 4 PASS: mirror of frame 2, other knee raised.
+Two separate legs and two separate shoes in every frame, never merged into one
+column. Each shoe at least 24 px wide. Dress hem above the shoes so ankles read.
+Free arm swings opposite the front leg. Upright, unhurried, not a running pose,
+no forward lean.
+
+STYLE: 16-bit RPG pixel art (Chrono Trigger, Eastward). Hard pixel edges, no
+anti-aliasing on the silhouette, ~32 muted colours, same palette as her sheet.

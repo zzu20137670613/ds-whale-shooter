@@ -1,0 +1,44 @@
+# 加冕之冠 —— galgame 联动奖励（主人 2026-11-17）。
+#
+# 主人原话：`我现在想要的其实是个王冠型道具，放背包里可以+100血蓝上线的，
+# 当作galgame那边过来的玩家的奖励`。名字他随后定死：`王冠名字叫加冕之冠`。
+#
+# 与词元盾的区别（别搞混）：
+#   · 词元盾拾取即生效、不进背包；这顶冠**留在背包里**，是一种被动加成。
+#   · 加成只算"身上带着"：卖掉了 / 没了，上限就回落（见 `src/lib/drops/held-bonus.ts`）。
+#   · 它不吃掉、不消耗，所以不进 `use-check` 的自动使用流程。
+name: Coronation Crown
+nameZh: "加冕之冠"
+description: A crown from the world on the other side. Carried, not worn.
+descriptionZh: 来自另一侧的加冕之冠，带在身上即生效
+unusableNotice: It works while it is in your bag, not by being used.
+unusableNoticeZh: 这顶冠带在背包里就生效，不需要使用
+# 主人 2026-11-17：`拾取的时候给个文字提示`。
+pickupNotice: The Coronation Crown. Max HP +100 and Max SP +100 while carried.
+pickupNoticeZh: "获得【加冕之冠】：血蓝上限各 +100，带在背包里就生效"
+# 不卖：它是身份，不是资源（也避免"卖掉再买回来"刷上限）。
+sellPrice: 0
+kind: static
+visual:
+    size: 26
+    # 主人 2026-11-17：`把王冠底色做成与词元盾/白米饭一样的颜色` -> 0xC084FC（紫）。
+    tint: 0xc084fc
+effect:
+    # 主人的要求：+100 血上限、+100 蓝上限。
+    type: max-bonus
+    hp: 100
+    sp: 100
+
+# 主人 2026-11-17：`我们之前做了3个"5毛特效"，词元盾用了一个，白龙獠牙用了一个，
+# 剩下一个用在这里`。
+# 三道的光的分工（见 `src/game/drops/token-beam.ts`）：金 = 词元盾、紫 = 白龙獠牙、
+# 白（bright，薰衣草白）= 这一个，加冕之冠。原本"白"是留给未至之境道具的，
+# 主人现在把它指定给了这顶冠；以后未至之境自己要用的光柱再另定一色。
+beam: bright
+
+# PLACEHOLDER ART：程序画的 64x64 像素王冠（底箍 + 三个尖 + 珍珠 + 红宝石 + 两颗蓝宝石）。
+# 主人 2026-11-17 选的就是"先程序画占位、之后换真图"，所以这里照其它掉落同一口径：
+# 64x64、透明底、1px 深色描边。换成 nano-banana 出的图时直接覆盖同名文件，YAML 不用动。
+sprite:
+    texture: assets/image/drops/crown.png
+    scale: 1

@@ -1,0 +1,51 @@
+name: Wanderer
+nameZh: "Wanderer"
+hp: 3000
+money: 100
+moveSpeed: 2.4
+body:
+    halfW: 11
+    halfH: 11
+# 招式：半神·Claude 的天谴轰炸，只有这一种（主人 2026-11-12）。
+weaponId: physical-salvation-boss
+bossAttack: triple-wrath
+bossAttackDamageScale: 0.8
+sfx:
+    hit: monster-hit
+    death: monster-death
+    aggro: monster-aggro
+drops:
+    # 主人定的掉落：1 个词元盾 + 5 个弹药箱（没有生命碎片）。
+    - dropId: token-shield
+      chance: 1
+    - dropId: ammo-cache
+      chance: 1
+      chance2: 1
+      chance3: 1
+    - dropId: ammo-cache
+      chance: 1
+      chance2: 1
+sprite:
+    texture: assets/image/monsters/wanderer.png
+    grid: { rows: 4, cols: 4 }
+    # 主人 2026-11-12：与 Kitty 同样，贴图与碰撞体都缩到一半。
+    scale: 0.5
+    offset: { left: 0, bottom: 0 }
+
+anims:
+    idle:
+        frames: [0, 3]
+        frameRate: 6
+        repeat: -1
+    move:
+        frames: [4, 7]
+        frameRate: 10
+        repeat: -1
+    hit:
+        frames: [8, 11]
+        frameRate: 12
+        repeat: -1
+    death:
+        frames: [12, 14]
+        frameRate: 10
+        repeat: 0

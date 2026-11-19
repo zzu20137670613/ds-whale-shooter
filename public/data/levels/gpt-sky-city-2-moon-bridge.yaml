@@ -1,0 +1,237 @@
+title: GPT's Sky City · Moon Bridge
+titleZh: 'GPT的天空之城·月桥'
+
+# 2x2 拆分：本关是原来 11008x6144 地图的一块 5504x3072。
+# 碰撞墙来自主人 2026-11-11 的按块标注（红=不可达），128px 网格合并成矩形。
+background: assets/image/scenes/gpt-sky-city/sky-city-2-gate.png
+imageSize: 5504x3072
+# 旧 4x4 版这张图就是 pixelLighting: false（差分光效会把画面压暗，
+# 主人报过「月桥色调明显偏暗」）；拆开后每块都要带上这一行。
+pixelLighting: false
+# 天空之城底图偏亮，词元盾光柱改用深色（主人 2026-11-12）。
+tokenPillarTone: dark
+
+airWalls:
+    # 13 段红区 + 4 段边界兜底。
+    - id: border-top
+      kind: short
+      points:
+          - - 48
+            - 48
+          - - 5456
+            - 48
+          - - 5456
+            - 56
+          - - 48
+            - 56
+    - id: border-bottom
+      kind: short
+      points:
+          - - 48
+            - 3016
+          - - 5456
+            - 3016
+          - - 5456
+            - 3024
+          - - 48
+            - 3024
+    - id: border-left
+      kind: short
+      points:
+          - - 48
+            - 48
+          - - 56
+            - 48
+          - - 56
+            - 3024
+          - - 48
+            - 3024
+    - id: border-right
+      kind: short
+      points:
+          - - 5448
+            - 48
+          - - 5456
+            - 48
+          - - 5456
+            - 3024
+          - - 5448
+            - 3024
+    - id: blocked-01
+      kind: short
+      points:
+          - - 1792
+            - 128
+          - - 3584
+            - 128
+          - - 3584
+            - 1152
+          - - 1792
+            - 1152
+    - id: blocked-02
+      kind: short
+      points:
+          - - 1920
+            - 1152
+          - - 2176
+            - 1152
+          - - 2176
+            - 1408
+          - - 1920
+            - 1408
+    - id: blocked-03
+      kind: short
+      points:
+          - - 3200
+            - 1152
+          - - 3456
+            - 1152
+          - - 3456
+            - 1408
+          - - 3200
+            - 1408
+    - id: blocked-04
+      kind: short
+      points:
+          - - 2048
+            - 1408
+          - - 2176
+            - 1408
+          - - 2176
+            - 1536
+          - - 2048
+            - 1536
+    - id: blocked-05
+      kind: short
+      points:
+          - - 0
+            - 1792
+          - - 2048
+            - 1792
+          - - 2048
+            - 1920
+          - - 0
+            - 1920
+    - id: blocked-06
+      kind: short
+      points:
+          - - 3456
+            - 1792
+          - - 5504
+            - 1792
+          - - 5504
+            - 2944
+          - - 3456
+            - 2944
+    - id: blocked-07
+      kind: short
+      points:
+          - - 0
+            - 1920
+          - - 1920
+            - 1920
+          - - 1920
+            - 2048
+          - - 0
+            - 2048
+    - id: blocked-08
+      kind: short
+      points:
+          - - 3328
+            - 1920
+          - - 3456
+            - 1920
+          - - 3456
+            - 2816
+          - - 3328
+            - 2816
+    - id: blocked-09
+      kind: short
+      points:
+          - - 0
+            - 2048
+          - - 1792
+            - 2048
+          - - 1792
+            - 2176
+          - - 0
+            - 2176
+    - id: blocked-10
+      kind: short
+      points:
+          - - 0
+            - 2176
+          - - 1664
+            - 2176
+          - - 1664
+            - 2304
+          - - 0
+            - 2304
+    - id: blocked-11
+      kind: short
+      points:
+          - - 0
+            - 2304
+          - - 1280
+            - 2304
+          - - 1280
+            - 2432
+          - - 0
+            - 2432
+    - id: blocked-12
+      kind: short
+      points:
+          - - 0
+            - 2432
+          - - 1152
+            - 2432
+          - - 1152
+            - 2560
+          - - 0
+            - 2560
+    - id: blocked-13
+      kind: short
+      points:
+          - - 0
+            - 2560
+          - - 896
+            - 2560
+          - - 896
+            - 2688
+          - - 0
+            - 2688
+
+characterSpawn:
+    x: 4600
+    'y': 700
+    facing: right
+
+monsters: []
+spawner:
+    # 单块 5504x3072 内部分成 2x2 象限，玩家第一次踏入某个象限刷一波。
+    # 波数沿用图书馆：入口 1 / 第二关 2 / 第三关 2 / 第四关 3。每次进入都重刷。
+    delayMs: 2000
+    waves: 2
+    near: { count: 4, minDistance: 300, maxDistance: 900 }
+    far: { count: 5, edgeInset: 480 }
+    pool:
+        melee: [keeper]
+        ranged: [drone-ultra]
+
+dropSpawns: []
+materials: []
+
+teleporters:
+    # 位置来自主人的绿圈，半径统一 200（2x2 规则）。
+    - id: from-entrance
+      x: 1003
+      'y': 2885
+      targetScene: gpt-sky-city-1-entrance
+      targetPortalId: to-moon-bridge
+      radius: 200
+    - id: to-great-tome
+      x: 5260
+      'y': 893
+      targetScene: gpt-sky-city-3-great-tome
+      targetPortalId: from-moon-bridge
+      radius: 200

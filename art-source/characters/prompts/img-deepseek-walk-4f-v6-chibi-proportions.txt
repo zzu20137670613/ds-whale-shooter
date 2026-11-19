@@ -1,0 +1,21 @@
+A single 2048x2048 image: exactly FOUR full-body figures of the same chibi whale-girl maid, left to right in ONE row, on a flat magenta background. This is a walk-cycle sprite sheet, not four views.
+
+PROPORTIONS - copy them from a chibi standing sprite, do not draw a tall girl:
+- three heads tall, head about one third of the whole figure
+- the dress hem reaches the knee; only the lower leg and the shoe show below it
+- bare leg below the hem is at most 1/6 of the total height. Long slim legs are WRONG.
+- small chibi feet, shoes no longer than one head
+
+THE FOUR FRAMES ARE THE SAME DRAWING, front view facing the viewer, identical in every frame: same head angle, same eyes looking straight at the viewer, same hair, same white frilled headdress, same whale tail behind her skirt, same navy dress and white apron, same hands clasped in front, same height, same spacing. Copy the same figure four times and redraw ONLY the legs.
+
+The four leg phases, all four different - never copy one frame twice:
+1. contact: front foot flat on the ground, the other leg straight behind, both feet down, calves apart.
+2. passing: one foot lifted and tucked beside the standing leg, shoe just off the ground.
+3. contact mirrored: the other foot forward.
+4. passing mirrored: the other foot lifted and tucked.
+
+LEGS: two clearly separate chibi legs. The stride is visible but short - at contact the front shoe leads by about half a shoe-length, no longer. Keep at least 6 px of magenta between the calves at the widest point. Legs never cross, never form an X, never merge into one column.
+
+DO NOT DRAW: long legs, a short skirt, a mini skirt, high heels, four different camera angles, a head turn, the tail swinging to one side, two identical poses, any shadow or floor line or ground strip under the feet, a 2x3 or 2x2 grid, weapons, words, borders.
+
+BACKGROUND: pure flat magenta #FF00FF, no gradient, no vignette. At least 40 px of flat magenta between neighbouring figures - no hair, arm or tail may touch.

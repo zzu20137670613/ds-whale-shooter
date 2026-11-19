@@ -1,0 +1,32 @@
+# 块 2 · 星海（右上 NE）· v2
+
+> v1 判了：**画成一艘浮在星空里的船**（3/4 等角，带一圈栏杆）。
+>
+> 根因跟第 1 块的房间坑**是同一个**：我写的是 ``an open observation deck floating in a star sea``——
+> **"deck"是一个"东西"，模型就会把它当物体从外面看**。凡是能被整体观看的物体，一定给你 3/4。
+>
+> 过关的公式在第 1 块那儿已经验证过：**主语必须是"一块表面"**。
+> v2 改成 ``This image IS A FLOOR: pale plating and dark metal seams, seen straight down. Not a ship, not a platform, not an object - a surface.``
+>
+> 另外把三个"立着"的诱因全拆了：
+> - **栏杆** → 加进 Negative：``railing, balustrade, handrail, guardrail``（v1 那圈栏杆就是"船"的元凶）
+> - **罗盘玫瑰/鲸尾** → 改成 ``inlaid flush``（平嵌），不许浮雕
+> - **星空在四周** → 改成 **"透过地板的缝隙看到下面的星海"**（``Stars come through the floor, not around it``），这样星星是地板的一部分，不是平台周围的背景
+
+```
+2D top-down game map asset seen from DIRECTLY ABOVE (90 degrees, orthographic plan view). This image IS A FLOOR: pale plating and dark metal seams, seen straight down. Not a ship, not a platform, not an object - a surface. The plating fills the whole frame and continues past ALL FOUR edges: no silhouette, no outline of a platform, no visible underside, no rim, no railing, no border, no vignette. Flat cel shading, thin ink outlines, large smooth colour fills, NOT painterly.
+
+GAPS: the plating is torn away in a few places and through the gaps you see the star field far below. Stars come through the floor, not around it.
+
+OCCUPANCY: >=60% clean walkable plating; the gaps and starfield occupy the rest; asymmetric.
+
+LIGHT: even and cold, no sun, no god rays; the plating is lit by its own pale reflection, the stars are the only sparkle.
+
+Palette: plating #B9C4D2, plate shadow #6E7A8C, star white #EAF2FF, void navy #0E1A2E, inlay gold #B08A3C, whale blue #2E5B8A.
+
+Details, ALL flush with the floor, none standing: long inlaid seams between plates; a brass compass rose inlaid flush; two or three round glass panels set flush in the floor, stars showing through them; small flat bolts and access hatches; a whale-tail motif inlaid flush in gold near one side; a few flat star-mote sparks on the surface. CENTRE: a wide clean circular inlay of pale plating, 14% of frame width, EMPTY - no figure, no statue, no console, no furniture.
+
+Size: 3:2 or 16:9, full bleed, composed for a 16:9 centre crop (landmarks inside the central 84%).
+
+Negative: ship, vessel, hull, deck seen from outside, railing, balustrade, handrail, guardrail, platform, island, floating rock, rim, border, frame, vignette, room, interior, walls, ceiling, columns, arch, doorway, window, horizon, planet, earth, perspective, vanishing point, isometric, three-quarter, symmetry, characters, person, text, watermark, logo.
+```

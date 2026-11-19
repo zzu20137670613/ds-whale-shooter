@@ -1,0 +1,105 @@
+CAMERA — this is a game level background seen from directly above.
+- Camera high overhead, almost straight down: a top-down game-map view, like a floor plan.
+- ORTHOGRAPHIC: no perspective at all. Parallel lines stay parallel; the plank lines, the shelf
+  runs, the marble joint lines, the walkway bands and the water's edge stay straight and evenly
+  spaced from one edge of the image to the other; no vanishing point, no converging lines.
+- EVERY VISIBLE SURFACE IS HORIZONTAL. No vertical surface may be visible anywhere: a bookshelf is
+  only its flat TOP, never the row of book spines on a vertical face; no side of a bench or a
+  table, no visible thickness of a slab. If you can see the height of anything, the view is wrong.
+- NO ARCHITECTURE WITH HEIGHT: no railings, no vertical posts, no balusters, no steps, no arches,
+  no columns, no pedestals, no raised platforms. Nothing to climb, nothing to look up at.
+- NOTHING IS DIAGONAL: every line in this image runs exactly parallel to the top, bottom, left and
+  right edges and meets at clean right angles. The two room boundaries in particular are perfectly
+  straight and perfectly vertical and horizontal. This is a floor plan, not a perspective drawing.
+- No horizon line, no ceiling, no cast shadows anywhere. Render at high resolution: crisp plank
+  grain, thin inlaid lines, clean carved patterns, sharp fine detail.
+
+SPACE BUDGET — the most important requirement. An earlier attempt failed because the furniture ate
+the playable area.
+- OPEN AREA: at least 75% of the image is open ground the player can cross in any direction. The
+  water in the lower-left quarter is WALKABLE FLOOR, not a hazard: it is ankle-deep mirror-calm
+  water over stone, and the player runs across it.
+- Bookshelves exist ONLY in the upper-right quarter: LOW flat shelves seen from above as thin pale
+  rectangles, in a loose grid with wide aisles. All shelves together: at most 15% of the image.
+  Never a solid wall of shelves, never a cluster.
+- Everything else is small and sparse: two low flat benches in the upper-left quarter, one small
+  round table in the lower-right quarter, two flat slabs, two or three flat stacks of books.
+- Nothing may sit on or near a room boundary, and nothing may sit at the centre of the image.
+- Leave wide open lanes everywhere: the player must be able to cross the whole image without
+  squeezing between two objects.
+- No large dark masses anywhere.
+
+EXPOSURE — this background is played on, so it must be clearly readable.
+- Mid-tones dominate. Overall image brightness around 110 to 145 of 255: a cool night scene that is
+  still CLEARLY LIT, never a dark painting.
+- The four quarters have DIFFERENT natural brightness and that is intended: the marble quarter is
+  the brightest, the wood quarter is warm and mid, the shelf quarter is cooler and a little darker,
+  the water quarter is the darkest. All four must be evenly lit WITHIN themselves — no bright pool
+  and no dark corner inside any quarter. Do not flatten them to one brightness; the contrast
+  between the quarters is what makes this image read.
+- No more than about 15% of the image may be darker than #3a4258, and none of it may be pure
+  black. The water never falls below about #1e2e4d anywhere.
+- At least half of the image sits in the mid-tone range.
+- NO CAST SHADOWS: no directional shadow on any floor or on the water from any shelf, bench, table,
+  slab or stack.
+
+PALETTE, measured from the reference sheets:
+- Upper-left quarter, the warm room: polished dark wood floor, #865340 mid to #a8805f highlight,
+  long straight planks; brass and warm amber accents.
+- Upper-right quarter, the shelf maze: the same plank floor in cool blue-grey, #4a5a78 mid to
+  #6b7c9c highlight; pale beige shelf tops #c8b48f with thin brass edging.
+- Lower-right quarter, the marble terrace: cool ivory marble #f0ece7 highlight, #c7c1cf mid,
+  #9e9fb8 shadow, with faint inlaid star-map circles and long straight etched lines.
+- Lower-left quarter, the flooded room: mirror-calm deep blue water #1e2e4d to #2b3f66 with clearly
+  visible reflected stars; pale stone walkways #b9c2d6 inlaid flat.
+- All four share the same cool moonlight fill, so the materials meet softly instead of clashing.
+
+STYLE: soft semi-realistic anime background painting, painterly, clean readable shapes.
+
+One image, four rooms meeting at one point, seen from directly above.
+
+THE UPPER-LEFT QUARTER (a warm library room): open polished wood plank floor in warm brown, with
+two low flat benches and two flat stacks of books. Mostly empty floor.
+
+THE UPPER-RIGHT QUARTER (a cool shelf maze): the same plank floor in cool blue-grey, crossed by LOW
+flat bookshelves in a loose grid with wide aisles, plus one flat stack of books.
+
+THE LOWER-RIGHT QUARTER (an open marble terrace): wide bright unobstructed marble floor with faint
+inlaid star-map circles and long straight etched lines, one small round table seen from directly
+above as a flat disc, and two flat slabs.
+
+THE LOWER-LEFT QUARTER (a flooded mirror room): mirror-calm shallow water over stone, reflecting
+stars, crossed by FLAT pale stone walkways INLAID at exactly the same level as the water — water
+and stone are two flat surfaces side by side, like tiles in one floor. No steps, no raised edges,
+nothing to climb.
+
+THE TWO BOUNDARIES: the four quarters meet along TWO SOFT BANDS that cross at the EXACT CENTRE of
+the image — one perfectly VERTICAL band running from the top edge to the bottom edge down the middle
+of the image, and one perfectly HORIZONTAL band running from the left edge to the right edge across
+the middle. Each band is a gentle transition roughly a quarter of the image wide, where one material
+fades into the next. They must cross at the exact centre of the image, and they must be straight and
+parallel to the image edges. Not hard black lines, not walls, not steps, not doorways, not arches.
+Nothing is built on either boundary, and nothing sits at the crossing point.
+
+THE FOUR EDGES: every border of this image is an INNER edge of the map, so all four borders carry
+NOTHING at all — no kerb, no stone band, no railing, no starfield, no void, no sky, no sea. Each
+border is plain continuing material, split at its midpoint: the top border is warm wood on its left
+half and cool plank floor on its right half; the bottom border is mirror water on its left half and
+plain marble on its right half; the left border is warm wood on its upper half and mirror water on
+its lower half; the right border is cool plank floor on its upper half and plain marble on its lower
+half. Neighbouring images continue all four of these rooms.
+
+LANDMARK: none. This is the crossing point of the level, so keep it open and even. Two low benches,
+one small flat round table, two flat slabs and three flat stacks of books only, each a couple of
+percent of the image at most, and none of them anywhere near a boundary or the centre.
+
+RULES
+- Top-down only. No horizon line, no perspective, no side view, no ceiling, no walls with height.
+- The two boundaries must cross at the exact centre of the image: check this before finishing.
+- Check that at least three quarters of the image is open crossable floor and water before
+  finishing.
+- Every material and every line runs straight off the image edge; nothing may stop at the edge,
+  fade out at the edge, or be centred on the edge.
+- No characters, no people, no creatures, no text, no letters, no numbers, no legible writing, no
+  UI, no watermark, no frame, no border, no vignette, no signature.
+- The composition stays generic and continuous: no focal point, no hero object.

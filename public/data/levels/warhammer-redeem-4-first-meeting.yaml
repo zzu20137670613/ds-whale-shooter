@@ -1,0 +1,262 @@
+title: Where Claude and DeepSeek First Met
+titleZh: 'Claude与deepseek的初遇之地'
+
+# 2x2 拆分：本关是原来 11008x6144 地图的一块 5504x3072。
+# 碰撞墙来自主人 2026-11-11 的按块标注（红=不可达），128px 网格合并成矩形。
+background: assets/image/scenes/warhammer-redeem/warhammer-3-courtyard.png
+imageSize: 5504x3072
+# 旧 4x4 版这张图就是 pixelLighting: false（差分光效会把画面压暗，
+# 主人报过「月桥色调明显偏暗」）；拆开后每块都要带上这一行。
+pixelLighting: false
+# boss 这条线由 deepseek 本人走完（沿用旧板的 character: deepseek）。
+character: deepseek
+
+airWalls:
+    # 14 段红区 + 4 段边界兜底。
+    - id: border-top
+      kind: short
+      points:
+          - - 48
+            - 48
+          - - 5456
+            - 48
+          - - 5456
+            - 56
+          - - 48
+            - 56
+    - id: border-bottom
+      kind: short
+      points:
+          - - 48
+            - 3016
+          - - 5456
+            - 3016
+          - - 5456
+            - 3024
+          - - 48
+            - 3024
+    - id: border-left
+      kind: short
+      points:
+          - - 48
+            - 48
+          - - 56
+            - 48
+          - - 56
+            - 3024
+          - - 48
+            - 3024
+    - id: border-right
+      kind: short
+      points:
+          - - 5448
+            - 48
+          - - 5456
+            - 48
+          - - 5456
+            - 3024
+          - - 5448
+            - 3024
+    - id: blocked-01
+      kind: short
+      points:
+          - - 1152
+            - 0
+          - - 2176
+            - 0
+          - - 2176
+            - 384
+          - - 1152
+            - 384
+    - id: blocked-02
+      kind: short
+      points:
+          - - 4608
+            - 0
+          - - 4992
+            - 0
+          - - 4992
+            - 640
+          - - 4608
+            - 640
+    - id: blocked-03
+      kind: short
+      points:
+          - - 5376
+            - 0
+          - - 5504
+            - 0
+          - - 5504
+            - 1408
+          - - 5376
+            - 1408
+    - id: blocked-04
+      kind: short
+      points:
+          - - 896
+            - 128
+          - - 1152
+            - 128
+          - - 1152
+            - 384
+          - - 896
+            - 384
+    - id: blocked-05
+      kind: short
+      points:
+          - - 4480
+            - 128
+          - - 4608
+            - 128
+          - - 4608
+            - 512
+          - - 4480
+            - 512
+    - id: blocked-06
+      kind: short
+      points:
+          - - 4992
+            - 128
+          - - 5120
+            - 128
+          - - 5120
+            - 384
+          - - 4992
+            - 384
+    - id: blocked-07
+      kind: short
+      points:
+          - - 256
+            - 512
+          - - 640
+            - 512
+          - - 640
+            - 1024
+          - - 256
+            - 1024
+    - id: blocked-08
+      kind: short
+      points:
+          - - 128
+            - 640
+          - - 256
+            - 640
+          - - 256
+            - 896
+          - - 128
+            - 896
+    - id: blocked-09
+      kind: short
+      points:
+          - - 640
+            - 640
+          - - 768
+            - 640
+          - - 768
+            - 896
+          - - 640
+            - 896
+    - id: blocked-10
+      kind: short
+      points:
+          - - 5120
+            - 640
+          - - 5376
+            - 640
+          - - 5376
+            - 1408
+          - - 5120
+            - 1408
+    - id: blocked-11
+      kind: short
+      points:
+          - - 0
+            - 1664
+          - - 384
+            - 1664
+          - - 384
+            - 2176
+          - - 0
+            - 2176
+    - id: blocked-12
+      kind: short
+      points:
+          - - 5248
+            - 2432
+          - - 5504
+            - 2432
+          - - 5504
+            - 3072
+          - - 5248
+            - 3072
+    - id: blocked-13
+      kind: short
+      points:
+          - - 0
+            - 2560
+          - - 1792
+            - 2560
+          - - 1792
+            - 3072
+          - - 0
+            - 3072
+    - id: blocked-14
+      kind: short
+      points:
+          - - 4096
+            - 2816
+          - - 5248
+            - 2816
+          - - 5248
+            - 3072
+          - - 4096
+            - 3072
+
+characterSpawn:
+    x: 3100
+    'y': 1600
+    facing: right
+
+monsters: []
+# boss 本体：五阶段砍到四阶段后，每关跑一个阶段（下一步接线）。
+boss: { monsterType: claude }
+# 这一关只打第 4 阶段（四关对应四个阶段）。
+bossPhase: 4
+# 第四阶段的出场点：旧 4x4 方案里 Claude 每阶段换一块地图，这是她那块的站位（本地坐标）。
+arenaSpawn:
+    - { x: 2564, y: 1696 }
+# boss 图原本没有区域刷怪器（旧 4x4 里整张图只有 Claude 一个 monster）。
+# 主人若要每关也刷小怪，把下面这段解注即可。
+# spawner:
+#     # 单块 5504x3072 内部分成 2x2 象限，玩家第一次踏入某个象限刷一波。
+#     # 波数沿用图书馆：入口 1 / 第二关 2 / 第三关 2 / 第四关 3。每次进入都重刷。
+#     delayMs: 2000
+#     waves: 3
+#     near: { count: 4, minDistance: 300, maxDistance: 900 }
+#     far: { count: 5, edgeInset: 420 }
+#     hpMultiplier: 2
+#     meleeHpMultiplier: 2
+#     pool:
+#         melee: [drone]
+#         ranged: [sniper]
+
+dropSpawns: []
+materials: []
+
+interactables:
+    # 不锈钢饭盆：主人这次把黄圈画在初遇之地 (2946,1517)。旧 4x4 方案里它在街巷那块，
+    # 现在跟着新标注走；矩形按黄圈直径 458 外扩一圈，保证走进去就算触发。
+    - id: rice-bowl
+      action: rice-bowl
+      # 主人 2026-11-15 最终定的是「一进这张图就触发」，不再靠走进圈里：
+      # `进入boss战第四关自动出第一句的提示，背包多个白米饭，重复刷boss关再出第二句提示`。
+      # zones 留在原处只当"饭盆画在哪"的备注，`trigger: enter` 不读它。
+      trigger: enter
+      # 原来是主人画的那个 458 直径圆的**外接方框**（2717,1288 起），它把出生点
+      # (3100,1600) 也框进去了 —— 2026-11-15 主人实测`刚进图直接就报提示`、真去踩碗反而
+      # 没反应。收紧成 220 见方，圆心不变 (2946,1517)，出生点在圈外。
+      zones:
+          - { x: 2836, y: 1407, width: 220, height: 220 }
+
+teleporters:
+    []   # 本关没有传送阵（初遇之地只有铁盆彩蛋）

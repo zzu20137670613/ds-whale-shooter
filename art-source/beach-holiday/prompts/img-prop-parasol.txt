@@ -1,0 +1,28 @@
+REQUEST SIZE: 1024x1024
+
+STYLE: top-down orthographic view, camera looking straight down, flat perspective, no horizon.
+Soft semi-realistic anime background painting, painterly, clean readable shapes, bright midday sun.
+This is a single game prop, painted in the same hand and the same light as a sunny tropical beach
+scene it will be pasted into.
+
+PALETTE (measured from that beach scene):
+sand highlight #f4ddb8, sand mid #eed3ab and #d0b288, sand shadow #9d815f;
+sea teal #47b0a8 deep and #7ccbba shallow; surf white #ede5d4;
+vegetation olive #7b7f66 with dark green #514d31; rock grey-olive #9c9585.
+
+SUBJECT: one single beach parasol (sun umbrella), standing upright on the ground and seen from
+DIRECTLY ABOVE, so the canopy reads as a large round disc. Alternating canopy panels in muted
+cream, faded coral and soft teal, with a visible rib structure and a small finial at the centre.
+The thin pole and its round foot peek out just below the centre of the canopy. A soft round
+shadow under the canopy only.
+
+RULES:
+- Exactly one object, centred, filling about 75% of the frame. No second object of any kind.
+- Top-down only: no side view, no 3/4 view, no horizon, no perspective vanishing point.
+- The object stands on ONE flat uniform background: a single mid-grey #808080 filling every
+  pixel around it. No gradient, no texture, no sand, no sea, no scenery, no cast shadow on the
+  background, no reflection, no border, no frame, no vignette.
+- A soft round shadow under the canopy itself is welcome; nothing outside the canopy silhouette.
+- Muted, sun-bleached colours. Do not make the canopy glossy and do not add specular highlights.
+- No text, no letters, no numbers, no logo, no watermark, no signature, no UI.
+- Clean crisp silhouette with a lightly antialiased edge, so it can be cut out cleanly.

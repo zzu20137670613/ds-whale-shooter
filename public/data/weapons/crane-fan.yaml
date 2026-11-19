@@ -1,0 +1,41 @@
+# Qwen — the fan comes down like a wing. Melee: the spread she used to fire is
+# now the arc she swings, and a fan has no bullet count (see docs/WEAPONS.md).
+# ART: a real 折扇 - blue paper, gold ribs, a crane picked out in the leaf. The owner's pick;
+# the source is a 430x680 product photo, so the white was flood-filled out from the borders
+# (the pale paper INSIDE the fan is left alone) and the halo eaten back three passes. The
+# pivot sits at the left edge, which is where the anchor points: she holds the rivet, the
+# leaf blooms. Numbers are placeholders: the whole ladder gets re-tuned.
+name: Crane Fan
+nameZh: "鹤扇"
+damage: 40
+cooldownMs: 420
+range: 180
+upgrades:
+    # Tavern weapon ladder. `costs.length` IS the max level.
+    costs: [36, 80, 140, 220, 320]
+    damagePerLevel: [40, 44, 51, 56, 62, 71]
+hitWidth: 140
+hitHeight: 120
+visual:
+    texture: assets/image/weapons/crane-fan.png
+    # 405px art x 0.214 = ~87px of fan out from the rivet. The owner: `立绘在人物上打怪时显得
+    # 太大了，整体缩减1/3` - display only, no number changed.
+    scale: 0.214
+    orbitRadius: 14
+    # The rivet: 10px in from the left, 55% down. Rotating anywhere else swings the fan
+    # around a point in mid-air that she is not holding.
+    anchor: [0.025, 0.55]
+    # The fan is taller than it is wide; lying it across the card cropped its edges.
+    cardRotation: 0
+    # 卡片上等比缩小，别压到名字。
+    cardScale: 0.68
+    swingAngle: 190
+    rotationOffset: 0
+bullet:
+    texture: assets/image/weapons/plasma-slash-arc.png
+    type: melee
+    scale: 0.32
+    anchor: [0.5, 0.5]
+    rotationOffset: 0
+sfx:
+    shoot: plasma-sword-shoot

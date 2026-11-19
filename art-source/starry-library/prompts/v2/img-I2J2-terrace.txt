@@ -1,0 +1,92 @@
+CAMERA — this is a game level background seen from directly above.
+- Camera high overhead, almost straight down: a top-down game-map view, like a floor plan.
+- ORTHOGRAPHIC: no perspective at all. Parallel lines stay parallel; the balustrade runs and the
+  inlaid lines stay straight and evenly spaced from one edge of the image to the other; no
+  vanishing point, no converging lines, no foreshortening.
+- EVERY VISIBLE SURFACE IS HORIZONTAL. No vertical surface may be visible anywhere: never the
+  elevation of a railing, never a row of vertical posts, never the side of a table or a bench.
+  If you can see the height of any object, the view is wrong.
+- NOTHING IN THIS IMAGE IS DIAGONAL. Every edge of the terrace, every inlaid line and both
+  starfield strips run exactly parallel to the top, bottom, left and right edges of the image and
+  meet at clean right angles. No rotated platform, no tilted edge, no diagonal band, no
+  parallelogram. This is a floor plan, not a perspective drawing.
+- No horizon line. The starfield and the far sea are seen from directly above as flat surfaces,
+  never as a band rising to a horizon.
+
+SPACE BUDGET — THIS IS THE MOST IMPORTANT REQUIREMENT. An earlier attempt failed because the
+furniture ate the playable area.
+- OPEN, WALKABLE FLOOR: at least 80% of the image area — one wide continuous marble terrace the
+  player can run across in any direction.
+- Everything that blocks movement (balustrade, pedestals, benches, void) together: at most 20%.
+- The balustrade: a THIN narrow strip (about 5% of the image) running along one or two borders
+  only, seen from directly above as small square post tops and baluster tips in a line. Never a
+  wide railing mass, never crossing the middle.
+- Furniture: a few SMALL individual pieces — one or two pedestal tables and two or three low
+  benches — widely spaced, a couple of percent each at most. They must not cluster.
+- A player must be able to walk between any two objects: leave wide open lanes everywhere.
+- No large dark masses anywhere.
+
+EXPOSURE — this background is played on, so it must be clearly readable. Hard requirements:
+- Mid-tones dominate. Overall brightness around 100/255: a cool but CLEARLY LIT scene, not a dark
+  scene, not a mood painting.
+- At least half of the image sits in the mid-tone range (roughly #5a6a88 to #d8dce8).
+- No more than about 15% of the image may be darker than #3a4258, and none of it may be pure
+  black. Near-black only in small contact shadows.
+- The floor must read as lit across the WHOLE image, not only in bright spots.
+- NO CAST SHADOWS: do not paint any directional shadow on the marble from the balustrade, the
+  pedestals or the benches — no long dark diagonal bands at all. Short soft contact shadows
+  directly under an object are the only shadows allowed.
+- EVEN LIGHTING — a hard requirement: the marble is lit uniformly across the entire image, with
+  no bright pool and no dark corner. Any two patches of open floor anywhere should read within
+  about 2x of each other, and the image's MEDIAN brightness should land close to its average
+  (a median far below the mean means one spotlight in a dark room, which is wrong here).
+- The marble must stay bright everywhere: never below about #9e9fb8 anywhere in the image,
+  including the far corners. Only gentle falloff.
+
+PALETTE (measured from the reference sheets, brightened for readability):
+starfield beyond the terrace #273559 to #3b4a74 with clearly visible stars; cool ivory marble
+#f0ece7 highlight / #c7c1cf mid / #9e9fb8 shadow; pale blue moonlight fill #8fb0d8; paper white
+#f2eee9.
+
+STYLE: soft semi-realistic anime background painting, painterly, clean readable shapes.
+
+An open marble terrace seen from directly above, floating in a starfield, on the south-east side
+of a magical library at night. There are no walls and no ceiling anywhere in this image — only
+the terrace and the stars around it.
+
+THE FLOOR — the subject of this image: a wide, bright, unobstructed marble floor — #f0ece7
+highlights, #c7c1cf mid tones, #9e9fb8 shadows — with faint inlaid star-map circles and long
+straight etched lines, running open across almost the entire image.
+
+THE OUTER EDGE — a flat stone kerb, NEVER a railing: along the LOWER border and the RIGHT border
+only, and nowhere else, a THIN flat band of pale stone (about 5% of the image) runs straight and
+parallel to those two borders and meets the bottom-right corner at a right angle. It is a flat kerb
+seen from directly above: a plain stone band carrying a row of small FLAT carved squares, like a
+pattern inlaid in the floor — NEVER a railing, NEVER a row of vertical posts or balusters, nothing
+whose height you could see. Beyond that thin band: a strip of deep blue starfield (#273559 to
+#3b4a74) with clearly visible stars, and far away a flat dark sea surface — both seen from directly
+above, no horizon line. Those two sides are the outer rim of the whole map. The UPPER border and
+the LEFT border carry NOTHING at all: plain continuing marble to the very edge, because a
+neighbouring image continues the same floor there.
+
+LANDMARK (well inside the image, never touching an edge): one round stone table seen from directly
+above — you see ONLY its flat round top, a pale disc about 8% of the image wide with a faint carved
+rim; NO pedestal, NO cylindrical side, NO visible thickness, NO shadow cast on the floor. On that
+flat top, three torn scraps of paper and a fountain pen resting beside them, with a few loose sheets
+drifting across the open floor. Keep the beautiful inlaid star-map circles and the long straight
+etched lines on the marble — they are the best part of this floor.
+
+LIGHTING: cold silver starlight, soft and even, no warm light at all. Short soft shadows only;
+no long cast shadows.
+
+RULES
+- Top-down only. No horizon line, no perspective, no side view, no ceiling.
+- The open floor must stay open: check that at least four fifths of the image is unobstructed
+  walkable floor before finishing.
+- Every material, wall, floor and light source must run straight off the image edge. Nothing
+  may stop at the edge, fade out at the edge, or be centred on the edge.
+- No characters, no people, no creatures, no text, no letters, no numbers, no legible writing,
+  no UI, no watermark, no frame, no border, no vignette, no signature.
+- Keep the composition generic and continuous; the one landmark above is the only focal point.
+- On the two sides NOT marked as the map rim, a neighbouring image must be able to continue the
+  same marble floor and the same balustrade runs seamlessly.

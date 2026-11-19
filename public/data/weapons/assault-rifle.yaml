@@ -1,0 +1,45 @@
+# Seed — the upstream machine gun, back on the roster: rapid fire, a big
+# magazine, a short reload. Restored from b9d349c with its numbers unchanged,
+# minus the unread `bullet.speed` the schema no longer accepts.
+name: Assault Rifle
+nameZh: "突击步枪"
+damage: 30
+cooldownMs: 125
+range: 550
+upgrades:
+    # Tavern weapon ladder. `costs.length` IS the max level.
+    costs: [40, 90, 160, 250, 360]
+    damagePerLevel: [30, 38, 38, 45, 52, 60]
+clipSize: 35
+ammoPrice: { price: 1, perRounds: 3 }
+reloadTimeMs: 1500
+bulletsPerShot: 1
+visual:
+    texture: assets/image/weapons/assault-rifle.png
+    # 0.16 was tuned for the old 944x313 sprite. The new portrait is 1415x510 with 1347px of
+    # actual gun in it, so 0.16 would draw a 216px rifle - 44% longer than the 150px it ships
+    # at today, and longer than she is tall. 0.112 keeps the reach identical.
+    scale: 0.112
+    orbitRadius: 18
+    anchor: [0.45, 0.5]
+    recoilDistance: 6
+    recoilDuration: 80
+bullet:
+    texture: assets/image/weapons/assault-bullet.png
+    type: projectile
+    scale: 0.08
+    anchor: [0.5, 0.5]
+    spawnOffset: [10, -10]
+projectile:
+    speed: 24
+    visual:
+        radius: 4
+        width: 2
+        height: 2
+        color: 0x23C9D0
+sfx:
+    shoot: assault-rifle-shoot
+    dryFire: dry-fire
+    bulletWall: bullet-wall
+    reloadStart: reload-start
+    reloadFinish: reload-finish

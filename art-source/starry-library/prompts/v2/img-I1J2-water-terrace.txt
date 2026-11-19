@@ -1,0 +1,96 @@
+CAMERA — this is a game level background seen from directly above.
+- Camera high overhead, almost straight down: a top-down game-map view, like a floor plan.
+- ORTHOGRAPHIC: no perspective at all. Parallel lines stay parallel; the plank and marble joint
+  lines, the walkway bands, the water's edge and the stone kerb stay straight and evenly spaced
+  from one edge of the image to the other; no vanishing point, no converging lines.
+- EVERY VISIBLE SURFACE IS HORIZONTAL. No vertical surface may be visible anywhere: no side of a
+  walkway, no edge with height, no thickness of a table or a slab, no elevation of the stone kerb.
+  If you can see the height of anything, the view is wrong.
+- NO ARCHITECTURE WITH HEIGHT: no railings, no vertical posts, no balusters, no steps, no arches,
+  no columns, no pedestals, no raised platforms. Nothing to climb, nothing to look up at.
+- NOTHING IS DIAGONAL: every joint line, every walkway band, the water's edge and the stone kerb
+  run exactly parallel to the image edges and meet at clean right angles. This is a floor plan.
+- No horizon line, no ceiling, no cast shadows anywhere. Render at high resolution: crisp thin
+  inlaid lines, clean carved patterns, sharp fine detail.
+
+SPACE BUDGET — the most important requirement. An earlier attempt failed because the furniture ate
+the playable area.
+- OPEN AREA: at least 75% of the image is open ground the player can cross in any direction. The
+  water in the left half is WALKABLE FLOOR, not a hazard: it is ankle-deep mirror-calm water over
+  the same stone floor, and the player runs across it.
+- The marble in the right half is furniture: keep it almost entirely bare — at most one small table
+  seen from above as a flat disc, and two flat slabs.
+- Everything that blocks movement (stone kerb band, table, slabs, walkway edging, book stacks)
+  together: at most 25% of the image.
+- The stone kerb on the bottom is a THIN narrow band, about 6% of the image, and nothing else
+  stands on the bottom border.
+- Leave wide open lanes everywhere: the player must be able to cross the whole image without
+  squeezing between two objects.
+- No large dark masses anywhere.
+
+EXPOSURE — this background is played on, so it must be clearly readable.
+- Mid-tones dominate. Overall image brightness around 110 to 145 of 255: a cool night scene that is
+  still CLEARLY LIT, never a dark painting.
+- The two halves have different natural brightness and that is intended: the marble half is the
+  brighter one, the water half is cooler and darker. Both must be evenly lit WITHIN themselves — no
+  bright pool and no dark corner inside either half. Do not brighten the water until it turns grey,
+  and do not darken the marble to match it: the water stays deep blue and readable.
+- No more than about 15% of the image may be darker than #3a4258, and none of it may be pure
+  black. The water never falls below about #1e2e4d anywhere.
+- At least half of the image sits in the mid-tone range.
+- NO CAST SHADOWS: no directional shadow on the marble or on the water from any table, slab or
+  kerb.
+
+PALETTE, measured from the reference sheets:
+- Left half, the flooded room: mirror-calm deep blue water #1e2e4d to #2b3f66 with clearly visible
+  reflected stars; pale stone walkways #b9c2d6; wet pale slabs; paper white #f2eee9 details.
+- Right half, the marble terrace: cool ivory marble #f0ece7 highlight, #c7c1cf mid, #9e9fb8 shadow,
+  with faint inlaid star-map circles and long straight etched lines; pale blue moonlight fill
+  #8fb0d8.
+- Bottom border: pale stone kerb #c7c1cf, then starfield #273559 to #3b4a74 with clearly visible
+  stars, then a flat dark sea surface far away.
+- Both halves share the same cool moonlight fill so the two materials meet softly.
+
+STYLE: soft semi-realistic anime background painting, painterly, clean readable shapes.
+
+One image, two rooms, one soft boundary, seen from directly above.
+
+THE LEFT HALF (the flooded mirror room): mirror-calm shallow water over stone, reflecting stars,
+crossed by FLAT pale stone walkways INLAID at exactly the same level as the water — water and stone
+are two flat surfaces side by side, like tiles in one floor. No steps, no raised edges, no kerbs
+with height, no platforms, nothing to climb. A few flat wet slabs and two or three flat stacks of
+books. Mostly open water. This is the lower part of the flooded room with the colossal scroll.
+
+THE RIGHT HALF (the marble terrace): a wide bright unobstructed marble floor with faint inlaid
+star-map circles and long straight etched lines, plus one small round table seen from directly
+above as a flat disc and two flat slabs. This is the lower-left part of an open marble terrace.
+
+THE BOUNDARY: the two rooms meet along a SOFT VERTICAL BAND running straight down the MIDDLE of the
+image, from the top edge to the bottom edge, parallel to the left and right edges. It is a gentle
+transition roughly a quarter of the image wide — mirror water fading into pale dry marble, like the
+wet edge of a flood. Not a hard black line, not a wall, not a step, not a doorway, not an arch.
+Nothing is built on the boundary.
+
+THE BOTTOM EDGE, the only outer edge: running straight along the bottom border, parallel to it, a
+THIN flat band about 6% of the image of pale stone kerb, seen from directly above as a flat strip
+with a line of small FLAT carved squares — NEVER a railing, NEVER a row of vertical posts or
+balusters, nothing whose height you could see. Beyond it a strip of deep blue starfield (#273559 to
+#3b4a74) with clearly visible stars, and far away a flat dark sea surface, both seen from directly
+above with no horizon line. This band runs the full width of the image, through both halves: beside
+the water it reads as a low wet stone edge, beside the marble as a clean carved kerb. The TOP
+border, the LEFT border and the RIGHT border carry NOTHING at all: plain continuing water on the
+left and plain continuing marble on the right, to the very edge, because neighbouring images
+continue both rooms there.
+
+LANDMARK: none. This is a passage image, so keep it open. One small flat round table, two flat slabs
+and two or three flat stacks of books only, each a couple of percent of the image at most.
+
+RULES
+- Top-down only. No horizon line, no perspective, no side view, no ceiling, no walls with height.
+- Check that at least three quarters of the image is open crossable floor and water before
+  finishing.
+- Every material and every line runs straight off the image edge; nothing may stop at the edge,
+  fade out at the edge, or be centred on the edge.
+- No characters, no people, no creatures, no text, no letters, no numbers, no legible writing, no
+  UI, no watermark, no frame, no border, no vignette, no signature.
+- The composition stays generic and continuous: no focal point, no hero object.

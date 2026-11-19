@@ -1,0 +1,73 @@
+REQUEST SIZE: 2752x1536
+
+> SCALE NOTE (for us, not for the model): this single image covers the WHOLE 2x2-screen world
+> at 1x. It is cut into four 1376x768 tiles, each upscaled 2x, then stitched back into
+> 5504x3072. Everything painted here ends up twice the pixel size on screen, and the player
+> (60 px wide) is the ruler.
+>
+> v1 RESULT AND FIX: v1 came back as an oblique drone shot (elliptical parasol, visible seat
+> sides, boardwalk planks converging) with enormous palms (each crown ~16% of the frame width,
+> which after the 2x upscale would be 15 player widths). The CAMERA, WITNESSES and SIZE RULES
+> blocks below are the fix and must stay verbatim.
+
+CAMERA — the most important line in this brief: a flat orthographic PLAN VIEW, as if a satellite
+photographed the ground from directly overhead. Everything is seen from straight above, and
+nothing has a visible side.
+
+WITNESSES OF A TRUE TOP-DOWN VIEW (the image must satisfy every one of these):
+- The parasol canopy is a PERFECT CIRCLE, not an ellipse.
+- The palm trees show only their fronds and the shadow they cast. No trunk is visible, no palm
+  leans, no palm has any visible height.
+- The waterline is one straight line running across the frame, and the strip of water keeps
+  exactly the same width from one side of the frame to the other. The surf foam is a straight
+  band, not a tapering wedge.
+- The boardwalk planks are parallel and every plank is the same width. Nothing converges toward
+  a vanishing point.
+- Rocks are flat rounded shapes with a radial shadow, never spheres with a lit side.
+
+STYLE: top-down orthographic view, camera looking straight down, flat perspective, no horizon.
+Soft semi-realistic anime background painting, painterly, clean readable shapes, bright midday
+tropical sun with soft long shadows.
+
+PALETTE (measured from the current beach scene, keep this exact mood):
+sand highlight #f4ddb8, sand mid #eed3ab and #d0b288, sand shadow #9d815f;
+sea teal #47b0a8 deep and #7ccbba shallow; surf white #ede5d4;
+vegetation olive #7b7f66 with dark green #514d31; rock grey-olive #9c9585.
+Sun-bleached and muted. No neon, no saturated magenta, no glossy 3D look.
+
+SCENE: a flat map of a daytime tropical beach: a wide, mostly EMPTY stretch of warm pale sand,
+with dry sand in the upper part and wet, darker sand along one side. Along one long side runs a
+band of shallow turquoise water with thin white surf lines and a few foam rings, calm and flat
+from this height. Scattered sparsely across the sand: two palm trees, a few low rounded rocks
+half buried in sand, dry driftwood, tufts of beach grass and a handful of shells. A short
+weathered wooden boardwalk crosses part of the sand.
+
+SIZE RULES — this is what went wrong in v1, the palms came out enormous:
+- The sand is the subject of the image and fills most of the frame.
+- At most TWO palm trees in the whole image, each crown no wider than a twelfth of the image
+  width, standing in a corner or at the edge of the frame.
+- The lounger is about one twentieth of the image width; the parasol canopy about one tenth, so
+  the parasol is clearly the biggest man-made object in the picture.
+- Every rock, log, grass tuft and shell stays small: apart from the water band, nothing may span
+  more than a fifth of the frame.
+
+LANDMARK (the only special spot, well inside the frame, never touching an edge, standing in an
+open sandy area with plenty of clear sand all around it): one beach lounger lying flat, one
+parasol standing open beside it, and one small round side table next to the lounger, arranged as
+a tidy little camp. The lounger has a slatted wooden frame and a cream canvas seat with faded
+coral stripes; the parasol canopy is a round disc of cream, faded coral and soft teal panels,
+with the pole and its round foot peeking out just below the centre. The parasol casts a soft
+round shadow on the sand.
+
+RULES:
+- Top-down only. No drone shot, no aerial three-quarter view, no isometric, no oblique angle,
+  no high-angle perspective, no vanishing point, no receding lines, no object standing up, no
+  visible sides of objects, no sky, no clouds, no horizon, no boat, no people.
+- Every material, shoreline, shadow and palm runs straight off the image edge. Nothing may stop
+  at the edge, fade out at the edge, or be centred on the edge.
+- Exactly one lounger, one parasol and one small table in the whole image, at the landmark spot.
+  No other furniture anywhere.
+- No characters, no people, no creatures, no monsters, no text, no letters, no numbers, no
+  legible writing, no UI, no watermark, no frame, no border, no vignette, no signature.
+- No clouds and no sky elements: the camera is looking down at the ground, so nothing floats
+  above the sand.

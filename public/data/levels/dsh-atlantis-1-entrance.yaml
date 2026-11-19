@@ -1,0 +1,479 @@
+title: dsh's Atlantis · Entrance
+titleZh: 'dsh的亚特兰蒂斯·入口'
+
+# 2x2 拆分：本关是原来 11008x6144 地图的一块 5504x3072。
+# 碰撞墙来自主人 2026-11-11 的按块标注（红=不可达），128px 网格合并成矩形。
+background: assets/image/scenes/dsh-atlantis/atlantis-2-memory.png
+imageSize: 5504x3072
+# 旧 4x4 版这张图就是 pixelLighting: false（差分光效会把画面压暗，
+# 主人报过「月桥色调明显偏暗」）；拆开后每块都要带上这一行。
+pixelLighting: false
+# 主人 2026-11-12 实测：亮色光柱在亚特兰蒂斯看不清，这里也用深色。
+tokenPillarTone: gold
+
+airWalls:
+    # 35 段红区 + 4 段边界兜底。
+    - id: border-top
+      kind: short
+      points:
+          - - 48
+            - 48
+          - - 5456
+            - 48
+          - - 5456
+            - 56
+          - - 48
+            - 56
+    - id: border-bottom
+      kind: short
+      points:
+          - - 48
+            - 3016
+          - - 5456
+            - 3016
+          - - 5456
+            - 3024
+          - - 48
+            - 3024
+    - id: border-left
+      kind: short
+      points:
+          - - 48
+            - 48
+          - - 56
+            - 48
+          - - 56
+            - 3024
+          - - 48
+            - 3024
+    - id: border-right
+      kind: short
+      points:
+          - - 5448
+            - 48
+          - - 5456
+            - 48
+          - - 5456
+            - 3024
+          - - 5448
+            - 3024
+    - id: blocked-01
+      kind: short
+      points:
+          - - 1152
+            - 0
+          - - 1920
+            - 0
+          - - 1920
+            - 128
+          - - 1152
+            - 128
+    - id: blocked-02
+      kind: short
+      points:
+          - - 3712
+            - 0
+          - - 5504
+            - 0
+          - - 5504
+            - 128
+          - - 3712
+            - 128
+    - id: blocked-03
+      kind: short
+      points:
+          - - 0
+            - 128
+          - - 1536
+            - 128
+          - - 1536
+            - 256
+          - - 0
+            - 256
+    - id: blocked-04
+      kind: short
+      points:
+          - - 3840
+            - 128
+          - - 5504
+            - 128
+          - - 5504
+            - 256
+          - - 3840
+            - 256
+    - id: blocked-05
+      kind: short
+      points:
+          - - 0
+            - 256
+          - - 1280
+            - 256
+          - - 1280
+            - 384
+          - - 0
+            - 384
+    - id: blocked-06
+      kind: short
+      points:
+          - - 4096
+            - 256
+          - - 5504
+            - 256
+          - - 5504
+            - 384
+          - - 4096
+            - 384
+    - id: blocked-07
+      kind: short
+      points:
+          - - 0
+            - 384
+          - - 1024
+            - 384
+          - - 1024
+            - 512
+          - - 0
+            - 512
+    - id: blocked-08
+      kind: short
+      points:
+          - - 4224
+            - 384
+          - - 5504
+            - 384
+          - - 5504
+            - 512
+          - - 4224
+            - 512
+    - id: blocked-09
+      kind: short
+      points:
+          - - 0
+            - 512
+          - - 640
+            - 512
+          - - 640
+            - 640
+          - - 0
+            - 640
+    - id: blocked-10
+      kind: short
+      points:
+          - - 4480
+            - 512
+          - - 5504
+            - 512
+          - - 5504
+            - 640
+          - - 4480
+            - 640
+    - id: blocked-11
+      kind: short
+      points:
+          - - 0
+            - 640
+          - - 384
+            - 640
+          - - 384
+            - 768
+          - - 0
+            - 768
+    - id: blocked-12
+      kind: short
+      points:
+          - - 4608
+            - 640
+          - - 5504
+            - 640
+          - - 5504
+            - 768
+          - - 4608
+            - 768
+    - id: blocked-13
+      kind: short
+      points:
+          - - 0
+            - 768
+          - - 128
+            - 768
+          - - 128
+            - 896
+          - - 0
+            - 896
+    - id: blocked-14
+      kind: short
+      points:
+          - - 4864
+            - 768
+          - - 5504
+            - 768
+          - - 5504
+            - 896
+          - - 4864
+            - 896
+    - id: blocked-15
+      kind: short
+      points:
+          - - 4992
+            - 896
+          - - 5504
+            - 896
+          - - 5504
+            - 1024
+          - - 4992
+            - 1024
+    - id: blocked-16
+      kind: short
+      points:
+          - - 5120
+            - 1024
+          - - 5504
+            - 1024
+          - - 5504
+            - 1152
+          - - 5120
+            - 1152
+    - id: blocked-17
+      kind: short
+      points:
+          - - 384
+            - 1152
+          - - 768
+            - 1152
+          - - 768
+            - 1408
+          - - 384
+            - 1408
+    - id: blocked-18
+      kind: short
+      points:
+          - - 1536
+            - 1408
+          - - 3840
+            - 1408
+          - - 3840
+            - 1536
+          - - 1536
+            - 1536
+    - id: blocked-19
+      kind: short
+      points:
+          - - 0
+            - 1536
+          - - 128
+            - 1536
+          - - 128
+            - 3072
+          - - 0
+            - 3072
+    - id: blocked-20
+      kind: short
+      points:
+          - - 1664
+            - 1536
+          - - 3712
+            - 1536
+          - - 3712
+            - 1664
+          - - 1664
+            - 1664
+    - id: blocked-21
+      kind: short
+      points:
+          - - 5248
+            - 1664
+          - - 5504
+            - 1664
+          - - 5504
+            - 2944
+          - - 5248
+            - 2944
+    - id: blocked-22
+      kind: short
+      points:
+          - - 128
+            - 1792
+          - - 256
+            - 1792
+          - - 256
+            - 3072
+          - - 128
+            - 3072
+    - id: blocked-23
+      kind: short
+      points:
+          - - 4864
+            - 1792
+          - - 5248
+            - 1792
+          - - 5248
+            - 2048
+          - - 4864
+            - 2048
+    - id: blocked-24
+      kind: short
+      points:
+          - - 256
+            - 1920
+          - - 512
+            - 1920
+          - - 512
+            - 3072
+          - - 256
+            - 3072
+    - id: blocked-25
+      kind: short
+      points:
+          - - 4992
+            - 2048
+          - - 5248
+            - 2048
+          - - 5248
+            - 2944
+          - - 4992
+            - 2944
+    - id: blocked-26
+      kind: short
+      points:
+          - - 4608
+            - 2304
+          - - 4992
+            - 2304
+          - - 4992
+            - 2560
+          - - 4608
+            - 2560
+    - id: blocked-27
+      kind: short
+      points:
+          - - 512
+            - 2432
+          - - 640
+            - 2432
+          - - 640
+            - 3072
+          - - 512
+            - 3072
+    - id: blocked-28
+      kind: short
+      points:
+          - - 640
+            - 2560
+          - - 768
+            - 2560
+          - - 768
+            - 3072
+          - - 640
+            - 3072
+    - id: blocked-29
+      kind: short
+      points:
+          - - 1280
+            - 2560
+          - - 1408
+            - 2560
+          - - 1408
+            - 3072
+          - - 1280
+            - 3072
+    - id: blocked-30
+      kind: short
+      points:
+          - - 4736
+            - 2560
+          - - 4992
+            - 2560
+          - - 4992
+            - 2944
+          - - 4736
+            - 2944
+    - id: blocked-31
+      kind: short
+      points:
+          - - 1152
+            - 2688
+          - - 1280
+            - 2688
+          - - 1280
+            - 3072
+          - - 1152
+            - 3072
+    - id: blocked-32
+      kind: short
+      points:
+          - - 1408
+            - 2688
+          - - 1536
+            - 2688
+          - - 1536
+            - 3072
+          - - 1408
+            - 3072
+    - id: blocked-33
+      kind: short
+      points:
+          - - 768
+            - 2816
+          - - 1152
+            - 2816
+          - - 1152
+            - 3072
+          - - 768
+            - 3072
+    - id: blocked-34
+      kind: short
+      points:
+          - - 1536
+            - 2816
+          - - 1920
+            - 2816
+          - - 1920
+            - 3072
+          - - 1536
+            - 3072
+    - id: blocked-35
+      kind: short
+      points:
+          - - 3712
+            - 2816
+          - - 4096
+            - 2816
+          - - 4096
+            - 2944
+          - - 3712
+            - 2944
+
+characterSpawn:
+    x: 2800
+    'y': 800
+    facing: right
+
+monsters: []
+spawner:
+    # 单块 5504x3072 内部分成 2x2 象限，玩家第一次踏入某个象限刷一波。
+    # 波数沿用图书馆：入口 1 / 第二关 2 / 第三关 2 / 第四关 3。每次进入都重刷。
+    delayMs: 2000
+    waves: 1
+    near: { count: 4, minDistance: 300, maxDistance: 900 }
+    far: { count: 5, edgeInset: 480, cornerInset: 900 }
+    pool:
+        melee: [warden]
+        ranged: [bengbu-erba]
+
+dropSpawns: []
+materials: []
+
+teleporters:
+    # 位置来自主人的绿圈，半径统一 200（2x2 规则）。
+    - id: from-sky-city
+      x: 176
+      'y': 1220
+      targetScene: gpt-sky-city-4-throne-hall
+      targetPortalId: to-atlantis
+      radius: 200
+    - id: to-sunken-ship
+      x: 5324
+      'y': 1427
+      targetScene: dsh-atlantis-2-sunken-ship
+      targetPortalId: from-entrance
+      radius: 200

@@ -1,0 +1,274 @@
+title: GPT's Sky City · Entrance
+titleZh: 'GPT的天空之城·入口'
+
+# 2x2 拆分：本关是原来 11008x6144 地图的一块 5504x3072。
+# 碰撞墙来自主人 2026-11-11 的按块标注（红=不可达），128px 网格合并成矩形。
+background: assets/image/scenes/gpt-sky-city/sky-city-1-landing.png
+imageSize: 5504x3072
+# 旧 4x4 版这张图就是 pixelLighting: false（差分光效会把画面压暗，
+# 主人报过「月桥色调明显偏暗」）；拆开后每块都要带上这一行。
+pixelLighting: false
+# 天空之城底图偏亮，词元盾光柱改用深色（主人 2026-11-12）。
+tokenPillarTone: dark
+
+airWalls:
+    # 16 段红区 + 4 段边界兜底。
+    - id: border-top
+      kind: short
+      points:
+          - - 48
+            - 48
+          - - 5456
+            - 48
+          - - 5456
+            - 56
+          - - 48
+            - 56
+    - id: border-bottom
+      kind: short
+      points:
+          - - 48
+            - 3016
+          - - 5456
+            - 3016
+          - - 5456
+            - 3024
+          - - 48
+            - 3024
+    - id: border-left
+      kind: short
+      points:
+          - - 48
+            - 48
+          - - 56
+            - 48
+          - - 56
+            - 3024
+          - - 48
+            - 3024
+    - id: border-right
+      kind: short
+      points:
+          - - 5448
+            - 48
+          - - 5456
+            - 48
+          - - 5456
+            - 3024
+          - - 5448
+            - 3024
+    - id: blocked-01
+      kind: short
+      points:
+          - - 1152
+            - 0
+          - - 1280
+            - 0
+          - - 1280
+            - 896
+          - - 1152
+            - 896
+    - id: blocked-02
+      kind: short
+      points:
+          - - 0
+            - 128
+          - - 1152
+            - 128
+          - - 1152
+            - 896
+          - - 0
+            - 896
+    - id: blocked-03
+      kind: short
+      points:
+          - - 0
+            - 896
+          - - 1024
+            - 896
+          - - 1024
+            - 1024
+          - - 0
+            - 1024
+    - id: blocked-04
+      kind: short
+      points:
+          - - 0
+            - 1024
+          - - 896
+            - 1024
+          - - 896
+            - 1152
+          - - 0
+            - 1152
+    - id: blocked-05
+      kind: short
+      points:
+          - - 0
+            - 1152
+          - - 640
+            - 1152
+          - - 640
+            - 1280
+          - - 0
+            - 1280
+    - id: blocked-06
+      kind: short
+      points:
+          - - 0
+            - 1280
+          - - 512
+            - 1280
+          - - 512
+            - 1408
+          - - 0
+            - 1408
+    - id: blocked-07
+      kind: short
+      points:
+          - - 0
+            - 1408
+          - - 256
+            - 1408
+          - - 256
+            - 3072
+          - - 0
+            - 3072
+    - id: blocked-08
+      kind: short
+      points:
+          - - 256
+            - 1536
+          - - 384
+            - 1536
+          - - 384
+            - 3072
+          - - 256
+            - 3072
+    - id: blocked-09
+      kind: short
+      points:
+          - - 384
+            - 1792
+          - - 512
+            - 1792
+          - - 512
+            - 3072
+          - - 384
+            - 3072
+    - id: blocked-10
+      kind: short
+      points:
+          - - 512
+            - 1920
+          - - 640
+            - 1920
+          - - 640
+            - 3072
+          - - 512
+            - 3072
+    - id: blocked-11
+      kind: short
+      points:
+          - - 640
+            - 2176
+          - - 768
+            - 2176
+          - - 768
+            - 3072
+          - - 640
+            - 3072
+    - id: blocked-12
+      kind: short
+      points:
+          - - 768
+            - 2304
+          - - 896
+            - 2304
+          - - 896
+            - 3072
+          - - 768
+            - 3072
+    - id: blocked-13
+      kind: short
+      points:
+          - - 896
+            - 2432
+          - - 1024
+            - 2432
+          - - 1024
+            - 3072
+          - - 896
+            - 3072
+    - id: blocked-14
+      kind: short
+      points:
+          - - 1024
+            - 2688
+          - - 1152
+            - 2688
+          - - 1152
+            - 3072
+          - - 1024
+            - 3072
+    - id: blocked-15
+      kind: short
+      points:
+          - - 1152
+            - 2816
+          - - 1280
+            - 2816
+          - - 1280
+            - 3072
+          - - 1152
+            - 3072
+    - id: blocked-16
+      kind: short
+      points:
+          - - 1280
+            - 2944
+          - - 1408
+            - 2944
+          - - 1408
+            - 3072
+          - - 1280
+            - 3072
+
+characterSpawn:
+    x: 3700
+    'y': 1600
+    facing: right
+
+monsters: []
+spawner:
+    # 单块 5504x3072 内部分成 2x2 象限，玩家第一次踏入某个象限刷一波。
+    # 波数沿用图书馆：入口 1 / 第二关 2 / 第三关 2 / 第四关 3。每次进入都重刷。
+    delayMs: 2000
+    waves: 1
+    near: { count: 4, minDistance: 300, maxDistance: 900 }
+    far: { count: 5, edgeInset: 480 }
+    exclude:
+        # 从旧 4x4 spawner 搬来的禁刷矩形（本地坐标）：屋顶、王座高台、
+        # 以及海边那条窄条，都是美术上不可站人的地方。
+        - { x: 0, y: 0, width: 720, height: 3072 }
+    pool:
+        melee: [keeper]
+        ranged: [drone-ultra]
+
+dropSpawns: []
+materials: []
+
+teleporters:
+    # 位置来自主人的绿圈，半径统一 200（2x2 规则）。
+    - id: to-library
+      x: 1688
+      'y': 489
+      targetScene: starry-library-4-scroll
+      targetPortalId: to-sky-city
+      radius: 200
+    - id: to-moon-bridge
+      x: 5259
+      'y': 1577
+      targetScene: gpt-sky-city-2-moon-bridge
+      targetPortalId: from-entrance
+      radius: 200

@@ -1,0 +1,176 @@
+/**
+ * src/lib/monsters/schema.ts
+ * --------------------------------------------------------------------------
+ * Zod schema for the monsters module.
+ *
+ * `body` is optional with defaults (14x14) so existing monster YAMLs
+ * without a body block keep working.
+ *
+ * Single source of truth — `./types.ts` derives types via `z.infer`.
+ */
+
+import { z } from 'zod';
+
+/**
+ * One item in a monster's drop table, with up to three nested tiers.
+ *
+ * The design table reads like a payout ladder: "藤壶 100% one, 50% two, 20% three".
+ * Those are tiers, not independent rolls - a three-hit eats the two and the one. So a
+ * row is `chance` (one), `chance2` (two) and `chance3` (three), and the tiers must be
+ * nested: you cannot be more likely to get three than to get two.
+ *
+ * Every copy is its own pickup on the ground; the drop system has no stack count.
+ */
+export const DropRefSchema = z
+    .object({
+        dropId: z.string().min(1),
+        /** Chance of the one-copy tier. 1 means "at least one, always". */
+        chance: z.number().gte(0).lte(1),
+        /** Chance of the two-copy tier. 0 by default: most rows never pay two. */
+        chance2: z.number().gte(0).lte(1).default(0),
+        /** Chance of the three-copy tier. 0 by default. */
+        chance3: z.number().gte(0).lte(1).default(0),
+    })
+    .strict()
+    .refine((row) => row.chance2 <= row.chance, {
+        message: 'chance2 must not exceed chance: the tiers have to nest',
+        path: ['chance2'],
+    })
+    .refine((row) => row.chance3 <= row.chance2, {
+        message: 'chance3 must not exceed chance2: the tiers have to nest',
+        path: ['chance3'],
+    });
+
+const BodySchema = z
+    .object({
+        halfW: z.number().gt(0).default(14),
+        halfH: z.number().gt(0).default(14),
+    })
+    .strict()
+    .default({ halfW: 14, halfH: 14 });
+
+const SpriteGridSchema = z
+    .object({
+        rows: z.number().gt(0),
+        cols: z.number().gt(0),
+    })
+    .strict();
+
+const SpriteOffsetSchema = z
+    .object({
+        left: z.number().optional(),
+        bottom: z.number().optional(),
+        x: z.number().optional(),
+        y: z.number().optional(),
+    })
+    .strict()
+    .optional();
+
+export const SpriteSchema = z
+    .object({
+        texture: z.string().min(1),
+        grid: SpriteGridSchema.optional(),
+        scale: z.number().gt(0).optional(),
+        offset: SpriteOffsetSchema,
+        script: z
+            .object({
+                downsample: z.number().optional(),
+                colors: z.number().optional(),
+                pad: z.number().optional(),
+            })
+            .optional(),
+    })
+    .strict();
+
+export const AnimSpecSchema = z
+    .object({
+        frames: z.tuple([z.number(), z.number()]),
+        frameRate: z.number().gt(0),
+        repeat: z.number().optional(),
+    })
+    .strict()
+    .refine((v) => v.frames[1] >= v.frames[0], {
+        message: 'frames[1] must be >= frames[0]',
+    });
+
+const AnimsSchema = z.record(z.string(), AnimSpecSchema);
+
+export const MonsterSfxSchema = z
+    .object({
+        hit: z.string().min(1).optional(),
+        death: z.string().min(1).optional(),
+        aggro: z.string().min(1).optional(),
+        /** Per-monster throttle on the `hit` SFX so a shotgun shell
+         *  hitting one monster doesn't stack overlapping instances.
+         *  Keyed per-monster, so different monsters fire independently. */
+        throttleMs: z.number().gt(0).optional(),
+    })
+    .strict();
+
+export const MonsterSpecSchema = z
+    .object({
+        id: z.string().min(1).optional(),
+        name: z.string().min(1),
+        /** Chinese name. Optional; no monster name is displayed yet, so this
+         *  is carried for future HUD use (boss banners, kill feeds). */
+        nameZh: z.string().min(1).optional(),
+        imageSize: z
+            .string()
+            .regex(/^\d+x\d+$/)
+            .optional(),
+        prompt: z.string().optional(),
+        hp: z.number().gt(0),
+        /**
+         * Flat damage soaked per player hit. 0 = none. Same rule as the player's
+         * armour: `taken = max(0, incoming - armour)`, so a weak hit is absorbed
+         * whole and can never heal.
+         *
+         * Bosses scale this per phase (灭世 Claude: 20, its 神 phase: 30).
+         */
+        armor: z.number().gte(0).default(0),
+        /** Bounty paid into the player's wallet when this monster dies.
+         *  Game data, not an engine constant — a boss is worth far more
+         *  than a drone. Defaults to 0 so specs without one stay valid. */
+        money: z.number().gte(0).default(0),
+        moveSpeed: z.number().gt(0),
+        body: BodySchema,
+        /** Shootable scenery rather than a creature: the controller keeps it
+         *  static, idle and HUD-less (no name, HP bar or damage numbers), and
+         *  it never flips to face the player. Used by the tavern wall ornament
+         *  that conceals the hidden level 1 entrance. Optional, so every
+         *  existing monster spec keeps its creature behaviour. */
+        prop: z.boolean().optional(),
+        /**
+         * A boss fights in phases rather than dying once.
+         *
+         * Its health bar is emptied per phase, and the controller walks the ladder in
+         * `src/lib/bosses/phases.ts`: new full bar, scaled stats, a short invulnerable
+         * beat, and only the LAST phase ends the fight. Single hits are also capped at
+         * a tenth of the phase's health, so a modified number cannot skip the descent.
+         */
+        boss: z.boolean().optional(),
+        /**
+         * 守关 boss 的唯一招式：直接借用半神 Claude 的一套攻击，不做武器射击。
+         *
+         * 主人 2026-11-12：`Kitty攻击方式为半神Claude的墨壶迫击三连击，只有这一种攻击方式，
+         * 伤害复用半神Claude的伤害`。`triple-cannon` = 墨壶迫击三连击，`barrage` = 顺时针
+         * 炮弹，`wrath` = 天谴轰炸。
+         */
+        bossAttack: z.enum(['triple-cannon', 'barrage', 'wrath', 'triple-wrath']).optional(),
+        /** 伤害倍率；不写就按半神（第 3 阶段）的倍率算。 */
+        bossAttackDamageScale: z.number().gt(0).optional(),
+        weaponId: z.string().min(1),
+        drops: z.array(DropRefSchema).default([]),
+        /** SFX ids to play on hit / death / aggro. Each field optional;
+         *  controller falls back to global 'monster-*' ids when missing. */
+        sfx: MonsterSfxSchema.optional(),
+        sprite: SpriteSchema.optional(),
+        anims: AnimsSchema.optional(),
+    })
+    .strict();
+
+export const MonsterIndexSchema = z
+    .object({
+        monsters: z.array(z.string().min(1)),
+    })
+    .strict();

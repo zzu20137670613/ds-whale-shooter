@@ -1,0 +1,199 @@
+import { describe, it, expect } from 'vitest';
+
+import { parseLevelYaml } from '@/lib/levels/parser';
+import type { Level } from '@/lib/levels/types';
+
+import { serializeLevelYaml } from '@/lib/editor/yaml';
+
+const minimal: Level = {
+    title: 'DS Whale Shooter — Sacred Forest Sanctuary',
+    background: 'assets/image/scenes/sacred-forest-sanctuary.png',
+    imageSize: { width: 2752, height: 1536 },
+    airWalls: [],
+};
+
+describe('serializeLevelYaml', () => {
+    it('round-trips through parseLevelYaml (empty airWalls)', () => {
+        const text = serializeLevelYaml(minimal);
+        expect(parseLevelYaml(text, 'sacred-forest-sanctuary')).toEqual(minimal);
+    });
+
+    it('round-trips backgroundBlocks (regression: a save dropped the world)', () => {
+        const level: Level = {
+            ...minimal,
+            backgroundBlocks: [
+                { texture: 'assets/image/scenes/a.png', x: 0, y: 0 },
+                { texture: 'assets/image/scenes/b.png', x: 5504, y: 0 },
+            ],
+        };
+        expect(parseLevelYaml(serializeLevelYaml(level), 'starry-library')).toEqual(level);
+    });
+
+    it('round-trips tilemap (regression: a tiled level lost its map)', () => {
+        const level: Level = {
+            ...minimal,
+            tilemap: { map: 'assets/maps/x.json', tileset: 'assets/image/scenes/atlas.png' },
+        };
+        expect(parseLevelYaml(serializeLevelYaml(level), 'tiled')).toEqual(level);
+    });
+
+    it('round-trips with polygon air walls', () => {
+        const level: Level = {
+            ...minimal,
+            airWalls: [
+                {
+                    id: 'w1',
+                    kind: 'tall',
+                    points: [
+                        [10, 20],
+                        [40, 20],
+                        [40, 60],
+                        [10, 60],
+                    ],
+                },
+                {
+                    id: 'w2',
+                    kind: 'short',
+                    points: [
+                        [50, 60],
+                        [55, 60],
+                        [55, 65],
+                    ],
+                },
+            ],
+        };
+        const text = serializeLevelYaml(level);
+        expect(parseLevelYaml(text, 'test')).toEqual(level);
+    });
+
+    it('emits imageSize as "WxH" string', () => {
+        const text = serializeLevelYaml(minimal);
+        expect(text).toMatch(/^imageSize: 2752x1536$/m);
+    });
+
+    it('emits empty airWalls as inline []', () => {
+        const text = serializeLevelYaml(minimal);
+        expect(text).toMatch(/^airWalls: \[\]$/m);
+    });
+
+    it('preserves key order (title, background, imageSize, airWalls)', () => {
+        const text = serializeLevelYaml(minimal);
+        const keys = ['title', 'background', 'imageSize', 'airWalls'];
+        let cursor = -1;
+        for (const key of keys) {
+            const idx = text.indexOf(`${key}:`, cursor + 1);
+            expect(idx).toBeGreaterThan(cursor);
+            cursor = idx;
+        }
+    });
+
+    it('round-trips characterSpawn (regression: save used to drop it)', () => {
+        const level: Level = {
+            ...minimal,
+            character: 'wanderer',
+            characterSpawn: { x: 500, y: 1300, facing: 'right' },
+        };
+        const text = serializeLevelYaml(level);
+        // characterSpawn must be present in the emitted YAML.
+        expect(text).toContain('characterSpawn:');
+        // And it must round-trip through the parser unchanged.
+        expect(parseLevelYaml(text, 'test')).toEqual(level);
+    });
+
+    it('round-trips one-shot triggers (regression: save used to drop them)', () => {
+        const level: Level = {
+            ...minimal,
+            triggers: [
+                {
+                    id: 'lounger-juice',
+                    zone: { x: 2520, y: 798, width: 359, height: 390 },
+                    spawn: {
+                        type: 'beach-drink',
+                        from: { x: 2699, y: 993 },
+                        to: { x: 2946, y: 903 },
+                        lift: 90,
+                        durationMs: 700,
+                    },
+                },
+            ],
+        };
+        const text = serializeLevelYaml(level);
+        expect(text).toContain('triggers:');
+        expect(parseLevelYaml(text, 'test')).toEqual(level);
+    });
+
+    it('round-trips monsters with x and y', () => {
+        const level: Level = {
+            ...minimal,
+            monsters: [
+                { type: 'drone', x: 1200, y: 800 },
+                { type: 'gunner', x: 2000, y: 600 },
+            ],
+        };
+        const text = serializeLevelYaml(level);
+        expect(parseLevelYaml(text, 'test')).toEqual(level);
+    });
+
+    it('round-trips dropSpawns with x and y', () => {
+        const level: Level = {
+            ...minimal,
+            dropSpawns: [
+                { type: 'hp-shard', x: 300, y: 400 },
+                { type: 'ammo-cache', x: 700, y: 900 },
+            ],
+        };
+        const text = serializeLevelYaml(level);
+        expect(parseLevelYaml(text, 'test')).toEqual(level);
+    });
+
+    it('omits undefined optional fields entirely', () => {
+        const text = serializeLevelYaml(minimal);
+        expect(text).not.toContain('character:');
+        expect(text).not.toContain('characterSpawn:');
+        expect(text).not.toContain('monsters:');
+        expect(text).not.toContain('dropSpawns:');
+        expect(text).not.toContain('music:');
+        expect(text).not.toContain('pixelLighting:');
+    });
+
+    // The next three are all "an editor save silently changed the level"
+    // regressions — the shape this suite exists to catch.
+    it('round-trips music and pixelLighting (regression: save used to drop them)', () => {
+        const level: Level = {
+            ...minimal,
+            music: 'forest-ambient',
+            pixelLighting: false,
+        };
+        const text = serializeLevelYaml(level);
+        expect(text).toContain('music: forest-ambient');
+        expect(text).toContain('pixelLighting: false');
+        expect(parseLevelYaml(text, 'test')).toEqual(level);
+    });
+
+    it('round-trips monster waveId and trigger (regression: save flattened the waves)', () => {
+        const level: Level = {
+            ...minimal,
+            monsters: [
+                { type: 'drone', x: 100, y: 200, waveId: 'wave-1' },
+                {
+                    type: 'gunner',
+                    x: 300,
+                    y: 400,
+                    waveId: 'wave-2',
+                    trigger: { kind: 'clear', delayMs: 500, waveId: 'wave-1' },
+                },
+            ],
+        };
+        const text = serializeLevelYaml(level);
+        expect(parseLevelYaml(text, 'test')).toEqual(level);
+    });
+
+    it('round-trips a weapon dropSpawn weaponId (regression: save lost the weapon)', () => {
+        const level: Level = {
+            ...minimal,
+            dropSpawns: [{ type: 'weapon', x: 900, y: 1500, weaponId: 'arcana-staff' }],
+        };
+        const text = serializeLevelYaml(level);
+        expect(parseLevelYaml(text, 'test')).toEqual(level);
+    });
+});

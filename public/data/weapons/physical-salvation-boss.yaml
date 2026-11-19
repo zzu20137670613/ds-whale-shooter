@@ -1,0 +1,38 @@
+# 物理超度 · Boss 版 —— 只给灭世 Claude 用，玩家那份 `inkwell-mortar` 不动。
+#
+# 为什么单独一份：设计稿要求「Boss 专用墨壶迫击，独立 YAML」。玩家那把会随海边亭台升级
+# 改数值，Boss 这把必须钉死在设计表上，两者共用一个文件迟早对不上。
+#
+# 弹匣 3 发 = 三连炮的三连，这不是巧合，是同一个设定：她一次装三发，一次打完。
+# 体积 ×2 / 速度 ×1/2 不写在这里——`src/game/monsters/boss-attacks.ts` 统一乘，
+# 因为那是「Boss 的子弹」的规则，不是「这把武器」的规则。
+#
+# 伤害一栏是阶段 1 的基准值，真正的伤害在 `src/lib/bosses/attacks.ts`（按阶段缩放）。
+# 这里留着是为了让「这把枪有多疼」在武器表里也看得见。
+name: Physical Salvation (Boss)
+nameZh: "物理超度（Boss）"
+damage: 130
+cooldownMs: 1000
+range: 700
+aoeRadius: 90
+clipSize: 3
+reloadTimeMs: 3200  # 她从不装填；留一个合法值，免得 schema 和校验打架
+visual:
+    texture: assets/image/weapons/rocket-launcher.png
+    scale: 0.18
+    orbitRadius: 22
+    anchor: [0.45, 0.5]
+    recoilDistance: 14
+    recoilDuration: 180
+bullet:
+    texture: assets/image/weapons/rocket-missile.png
+    type: projectile
+    scale: 0.13
+    anchor: [0.5, 0.5]
+projectile:
+    speed: 14
+    visual:
+        radius: 9
+        width: 28
+        height: 11
+        color: 0x7C3AED

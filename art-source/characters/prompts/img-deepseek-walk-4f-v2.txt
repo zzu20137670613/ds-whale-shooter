@@ -1,0 +1,33 @@
+Whale-girl (DeepSeek) walk row — 4 frames. Her apron hides her legs, so the row
+reads as standing. This redraw is about showing the legs.
+
+LAYOUT: one row, 4 frames, image 2048x512 (4 cells of 512x512). Background flat
+MAGENTA #FF00FF, one colour, no gradient, no vignette. No grid, text, watermark
+or ground shadow. Character ~350x460 px per cell, same scale in all four cells,
+feet at 92% of cell height. Faces the viewer, turned slightly to her right.
+
+CHARACTER (same girl, do not redesign): chibi whale-girl, short deep-blue hair
+fading to white tips, two whale-fluke hair ornaments, white frilled headdress,
+navy-blue maid dress with white lace trim, a small whale-tail ornament at the
+waist, one arm holding a small round whale plush, whale tail behind her, white
+thigh-high socks, dark rounded shoes. Head-to-body 1:2. 1px navy outline,
+2-3 tones per material, ~32 colours.
+
+LEGS — the whole point:
+ The apron and skirt hem end AT THE KNEE, not below it. Both legs from knee to
+   shoe are fully visible in every frame, at least 12 px wide each.
+ Both shoes fully visible, at least 26 px wide, flat horizontal soles.
+ Two separate legs, never merged into one column.
+
+WALK CYCLE:
+ frame 1 CONTACT: legs spread wide, both soles on the ground, front foot
+   forward — the widest stance of the cycle.
+ frame 2 PASS: rear leg swings through, knee lifted 20-30 px, that foot off the
+   ground and clearly higher than the other.
+ frame 3 CONTACT: mirror of frame 1, the other leg forward now.
+ frame 4 PASS: mirror of frame 2, the other knee lifted.
+ Feet alternate: if the left foot leads in frame 1, the right foot leads in
+ frame 3. The free arm swings opposite the leading leg.
+
+STYLE: 16-bit RPG pixel art, hard pixel edges, no anti-aliasing on the
+silhouette, muted palette matching her sheet.

@@ -1,0 +1,26 @@
+name: Barnacle
+nameZh: "藤壶"
+sellPrice: 1
+kind: monster
+sfx: pickup-hp
+# Not used, only sold. The price is a placeholder the shop will read later.
+effect:
+    type: material
+visual:
+    size: 22
+    tint: 0xe7e2d3
+
+# Three 64x64 frames in a row. The source sheet had four, but the fourth carried
+# a watermark, so it was dropped; three frames of a slow shimmer is the whole
+# idle loop.
+sprite:
+    texture: assets/image/drops/barnacle.png
+    grid: { rows: 1, cols: 3 }
+    scale: 1
+    offset: { left: 0, bottom: 0 }
+
+anims:
+    idle:
+        frames: [0, 2]
+        frameRate: 4
+        repeat: -1

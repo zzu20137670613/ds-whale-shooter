@@ -1,0 +1,34 @@
+Top-down orthographic view, camera looking straight down, flat perspective, no horizon.
+Soft semi-realistic anime background painting, painterly, clean readable shapes, night scene.
+
+PALETTE (measured from the reference sheets): deep indigo void #101a2e to #1e2e4d; cool ivory
+marble #f0ece7 highlight / #c7c1cf mid / #9e9fb8 shadow; warm lamp glow #e9d8bf; warm wood
+#48312c dark / #865340 mid / #bc8b6c lit; pale sky blue #78aad5; paper white #f2eee9.
+
+An open marble terrace seen from directly above, floating in a starfield, on the south-east side
+of a magical library at night. There are no walls and no ceiling anywhere in this image — only
+the terrace and the stars around it.
+
+THE TERRACE: a floor of cool ivory marble (#f0ece7 highlights, #c7c1cf mid tones, #9e9fb8
+shadows) with faint inlaid star-map circles and long straight etched lines. Classical stone
+balustrades with turned balusters and square posts run in long straight segments, with occasional
+narrow gaps; beyond the balustrade there is only starfield and, far away, a faint dark sea
+horizon. Stone pedestal tables, low stone benches, and loose paper sheets drifting across the
+floor.
+
+LANDMARK (keep it well inside the image, never touching an edge): a stone pedestal table bearing
+three torn scraps of paper and a fountain pen resting beside them, with more loose sheets
+drifting across the floor around it.
+
+LIGHTING: cold silver starlight only — soft, even, and cold. No warm light at all. The balustrade
+casts a short hard shadow inward across the marble.
+
+RULES
+- Top-down only. No horizon line, no perspective, no side view, no ceiling.
+- Every material, wall, floor and light source must run straight off the image edge. Nothing
+  may stop at the edge, fade out at the edge, or be centred on the edge.
+- No characters, no people, no creatures, no text, no letters, no numbers, no legible writing,
+  no UI, no watermark, no frame, no border, no vignette, no signature.
+- Keep the composition generic and continuous; the one landmark above is the only focal point.
+- All four edges must be plain continuing terrain: a neighbouring image continues the same
+  marble floor and the same balustrade runs on every side.

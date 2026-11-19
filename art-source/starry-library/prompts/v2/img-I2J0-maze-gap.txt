@@ -1,0 +1,83 @@
+CAMERA — this is a game level background seen from directly above.
+- Camera high overhead, almost straight down: a top-down game-map view, like a floor plan.
+- ORTHOGRAPHIC: no perspective at all. Parallel lines stay parallel; the floorboards must be the
+  SAME WIDTH at the top edge of the image as at the bottom edge; no vanishing point, no
+  converging lines, no foreshortening.
+- EVERY VISIBLE SURFACE IS HORIZONTAL. No vertical surface may be visible anywhere: no front face
+  of a bookshelf (no rows of spines seen face-on), no side of a bench, no rung of a ladder seen
+  from the side, no side of a toppled shelf. You see only tops and footprints. If you can see the
+  height of any object, the view is wrong.
+- No horizon line anywhere.
+
+SPACE BUDGET — THIS IS THE MOST IMPORTANT REQUIREMENT. An earlier attempt failed because the
+furniture ate the playable area.
+- OPEN, WALKABLE FLOOR: at least 78% of the image area, as WIDE aisles that read as open lanes,
+  not narrow slots. The player must be able to run down every aisle and cross between them.
+- The bookshelves together: at most 22% of the image.
+- Shelf rows must be THIN and widely spaced — a small footprint each, with wide open floor
+  between them, so that the floor reads as a big open grid of lanes rather than a dense block of
+  bookcases. Do not let shelves merge into large solid masses.
+- A player must be able to walk between any two objects: leave wide open lanes everywhere.
+- No large dark masses anywhere.
+
+EXPOSURE — this background is played on, so it must be clearly readable. Hard requirements:
+- Mid-tones dominate. Overall brightness around 100/255: a dim but CLEARLY LIT scene, not a dark
+  scene, not a mood painting.
+- At least half of the image sits in the mid-tone range (roughly #5a6a88 to #d8dce8).
+- No more than about 15% of the image may be darker than #3a4258, and none of it may be pure
+  black. Near-black only in small contact shadows.
+- The floor must read as lit across the WHOLE image, not only in bright spots. Cool blue ambient
+  moonlight fills the space so that even the far corners stay visible.
+- NO CAST SHADOWS: do not paint any directional shadow on the floor from the shelves, the ladders
+  or the benches — no long dark diagonal bands at all. Short soft contact shadows directly under
+  an object are the only shadows allowed.
+- EVEN LIGHTING — a hard requirement: the floor is lit uniformly across the entire image, with
+  no bright pool and no dark corner. Any two patches of open floor anywhere should read within
+  about 2x of each other, and the image's MEDIAN brightness should land close to its average
+  (a median far below the mean means one spotlight in a dark room, which is wrong here).
+- The floor must never fall below about #4a5878 (luminance about 75/255) anywhere in the image,
+  including the far corners. Only gentle falloff; cool moonlight fill keeps everything readable.
+
+PALETTE (measured from the reference sheets, brightened for readability):
+starfield #273559 to #3b4a74 with clearly visible stars; warm wood lit #a8805f / mid #865340 /
+shadowed #6b4a38 (never black); pale blue moonlight fill #8fb0d8; paper white #f2eee9.
+
+STYLE: soft semi-realistic anime background painting, painterly, clean readable shapes.
+
+A cool, austere bookshelf maze seen from directly above, on the north-east side of a night-time
+magical library floating in a starfield. There is no warm light anywhere in this image, but it
+must still be clearly readable.
+
+THE FLOOR — the subject of this image: a large open plank floor of mid blue-grey wood
+(#6a7694 to #9aa8c0) filling most of the image, with wide open lanes running in two
+perpendicular directions.
+
+THE BOOKSHELVES: THIN rows of tall dark bookshelves set well apart from each other, their TOPS
+seen as narrow flat wooden caps from above (#8a6448 to #b08a68 lit). They form an open grid —
+wide aisles, small shelf footprints. Scattered fallen books, a few toppled thin shelves, thin
+drifting paper sheets, slim brass rails and shelf ladders.
+
+LANDMARK (well inside the image, never touching an edge): in one part of the image the shelf rows
+break off and the plank floor splits into several floating slabs adrift in open starfield — a
+wide bright opening of stars where the maze ends (the starlight gap). The starfield there is
+#273559 to #3b4a74 with clearly visible stars. The broken edge is ragged: torn planks, dangling
+boards, books resting on the brink — all drawn from directly above.
+PLACEMENT: the starlight gap opens along the TOP border and the RIGHT border of the image — those
+two sides are the outer rim of the whole map. The LEFT border and the BOTTOM border must be plain
+continuing maze: a neighbouring image continues the same shelves and the same floor there.
+
+LIGHTING: cold silver-blue and even. Darkness exists only as short soft contact shadows under the
+shelves (#4e5878). The starlight gap is the brightest area, but the rest of the image stays
+clearly readable.
+
+RULES
+- Top-down only. No horizon line, no perspective, no side view, no ceiling.
+- The open floor must stay open: check that at least three quarters of the image is unobstructed
+  walkable floor before finishing.
+- Every material, wall, floor and light source must run straight off the image edge. Nothing
+  may stop at the edge, fade out at the edge, or be centred on the edge.
+- No characters, no people, no creatures, no text, no letters, no numbers, no legible writing,
+  no UI, no watermark, no frame, no border, no vignette, no signature.
+- Keep the composition generic and continuous; the one landmark above is the only focal point.
+- On the two sides NOT marked as the map rim, a neighbouring image must be able to continue the
+  same shelves and the same floor seamlessly.

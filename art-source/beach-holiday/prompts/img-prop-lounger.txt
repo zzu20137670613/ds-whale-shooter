@@ -1,0 +1,27 @@
+REQUEST SIZE: 1024x1024
+
+STYLE: top-down orthographic view, camera looking straight down, flat perspective, no horizon.
+Soft semi-realistic anime background painting, painterly, clean readable shapes, bright midday sun.
+This is a single game prop, painted in the same hand and the same light as a sunny tropical beach
+scene it will be pasted into.
+
+PALETTE (measured from that beach scene):
+sand highlight #f4ddb8, sand mid #eed3ab and #d0b288, sand shadow #9d815f;
+sea teal #47b0a8 deep and #7ccbba shallow; surf white #ede5d4;
+vegetation olive #7b7f66 with dark green #514d31; rock grey-olive #9c9585.
+
+SUBJECT: one single wooden beach lounger (sun lounger, deck chair), seen from DIRECTLY ABOVE,
+lying flat on the ground. Slatted wooden frame, canvas seat in muted cream with faded coral
+stripes, small wooden armrests, the tips of short legs just visible at the four corners. A tight
+contact shadow under the frame only. Slightly angled on the ground, not perfectly axis aligned.
+
+RULES:
+- Exactly one object, centred, filling about 70% of the frame. No second object of any kind.
+- Top-down only: no side view, no 3/4 view, no horizon, no perspective vanishing point.
+- The object stands on ONE flat uniform background: a single mid-grey #808080 filling every
+  pixel around it. No gradient, no texture, no sand, no sea, no scenery, no cast shadow on the
+  background, no reflection, no border, no frame, no vignette.
+- A tight contact shadow under the object itself is welcome; nothing outside its silhouette.
+- Muted, sun-bleached colours. Do not make it glossy, do not add specular highlights.
+- No text, no letters, no numbers, no logo, no watermark, no signature, no UI.
+- Clean crisp silhouette with a lightly antialiased edge, so it can be cut out cleanly.

@@ -1,0 +1,26 @@
+# The beach lounger's easter egg reward: 苹果杯 / the Apple Cup from Don't
+# Starve Together, Klei's original sprite. A hollowed-out apple filled with
+# iced juice, the sliced-off top with its stem and leaf leaning against it.
+# Replaces the placeholder art (a tinted hp-shard cell) the egg shipped with.
+#
+# Provenance: third-party art, supplied by the project owner. Not ours to
+# redistribute - worth remembering before this repo goes anywhere public.
+#
+# Single 64x64 frame: `loadDropAssets` slices every drop texture at 64x64,
+# which is exactly this image's size, so frame 0 is the whole cup and no
+# anim table is needed - DropInstance falls back to `setFrame(0)`.
+name: Iced Juice
+nameZh: "冰镇果汁"
+sellPrice: 0
+kind: static
+sfx: pickup-hp
+visual:
+    size: 44
+    tint: 0xfb7185
+effect:
+    type: full-restore
+sprite:
+    texture: assets/image/drops/iced-juice.png
+    grid: { rows: 1, cols: 1 }
+    scale: 1
+    offset: { left: 0, bottom: 0 }

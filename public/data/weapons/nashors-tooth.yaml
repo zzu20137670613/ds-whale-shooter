@@ -1,0 +1,34 @@
+# GPT — Nashor's Tooth, borrowed from a certain MOBA on purpose. Melee: no
+# bullet count (see docs/WEAPONS.md). Behaviour and numbers are unchanged from
+# the twin-tail set; the name, the sprite and the swing sound are what moved.
+# ART IS REAL — nashors-tooth.png is the item icon with its glow-keyed
+# background removed and the blade rotated flat by tools/prep-weapon-sprite.py.
+# `rotationOffset: 180` flips the blade end-for-end if the tip reads backwards.
+name: Nashor's Tooth
+nameZh: "纳什之牙"
+damage: 50
+cooldownMs: 190
+range: 200
+upgrades:
+    # Tavern weapon ladder. `costs.length` IS the max level.
+    costs: [38, 85, 148, 232, 336]
+    damagePerLevel: [50, 55, 64, 73, 82, 91]
+hitWidth: 130
+hitHeight: 110
+visual:
+    texture: assets/image/weapons/nashors-tooth.png
+    # 56px on screen read as a dagger; 0.42 puts it at ~118px, in line with the
+    # other held blades.
+    scale: 0.42
+    orbitRadius: 12
+    anchor: [0.1, 0.5]
+    swingAngle: 170
+    rotationOffset: 0
+bullet:
+    texture: assets/image/weapons/plasma-slash-arc.png
+    type: melee
+    scale: 0.32
+    anchor: [0.5, 0.5]
+    rotationOffset: 0
+sfx:
+    shoot: plasma-sword-shoot

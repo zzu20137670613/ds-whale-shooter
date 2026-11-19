@@ -1,0 +1,63 @@
+﻿# 块 B · 直接粘贴（3:2 版）
+
+> 生成器只出 4:3 / 3:2 → 用 3:2，我裁到 16:9（上下各裁 8%）。
+> 渐变已确认交给脚本做，你只管画面。
+>
+> **接块 A 的要点**：A 的顶边中间有一段**石阶往上走**，所以这张的石阶必须从**底边**
+> 靠左约 1/4 处进来、往上爬；A 顶边左侧还有一段**带云纹的弧形白栏杆**，这张底边左侧
+> 也要让它继续跑出画面。这两处对齐了，接缝就看不出。
+
+```
+Anime-inspired hand-painted 2D top-down game art, orthographic plan view seen
+straight down, as if a drone pointed straight down at the ground: no horizon, no
+sky band, no vanishing point, no visible sides of anything standing above the
+ground plane. Stairs are read as treads seen from above (parallel lit edges with
+shadow gaps), never as a staircase in elevation. Cloud is ground fog seen from
+above, with the ground showing through its gaps. Matte painted texture, soft cel
+shading, clean 1-2 px line work on landmarks, wide flat colour areas so characters
+and props stay readable on top.
+
+Palette: cloud white #F4F8FC, moon white #E4EEF7, pale gold #E8D3A0, sky cyan
+#9EC6E8, cold grey cloud shadow #C3D2E2. This is the brightest panel of the map:
+the upper half is blown out to near-white, and the terrace stones are the lightest
+stone in the set. Keep saturation low; the only warm accents are small pale-gold
+details on the gate.
+
+Motif vocabulary: white stone balustrade with square posts, their top faces carved
+with shallow cloud scrolls; abstract carved glyph marks (strokes, never legible
+characters); a layered band of square bracket blocks under the eaves (seen from
+above as a dark even row); translucent white gauze ribbons lying over the stone.
+
+Subject: the top of a broad pale stone stair flight rises from the BOTTOM edge,
+entering roughly a quarter of the way in from the left, every tread lit along its
+upper edge with a shadow under its lip, and climbs toward the top of the frame.
+The flight ends at a CLOUD GATE: a squared gate whose wide tiled hip roof is seen
+from above as ridge lines and tile courses, with one layered row of brackets under
+the eaves and no walls visible anywhere; its pillars are half dissolved into cloud.
+Beyond the gate a flat stone terrace carries three circular stepping stones set at
+irregular spacing, each ringed by an abstract carved glyph circle. Long horizontal
+cloud streaks drive across the terrace (the wind is strongest here); a few small
+loose stone fragments sit pinned against the gate pillars. At the bottom edge, to
+the left of the stairs, a curved white parapet with carved cloud swirls runs off
+the bottom edge, continuing from the previous panel.
+
+Edges: the outer 140 px of the BOTTOM edge must ramp smoothly toward #F4F8FC; the
+outer 140 px of the RIGHT edge must ramp smoothly toward #F0F4F0; both ramps
+smooth, not banded. The TOP edge is the map boundary and dissolves into blown-out
+near-white light with no hard line. The LEFT edge is the map boundary too: a low
+white balustrade whose far side drops into open cloud. No border, no frame, no
+vignette, no corner darkening. Keep the outer 140 px of every edge free of unique
+landmarks.
+
+Size: 3:2, as large as the generator allows (2048 px on the long edge or more),
+full bleed. Compose for a 16:9 center crop: the outer 8% of the TOP and BOTTOM
+will be cut off, so keep every landmark, the whole stair run, and both edge ramps
+inside the central 84% band, and let the sacrificial top and bottom strips be plain
+cloud and rock texture only. The left and right edges are NOT cropped.
+
+Negative: side view, elevation, three-quarter view, isometric, tilted camera,
+horizon, sky band, moon in the sky, visible walls in elevation, staircase seen from
+the side, characters, person, girl, dragon, creature, hands, readable Chinese or
+Latin text, lettering, watermark, logo, UI, frame border, vignette, photorealistic,
+glossy 3D, neon, high saturation.
+```

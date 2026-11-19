@@ -1,0 +1,37 @@
+# DeepSeek — the whale-girl turns her back and swings her tail. Melee: no
+# bullet count (see docs/WEAPONS.md).
+# The back-facing pose needs new sheet frames — every roster sheet only faces
+# right, so today the tail lands with her facing the camera. The hitbox and the
+# swing are live; the pose is an art task.
+# ART: the salted-fish cutlass from Don't Starve: Shipwrecked - the owner's pick, and an
+# easter egg in the same family as the Apple Cup on the beach lounger. The source is a 64px
+# icon; it is rotated so the blade points right (the held-weapon convention), upscaled 4x with
+# NEAREST so it stays pixel-crisp, and scaled to ~118px on screen - the same held length as
+# 纳什之牙. Numbers below are still placeholders; the ladder gets re-tuned.
+name: Salted Fish Sword
+nameZh: "咸鱼剑"
+damage: 40
+cooldownMs: 520
+range: 200
+upgrades:
+    # Tavern weapon ladder. `costs.length` IS the max level.
+    costs: [40, 90, 160, 250, 360]
+    damagePerLevel: [40, 47, 53, 62, 70, 80]
+hitWidth: 150
+hitHeight: 130
+visual:
+    texture: assets/image/weapons/salted-fish-sword.png
+    # 316px art x 0.373 = ~118px in her hands, matching the other blades.
+    scale: 0.373
+    orbitRadius: 12
+    anchor: [0.1, 0.5]
+    swingAngle: 220
+    rotationOffset: 0
+bullet:
+    texture: assets/image/weapons/plasma-slash-arc.png
+    type: melee
+    scale: 0.34
+    anchor: [0.5, 0.5]
+    rotationOffset: 0
+sfx:
+    shoot: plasma-sword-shoot

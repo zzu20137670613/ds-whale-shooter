@@ -1,0 +1,34 @@
+# 铁盆彩蛋的奖励：初遇之地那只不锈钢饭盆。
+#
+# 主人：`走进黄圈就自动获得（不用按键），背包里立刻多一个道具`。它是未至之境的钥匙，
+# 现在只进包、还不能用，所以效果是 material（可持有、可卖），价格留 0——还没定价。
+#
+# 主人 2026-11-15 的三处改动：
+#   1. `把在背包里显示的道具名字直接换成【白米饭】` —— 名字就是白米饭，别名留给 description。
+#   2. `底色与我们游戏底色有些不搭，换成一个深色底吧` —— 原来的 0xcfd6dd 是浅银灰，
+#      在背包的暗底上是一块亮斑；换成深蓝灰，跟背包/商店的暗调一致。
+#   3. `点击时显示【这个不能在这里使用】，改成【这个是【未至之境】中的关键道具，现在不能使用】`
+#      —— 走物品自带的 unusableNotice / unusableNoticeZh。
+name: White Rice
+nameZh: "白米饭"
+description: The key item for 未至之境. Still waiting for its chapter.
+descriptionZh: 敬请期待（未至之境关键道具）
+unusableNotice: This is a key item for the Unreached Land. It cannot be used yet.
+unusableNoticeZh: 这个是【未至之境】中的关键道具，现在不能使用
+sellPrice: 0
+kind: static
+effect:
+    type: material
+visual:
+    size: 26
+    # 主人 2026-11-15：`将白米饭的底色改为与词元盾一样的底色` -> 0xC084FC。
+    tint: 0xc084fc
+
+# 图标来自主人 2026-11-14 给的照片（不锈钢饭盆 + 一盆白米饭 + 那只鲸鱼贴纸）。
+# 第二版他手动把地面投影抠掉了（`我手动把阴影抠掉了，你用这张图片试试`），所以这里不再需要
+# 处理阴影：抠粉背景 -> 粉反光拉回冷银灰 -> 钢盆/米饭降饱和（鲸鱼那一片蓝留着）->
+# 压色阶到 16 色 -> 加 1px 深色描边 -> 64x64，
+# 和其他掉落同一口径（`loadDropAssets` 按 64 的格子切，尺寸不对会被切掉一截）。
+sprite:
+    texture: assets/image/drops/rice-bowl-basin.png
+    scale: 1

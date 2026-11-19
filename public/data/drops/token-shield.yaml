@@ -1,0 +1,22 @@
+name: Token Shield
+nameZh: "词元盾"
+sellPrice: 0
+kind: static
+sfx: pickup-hp
+visual:
+    size: 22
+    tint: 0xc084fc
+# 不进背包，拾取即生效：等级存在角色身上，上限见 TOKEN_SHIELD_MAX_LEVEL，现在是 10 级（主人 2026-11-12 定 5 级，后来扩到 10）。
+effect:
+    type: token-shield
+
+# 主人 2026-11-14：`金色光柱配给词元盾`。
+beam: gold
+
+# 图是 64x64 的单帧（掉落贴图统一按 64 的格子切，见 loadDropAssets）。
+# 用 1.0 与其他掉落一致（生命碎片/弹药箱都是 1）：0.34 在地图缩放下只剩十几像素，
+# 主人看成"什么都没掉"。1.0 时屏幕上约 40px，一眼能认出是盾。
+sprite:
+    texture: assets/image/drops/token-shield.png
+    scale: 1
+    offset: { left: 0, bottom: 0 }

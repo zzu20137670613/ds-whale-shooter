@@ -1,0 +1,23 @@
+A single 2048x2048 image: exactly FOUR full-body figures of the same chibi whale-girl maid, left to right in ONE row, flat magenta background. A walk-cycle sprite sheet, not four views.
+
+PROPORTIONS - this is the part that keeps going wrong. She is a SHORT-LEGGED CHIBI, copy these ratios:
+- three heads tall; her head is about one third of the whole figure
+- the dress hem sits at FOUR FIFTHS of her total height. Below the hem only ONE FIFTH remains: a short lower leg and a small shoe.
+- bare skin below the hem is at most ONE SEVENTH of her height. Most of her is dress.
+- thighs are never visible. No long slim legs, no mini skirt, no high heels, no tall model proportions.
+- shoes are small and round, no longer than her head is wide
+Check before drawing: if you can see most of her leg, the proportions are wrong.
+
+THE FOUR FRAMES ARE THE SAME DRAWING, front view facing the viewer, identical in every frame: same head, same eyes looking straight ahead, same hair, same white frilled headdress, same whale tail behind the skirt, same navy dress with white apron, same hands clasped in front, same height, same spacing. Redraw ONLY the legs.
+
+The four leg phases, all four different - never copy one frame twice:
+1. front foot flat down, the other leg straight behind
+2. one foot lifted and tucked beside the standing leg, shoe just off the ground
+3. the other foot forward
+4. the other foot lifted and tucked
+
+LEGS: two separate chibi legs, chunky, short. At contact the front shoe leads by half a shoe-length, no more. At least 6 px of magenta between the calves. Never crossed, never an X, never one column.
+
+DO NOT DRAW: long legs, visible thighs, short skirt, mini skirt, heels, tall proportions, a head turn, four different angles, the tail swinging sideways, two identical poses, shadows, floor lines, ground strips, 2x3 or 2x2 grids, weapons, words, borders.
+
+BACKGROUND: flat magenta #FF00FF. At least 40 px of magenta between figures; nothing touching.

@@ -1,0 +1,219 @@
+title: GPT's Sky City · Great Tome
+titleZh: 'GPT的天空之城·巨册'
+
+# 2x2 拆分：本关是原来 11008x6144 地图的一块 5504x3072。
+# 碰撞墙来自主人 2026-11-11 的按块标注（红=不可达），128px 网格合并成矩形。
+background: assets/image/scenes/gpt-sky-city/sky-city-3-pavilion.png
+imageSize: 5504x3072
+# 旧 4x4 版这张图就是 pixelLighting: false（差分光效会把画面压暗，
+# 主人报过「月桥色调明显偏暗」）；拆开后每块都要带上这一行。
+pixelLighting: false
+# 天空之城底图偏亮，词元盾光柱改用深色（主人 2026-11-12）。
+tokenPillarTone: dark
+
+airWalls:
+    # 11 段红区 + 4 段边界兜底。
+    - id: border-top
+      kind: short
+      points:
+          - - 48
+            - 48
+          - - 5456
+            - 48
+          - - 5456
+            - 56
+          - - 48
+            - 56
+    - id: border-bottom
+      kind: short
+      points:
+          - - 48
+            - 3016
+          - - 5456
+            - 3016
+          - - 5456
+            - 3024
+          - - 48
+            - 3024
+    - id: border-left
+      kind: short
+      points:
+          - - 48
+            - 48
+          - - 56
+            - 48
+          - - 56
+            - 3024
+          - - 48
+            - 3024
+    - id: border-right
+      kind: short
+      points:
+          - - 5448
+            - 48
+          - - 5456
+            - 48
+          - - 5456
+            - 3024
+          - - 5448
+            - 3024
+    - id: blocked-01
+      kind: short
+      points:
+          - - 1152
+            - 0
+          - - 5376
+            - 0
+          - - 5376
+            - 768
+          - - 1152
+            - 768
+    - id: blocked-02
+      kind: short
+      points:
+          - - 128
+            - 128
+          - - 1152
+            - 128
+          - - 1152
+            - 768
+          - - 128
+            - 768
+    - id: blocked-03
+      kind: short
+      points:
+          - - 1792
+            - 768
+          - - 2048
+            - 768
+          - - 2048
+            - 1152
+          - - 1792
+            - 1152
+    - id: blocked-04
+      kind: short
+      points:
+          - - 3328
+            - 768
+          - - 3712
+            - 768
+          - - 3712
+            - 1152
+          - - 3328
+            - 1152
+    - id: blocked-05
+      kind: short
+      points:
+          - - 2048
+            - 896
+          - - 2176
+            - 896
+          - - 2176
+            - 1024
+          - - 2048
+            - 1024
+    - id: blocked-06
+      kind: short
+      points:
+          - - 2304
+            - 1408
+          - - 3200
+            - 1408
+          - - 3200
+            - 2176
+          - - 2304
+            - 2176
+    - id: blocked-07
+      kind: short
+      points:
+          - - 1792
+            - 2432
+          - - 2048
+            - 2432
+          - - 2048
+            - 2816
+          - - 1792
+            - 2816
+    - id: blocked-08
+      kind: short
+      points:
+          - - 3456
+            - 2432
+          - - 3712
+            - 2432
+          - - 3712
+            - 2688
+          - - 3456
+            - 2688
+    - id: blocked-09
+      kind: short
+      points:
+          - - 2048
+            - 2560
+          - - 2176
+            - 2560
+          - - 2176
+            - 2688
+          - - 2048
+            - 2688
+    - id: blocked-10
+      kind: short
+      points:
+          - - 3328
+            - 2560
+          - - 3456
+            - 2560
+          - - 3456
+            - 2688
+          - - 3328
+            - 2688
+    - id: blocked-11
+      kind: short
+      points:
+          - - 3456
+            - 2688
+          - - 3584
+            - 2688
+          - - 3584
+            - 2816
+          - - 3456
+            - 2816
+
+characterSpawn:
+    x: 4700
+    'y': 1800
+    facing: right
+
+monsters: []
+spawner:
+    # 单块 5504x3072 内部分成 2x2 象限，玩家第一次踏入某个象限刷一波。
+    # 波数沿用图书馆：入口 1 / 第二关 2 / 第三关 2 / 第四关 3。每次进入都重刷。
+    delayMs: 2000
+    waves: 2
+    near: { count: 4, minDistance: 300, maxDistance: 900 }
+    far: { count: 5, edgeInset: 480 }
+    exclude:
+        # 从旧 4x4 spawner 搬来的禁刷矩形（本地坐标）：屋顶、王座高台、
+        # 以及海边那条窄条，都是美术上不可站人的地方。
+        - { x: 0, y: 0, width: 5504, height: 1440 }
+    pool:
+        melee: [keeper]
+        ranged: [drone-ultra]
+
+dropSpawns: []
+materials: []
+
+teleporters:
+    # 位置来自主人的绿圈，半径统一 200（2x2 规则）。
+    - id: from-moon-bridge
+      x: 237
+      'y': 1664
+      targetScene: gpt-sky-city-2-moon-bridge
+      targetPortalId: to-great-tome
+      radius: 200
+    - id: to-throne-hall
+      x: 2808
+      'y': 2854
+      targetScene: gpt-sky-city-4-throne-hall
+      targetPortalId: from-great-tome
+      radius: 200

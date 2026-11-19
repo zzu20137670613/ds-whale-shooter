@@ -1,0 +1,65 @@
+The 11th Forest — Gemini WALK ROW, 4 frames
+
+REPLACEMENT JOB. Her walk row reads as a slide next to GPT and Claude, and her
+sheet has 1-3 px stray fragments beside the feet (measured: two extra
+"feet-like" runs per frame that are 1 and 3 px wide, floating ~16 px above the
+soles). Everything else about her sheet is fine and stays as it is — I need the
+walk row only.
+
+HARD NEGATIVE PROMPTS (must NOT appear in the image):
+  - No visible grid, no dividers, no borders, no ground, no scene, no text,
+    no logo, no watermark, no frame numbers, no guide crosses.
+  - No checkerboard, no tile outlines, no debug overlays.
+  - No magenta or pink anywhere on the character body. The background is the
+    ONLY place magenta appears.
+  - No floating pixels, no stray 1-pixel lines, no detached fragments near the
+    feet or the tail.
+  - No shadows on the ground, no dust, no speed lines, no motion blur.
+
+LAYOUT (must be EXACTLY this):
+  1 row x 4 columns, 4 frames, every cell the same size. Image 2048x512, so
+  each cell is 512x512.
+  The grid is COMPLETELY IMPLIED by the character's position — the magenta
+  field is one flat continuous colour everywhere except where she is drawn.
+  The character is ~340x470 px in each cell, centred horizontally, soles at
+  ~92% of the cell height, identical scale in all four cells.
+  She faces RIGHT in every frame. Left-facing or back-facing poses are wrong.
+
+CHARACTER (must match her existing sheet exactly — same girl):
+  A chibi cat-girl with nine lives:
+  - Long blue-violet hair with a slight wave, two tall cat ears matching the
+    hair colour, small dark inner-ear shading.
+  - Big violet eyes, calm half-smile.
+  - A dark navy-violet short dress with a lighter blue-violet bodice panel,
+    thin straps, a small bow at the chest.
+  - A thin dark tail with a lighter tip.
+  - Chunky dark boots with lighter purple laces and thick soles, plus short
+    dark socks.
+  - Bare arms, one wrist cuff.
+  - Chibi head-to-body ratio ~1:2, 1-pixel dark navy outline,
+    2-3 tonal steps per material, no smooth gradients.
+
+WALK CYCLE — the boots must read:
+  Four frames of ONE cycle, read left to right:
+    frame 1: CONTACT  — front boot planted forward, back boot extended behind,
+                        both soles on the ground, widest stance of the cycle.
+    frame 2: PASS     — back leg swings through, knee raised, that boot's sole
+                        clearly OFF the ground with a visible gap beneath it.
+    frame 3: CONTACT  — mirror of frame 1.
+    frame 4: PASS     — mirror of frame 2.
+  Foot rules:
+  - Two distinct boots in every frame, each at least 30 px wide at this
+    resolution, soles flat and horizontal.
+  - Soles on the ground sit on ONE horizontal line across all four frames.
+  - The raised sole is raised on purpose by 10-24 px, never tilted.
+  - Nothing — hair tip, tail tip, cord or stray pixel — may float beside a
+    boot. Every drawn pixel must belong to her body.
+
+REFERENCE FOR THE BAR: the GPT and Claude sheets in this project read correctly
+at gameplay size; GPT's leg band changes ~31 units between frames and her feet
+are solid blocks. Match that.
+
+STYLE:
+  - 16-bit RPG aesthetic, Chrono Trigger / Eastward / Children of Morta.
+  - Hard clean pixel edges, no anti-aliasing on the silhouette.
+  - Limited muted palette, ~32 colours total, same palette as her current sheet.

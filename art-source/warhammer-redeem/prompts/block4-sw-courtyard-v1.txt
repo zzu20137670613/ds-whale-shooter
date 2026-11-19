@@ -1,0 +1,32 @@
+# 块 4 · 初遇庭院（左下 SW）· v1
+
+> 定了：**中庭**（内），不是正门外的台阶。理由——结局那张精修图就是中庭视角，
+> 地板要是它的"俯视版"，玩家走进去再看到结局图，才觉得是同一个地方。
+>
+> **配色直接从那张精修图量化来的**（不是眼估）：
+> ``#E4E4E2`` 白纱/亮石 · ``#A8ADB9`` 冷灰 · ``#464E6C`` 深蓝 · ``#382A23`` 暖褐 · ``#060504`` 近黑。
+>
+> 光我选了**清晨**：第 3 块是黄昏、第 2 块是深空、第 1 块是夜。四块连起来的明度是
+> 夜 → 深空 → 黄昏 → **清晨**，最后一块最亮也最静——"回到起点"。
+>
+> **那张精修图不进这张地图**：它是结算画面（第五阶段停战后全屏）。
+> 地板里我留了一只**不锈钢碗**（centre-left），就是「白米饭」暗号将来要放的地方——
+> 图里不画字，字由游戏里的可交互物件说。
+
+```
+2D top-down game map asset seen from DIRECTLY ABOVE (90 degrees, orthographic plan view). Everything in frame is GROUND: nothing has height, nothing stands, no walls, no roofs, no figures. Flat cel shading, thin ink outlines, large smooth colour fills, NOT painterly. The paving fills the whole frame and runs past ALL four edges: no rim, no border, no frame, no vignette.
+
+PLACE: the inner courtyard of a gothic church, seen straight down. Pale flagstones worn smooth, a wide threshold step at one side, flower beds pressed flat to the ground, tiny white flowers scattered across the stones, fallen petals, candle stubs burnt down, a shallow stone basin with still water off-centre, a low stone bench. ONE steel bowl left on the paving near the centre-left. No people, no robes, no figures anywhere - this is the place before anyone arrived.
+
+LIGHT: early morning, soft and pale, high-key; no sun disc, no god rays, no lantern glow; long gentle shadows only.
+
+OCCUPANCY: >=65% clean walkable flagstone; props only in the outer 30%.
+
+Palette: white stone #E4E4E2, cold grey #A8ADB9, deep blue #464E6C, warm brown #382A23, near black #060504.
+
+CENTRE: a wide clean circular area of pale flagstone, 14% of frame width, EMPTY - no figure, no statue, no basin.
+
+Size: 3:2 or 16:9, full bleed, composed for a 16:9 centre crop (landmarks inside the central 84%).
+
+Negative: interior, room, walls, ceiling, columns standing, arcade, cloister arches, arch, doorway in elevation, upright window, stained glass standing, roofs, sky with clouds, horizon, figures, people, robes, crowd, characters, person, statue, perspective, vanishing point, isometric, three-quarter, symmetry, text, watermark, logo, cluttered.
+```

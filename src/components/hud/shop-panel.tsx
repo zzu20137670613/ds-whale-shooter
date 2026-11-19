@@ -1,0 +1,533 @@
+/**
+ * src/components/hud/shop-panel.tsx
+ * --------------------------------------------------------------------------
+ * The tavern shop — spends kill-bounty money on the character's four
+ * upgrade ladders, the hotbar weapons' damage ladders, and an ammo refill.
+ *
+ * Mounted only while the mysterious merchant is standing on the junction of
+ * a four-block world (`merchantReady`): the shop moved out of the seaside
+ * pavilion and onto her. Clicking her in the scene emits
+ * `merchant-open-shop`, which opens this panel — the toggle button below is
+ * the keyboard-free fallback for the same thing.
+ *
+ * ── Where the prices come from ─────────────────────────────────────────
+ * Not from this file and not from the store. Each character's and each
+ * weapon's YAML carries its own `upgrades:` ladder, and the store keeps
+ * only the ledgers (`upgradeLevels`, `weaponLevels`). So this component
+ * fetches the specs it needs, asks the pure pricing helpers what the next
+ * level costs, and pays through `spendMoney()` — which refuses rather than
+ * going negative. An upgrade added in YAML appears here with no code
+ * change (give it a `shop.upgrade.<id>` catalog entry to get a name).
+ *
+ * ── Why the ammo refill lives here too ─────────────────────────────────
+ * Refilling writes the store's `slots`, and the live weapon picks the new
+ * ammo up when the next scene restores its slots from the store
+ * (`weapons/logic.ts`). So the refill is real without reaching into the
+ * Phaser weapon controller — the same "let the existing restore path do
+ * the work" trick the upgrades use.
+ */
+import { useEffect, useMemo, useState } from 'react';
+import { Coins, Home, X } from 'lucide-react';
+
+import { CornerPixels, RETRO_BOX } from './retro-box';
+import {
+    SHOP_RESTORE_VITALS_EVENT,
+    vitalsRestorePrice,
+    canBuyRestore,
+} from '@/lib/characters/vitals';
+import { EventBus } from '@/lib/events/bus';
+import { subscribeCurrentLevel } from '@/lib/levels/current-level';
+import { MERCHANT_SHOP_EVENT, RETURN_TO_PAVILION_EVENT } from '@/lib/merchant/logic';
+import type { CharacterSpec } from '@/lib/characters';
+import { fetchCharacter } from '@/lib/characters';
+import { upgradeCost } from '@/lib/characters/upgrades';
+import type { WeaponSpec } from '@/lib/weapons';
+import { fetchWeapon } from '@/lib/weapons';
+import { ammoRefillPrice, maxWeaponUpgradeLevel, weaponUpgradeCost } from '@/lib/weapons/upgrades';
+import { sellListings } from '@/lib/inventory/sell';
+import { t, pickText } from '@/locales';
+import { useGameStore } from '@/store/game-store';
+
+interface Row {
+    id: string;
+    name: string;
+    level: number;
+    max: number;
+    /** null once the ladder is maxed. */
+    price: number | null;
+    affordable: boolean;
+}
+
+export function ShopPanel() {
+    const [open, setOpen] = useState(false);
+    const [spec, setSpec] = useState<CharacterSpec | null>(null);
+    const [weaponSpecs, setWeaponSpecs] = useState<Record<string, WeaponSpec>>({});
+
+    const money = useGameStore((s) => s.money);
+    const characterId = useGameStore((s) => s.selectedCharacterId);
+    const upgradeLevels = useGameStore((s) => s.upgradeLevels);
+    const weaponLevels = useGameStore((s) => s.weaponLevels);
+    const slots = useGameStore((s) => s.slots);
+    const hp = useGameStore((s) => s.hp);
+    const maxHp = useGameStore((s) => s.maxHp);
+    const sp = useGameStore((s) => s.sp);
+    const maxSp = useGameStore((s) => s.maxSp);
+    const spendMoney = useGameStore((s) => s.spendMoney);
+    const setUpgradeLevel = useGameStore((s) => s.setUpgradeLevel);
+    const setWeaponLevel = useGameStore((s) => s.setWeaponLevel);
+    // 猫猫商店: the same shop, opened from the cabin's cat.
+    const shopTitleKey = useGameStore((s) => s.shopTitleKey);
+    const refillWeaponAmmo = useGameStore((s) => s.refillWeaponAmmo);
+    const refillAmmo = useGameStore((s) => s.refillAmmo);
+    // Subscribed (not read) so the labels re-render on a language switch:
+    // `t()` reads module state, which React cannot see change on its own.
+    const locale = useGameStore((s) => s.locale);
+
+    // Clicking the merchant in the scene opens the shop — that click is what
+    // used to be the tavern's job.
+    useEffect(() => {
+        const handler = () => setOpen(true);
+        EventBus.on(MERCHANT_SHOP_EVENT, handler);
+        return () => EventBus.off(MERCHANT_SHOP_EVENT, handler);
+    }, []);
+
+    /**
+     * Close on a map switch.
+     *
+     * This panel is mounted above the Phaser scene, so a portal never unmounted it: open the
+     * merchant, walk onto the beach, and the shop was still on screen — with 一键回城 sitting
+     * there as a free ride home from anywhere. The owner found that exploit and asked for the
+     * panel to close when the map changes.
+     */
+    useEffect(() => subscribeCurrentLevel(() => setOpen(false)), []);
+
+    useEffect(() => {
+        if (!characterId) {
+            setSpec(null);
+            return;
+        }
+        let alive = true;
+        fetchCharacter(characterId)
+            .then((next) => {
+                if (alive) setSpec(next);
+            })
+            .catch(() => {
+                if (alive) setSpec(null);
+            });
+        return () => {
+            alive = false;
+        };
+    }, [characterId]);
+
+    // Slot ids as a stable string so the effect only refires when the set of
+    // held weapons actually changes (the slots array is rewritten on the
+    // 1Hz save tick, which would otherwise re-fetch every second).
+    const slotKey = useMemo(() => [...new Set(slots.map((s) => s.id))].sort().join(','), [slots]);
+
+    useEffect(() => {
+        const ids = slotKey ? slotKey.split(',') : [];
+        if (ids.length === 0) {
+            setWeaponSpecs({});
+            return;
+        }
+        let alive = true;
+        Promise.all(ids.map(async (id) => [id, await fetchWeapon(id)] as const))
+            .then((entries) => {
+                if (alive) setWeaponSpecs(Object.fromEntries(entries));
+            })
+            .catch(() => {
+                if (alive) setWeaponSpecs({});
+            });
+        return () => {
+            alive = false;
+        };
+    }, [slotKey]);
+
+    const rows = useMemo<Row[]>(() => {
+        if (!spec?.upgrades) return [];
+        return Object.keys(spec.upgrades).map((id) => {
+            const max = spec.upgrades?.[id].costs.length ?? 0;
+            const level = upgradeLevels[id] ?? 0;
+            const price = upgradeCost(spec, id, level);
+            const label = t(`shop.upgrade.${id}`);
+            return {
+                id,
+                // An id with no catalog entry shows itself rather than a
+                // raw dot-path key.
+                name: label === `shop.upgrade.${id}` ? id : label,
+                level,
+                max,
+                price,
+                affordable: price !== null && money >= price,
+            };
+        });
+        // `locale` is a real dependency: the labels come from the catalog
+        // the locale selects.
+    }, [spec, upgradeLevels, money, locale]);
+
+    const weaponRows = useMemo<Row[]>(() => {
+        return Object.entries(weaponSpecs)
+            .filter(([, weapon]) => weapon.upgrades !== undefined)
+            .map(([id, weapon]) => {
+                const max = maxWeaponUpgradeLevel(weapon);
+                const level = weaponLevels[id] ?? 0;
+                const price = weaponUpgradeCost(weapon, level);
+                return {
+                    id,
+                    // `name` is the code-side identity; the player reads the
+                    // name of the language they are playing in.
+                    name: pickText(weapon.name, weapon.nameZh),
+                    level,
+                    max,
+                    price,
+                    affordable: price !== null && money >= price,
+                };
+            });
+        // `locale` is a real dependency: the names above follow it.
+    }, [weaponSpecs, weaponLevels, money, locale]);
+
+    // Sell-back: materials only. The shop pays `sellPrice` per unit, and a
+    // price of 0 means "not bought yet", so those rows never appear.
+    const inventory = useGameStore((s) => s.inventory);
+    const dropCatalog = useGameStore((s) => s.dropCatalog);
+    const sellInventorySlot = useGameStore((s) => s.sellInventorySlot);
+    const sellEverything = useGameStore((s) => s.sellEverything);
+    const listings = sellListings(inventory, dropCatalog);
+
+    // Each slot is priced by its own weapon: a cannon round costs more than a
+    // rifle round, and the reserve cap depends on how many upgrades it has.
+    const refillPrice = ammoRefillPrice(
+        slots.map((slot) => ({
+            ...slot,
+            level: weaponLevels[slot.id] ?? 0,
+            ammoPrice: weaponSpecs[slot.id]?.ammoPrice,
+            // Melee weapons carry no rounds; pricing them charged for ammo that cannot exist.
+            melee: slot.melee === true,
+        })),
+    );
+    const canRefill = refillPrice > 0 && money >= refillPrice;
+
+    const buyUpgrade = (id: string) => {
+        if (!spec) return;
+        const level = upgradeLevels[id] ?? 0;
+        const price = upgradeCost(spec, id, level);
+        if (price === null) return;
+        // Money first: if the wallet refuses, no level gets recorded.
+        if (spendMoney(price)) setUpgradeLevel(id, level + 1);
+    };
+
+    const buyWeapon = (id: string) => {
+        const weapon = weaponSpecs[id];
+        if (!weapon) return;
+        const level = weaponLevels[id] ?? 0;
+        const price = weaponUpgradeCost(weapon, level);
+        if (price === null) return;
+        if (!spendMoney(price)) return;
+        setWeaponLevel(id, level + 1);
+        // An upgrade comes with a full load. Refill *after* the level lands so the
+        // bigger reserve is what gets filled.
+        refillWeaponAmmo(id);
+    };
+
+    const buyRefill = () => {
+        if (!canRefill) return;
+        if (spendMoney(refillPrice)) refillAmmo();
+    };
+
+    // HP and SP never regenerate on their own any more — this purchase (and
+    // pickups) is the only way back up. The character applies it; the panel
+    // only charges and announces.
+    // Refill price rides the armour ladder: 5 / 10 / 20 / 40 / 80 / 160.
+    const restorePrice = vitalsRestorePrice(upgradeLevels.armor ?? 0);
+    // The price rides the armour ladder, so the gate has to know it - otherwise the row is
+    // enabled at 5 coins while the click asks for 160 and silently does nothing.
+    const canRestoreVitals = canBuyRestore({ hp, maxHp, sp, maxSp, money }, restorePrice);
+    const buyVitals = () => {
+        if (!canRestoreVitals) return;
+        if (spendMoney(restorePrice)) {
+            EventBus.emit(SHOP_RESTORE_VITALS_EVENT);
+        }
+    };
+
+    const rowClass =
+        'flex items-center justify-between gap-2 border-b border-stone-800/60 py-1.5 last:border-0';
+    const buyClass = (affordable: boolean) =>
+        `flex items-center gap-1 border px-1.5 py-0.5 text-[10px] tabular-nums ${
+            affordable
+                ? 'border-amber-700 text-amber-300 hover:bg-amber-900/40'
+                : 'cursor-not-allowed border-stone-800 text-stone-600'
+        }`;
+
+    return (
+        open && (
+            <div
+                data-testid="shop-panel"
+                className="absolute bottom-16 left-1/2 z-30 max-h-[70vh] w-[300px] -translate-x-1/2 overflow-y-auto pointer-events-auto select-none"
+            >
+                <div className={`relative ${RETRO_BOX} p-3 font-['Silkscreen',monospace]`}>
+                    <CornerPixels />
+
+                    <div className="mb-2 flex items-center justify-between">
+                        <span className="text-[12px] font-bold uppercase tracking-widest text-amber-300">
+                            {shopTitleKey === 'shop.catTitle' ? t('shop.catTitle') : t('shop.title')}
+                        </span>
+                        <div className="flex items-center gap-2">
+                            <span
+                                data-testid="shop-balance"
+                                className="flex items-center gap-1 text-[11px] tabular-nums text-amber-300"
+                            >
+                                <Coins className="size-3 text-amber-400" />
+                                {money}
+                            </span>
+                            <button
+                                type="button"
+                                data-testid="shop-close"
+                                onClick={() => setOpen(false)}
+                                aria-label={t('shop.close')}
+                                className="text-stone-400 hover:text-stone-200"
+                            >
+                                <X className="size-3" />
+                            </button>
+                        </div>
+                    </div>
+
+                    {!characterId ? (
+                        <p data-testid="shop-hint" className="text-[11px] text-stone-400">
+                            {t('shop.noCharacter')}
+                        </p>
+                    ) : (
+                        rows.map((row) => (
+                            <div
+                                key={row.id}
+                                data-testid={`shop-row-${row.id}`}
+                                className={rowClass}
+                            >
+                                <div className="flex flex-col gap-0.5">
+                                    <span className="text-[12px] text-stone-200">{row.name}</span>
+                                    <span
+                                        data-testid={`shop-level-${row.id}`}
+                                        className="text-[10px] text-lime-400"
+                                    >
+                                        {t('shop.level')} {row.level}/{row.max}
+                                    </span>
+                                </div>
+
+                                {row.price === null ? (
+                                    <span
+                                        data-testid={`shop-maxed-${row.id}`}
+                                        className="text-[10px] text-amber-500"
+                                    >
+                                        {t('shop.maxed')}
+                                    </span>
+                                ) : (
+                                    <button
+                                        type="button"
+                                        data-testid={`shop-buy-${row.id}`}
+                                        disabled={!row.affordable}
+                                        onClick={() => buyUpgrade(row.id)}
+                                        className={buyClass(row.affordable)}
+                                    >
+                                        <Coins className="size-2.5" />
+                                        {row.price}
+                                    </button>
+                                )}
+                            </div>
+                        ))
+                    )}
+
+                    {characterId && (
+                        <>
+                            <div className="mt-3 mb-1 text-[11px] uppercase tracking-widest text-amber-500/80">
+                                {t('shop.weapons')}
+                            </div>
+
+                            {weaponRows.length === 0 ? (
+                                <p
+                                    data-testid="shop-weapons-empty"
+                                    className="text-[11px] text-stone-400"
+                                >
+                                    {t('shop.empty')}
+                                </p>
+                            ) : (
+                                weaponRows.map((row) => (
+                                    <div
+                                        key={row.id}
+                                        data-testid={`shop-weapon-row-${row.id}`}
+                                        className={rowClass}
+                                    >
+                                        <div className="flex flex-col gap-0.5">
+                                            <span className="text-[12px] text-stone-200">
+                                                {row.name}
+                                            </span>
+                                            <span
+                                                data-testid={`shop-weapon-level-${row.id}`}
+                                                className="text-[10px] text-lime-400"
+                                            >
+                                                {t('shop.level')} {row.level}/{row.max}
+                                            </span>
+                                        </div>
+
+                                        {row.price === null ? (
+                                            <span
+                                                data-testid={`shop-weapon-maxed-${row.id}`}
+                                                className="text-[10px] text-amber-500"
+                                            >
+                                                {t('shop.maxed')}
+                                            </span>
+                                        ) : (
+                                            <button
+                                                type="button"
+                                                data-testid={`shop-weapon-buy-${row.id}`}
+                                                disabled={!row.affordable}
+                                                onClick={() => buyWeapon(row.id)}
+                                                className={buyClass(row.affordable)}
+                                            >
+                                                <Coins className="size-2.5" />
+                                                {row.price}
+                                            </button>
+                                        )}
+                                    </div>
+                                ))
+                            )}
+
+                            {slots.length > 0 && (
+                                <div data-testid="shop-refill-row" className={rowClass}>
+                                    <span className="text-[12px] text-stone-200">
+                                        {t('shop.ammo')}
+                                    </span>
+                                    <button
+                                        type="button"
+                                        data-testid="shop-refill"
+                                        disabled={!canRefill}
+                                        onClick={buyRefill}
+                                        className={buyClass(canRefill)}
+                                    >
+                                        <Coins className="size-2.5" />
+                                        {refillPrice}
+                                    </button>
+                                </div>
+                            )}
+                        </>
+                    )}
+
+                    {/* No passive HP/SP regen exists, so this is the only
+                        deliberate refill outside a ground pickup. */}
+                    <div data-testid="shop-vitals-row" className={rowClass}>
+                        <span className="text-[12px] text-stone-200">
+                            {t('shop.restoreVitals')}
+                        </span>
+                        <button
+                            type="button"
+                            data-testid="shop-restore-vitals"
+                            disabled={!canRestoreVitals}
+                            onClick={buyVitals}
+                            className={buyClass(canRestoreVitals)}
+                        >
+                            <Coins className="size-2.5" />
+                            {restorePrice}
+                        </button>
+                    </div>
+
+                    {/* Sell-back. Materials are dead weight until sold, and the
+                        barnacle is the only priced item so far. */}
+                    <div className="mt-2 border-t-2 border-amber-900/40 pt-2">
+                        <div className="mb-1 flex items-center justify-between">
+                            <span className="text-[10px] tracking-wider text-amber-500 uppercase">
+                                {t('shop.sell')}
+                            </span>
+                            {listings.length > 0 && (
+                                <button
+                                    type="button"
+                                    data-testid="shop-sell-all"
+                                    onClick={() => sellEverything()}
+                                    className={buyClass(true)}
+                                >
+                                    <Coins className="size-2.5" />
+                                    {t('shop.sellAll')}
+                                </button>
+                            )}
+                        </div>
+                        <div data-testid="shop-sell-section">
+                            {listings.length === 0 && (
+                                <div className="py-1 text-[10px] text-stone-600">
+                                    {t('shop.nothingToSell')}
+                                </div>
+                            )}
+                            {listings.map((listing) => (
+                                <div
+                                    key={listing.dropId}
+                                    data-testid={`shop-sell-${listing.dropId}`}
+                                    className={rowClass}
+                                >
+                                    <span className="text-[12px] text-stone-200">
+                                        {/* Chinese under a Chinese HUD: the sell list used to
+                                            print the English drop name no matter the locale. */}
+                                        {pickText(listing.name, listing.nameZh)}
+                                        {/* Same white as the name: `×3` in stone-500 was
+                                            grey on grey next to a white item name. */}
+                                        <span className="ml-1 text-stone-200">
+                                            ×{listing.count}
+                                        </span>
+                                        {/* Same white as the item name beside it: the
+                                            unit price sat in stone-600, which at 9 px was
+                                            almost invisible against the panel. */}
+                                        <span className="ml-1 text-[9px] text-stone-200">
+                                            {t('shop.sellUnit')} {listing.unitPrice}
+                                        </span>
+                                    </span>
+                                    <button
+                                        type="button"
+                                        data-testid={`shop-sell-one-${listing.dropId}`}
+                                        onClick={() => {
+                                            const index = inventory.findIndex(
+                                                (slot) => slot.dropId === listing.dropId,
+                                            );
+                                            if (index >= 0) sellInventorySlot(index);
+                                        }}
+                                        className={buyClass(true)}
+                                    >
+                                        <Coins className="size-2.5" />
+                                        {listing.unitPrice}
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* The way home. Deliberately NOT `restartAtTavern`: that
+                        wipes the run and drops the player back into character
+                        select. This only walks them to the pavilion with
+                        everything they are carrying. */}
+                    <button
+                        type="button"
+                        data-testid="shop-return-home"
+                        onClick={() => {
+                            // Close first: the walk home is a scene change, and a
+                            // panel left mounted would ride along and sit on top
+                            // of the pavilion until closed by hand.
+                            setOpen(false);
+                            EventBus.emit(RETURN_TO_PAVILION_EVENT);
+                        }}
+                        className="mt-3 flex w-full items-center justify-center gap-1.5 border border-amber-700 py-1.5 text-[11px] font-bold uppercase tracking-widest text-amber-300 hover:bg-amber-900/40"
+                    >
+                        <Home className="size-3" />
+                        {t('shop.returnHome')}
+                    </button>
+
+                    {/* A plain way out, next to the travel button: 一键回城 moves the
+                        player, this one just closes the panel and leaves her standing at
+                        the merchant. */}
+                    <button
+                        type="button"
+                        data-testid="shop-close"
+                        onClick={() => setOpen(false)}
+                        className="mt-2 flex w-full items-center justify-center gap-1.5 border border-stone-600 py-1.5 text-[11px] font-bold uppercase tracking-widest text-stone-300 hover:bg-stone-800/60"
+                    >
+                        <X className="size-3" />
+                        {t('shop.close')}
+                    </button>
+                </div>
+            </div>
+        )
+    );
+}

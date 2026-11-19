@@ -1,0 +1,104 @@
+CAMERA — this is a game level background seen from directly above.
+- Camera directly overhead at 90 degrees: a top-down game-map view, like an architectural floor
+  plan painted with real materials, or a room photographed from straight above through a glass
+  ceiling.
+- ORTHOGRAPHIC: no perspective at all. Parallel lines stay parallel; the floorboards must be the
+  SAME WIDTH at the top edge of the image as at the bottom edge; no vanishing point, no
+  converging lines, no foreshortening.
+- EVERY VISIBLE SURFACE IS HORIZONTAL. No vertical surface may be visible anywhere: no front face
+  of a bookshelf (no rows of spines seen face-on), no side panel of the counter, no shaft of a
+  baluster, no side of a bench, no rung of a ladder seen from the side. You see only tops and
+  footprints. If you can see the height of any object, the view is wrong.
+- No horizon line.
+
+SPACE BUDGET — THIS IS THE MOST IMPORTANT REQUIREMENT. An earlier attempt failed because the
+furniture ate the playable area; only a fifth of the image was walkable.
+- OPEN, WALKABLE FLOOR: at least 80% of the image area. This is where the player moves around and
+  fights. It must be one continuous open floor, not broken into small pockets.
+- Everything that blocks movement (bookshelves, counter, furniture, balustrade, void) together:
+  at most 20% of the image.
+- The bookshelves: ONE narrow strip along the TOP border only, about 5% of the image, hugging the
+  edge, with their TOPS as thin flat wooden caps. Nothing along the bottom border, and nothing
+  reaching into the middle of the room.
+- The balustrade and the void: ONE narrow strip along the LEFT border only, about 8% of the image
+  in total.
+- The landmark counter: SMALL and slim, lying along the lower-right at an angle, about 5% of the
+  image, leaving the entire centre open.
+- Furniture (lamp, teapot, benches, book stacks, ladders): small individual objects, widely
+  spaced, a couple of percent each at most.
+- A player must be able to walk between any two objects: leave wide open lanes between all of
+  them. No large dark masses anywhere.
+- The RIGHT edge and the BOTTOM edge must be plain open floor continuing off the image — a
+  neighbouring image continues the same floor there.
+
+EXPOSURE — this background is played on, so it must be clearly readable. Hard requirements:
+- Mid-tones dominate. Overall brightness around 100/255: a dim but CLEARLY LIT room, not a dark
+  room, not a mood painting.
+- At least half of the image sits in the mid-tone range (roughly #5a6a88 to #d8dce8).
+- No more than about 15% of the image may be darker than #3a4258, and none of it may be pure
+  black.
+- NO CAST SHADOWS AT ALL: do not paint any directional shadow on the floor from the balustrade,
+  the counter, the shelves, the ladders or the benches — no long dark diagonal bands, no dark
+  side of the counter. A soft warm CIRCULAR pool of lamplight is allowed; directional shadow
+  shapes are not.
+- EVEN LIGHTING — a hard requirement, and the thing an earlier attempt got wrong: the floor is
+  lit UNIFORMLY across the entire image. Brightness must NOT be one bright pool with dark
+  surroundings. Sample any two patches of open floor anywhere in the image and they should read
+  within about 2x of each other; the darkest part of the floor should be no less than half the
+  brightest part. Aim for the image's MEDIAN brightness to land close to its average (a median
+  near 85-110 and a mean near 95-115 is the target) — when the median sits far below the mean,
+  the picture is one spotlight in a dark room, which is wrong here.
+- The floor must never fall below about #6b4a38 (luminance about 75/255) anywhere in the image,
+  including the corner furthest from the lamp. Only gentle falloff. Cool blue moonlight fill
+  (#8fb0d8) keeps the far corners visible.
+
+PALETTE (measured from the reference sheets, brightened for readability):
+starfield beyond the room #273559 to #3b4a74 with clearly visible stars; warm lamp glow #e9d8bf
+and #f0c98a; warm wood lit #a8805f / mid #865340 / shadowed #6b4a38 (never darker); cool ivory
+marble #f0ece7 highlight / #c7c1cf mid / #9e9fb8 shadow; pale blue moonlight fill #8fb0d8; paper
+white #f2eee9.
+
+STYLE: soft semi-realistic anime background painting, painterly, clean readable shapes.
+
+A night-time magical library lending-counter room seen from directly above, on a floating slab of
+floor adrift in a starry void. This is the warm, welcoming entrance room of the library — the
+only warm area in the whole level.
+
+THE FLOOR — the subject of this image: a large, open, warmly lit walnut plank floor — lit planks
+#a8805f, mid #865340 — running unbroken across almost the entire image, with visible plank seams
+but no dark gaps. It must read as a wide empty floor with room to run.
+
+THE BOOKSHELVES: ONE narrow row of bookshelves along the TOP border only, their TOPS seen as a
+thin flat wooden cap from above with a soft warm glow along it. Two slim rolling ladders lean
+against it. They occupy about 5% of the image and never reach into the open middle. No shelves on
+the left, right or bottom borders.
+
+THE OPEN SIDE: along the LEFT border, a narrow strip of low stone balustrade seen from directly
+above — small square post tops in a line, about 8% of the image — and beyond it a thin strip of
+deep blue starfield (#273559 with clearly visible stars) and a flat dark sea surface, both seen
+from directly above, no horizon.
+
+LANDMARK — kept small (well inside the image, never touching an edge): a slim L-shaped dark wood
+lending counter, low and narrow, lying along the lower-right at an angle. It covers about 5% of
+the image. On it: an open ledger book with blank pages and no legible writing, a brass table lamp
+casting a warm amber pool (#e9d8bf), a white teapot and two small teacups, a clipboard holding a
+blank form, a small blank library card, and two small stacks of books. A few low benches and
+small book stacks are scattered far apart on the open floor.
+
+LIGHTING — EVEN and flat, never spotlit. The whole floor is lit to the same warm mid-brown
+(#865340 to #a8805f) from edge to edge; there is no bright circle and no dark corner. The brass
+lamp is a small warm accent sitting ON the counter — a modest amber glow around the lamp on the
+counter top — NOT a searchlight throwing a pool across the floor. Treat the scene as evenly lit
+by a soft, diffuse night light from above, with the lamp adding only local warmth.
+
+RULES
+- Top-down only. No horizon line, no perspective, no vertical surfaces, no ceiling.
+- The open floor must stay open: check that at least four fifths of the image is unobstructed
+  walkable floor before finishing.
+- Every material, floor and light source must run straight off the image edge. Nothing may stop
+  at the edge, fade out at the edge, or be centred on the edge.
+- No characters, no people, no creatures, no text, no letters, no numbers, no legible writing, no
+  UI, no watermark, no frame, no border, no vignette, no signature.
+- Keep the composition generic and continuous; the one landmark above is the only focal point.
+- The right and bottom edges must be plain continuing floor: a neighbouring image continues the
+  same wooden floor there.

@@ -1,0 +1,48 @@
+# 物理超度 — Claude's mortar, and the best argument for never judging a book by its
+# cover: a saint in a white dress who answers questions with a 90-radius blast.
+#
+# 物理超度 is a pun on the Buddhist 超度 (to ferry a soul onward). Prefixing it with
+# 物理 ("physical", i.e. force) turns a rite into a delivery method.
+#
+# The id stays `inkwell-mortar` on purpose: it is written into save files, and a
+# rename would orphan every existing save's equipped weapon for the sake of a label.
+#
+# PLACEHOLDER ART — reuses the rocket-launcher.png / rocket-missile.png sprites until
+# bespoke art exists. Stats and behaviour are final; only the textures are borrowed.
+name: Physical Salvation
+nameZh: "物理超度"
+damage: 70
+# 主人：`墨壶迫击改为三连击，打出去一发实际出去连续三发`。
+bulletsPerShot: 3
+burstDelayMs: 130
+# 三发走同一条弹道（不是散弹），所以把扇形角度压到 0。
+spreadDeg: 0
+cooldownMs: 1500
+range: 700
+aoeRadius: 90
+upgrades:
+    # Tavern weapon ladder. `costs.length` IS the max level.
+    costs: [55, 120, 205, 315, 455]
+    damagePerLevel: [70, 82, 97, 116, 135, 160]
+clipSize: 5
+ammoPrice: { price: 2, perRounds: 1 }
+reloadTimeMs: 3200
+visual:
+    texture: assets/image/weapons/rocket-launcher.png
+    scale: 0.18
+    orbitRadius: 22
+    anchor: [0.45, 0.5]
+    recoilDistance: 14
+    recoilDuration: 180
+bullet:
+    texture: assets/image/weapons/rocket-missile.png
+    type: projectile
+    scale: 0.13
+    anchor: [0.5, 0.5]
+projectile:
+    speed: 14
+    visual:
+        radius: 9
+        width: 28
+        height: 11
+        color: 0x2B2B44

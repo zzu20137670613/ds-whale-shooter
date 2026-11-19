@@ -1,0 +1,23 @@
+# 块 D · 精简版 v2（修透视）
+
+> 上一版（jimeng 9506）元素全对，但四处斜视：王座正面、水池椭圆、右上角有海、台阶带侧面。
+> 这版把要害写死：**只画顶面**、背板是**薄板一条边**、水池是**正圆**、全图**没有地平线/海/天**。
+> 保留上一版最好看的细节：银链末端各连一块**扁平八角链牌**。
+
+```
+Anime-style 2D game art, strict top-down plan view, camera straight down: no horizon, no sky, no sea, no side faces, no legs, nothing in elevation or perspective. Playable combat field, not an illustration. Throne = flat top surfaces only: seat a flat rectangle, backrest a THIN SLAB seen edge-on (a narrow strip, not a tall panel). Matte painted, soft cel shading.
+
+OCCUPANCY: >=65% of frame clear pale floor; throne <=18% of frame, <=35% of width, centred; light circle <=25% of width; chains ~3px; cloud only in outer 8%; nothing else stands on the floor.
+
+BRIGHTNESS: light airy near-white floor; darken only the outer corners.
+
+Palette: #FBFAF6 near-white, #F4F8FC cloud white, #F0D9A4 pale gold, #C9CED8 silver, #FFF6DE halo, #16324A outer corners.
+
+Subject: pale stone floor, right and lower edges ending into cloud. At centre an EMPTY THRONE from above: flat pale seat, thin slab backrest with cloud swirls on its top edge, two short armrest blocks. From each armrest a thin silver chain ends in a small flat octagonal plate on the floor. Around the throne a POOL OF LIGHT: a PERFECT CIRCLE (not an ellipse), hard-edged pale blue-white, soft halo, brightest passage, rimmed by cloud torn open.
+
+Edges: LEFT 140px ramp to #E7F1F9; TOP ramp to #EAF0F6; smooth, not banded. RIGHT and BOTTOM are map boundaries: floor ends in cloud, outer corners to #16324A. No border, frame or vignette; outer 140px free of landmarks.
+
+Size: 3:2, largest available, full bleed. Compose for a 16:9 centre crop: outer 8% top/bottom cut, landmarks inside the central 84%; left/right uncropped.
+
+Negative: three-quarter view, isometric, tilted camera, perspective, throne from the front, chair legs, elliptical pool, horizon, sea, sky, beam of light standing up, giant throne, oversized furniture, props crowding the floor, characters, person, girl, creature, hands, text, lettering, watermark, logo, UI, frame, vignette, photorealistic, neon.
+```

@@ -1,0 +1,349 @@
+/**
+ * src/components/hud/settings-overlay.tsx
+ * --------------------------------------------------------------------------
+ * Top-right chrome: a GitHub link and a gear that opens the settings hub.
+ *
+ * Opening the hub pauses the running scene the same way death does
+ * (`scene.scene.pause()` — freezes physics, tweens and timers without
+ * touching `game.pause()`, which the tab-hide handler owns) and pauses
+ * the music. Resume undoes both; Restart reuses the editor's
+ * `restartSceneWith` path, same as the death overlay.
+ *
+ * Rendered inside GameHUDLayer rather than a portal so it inherits the
+ * HUD scale and the forced-landscape rotation.
+ */
+
+import { useEffect, useRef, useState } from 'react';
+import { RotateCcw, Play, X, FolderOpen, Sparkles } from 'lucide-react';
+
+import { Button } from '@/components/ui/button';
+import { STORE_BUILD } from '@/lib/build/store-build';
+import { MUSIC_PAUSE, MUSIC_RESUME } from '@/lib/constants';
+import { EventBus } from '@/lib/events/bus';
+import { getPhaserGame, restartAtTavern } from '@/lib/phaser-game';
+import { t } from '@/locales';
+import { isMobileBuild, isMobileLike } from '@/lib/mobile';
+import { useGameStore } from '@/store/game-store';
+
+import { FullscreenToggle } from '@/components/hud/fullscreen-toggle';
+import { InputSchemeSwitch } from './input-scheme-switch';
+import { PetBuffBadge } from './pet-buff-badge';
+import { TokenShieldBadge } from './token-shield-badge';
+import { SaveSlotsPanel } from './save-slots-panel';
+import { CornerPixels, RETRO_BOX } from './retro-box';
+
+// 作者的 Gitee 主页。原来指向具体仓库（ds-whale-shooter-PC / -mobile），
+// 主人 2026-11-19 改成主页 `https://gitee.com/zzu20137670613/` ——
+// 那个账号下不止这一个项目，玩家从主页能自己挑，也方便以后加新仓库不用再改代码。
+const GITEE_OWNER_URL = 'https://gitee.com/zzu20137670613/';
+const REPO_URL_PC = STORE_BUILD ? '' : GITEE_OWNER_URL;
+const REPO_URL_MOBILE = STORE_BUILD ? '' : GITEE_OWNER_URL;
+
+/**
+ * Which repo the GitHub-shaped chip opens.
+ *
+ * The owner: `手机端的git按钮应该连mobile这个仓库，而不是PC的仓库`. Decided from the build flag
+ * rather than the pointer, the same way the aim scheme is: the shell knows what it is, and an
+ * emulator driven by a mouse still runs the mobile build.
+ */
+function repoUrl(): string {
+    return isMobileBuild() ? REPO_URL_MOBILE : REPO_URL_PC;
+}
+
+/**
+ * How far the settings cluster sits from the right edge on the mobile build.
+ *
+ * The backpack chip is 46 px wide at 16 px from the edge, plus an 8 px gap: 70 px clears it.
+ */
+const BACKPACK_CLUSTER_OFFSET_PX = 70;
+
+/** lucide 1.x dropped brand icons, so the mark is inlined rather than
+ *  pulling in a whole brand-icon package for one glyph. */
+function GithubMark() {
+    return (
+        <svg viewBox="0 0 24 24" fill="currentColor" className="size-5" aria-hidden="true">
+            <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
+        </svg>
+    );
+}
+
+export function SettingsOverlay() {
+    const [open, setOpen] = useState(false);
+    // The save rack draws over the settings panel rather than inside it: it needs
+    // more width than a pause menu, and it must not close when the panel does.
+    const [savesOpen, setSavesOpen] = useState(false);
+    // Destructive, so it takes two clicks: the first arms, the second wipes.
+    const [newGameArmed, setNewGameArmed] = useState(false);
+    // Which half of the input redesign is live. Same field the corner chip writes -
+    // one source of truth, two doors into it.
+    const inputScheme = useGameStore((s) => s.inputScheme);
+    const setInputScheme = useGameStore((s) => s.setInputScheme);
+    // The scene we paused, so resume hits the same one even if a
+    // teleport registered another in the meantime.
+    const paused = useRef<Phaser.Scene | null>(null);
+
+    function pauseGame() {
+        const scene = getPhaserGame()?.scene.getScenes(true)[0] ?? null;
+        scene?.scene.pause();
+        paused.current = scene;
+        EventBus.emit(MUSIC_PAUSE);
+        setOpen(true);
+    }
+
+    function resumeGame() {
+        // The scene we paused may have been destroyed while the menu was open - loading a
+        // save replaces it wholesale. `resume()` on a destroyed scene throws, and because
+        // that throw used to come before `setOpen(false)`, the menu stayed on screen with
+        // every button dead. Closing must never depend on the scene still being alive.
+        try {
+            paused.current?.scene.resume();
+        } catch {
+            /* the scene is gone; the new one is already running */
+        } finally {
+            paused.current = null;
+            EventBus.emit(MUSIC_RESUME);
+            setOpen(false);
+            setSavesOpen(false);
+        }
+    }
+
+    /**
+     * A save was loaded: the scene it belonged to is gone, and `restartSceneWith` already
+     * resumed the replacement. Drop the stale reference and close the whole menu.
+     */
+    function handleSaveLoaded() {
+        paused.current = null;
+        EventBus.emit(MUSIC_RESUME);
+        setSavesOpen(false);
+        setOpen(false);
+    }
+
+    function handleNewGame() {
+        if (!newGameArmed) {
+            setNewGameArmed(true);
+            return;
+        }
+        // Wipe the run and the world, then drop back to the tavern as if fresh.
+        useGameStore.getState().clearSaveData({ wipeWorld: true });
+        paused.current = null;
+        setOpen(false);
+        setNewGameArmed(false);
+        EventBus.emit(MUSIC_RESUME);
+        void restartAtTavern();
+    }
+
+    function handleRestart() {
+        // The old scene is destroyed wholesale, so its paused state goes
+        // with it — just drop our reference and let the music resume.
+        paused.current = null;
+        setOpen(false);
+        EventBus.emit(MUSIC_RESUME);
+        void restartAtTavern();
+    }
+
+    useEffect(() => {
+        if (!open) return;
+        const onKey = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') resumeGame();
+        };
+        window.addEventListener('keydown', onKey);
+        return () => window.removeEventListener('keydown', onKey);
+    });
+
+    return (
+        <>
+            <div
+                className="pointer-events-auto absolute top-6 right-6 z-30 flex items-center gap-2 select-none"
+                // The mobile build puts the backpack chip in the very top-right corner
+                // (`背包的话做成一个小背包图标，放右上角`), so this cluster steps left just
+                // enough to clear it instead of stacking two things on one spot.
+                style={isMobileLike() ? { right: BACKPACK_CLUSTER_OFFSET_PX } : undefined}
+            >
+                {/* The pet's buff sits at the far left of the row, then the aim
+                    scheme, then the source link and the gear. */}
+                <div className="flex flex-col items-start gap-1">
+                    <PetBuffBadge />
+                    <TokenShieldBadge />
+                </div>
+                <InputSchemeSwitch inline />
+                <FullscreenToggle />
+                {/* Store build: no repo chip. It is the only thing in this row that leaves the
+                    device, and a TapTap build has to be provably single-player. */}
+                {!STORE_BUILD && (
+                    <a
+                        href={repoUrl()}
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        title="Source on Gitee"
+                        aria-label="Source on Gitee"
+                        className={`${RETRO_BOX} relative flex size-10 items-center justify-center text-amber-500 transition-colors hover:text-amber-300`}
+                    >
+                        <CornerPixels />
+                        <GithubMark />
+                    </a>
+                )}
+                <button
+                    type="button"
+                    onClick={pauseGame}
+                    title={t('settings.title')}
+                    aria-label={t('settings.title')}
+                    className={`${RETRO_BOX} relative flex size-10 items-center justify-center text-amber-500 transition-colors hover:text-amber-300`}
+                >
+                    <CornerPixels />
+                    {/* Solid gear (lucide's Settings / Cog are stroke-
+                        only by default; the path elements carry their
+                        own stroke attribute so props can't override
+                        it). Inline SVG with fill-rule="evenodd" draws
+                        a fully filled gear with a clean central hole.
+                        size-6 (24px) to match the github mark's visual
+                        weight — gear teeth leave whitespace so the
+                        same px size reads smaller than the octocat. */}
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                        className="size-6"
+                        aria-hidden="true"
+                    >
+                        <path
+                            fillRule="evenodd"
+                            clipRule="evenodd"
+                            d="M19.5 12c0-.47-.04-.93-.1-1.38l2.13-1.65-2-3.46-2.49.96c-.7-.6-1.5-1.08-2.4-1.38L14.5 2.5h-4l-.14 2.59c-.9.3-1.7.78-2.4 1.38l-2.49-.96-2 3.46 2.13 1.65c-.06.45-.1.91-.1 1.38s.04.93.1 1.38l-2.13 1.65 2 3.46 2.49-.96c.7.6 1.5 1.08 2.4 1.38l.14 2.59h4l.14-2.59c.9-.3 1.7-.78 2.4-1.38l2.49.96 2-3.46-2.13-1.65c.06-.45.1-.91.1-1.38zM12 15.5a3.5 3.5 0 100-7 3.5 3.5 0 000 7z"
+                        />
+                    </svg>
+                </button>
+            </div>
+
+            {open && (
+                <div
+                    data-testid="settings-overlay"
+                    onClick={resumeGame}
+                    className="pointer-events-auto absolute inset-0 z-40 flex items-center justify-center bg-black/70 backdrop-blur-sm"
+                >
+                    <div
+                        onClick={(e) => e.stopPropagation()}
+                        className={`${RETRO_BOX} relative flex w-96 flex-col items-center gap-4 px-7 py-6 font-['Silkscreen',monospace]`}
+                    >
+                        <CornerPixels />
+                        <button
+                            type="button"
+                            onClick={resumeGame}
+                            aria-label="Close"
+                            className="absolute top-2 right-2 text-stone-500 transition-colors hover:text-amber-400"
+                        >
+                            <X className="size-5" />
+                        </button>
+
+                        {/* Gear icon — plain large glyph inside the panel */}
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                            className="size-9 text-amber-500"
+                            aria-hidden="true"
+                            style={{ filter: 'drop-shadow(0 0 6px rgba(245,158,11,0.6))' }}
+                        >
+                            <path
+                                fillRule="evenodd"
+                                clipRule="evenodd"
+                                d="M19.5 12c0-.47-.04-.93-.1-1.38l2.13-1.65-2-3.46-2.49.96c-.7-.6-1.5-1.08-2.4-1.38L14.5 2.5h-4l-.14 2.59c-.9.3-1.7.78-2.4 1.38l-2.49-.96-2 3.46 2.13 1.65c-.06.45-.1.91-.1 1.38s.04.93.1 1.38l-2.13 1.65 2 3.46 2.49-.96c.7.6 1.5 1.08 2.4 1.38l.14 2.59h4l.14-2.59c.9-.3 1.7-.78 2.4-1.38l2.49.96 2-3.46-2.13-1.65c.06-.45.1-.91.1-1.38zM12 15.5a3.5 3.5 0 100-7 3.5 3.5 0 000 7z"
+                            />
+                        </svg>
+
+                        {/* Decorated title */}
+                        <div className="flex flex-col items-center gap-1 w-full">
+                            <div className="flex items-center gap-2 w-full">
+                                <span className="flex-1 h-px bg-amber-800/50" />
+                                <span className="text-sm font-bold tracking-[0.35em] text-amber-400 uppercase drop-shadow-[1px_1px_0px_#000]">
+                                    {t('settings.title')}
+                                </span>
+                                <span className="flex-1 h-px bg-amber-800/50" />
+                            </div>
+                            <div className="text-[11px] tracking-[0.24em] text-stone-400 uppercase">
+                                — paused —
+                            </div>
+                        </div>
+
+                        {/* Aiming is a setting, not an action: it sits above the
+                            buttons and shows the current choice inline. */}
+                        <div className="flex w-full flex-col gap-1">
+                            <span className="text-[12px] tracking-[0.22em] text-stone-400 uppercase">
+                                {t('settings.controlScheme')}
+                            </span>
+                            <div className="flex gap-1">
+                                {(
+                                    [
+                                        ['mouse', t('input.mouse')],
+                                        ['directional', t('input.directional')],
+                                    ] as const
+                                ).map(([id, label]) => (
+                                    <button
+                                        key={id}
+                                        type="button"
+                                        onClick={() => setInputScheme(id)}
+                                        aria-pressed={inputScheme === id}
+                                        className={`h-9 flex-1 rounded border text-[12px] font-semibold tracking-wider transition-colors ${
+                                            inputScheme === id
+                                                ? 'border-amber-500 bg-amber-500 text-black'
+                                                : 'border-stone-700 bg-stone-900/80 text-stone-400 hover:bg-stone-800 hover:text-amber-300'
+                                        }`}
+                                    >
+                                        {label}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="flex w-full flex-col gap-2">
+                            <Button
+                                onClick={resumeGame}
+                                className="h-11 w-full text-[13px] bg-amber-500 font-semibold text-black hover:bg-amber-400"
+                            >
+                                <Play className="size-5" />
+                                {t('settings.resume')}
+                            </Button>
+                            <Button
+                                onClick={handleRestart}
+                                variant="outline"
+                                className="h-11 w-full text-[13px] border-stone-700 bg-stone-900/80 font-semibold text-stone-300 hover:bg-stone-800 hover:text-amber-300"
+                            >
+                                <RotateCcw className="size-5" />
+                                {t('settings.restart')}
+                            </Button>
+                            <Button
+                                onClick={handleNewGame}
+                                variant="outline"
+                                className={`h-11 w-full text-[13px] font-semibold ${
+                                    newGameArmed
+                                        ? 'border-red-700 bg-red-900/70 text-red-200 hover:bg-red-800'
+                                        : 'border-stone-700 bg-stone-900/80 text-stone-400 hover:bg-stone-800 hover:text-amber-300'
+                                }`}
+                            >
+                                <Sparkles className="size-5" />
+                                {newGameArmed
+                                    ? t('settings.newGameConfirm')
+                                    : t('settings.newGame')}
+                            </Button>
+                            <Button
+                                onClick={() => setSavesOpen(true)}
+                                variant="outline"
+                                className="h-11 w-full text-[13px] border-stone-700 bg-stone-900/80 font-semibold text-stone-300 hover:bg-stone-800 hover:text-amber-300"
+                            >
+                                <FolderOpen className="size-5" />
+                                {t('saves.title')}
+                            </Button>
+                        </div>
+
+                        {/* Same size as the death screen's subtitle: 9px made this line
+                            unreadable (`也调大改成跟上面【真可惜我不是主角】一样的字体`). */}
+                        <div className="text-[14px] tracking-wider text-stone-300 uppercase leading-relaxed">
+                            {t('settings.restartHint')}
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {savesOpen && (
+                <SaveSlotsPanel onClose={() => setSavesOpen(false)} onLoaded={handleSaveLoaded} />
+            )}
+        </>
+    );
+}

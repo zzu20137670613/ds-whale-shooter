@@ -1,0 +1,66 @@
+# 隐藏地图（占位版）。
+#
+# 主人要求：先用文字版占位，地板上的字告诉玩家这图怎么做、怎么替换、怎么找他定制。
+# 现在只有底图和出口；地板文字还没有载体（关卡 schema 暂不支持文字对象），下一步补。
+title: Hidden Map
+titleZh: "隐藏地图"
+background: assets/image/scenes/hidden-whale/hidden-whale-blank.png
+imageSize: 2752x1536
+airWalls:
+    - id: edge-left
+      kind: short
+      points: [[0, 0], [44, 0], [44, 1536], [0, 1536]]
+    - id: edge-right
+      kind: short
+      points: [[2708, 0], [2752, 0], [2752, 1536], [2708, 1536]]
+    - id: edge-top
+      kind: short
+      points: [[0, 0], [2752, 0], [2752, 44], [0, 44]]
+    - id: edge-bottom
+      kind: short
+      points: [[0, 1492], [2752, 1492], [2752, 1536], [0, 1536]]
+characterSpawn:
+    x: 1376
+    'y': 660
+    facing: right
+dropSpawns:
+    # 加冕之冠（主人 2026-11-17：`把这个王冠放隐藏地图右侧正中间的空地上`）。
+    # 地图 2752×1536，右侧边缘墙在 2708，所以取 x=2250 留出光柱的宽度；
+    # y=768 是竖直正中，正好落在右侧那块空地上（地板字只占中间一列，碰不到这里）。
+    - type: crown
+      x: 2250
+      y: 768
+      # 只给一次：捡走之后不再摆（主人 2026-11-17：不能重复进图无限刷）。
+      # 按"摆位"记而不是按道具记，见 `DropSpawnSchema.onceKey` 的说明。
+      onceKey: hidden-whale:crown
+teleporters:
+    - id: hidden-whale-exit
+      x: 1376
+      'y': 1180
+      targetScene: tavern
+      targetPortalId: hidden-whale-entrance
+      requiresClear: false
+      radius: 60
+floorText:
+    # 占位版的"地图"就是这些字：告诉玩家怎么做图、怎么做完替换、想定制找谁。
+    - x: 1376
+      'y': 350
+      fontSize: 50
+      text: "隐藏地图 \u00b7 占位版"
+    - x: 1376
+      'y': 520
+      fontSize: 34
+      text: "怎么做图：把这张地图的画稿按 2752x1536 出图，画完丢进\npublic/assets/image/scenes/ 里，再把 hidden-whale.yaml 的 background 改掉"
+    - x: 1376
+      'y': 710
+      fontSize: 34
+      text: "怎么替换：本页所有文字都在 hidden-whale.yaml 的 floorText 里，\n换成你的正文即可；不想写字就直接删掉这一段"
+    - x: 1376
+      'y': 890
+      fontSize: 34
+      text: "想要一张专属隐藏地图？去 Gitee 给作者留言：\ngitee.com/zzu20137670613/ds-whale-shooter-PC/issues"
+    - x: 1376
+      'y': 1050
+      fontSize: 30
+      color: "#a8a29e"
+      text: "踩下面的传送阵回海边亭台"

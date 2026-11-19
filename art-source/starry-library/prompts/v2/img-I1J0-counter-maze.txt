@@ -1,0 +1,79 @@
+CAMERA — this is a game level background seen from directly above.
+- Camera high overhead, almost straight down: a top-down game-map view, like a floor plan.
+- ORTHOGRAPHIC: no perspective at all. Parallel lines stay parallel; the shelf runs and the plank
+  lines stay straight and evenly spaced from one edge of the image to the other; no vanishing
+  point, no converging lines, no foreshortening.
+- EVERY VISIBLE SURFACE IS HORIZONTAL. No vertical surface may be visible anywhere: a bookshelf
+  is only its flat TOP, never the row of book spines on a vertical face; no side of a bench, no
+  visible thickness of a book stack. If you can see the height of anything, the view is wrong.
+- NO ARCHITECTURE WITH HEIGHT: no steps, no standing ladders, no railings, no arches, no columns,
+  no balustrades, no raised platforms. Nothing to climb, nothing to look up at.
+- NOTHING IS DIAGONAL: every shelf run, every plank line and the room boundary run exactly
+  parallel to the image edges and meet at clean right angles. This is a floor plan.
+- No horizon line, no ceiling, no cast shadows anywhere.
+
+SPACE BUDGET — the most important requirement. An earlier attempt failed because the furniture ate
+the playable area.
+- OPEN WALKABLE FLOOR: at least 75% of the image — one wide continuous floor the player can run
+  across in any direction.
+- Bookshelves: LOW flat shelves seen from above as thin pale rectangles, in a LOOSE grid with wide
+  aisles. All shelves together: at most 20% of the image. Never a solid wall of shelves, never a
+  cluster, never one shelf longer than about a sixth of the image.
+- Leave wide open lanes everywhere: the player must be able to run between any two shelves.
+- No large dark masses anywhere.
+
+EXPOSURE — this background is played on, so it must be clearly readable.
+- Mid-tones dominate. Overall brightness around 100 to 130 of 255: a cool night scene that is
+  still CLEARLY LIT, never a dark painting.
+- At least half of the image sits in the mid-tone range.
+- No more than about 15% of the image may be darker than #3a4258, and none of it may be pure
+  black.
+- EVEN LIGHTING, a hard requirement: the floor is lit uniformly across the whole image, with no
+  bright pool and no dark corner. Any two patches of open floor should read within about 2x of
+  each other, and the image's MEDIAN brightness should land close to its average (a median far
+  below the mean means one spotlight in a dark room, which is wrong here).
+- NO CAST SHADOWS: no directional shadow on the floor from any shelf, bench or book stack.
+
+PALETTE, measured from the reference sheets:
+- LEFT half, the warm room: polished dark wood floor, #865340 mid to #a8805f highlight, long
+  straight planks; brass and warm amber accents; a few pale paper-white #f2eee9 details.
+- RIGHT half, the cool maze: the same plank floor in cool blue-grey, #4a5a78 mid to #6b7c9c
+  highlight; pale beige shelf tops #c8b48f with thin brass edging.
+- Both halves share the same cool moonlight fill so the two palettes meet softly instead of
+  clashing.
+
+STYLE: soft semi-realistic anime background painting, painterly, clean readable shapes.
+
+One image, two rooms, one soft boundary, seen from directly above.
+
+THE LEFT HALF (a warm library room): open polished wood plank floor in warm brown, with one or two
+low flat benches and two or three flat stacks of books. This is the right-hand part of a warm
+lending-counter room; keep it mostly empty floor.
+
+THE RIGHT HALF (a cool shelf maze): the same plank floor in cool blue-grey, crossed by LOW flat
+bookshelves in a loose grid with wide aisles, plus a few flat stacks of books. This is the
+left-hand part of a vast shelf maze.
+
+THE BOUNDARY: the two rooms meet along a SOFT VERTICAL BAND running straight down the MIDDLE of
+the image, from the top edge to the bottom edge, parallel to the left and right edges. It is a
+gentle transition roughly a quarter of the image wide — warm floor fading into cool floor. Not a
+hard line, not a wall, not a doorway, not an arch. Nothing is built on the boundary.
+
+THE TOP EDGE, the only outer edge: along the top border only, a THIN flat band about 6% of the
+image of LOW bookshelf tops runs straight and parallel to the top border — warm wood and brass on
+the left half, pale beige shelves on the right half — seen from directly above as flat rectangles.
+Beyond that band the floor simply continues to the top edge. Do NOT paint any starfield, void,
+railing or sky at the top. The other three borders, left, right and bottom, are plain continuing
+floor with nothing on them: neighbouring images continue the same two rooms there.
+
+LANDMARK: none. This is a passage image, so keep it open. Two or three flat stacks of books and
+one or two low benches only, each a couple of percent of the image at most.
+
+RULES
+- Top-down only. No horizon line, no perspective, no side view, no ceiling, no walls with height.
+- Check that at least three quarters of the image is unobstructed walkable floor before finishing.
+- Every material and every line runs straight off the image edge; nothing may stop at the edge,
+  fade out at the edge, or be centred on the edge.
+- No characters, no people, no creatures, no text, no letters, no numbers, no legible writing, no
+  UI, no watermark, no frame, no border, no vignette, no signature.
+- The composition stays generic and continuous: no focal point, no hero object.

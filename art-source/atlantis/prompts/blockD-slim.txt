@@ -1,0 +1,26 @@
+# 块 D · 加冕（右下 SE）
+
+> 四块里最亮最暖的一块：潮退、石阶、石座、半浸的鲸像，冷银转浅金。
+> 座用 **LOW STONE DAIS（低矮石台，台面上凹出一个浅座）**，不是椅子——
+> C 那块已经有一把立着的王座了，这块再来一把就重复了；石台是平的，模型画不成立面。
+> 石阶写成 `broad stair treads`（踏步），俯视图里就是一条条横带，天空之城 B 块验证过可行。
+>
+> 接邻块：左边接 A，上边接 C；右边和下边是地图外缘（石栏+外海）。
+
+```
+Hand-painted anime game art, strict top-down plan view: no isometric, no three-quarter, no horizon, no vertical structure. Nothing is taller than the ground; everything reads as flat shapes on the floor. No arch, gate, doorway, pillar or standing wall. No throne chair: the seat is a LOW STONE DAIS with a shallow seat cut into its top. Steps read as flat treads from above. Smooth painted cel shading, NOT pixel art. Playable combat field, not an illustration.
+
+OCCUPANCY: >=70% open wet stone floor; dais <=18%; whale slabs <=12%; haze in the outer 8%.
+
+LIGHT: the brightest and warmest panel: pale gold light on wet stone, strong highlights on the dais and the wet steps, cold silver only in the outermost corners.
+
+Palette: wet stone #B9C4C6, pale gold #E8C87A, warm light #FFF3D6, silver #C9CED8, shallow water #6E8C96.
+
+Subject: a tide-pulled-back platform of pale wet stone, broad stair treads rising toward the top of the frame, each tread ringed by a drying tide line. Above them a wide platform with a LOW STONE DAIS at its centre, a shallow seat cut into its flat top, one line of pale gold inlay. Flanking it two low blocks (crown and seal). At the platform edge, whale-shaped stone slabs lie half-submerged in the shallow water, all facing the dais. Warm light rakes across the wet steps.
+
+Edges: RIGHT and BOTTOM are the map boundary: stone parapet over open water. LEFT 140px ramp to #35505A; TOP ramp to #6E7F86; smooth, not banded. No border, frame or vignette; outer 140px free.
+
+Size: 3:2, largest available, full bleed. Compose for a 16:9 centre crop: outer 8% top/bottom cut, landmarks inside the central 84%; left/right uncropped.
+
+Negative: isometric, iso, three-quarter, side view, elevation, vertical wall, arch, door standing up, throne chair, statue standing upright, camera tilt, horizon, sky, pixel art, characters, person, girl, hands, text, lettering, watermark, logo, UI, frame, vignette.
+```

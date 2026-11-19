@@ -1,0 +1,58 @@
+# 奔波儿灞 — 怪物表 行11（新增）。碧波潭的鱼怪，Atlantis 的远程怪。
+# PLACEHOLDER ART: reuses the stalker sheet (an organic, small-bodied monster) at a
+# different scale, the same trick drone-ultra uses with the drone sheet. Swap the
+# texture + grid when his own art exists; the numbers below are final.
+name: Bengbu Erba
+nameZh: "奔波儿灞"
+hp: 320
+money: 30
+moveSpeed: 3.0
+body:
+    halfW: 28
+    halfH: 28
+weaponId: fish-spear
+sfx:
+    hit: monster-hit
+    death: monster-death
+    aggro: monster-aggro
+drops:
+    # 怪物掉落表（表·2026-10-29 定稿）：一行一次抽，档位从高往低套。
+    # 掉3个 命中就吃掉 掉2个 和 概率%，都没中才掉 1 个或 0 个。
+    - dropId: sp-fragment
+      chance: 0.3
+    - dropId: ammo-cache
+      chance: 0.2
+      chance2: 0.2
+    - dropId: overcharge-core
+      chance: 0.1
+      chance2: 0.1
+    - dropId: beach-drink
+      chance: 0.05
+      chance2: 0.01
+      chance3: 0.01
+sprite:
+    texture: assets/image/monsters/stalker.png
+    grid: { rows: 4, cols: 4 }
+    scale: 1.5
+    offset: { left: 0, bottom: 4 }
+    script:
+        downsample: 4
+        colors: 32
+        pad: 2
+anims:
+    idle:
+        frames: [0, 3]
+        frameRate: 6
+        repeat: -1
+    move:
+        frames: [4, 7]
+        frameRate: 10
+        repeat: -1
+    hit:
+        frames: [8, 11]
+        frameRate: 12
+        repeat: -1
+    death:
+        frames: [12, 14]
+        frameRate: 10
+        repeat: 0

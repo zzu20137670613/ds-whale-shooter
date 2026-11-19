@@ -1,0 +1,672 @@
+title: Starry Library · Entrance
+titleZh: 'Claude的星空图书馆·入口'
+
+# 2x2 拆分：本关是原来 11008x6144 地图的一块 5504x3072。
+# 碰撞墙与传送阵由主人 2026-11-11 的标注图生成（红=不可达，绿=传送阵），
+# 生成脚本把红区栅格化后合并成矩形，所以边界是 128px 的整数倍。
+background: assets/image/scenes/starry-library/starry-library-2-maze.png
+imageSize: 5504x3072
+# 主人 2026-11-12：图书馆词元盾光柱用深金色。
+tokenPillarTone: gold
+
+airWalls:
+    # 红区矩形 52 段（覆盖率阈值 0.35，宁可多挡不留缝）+ 4 段边界。
+    - id: border-top
+      kind: short
+      points:
+          - - 48
+            - 48
+          - - 5456
+            - 48
+          - - 5456
+            - 56
+          - - 48
+            - 56
+    - id: border-bottom
+      kind: short
+      points:
+          - - 48
+            - 3016
+          - - 5456
+            - 3016
+          - - 5456
+            - 3024
+          - - 48
+            - 3024
+    - id: border-left
+      kind: short
+      points:
+          - - 48
+            - 48
+          - - 56
+            - 48
+          - - 56
+            - 3024
+          - - 48
+            - 3024
+    - id: border-right
+      kind: short
+      points:
+          - - 5448
+            - 48
+          - - 5456
+            - 48
+          - - 5456
+            - 3024
+          - - 5448
+            - 3024
+    - id: blocked-01
+      kind: short
+      points:
+          - - 0
+            - 0
+          - - 5504
+            - 0
+          - - 5504
+            - 256
+          - - 0
+            - 256
+    - id: blocked-02
+      kind: short
+      points:
+          - - 0
+            - 256
+          - - 640
+            - 256
+          - - 640
+            - 384
+          - - 0
+            - 384
+    - id: blocked-03
+      kind: short
+      points:
+          - - 896
+            - 256
+          - - 1024
+            - 256
+          - - 1024
+            - 1280
+          - - 896
+            - 1280
+    - id: blocked-04
+      kind: short
+      points:
+          - - 2048
+            - 256
+          - - 2304
+            - 256
+          - - 2304
+            - 768
+          - - 2048
+            - 768
+    - id: blocked-05
+      kind: short
+      points:
+          - - 3200
+            - 256
+          - - 3328
+            - 256
+          - - 3328
+            - 512
+          - - 3200
+            - 512
+    - id: blocked-06
+      kind: short
+      points:
+          - - 3456
+            - 256
+          - - 5504
+            - 256
+          - - 5504
+            - 768
+          - - 3456
+            - 768
+    - id: blocked-07
+      kind: short
+      points:
+          - - 0
+            - 384
+          - - 256
+            - 384
+          - - 256
+            - 1408
+          - - 0
+            - 1408
+    - id: blocked-08
+      kind: short
+      points:
+          - - 384
+            - 384
+          - - 640
+            - 384
+          - - 640
+            - 640
+          - - 384
+            - 640
+    - id: blocked-09
+      kind: short
+      points:
+          - - 1408
+            - 384
+          - - 2048
+            - 384
+          - - 2048
+            - 512
+          - - 1408
+            - 512
+    - id: blocked-10
+      kind: short
+      points:
+          - - 2304
+            - 384
+          - - 2560
+            - 384
+          - - 2560
+            - 512
+          - - 2304
+            - 512
+    - id: blocked-11
+      kind: short
+      points:
+          - - 2944
+            - 384
+          - - 3200
+            - 384
+          - - 3200
+            - 512
+          - - 2944
+            - 512
+    - id: blocked-12
+      kind: short
+      points:
+          - - 1408
+            - 640
+          - - 2048
+            - 640
+          - - 2048
+            - 768
+          - - 1408
+            - 768
+    - id: blocked-13
+      kind: short
+      points:
+          - - 2944
+            - 640
+          - - 3200
+            - 640
+          - - 3200
+            - 768
+          - - 2944
+            - 768
+    - id: blocked-14
+      kind: short
+      points:
+          - - 3328
+            - 640
+          - - 3456
+            - 640
+          - - 3456
+            - 768
+          - - 3328
+            - 768
+    - id: blocked-15
+      kind: short
+      points:
+          - - 2176
+            - 768
+          - - 2304
+            - 768
+          - - 2304
+            - 1280
+          - - 2176
+            - 1280
+    - id: blocked-16
+      kind: short
+      points:
+          - - 3712
+            - 768
+          - - 5504
+            - 768
+          - - 5504
+            - 896
+          - - 3712
+            - 896
+    - id: blocked-17
+      kind: short
+      points:
+          - - 3840
+            - 896
+          - - 5504
+            - 896
+          - - 5504
+            - 1024
+          - - 3840
+            - 1024
+    - id: blocked-18
+      kind: short
+      points:
+          - - 3968
+            - 1024
+          - - 4096
+            - 1024
+          - - 4096
+            - 1152
+          - - 3968
+            - 1152
+    - id: blocked-19
+      kind: short
+      points:
+          - - 4352
+            - 1024
+          - - 5504
+            - 1024
+          - - 5504
+            - 1152
+          - - 4352
+            - 1152
+    - id: blocked-20
+      kind: short
+      points:
+          - - 256
+            - 1152
+          - - 512
+            - 1152
+          - - 512
+            - 1280
+          - - 256
+            - 1280
+    - id: blocked-21
+      kind: short
+      points:
+          - - 4480
+            - 1152
+          - - 4736
+            - 1152
+          - - 4736
+            - 1280
+          - - 4480
+            - 1280
+    - id: blocked-22
+      kind: short
+      points:
+          - - 5120
+            - 1152
+          - - 5504
+            - 1152
+          - - 5504
+            - 1280
+          - - 5120
+            - 1280
+    - id: blocked-23
+      kind: short
+      points:
+          - - 5376
+            - 1280
+          - - 5504
+            - 1280
+          - - 5504
+            - 3072
+          - - 5376
+            - 3072
+    - id: blocked-24
+      kind: short
+      points:
+          - - 0
+            - 1408
+          - - 128
+            - 1408
+          - - 128
+            - 3072
+          - - 0
+            - 3072
+    - id: blocked-25
+      kind: short
+      points:
+          - - 128
+            - 1792
+          - - 512
+            - 1792
+          - - 512
+            - 1920
+          - - 128
+            - 1920
+    - id: blocked-26
+      kind: short
+      points:
+          - - 5120
+            - 1792
+          - - 5376
+            - 1792
+          - - 5376
+            - 1920
+          - - 5120
+            - 1920
+    - id: blocked-27
+      kind: short
+      points:
+          - - 128
+            - 1920
+          - - 384
+            - 1920
+          - - 384
+            - 3072
+          - - 128
+            - 3072
+    - id: blocked-28
+      kind: short
+      points:
+          - - 512
+            - 1920
+          - - 640
+            - 1920
+          - - 640
+            - 3072
+          - - 512
+            - 3072
+    - id: blocked-29
+      kind: short
+      points:
+          - - 896
+            - 1920
+          - - 1024
+            - 1920
+          - - 1024
+            - 3072
+          - - 896
+            - 3072
+    - id: blocked-30
+      kind: short
+      points:
+          - - 1280
+            - 1920
+          - - 1408
+            - 1920
+          - - 1408
+            - 3072
+          - - 1280
+            - 3072
+    - id: blocked-31
+      kind: short
+      points:
+          - - 1408
+            - 2048
+          - - 1536
+            - 2048
+          - - 1536
+            - 3072
+          - - 1408
+            - 3072
+    - id: blocked-32
+      kind: short
+      points:
+          - - 1664
+            - 2048
+          - - 1920
+            - 2048
+          - - 1920
+            - 2560
+          - - 1664
+            - 2560
+    - id: blocked-33
+      kind: short
+      points:
+          - - 3968
+            - 2048
+          - - 4096
+            - 2048
+          - - 4096
+            - 3072
+          - - 3968
+            - 3072
+    - id: blocked-34
+      kind: short
+      points:
+          - - 2048
+            - 2176
+          - - 2304
+            - 2176
+          - - 2304
+            - 2560
+          - - 2048
+            - 2560
+    - id: blocked-35
+      kind: short
+      points:
+          - - 3200
+            - 2176
+          - - 3328
+            - 2176
+          - - 3328
+            - 3072
+          - - 3200
+            - 3072
+    - id: blocked-36
+      kind: short
+      points:
+          - - 3584
+            - 2176
+          - - 3840
+            - 2176
+          - - 3840
+            - 3072
+          - - 3584
+            - 3072
+    - id: blocked-37
+      kind: short
+      points:
+          - - 4480
+            - 2176
+          - - 4736
+            - 2176
+          - - 4736
+            - 3072
+          - - 4480
+            - 3072
+    - id: blocked-38
+      kind: short
+      points:
+          - - 4864
+            - 2176
+          - - 5120
+            - 2176
+          - - 5120
+            - 3072
+          - - 4864
+            - 3072
+    - id: blocked-39
+      kind: short
+      points:
+          - - 5248
+            - 2176
+          - - 5376
+            - 2176
+          - - 5376
+            - 3072
+          - - 5248
+            - 3072
+    - id: blocked-40
+      kind: short
+      points:
+          - - 1664
+            - 2688
+          - - 1920
+            - 2688
+          - - 1920
+            - 3072
+          - - 1664
+            - 3072
+    - id: blocked-41
+      kind: short
+      points:
+          - - 2176
+            - 2688
+          - - 2304
+            - 2688
+          - - 2304
+            - 3072
+          - - 2176
+            - 3072
+    - id: blocked-42
+      kind: short
+      points:
+          - - 384
+            - 2944
+          - - 512
+            - 2944
+          - - 512
+            - 3072
+          - - 384
+            - 3072
+    - id: blocked-43
+      kind: short
+      points:
+          - - 640
+            - 2944
+          - - 896
+            - 2944
+          - - 896
+            - 3072
+          - - 640
+            - 3072
+    - id: blocked-44
+      kind: short
+      points:
+          - - 1024
+            - 2944
+          - - 1280
+            - 2944
+          - - 1280
+            - 3072
+          - - 1024
+            - 3072
+    - id: blocked-45
+      kind: short
+      points:
+          - - 1536
+            - 2944
+          - - 1664
+            - 2944
+          - - 1664
+            - 3072
+          - - 1536
+            - 3072
+    - id: blocked-46
+      kind: short
+      points:
+          - - 1920
+            - 2944
+          - - 2176
+            - 2944
+          - - 2176
+            - 3072
+          - - 1920
+            - 3072
+    - id: blocked-47
+      kind: short
+      points:
+          - - 2304
+            - 2944
+          - - 3200
+            - 2944
+          - - 3200
+            - 3072
+          - - 2304
+            - 3072
+    - id: blocked-48
+      kind: short
+      points:
+          - - 3328
+            - 2944
+          - - 3584
+            - 2944
+          - - 3584
+            - 3072
+          - - 3328
+            - 3072
+    - id: blocked-49
+      kind: short
+      points:
+          - - 3840
+            - 2944
+          - - 3968
+            - 2944
+          - - 3968
+            - 3072
+          - - 3840
+            - 3072
+    - id: blocked-50
+      kind: short
+      points:
+          - - 4096
+            - 2944
+          - - 4480
+            - 2944
+          - - 4480
+            - 3072
+          - - 4096
+            - 3072
+    - id: blocked-51
+      kind: short
+      points:
+          - - 4736
+            - 2944
+          - - 4864
+            - 2944
+          - - 4864
+            - 3072
+          - - 4736
+            - 3072
+    - id: blocked-52
+      kind: short
+      points:
+          - - 5120
+            - 2944
+          - - 5248
+            - 2944
+          - - 5248
+            - 3072
+          - - 5120
+            - 3072
+
+characterSpawn:
+    x: 2960
+    'y': 1520
+    facing: right
+
+monsters: []
+spawner:
+    # 单块 5504x3072 内部再四等分成 2x2 象限，玩家第一次踏入某个象限时刷一波。
+    # 波次：入口 1 / 柜台 2 / 露台 2 / 卷轴 3。每次进入都重新刷（不再读存档）。
+    delayMs: 2000
+    waves: 1
+    near: { count: 4, minDistance: 300, maxDistance: 900 }
+    far: { count: 5, edgeInset: 420 }
+    exclude:
+        # 主人 2026-11-13：`星空图书馆入口关有怪刷到右上角了，将这个角落刷怪禁掉，只让刷到其他位置`。
+        # 右上角那片是星空（断掉的木梁 + 会飞的纸页），底图下面没有地板，怪会悬在星星中间。
+        # 世界坐标从底图上量：天空楔形占 x 3400-5504 / y 0-1300，禁掉整块后远处的
+        # 5 个刷怪点会落到 y≈1324 的实地上（东侧书架前那块地板）。
+        - { x: 3400, y: 0, width: 2104, height: 1300 }
+    # 血量倍数：拆分后按关卡重调，等主人给数值。
+    pool:
+        melee: [drone]     # 星穹潜行者
+        ranged: [sniper]   # 星海狙手
+
+dropSpawns: []
+materials: []
+
+teleporters:
+    # 位置来自主人的绿色圆形标注；radius 就是画出来的圆半径。
+    # 传送阵清怪后才会淡入（见 teleporter.ts 的 appearAlpha）。
+    - id: to-beach
+      x: 4260
+      'y': 1115
+      targetScene: beach-holiday
+      targetPortalId: teleporter-msfmft58
+      radius: 200
+    - id: to-counter
+      x: 224
+      'y': 1573
+      targetScene: starry-library-2-counter
+      targetPortalId: from-entrance
+      radius: 200

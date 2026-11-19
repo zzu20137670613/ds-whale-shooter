@@ -1,0 +1,329 @@
+title: dsh's Atlantis · Coronation Dais
+titleZh: 'dsh的亚特兰蒂斯·加冕台'
+
+# 2x2 拆分：本关是原来 11008x6144 地图的一块 5504x3072。
+# 碰撞墙来自主人 2026-11-11 的按块标注（红=不可达），128px 网格合并成矩形。
+background: assets/image/scenes/dsh-atlantis/atlantis-3-regent.png
+imageSize: 5504x3072
+# 旧 4x4 版这张图就是 pixelLighting: false（差分光效会把画面压暗，
+# 主人报过「月桥色调明显偏暗」）；拆开后每块都要带上这一行。
+pixelLighting: false
+# 主人 2026-11-12 实测：亮色光柱在亚特兰蒂斯看不清，这里也用深色。
+tokenPillarTone: gold
+
+airWalls:
+    # 19 段红区 + 4 段边界兜底。
+    - id: border-top
+      kind: short
+      points:
+          - - 48
+            - 48
+          - - 5456
+            - 48
+          - - 5456
+            - 56
+          - - 48
+            - 56
+    - id: border-bottom
+      kind: short
+      points:
+          - - 48
+            - 3016
+          - - 5456
+            - 3016
+          - - 5456
+            - 3024
+          - - 48
+            - 3024
+    - id: border-left
+      kind: short
+      points:
+          - - 48
+            - 48
+          - - 56
+            - 48
+          - - 56
+            - 3024
+          - - 48
+            - 3024
+    - id: border-right
+      kind: short
+      points:
+          - - 5448
+            - 48
+          - - 5456
+            - 48
+          - - 5456
+            - 3024
+          - - 5448
+            - 3024
+    - id: blocked-01
+      kind: short
+      points:
+          - - 3584
+            - 0
+          - - 5504
+            - 0
+          - - 5504
+            - 128
+          - - 3584
+            - 128
+    - id: blocked-02
+      kind: short
+      points:
+          - - 0
+            - 128
+          - - 896
+            - 128
+          - - 896
+            - 384
+          - - 0
+            - 384
+    - id: blocked-03
+      kind: short
+      points:
+          - - 3840
+            - 128
+          - - 5504
+            - 128
+          - - 5504
+            - 256
+          - - 3840
+            - 256
+    - id: blocked-04
+      kind: short
+      points:
+          - - 3968
+            - 256
+          - - 5504
+            - 256
+          - - 5504
+            - 384
+          - - 3968
+            - 384
+    - id: blocked-05
+      kind: short
+      points:
+          - - 0
+            - 384
+          - - 768
+            - 384
+          - - 768
+            - 768
+          - - 0
+            - 768
+    - id: blocked-06
+      kind: short
+      points:
+          - - 4224
+            - 384
+          - - 5504
+            - 384
+          - - 5504
+            - 512
+          - - 4224
+            - 512
+    - id: blocked-07
+      kind: short
+      points:
+          - - 4352
+            - 512
+          - - 5504
+            - 512
+          - - 5504
+            - 640
+          - - 4352
+            - 640
+    - id: blocked-08
+      kind: short
+      points:
+          - - 2176
+            - 640
+          - - 2688
+            - 640
+          - - 2688
+            - 1280
+          - - 2176
+            - 1280
+    - id: blocked-09
+      kind: short
+      points:
+          - - 4608
+            - 640
+          - - 5504
+            - 640
+          - - 5504
+            - 768
+          - - 4608
+            - 768
+    - id: blocked-10
+      kind: short
+      points:
+          - - 0
+            - 768
+          - - 512
+            - 768
+          - - 512
+            - 896
+          - - 0
+            - 896
+    - id: blocked-11
+      kind: short
+      points:
+          - - 4864
+            - 768
+          - - 5504
+            - 768
+          - - 5504
+            - 896
+          - - 4864
+            - 896
+    - id: blocked-12
+      kind: short
+      points:
+          - - 0
+            - 896
+          - - 384
+            - 896
+          - - 384
+            - 1024
+          - - 0
+            - 1024
+    - id: blocked-13
+      kind: short
+      points:
+          - - 4992
+            - 896
+          - - 5504
+            - 896
+          - - 5504
+            - 1024
+          - - 4992
+            - 1024
+    - id: blocked-14
+      kind: short
+      points:
+          - - 0
+            - 1024
+          - - 128
+            - 1024
+          - - 128
+            - 1152
+          - - 0
+            - 1152
+    - id: blocked-15
+      kind: short
+      points:
+          - - 5248
+            - 1024
+          - - 5504
+            - 1024
+          - - 5504
+            - 1152
+          - - 5248
+            - 1152
+    - id: blocked-16
+      kind: short
+      points:
+          - - 5376
+            - 1152
+          - - 5504
+            - 1152
+          - - 5504
+            - 1280
+          - - 5376
+            - 1280
+    - id: blocked-17
+      kind: short
+      points:
+          - - 0
+            - 2176
+          - - 256
+            - 2176
+          - - 256
+            - 2944
+          - - 0
+            - 2944
+    - id: blocked-18
+      kind: short
+      points:
+          - - 256
+            - 2560
+          - - 384
+            - 2560
+          - - 384
+            - 2944
+          - - 256
+            - 2944
+    - id: blocked-19
+      kind: short
+      points:
+          - - 384
+            - 2688
+          - - 512
+            - 2688
+          - - 512
+            - 2944
+          - - 384
+            - 2944
+
+characterSpawn:
+    x: 3700
+    'y': 2500
+    facing: right
+
+monsters: []
+spawner:
+    # 单块 5504x3072 内部分成 2x2 象限，玩家第一次踏入某个象限刷一波。
+    # 波数沿用图书馆：入口 1 / 第二关 2 / 第三关 2 / 第四关 3。每次进入都重刷。
+    delayMs: 2000
+    waves: 3
+    near: { count: 4, minDistance: 300, maxDistance: 900 }
+    far: { count: 5, edgeInset: 480, cornerInset: 900 }
+    exclude:
+        # 主人 2026-11-12：`亚特兰蒂斯最后一关的右上角还会刷怪，把这个角也给禁掉`。
+        # 右上角那片是崖外的深水/珊瑚（美术上不可站人），怪会贴在屏幕最上沿露半个身子。
+        # 世界坐标从底图上量的：深水 + 珊瑚约占 x 4000-5504 / y 0-700。
+        - { x: 4000, y: 0, width: 1504, height: 700 }
+    # 主人 2026-11-12 定的最后一波（第三波）配比：
+    # 亚特兰蒂斯·加冕台：远处边缘 1 只奔波儿灞换 Wanderer。
+    # 前两波不动；`far` 一项一只怪，按顺序占远处边缘的槽位。
+    finalWave:
+        far:
+            - warden
+            - bengbu-erba
+            - warden
+            - bengbu-erba
+            - wanderer
+    pool:
+        melee: [warden]
+        ranged: [bengbu-erba]
+
+dropSpawns: []
+materials: []
+
+triggers:
+    # 踩王座进 boss 教堂：不画魔法阵、不给光效，走到座位上前一步就切场景（单向）。
+    # 旧 4x4 方案里这块在世界坐标 (7976,1296)，减掉本块原点 (5504,0) 就是下面这个矩形。
+    - id: hidden-2-entry
+      zone: { x: 2472, y: 1296, width: 344, height: 444 }
+      travel:
+          targetScene: warhammer-redeem-1-chapel
+          # Claude 也踩得进去（主人 2026-11-12：`让你去掉的是这个`）。原来这里写着
+          # `excludeCharacters: [claude]`，所以用 Claude 踩王座进不了 boss 关。
+          requiresClear: true
+
+teleporters:
+    # 位置来自主人的绿圈，半径统一 200（2x2 规则）。
+    - id: from-ruined-palace
+      x: 4145
+      'y': 2855
+      targetScene: dsh-atlantis-3-ruined-palace
+      targetPortalId: to-coronation-dais
+      radius: 200
+
+exitArrow:
+    x: 2644
+    y: 1690
+    direction: up
+    orbit: true

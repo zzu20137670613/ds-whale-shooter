@@ -1,0 +1,29 @@
+# 块 1 · 教堂废墟（左上 NW）· v3
+
+> v2 判了：**方向对了，但画成一张"漂浮的棋盘"，不是一张能拼的地图**。三个问题：
+>
+> 1. **黑底漂浮** — 地板是一块方厅浮在黑色里，四周还有一圈装饰石边。四块拼起来会变成黑缝拼图。v3 写死 **FILL THE FRAME / 继续延伸出四边 / 不要石边不要框**。
+> 2. **柱子还立着** — 上边沿那几根有柱头、有竖向明暗，一看就是立起来的。v3 改成 **column stumps cut FLUSH（齐地切断）**，并且把 pillar shafts / capitals 放进 Negative。
+> 3. **构图太正** — 近乎左右镜像，像选关界面。v3 要求 **asymmetric, nothing mirrored**。
+>
+> 保留 v2 做对的部分：平涂、淡色调、玫瑰窗平嵌在地面、中心圆台留空、长椅摊平、两三点余烬。
+
+```
+2D top-down game map asset seen from DIRECTLY ABOVE (90 degrees, orthographic plan view). Everything in frame is FLOOR: nothing has height, nothing stands. Flat cel shading, thin ink outlines, large smooth colour fills, NOT painterly. Readable arena, not a picture.
+
+FILL THE FRAME: the floor covers the whole image and CONTINUES PAST all four edges. No black background, no stone rim, no border, no frame, no floating plate.
+
+OCCUPANCY: >=65% plain pale stone floor; scenery only in the outer 25%; asymmetric.
+
+LIGHT: flat even ambient moonlight, high-key, pale and cool; no god rays, no window light; only two or three tiny ember dots.
+
+Palette: pale stone #C9C7C0, shadow #8E8C86, ash #E8E6E0, scorch #3A3430, glass red #8E3B3B, glass blue #3B4E6E, ember #C25A28.
+
+Subject: the cracked pale stone floor of a cathedral its own god destroyed. A huge shattered ROSE-WINDOW MOSAIC is INLAID FLAT into the floor: red and blue glass shards among the stones, frame flush with the ground. Scorch patches; ash drifts; column stumps cut FLUSH with the floor as flat stone discs, no shafts, no capitals; pews as loose planks; a black iron chandelier lying flat. CENTRE: a clean circular dais of pale cracked stone, 12% of frame width, EMPTY - the boss spawns there: no figure, no statue.
+
+Edges: near TOP and LEFT the pavement breaks into rubble and ash - still filled, fading darker but never flat black. RIGHT ramps to #0A1A2E. BOTTOM ramps to #3A2A1E. Smooth, not banded.
+
+Size: 3:2 or 16:9, largest available, full bleed, composed for a 16:9 centre crop (landmarks inside the central 84%).
+
+Negative: interior, room, walls, ceiling, columns standing, pillar shafts, capitals, arch, doorway, upright window, sky, moon, stars, black background, floating plate, stone rim, border, frame, perspective, vanishing point, isometric, three-quarter, symmetry, characters, person, text, watermark, logo, vignette, pixel art, cluttered.
+```

@@ -1,0 +1,25 @@
+# 块 A · 海门 + 折断沉船（左下 SW）· v2
+
+> 上一版（jimeng 3724）三处不合格：**等轴测视角**（门有正面、船 3/4）、**像素风**、**太亮**（阳光浅滩）。
+> v2 对应三处改：
+> ① 门改写成"**平贴地面的石墙 + 切出来的深色矩形门洞**"，避开"门框/门柱"这类会拽出 3D 的词；
+> ② 明确 `NOT pixel art`，负面词加 `pixel art / 16-bit / pixelated`；
+> ③ LIGHT 改成"深暗海底、灰蓝沙"，负面词加 `bright turquoise / sunny beach`。
+
+```
+Hand-painted anime game art, strict top-down plan view: no isometric, no three-quarter, no visible fronts or sides of blocks, no depth faces, no horizon. Every wall reads as a FLAT LAYER on the ground plane; a doorway reads as a dark rectangle cut into it. Smooth painted cel shading, NOT pixel art, no pixel grid. Playable combat field, not an illustration.
+
+OCCUPANCY: >=65% of frame open seabed; shipwreck <=20%; gate <=20%; haze only in the outer 8%; nothing else stands on the floor.
+
+LIGHT: deep abyss, dim: pale grey-blue sand, no sunlit beach, no bright turquoise. The one bright passage is the blue slot in the gate.
+
+Palette: sand #8C9AA0, silt #5E6A70, cyan stone #6F9C9C, deep slot blue #0E1E2A, rust #5A4A32, faint teal glow #2E5B66.
+
+Subject: drowned outskirts on pale grey-blue seabed sand in soft ripples, drifts of silt, broken coral. Upper left: a BROKEN SHIPWRECK collapsed and half-buried, ribbed timbers flat from above, snapped mast, sail pressed flat on the sand, rust on iron. Right: the STONE GATE, a massive FLAT masonry wall along the ground with a rectangular dark slot cut into it, one leaf pushed inward so the slot shows as a thin deep-blue opening, barnacle crust at its base.
+
+Edges: LEFT and BOTTOM are the map boundary: black reef and open water. TOP 140px ramp to #0A1822; RIGHT ramp to #3A5A62; smooth, not banded. No border, frame or vignette; outer 140px free of landmarks.
+
+Size: 3:2, largest available, full bleed. Compose for a 16:9 centre crop: outer 8% top/bottom cut, landmarks inside the central 84%; left/right uncropped.
+
+Negative: isometric, iso, three-quarter, side view, elevation, depth face, cube, camera tilt, horizon, sky, pixel art, 16-bit, pixelated, bright turquoise, sunny beach, water wall, beam of light, giant prop, characters, person, girl, mermaid, hands, text, watermark, logo, UI, frame, vignette.
+```

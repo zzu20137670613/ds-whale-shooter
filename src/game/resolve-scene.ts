@@ -1,0 +1,534 @@
+/**
+ * src/game/resolve-scene.ts
+ * --------------------------------------------------------------------------
+ * Resolves a scene id into the full bundle of specs (level + weapons +
+ * character + monsters + drops + audio + sprite cell) the Phaser scene
+ * needs to boot.
+ *
+ * Lives apart from `src/game/main.ts` so the editor's in-process scene
+ * restart path (`src/lib/phaser-game.ts → restartScene`) can reuse it
+ * without re-importing the Phaser `Game` constructor side-effects in
+ * `main.ts`. main.ts still calls this once for the initial boot.
+ *
+ * Pure data fetch + small image-size probe — no Phaser coupling.
+ */
+
+import type { MusicSpec, SfxSpec } from '@/lib/audios';
+import { bossCharacterId } from '@/lib/characters/boss-character';
+import { fetchAudioIndex, fetchAudioMusic, fetchAudioSfx } from '@/lib/audios';
+import type { CharacterSpec } from '@/lib/characters';
+import {
+    applyUpgrades,
+    fetchCharacter,
+    fetchCharacterIndex,
+    resolveRosterCharacterId,
+} from '@/lib/characters';
+import {
+    applyBlessingDamage,
+    applyPetBonus,
+    blessingApplies,
+    petBonusAppliesTo,
+} from '@/lib/pet/bonus';
+import type { SceneAssets } from '@/game/scenes/scene';
+import { fetchDrop } from '@/lib/drops';
+import { GEMINI_JUICE_WEAPON_ID as JUICE_EGG_WEAPON_ID } from '@/lib/drops/easter-eggs';
+import { mergeDropCatalog } from '@/lib/drops/catalog';
+import { describeEffect } from '@/lib/drops/effect-text';
+import type { DropSpec } from '@/lib/drops';
+import { collectDropIds, fetchLevel, fetchLevelIndex } from '@/lib/levels';
+import { CAT_SHOP_ACTION, CAT_SHOP_GIFT_WEAPON_ID } from '@/lib/levels/easter-eggs';
+import type { MonsterSpec } from '@/lib/monsters';
+import { pickText } from '@/locales';
+import {
+    BOSS_EXTRA_WEAPON_ID,
+    bossHotbar,
+    fullWeaponSlot,
+    maxedUpgradeLevels,
+    maxedWeaponLevels,
+    mergeBossWeaponLevels,
+} from '@/lib/levels/boss-loadout';
+import { collectMonsterIds } from '@/lib/levels/prefetch';
+import { fetchMonster } from '@/lib/monsters';
+import type { WeaponSpec } from '@/lib/weapons';
+import { fetchWeapon } from '@/lib/weapons';
+import { applyWeaponUpgrade } from '@/lib/weapons/upgrades';
+
+import { registerMaxBonus } from '@/lib/drops/held-bonus';
+import { useGameStore } from '@/store/game-store';
+
+export interface ResolvedScene {
+    id: string;
+    level: Awaited<ReturnType<typeof fetchLevel>>;
+    /** Player hotbar (read from character.hotbar, in display order). */
+    weapons: WeaponSpec[];
+    /** All weapons keyed by id (player hotbar + monster weapons). */
+    weaponsById: Map<string, WeaponSpec>;
+    character: CharacterSpec;
+    /** Computed cell size for the character sprite sheet (naturalSize / grid). */
+    spriteCell: { width: number; height: number };
+    monsters: Map<string, MonsterSpec>;
+    /**
+     * Measured cell size per monster id, read from each PNG before the scene starts.
+     *
+     * Measured here rather than in `preload()` because the loader cannot wait: a sheet queued
+     * after it finishes is never fetched, and that is how the 2048² guardians lost their
+     * bodies on a phone (2026-11-14).
+     */
+    monsterCells: Map<string, { width: number; height: number }>;
+    drops: Map<string, DropSpec>;
+    sfx: Map<string, SfxSpec>;
+    music: Map<string, MusicSpec>;
+    /** Weapon ids referenced by monster specs in this level. Their
+     *  `visual.texture` is NOT loaded — only `bullet.texture` is.
+     *  Scene uses this set to call `loadWeaponAssets` with
+     *  `loadVisualTexture: false` for monster weapons. */
+    monsterWeaponIds: Set<string>;
+    /** Weapon ids the player can hold / see rendered: character hotbar
+     *  + tavern dropSpawn entries. These get the full visual+bullet
+     *  texture load. */
+    playerWeaponIds: Set<string>;
+    /** Tavern mode only: all available characters for NPC display + selection. */
+    allCharacters?: CharacterSpec[];
+    /**
+     * Real cell size per character id, read from each PNG.
+     *
+     * Sheets are not all the same resolution (768 for the rebuilt ones, 512 for the rest),
+     * so a hardcoded 128 slices the bigger ones into a top-left crop - which is exactly how
+     * Claude and GPT ended up cut in half in the tavern.
+     */
+    characterCells?: Record<string, { width: number; height: number }>;
+}
+
+/** Most-recently-resolved scene bundle. Set by main.ts after the initial
+ *  boot resolve; read by the death overlay's Restart button so it can
+ *  call `restartSceneWith` without re-fetching YAML. */
+let _cached: ResolvedScene | null = null;
+
+export function cacheResolvedScene(r: ResolvedScene): void {
+    _cached = r;
+}
+
+export function getCachedResolvedScene(): ResolvedScene | null {
+    return _cached;
+}
+
+/**
+ * Resolve `sceneId` into a full ResolvedScene. Scene id is taken verbatim —
+ * caller decides where it comes from (URL ?scene=, index.yaml[0], editor
+ * jump-to).
+ *
+ * `getSceneIdFromUrl()` is the one runtime dependency; split out so tests
+ * can supply a fixed id without touching `window.location`.
+ */
+export async function resolveScene(
+    sceneId: string,
+    deps: {
+        fetchLevelId: (id: string) => ReturnType<typeof fetchLevel>;
+        fetchFirstCharacterId: () => Promise<string>;
+        characterIds: () => Promise<string[]>;
+    } = {
+        fetchLevelId: fetchLevel,
+        fetchFirstCharacterId: async () => (await fetchCharacterIndex()).characters[0],
+        characterIds: async () => (await fetchCharacterIndex()).characters,
+    },
+): Promise<ResolvedScene> {
+    const id = sceneId;
+    const level = await deps.fetchLevelId(id);
+
+    // Pick the character for this scene, in priority order:
+    //   1. Player's tavern selection (persisted) — survives into every
+    //      non-tavern scene so the picked character follows the player.
+    //   2. The level's `character:` field — author override per level.
+    //   3. First character in index.yaml — fall-back for fresh starts
+    //      before the player has picked anyone.
+    //
+    // The persisted selection is an id in the save file, so it can outlive
+    // the roster entry it names (a rename leaves `whale-girl` behind after
+    // `deepseek` replaces it). An id no YAML answers to is dropped — and the
+    // player is asked to pick again — rather than fetched and 404'd, which
+    // would leave the scene unbootable.
+    const storedCharacterId = useGameStore.getState().selectedCharacterId;
+    const selectedCharacterId = resolveRosterCharacterId(
+        storedCharacterId,
+        storedCharacterId ? await deps.characterIds() : [],
+    );
+    if (storedCharacterId && !selectedCharacterId) {
+        useGameStore.getState().setSelectedCharacterId(null);
+    }
+    // A boss level names its own character and that name WINS: the fight is built around the
+    // maxed whale girl (panel, extra rifle, pet tier), so a saved Gemini must not walk in
+    // instead. See `bossCharacterId`. The saved pick is left alone, so the settlement's
+    // `characterBeforeArena` restore still walks the player back as themselves.
+    const forcedByBoss = bossCharacterId(level, selectedCharacterId);
+    const characterId =
+        forcedByBoss ??
+        selectedCharacterId ??
+        level.character ??
+        (await deps.fetchFirstCharacterId());
+    if (!characterId) {
+        throw new Error('No character available — add one to public/data/characters/index.yaml');
+    }
+    // Tavern upgrades are applied here, once, to the spec the whole scene
+    // is built from: spawn HP, the HUD bars, movement and the save-restore
+    // clamp all read this spec, so this single call makes every purchase
+    // real. See `lib/characters/upgrades.ts`.
+    // ── Boss level: a MAXED panel, whatever the save says ────────────────
+    // The owner: `鲸鱼娘的武器和面板要全部是满级状态的`. The fight is calibrated against a
+    // fully upgraded whale girl, so walking in half-built is not a challenge, it is a wall.
+    // Applied before `applyUpgrades` reads the store, which is why it lives here and not in
+    // the scene.
+    const baseSpec = await fetchCharacter(characterId);
+    // Leaving the boss level puts the real ledgers back before anything reads them, so the
+    // tavern/shop show what the player actually bought. Entering stashes them first.
+    if (!level.boss) {
+        useGameStore.getState().restoreRunProgress();
+    }
+    if (level.boss) {
+        useGameStore.getState().stashRunProgress();
+        useGameStore.setState({ upgradeLevels: maxedUpgradeLevels(baseSpec) });
+    }
+    const upgradeLevels = useGameStore.getState().upgradeLevels;
+    const upgraded = applyUpgrades(baseSpec, upgradeLevels);
+    // The desktop pet's tier, applied last so it multiplies the *upgraded*
+    // panel - buying armor and then wearing the pet should compound. Reads the
+    // store rather than awaiting the bridge: the probe runs at boot and takes
+    // milliseconds, while the player needs seconds just to reach a level, and a
+    // missing pet is a no-op.
+    const petBonus = useGameStore.getState().petBonus;
+    // The pet buffs DeepSeek only - see `petBonusAppliesTo`. Everyone else plays
+    // on their own upgraded numbers.
+    const character =
+        petBonus && petBonusAppliesTo(characterId)
+            ? applyPetBonus(upgraded, petBonus.percent)
+            : upgraded;
+
+    const monsterSpecMap = new Map<string, MonsterSpec>();
+    const monsterWeaponIds = new Set<string>();
+    // Hand-placed rows AND the spawner's pools AND the boss - see `collectMonsterIds`.
+    // Reading `level.monsters` alone left the three spawner worlds with an empty spec map,
+    // so their waves spawned nothing and the exit portal opened on an untouched map.
+    const uniqueMonsterIds = collectMonsterIds(level);
+    if (uniqueMonsterIds.length > 0) {
+        const specs = await Promise.all(uniqueMonsterIds.map((mid) => fetchMonster(mid)));
+        for (let i = 0; i < uniqueMonsterIds.length; i++) {
+            monsterSpecMap.set(uniqueMonsterIds[i], specs[i]);
+            monsterWeaponIds.add(specs[i].weaponId);
+        }
+    }
+
+    // Measure every monster sheet now, so `preload()` can queue them synchronously.
+    const monsterCells = new Map<string, { width: number; height: number }>(
+        await Promise.all(
+            [...monsterSpecMap].map(async ([mid, spec]) => {
+                try {
+                    return [mid, await getSpriteCellDims(spec)] as const;
+                } catch {
+                    // A missing sheet must not take the whole level down: the monster spawns
+                    // without art, which is the same state the "no sprite" guard already has.
+                    return [mid, { width: 0, height: 0 }] as const;
+                }
+            }),
+        ),
+    );
+
+    const dropIds = collectDropIds(level, monsterSpecMap);
+    const dropEntries = await Promise.all(
+        [...dropIds].map(async (did) => [did, await fetchDrop(did)] as const),
+    );
+
+    // Weapon ids come from three sources:
+    //   1. character.hotbar (starting weapons, normally empty in tavern)
+    //   2. monster weapon ids (monster AI uses these)
+    //   3. dropSpawn entries with a weaponId override (tavern pickups)
+    //      — these are static-spawn weapon drops, not monster drops.
+    //      Without collecting them here the WeaponSpec lookup map
+    //      would be empty for the tavern and DropController couldn't
+    //      resolve the spawn's `weaponId` to a spec.
+    //   4. savedSlots weapon ids — weapons the player picked up in
+    //      a previous tavern session and persisted via the zustand
+    //      store. Without these the in-hand weapon visual has no
+    //      texture to render after a scene transition into a
+    //      non-tavern level.
+    const spawnWeaponIds = new Set<string>();
+    level.dropSpawns?.forEach((d) => {
+        if (d.weaponId) spawnWeaponIds.add(d.weaponId);
+    });
+    // A trigger can drop a weapon that is in nobody's hotbar - the throne's white dragon
+    // fangs is exactly that on Gemini. Without this id in the map the trigger logs
+    // `unknown weaponId` and hands out nothing (`在龙王王座上没有掉下白龙獠牙`).
+    level.triggers?.forEach((t) => {
+        if ('spawn' in t && t.spawn.weaponId) spawnWeaponIds.add(t.spawn.weaponId);
+    });
+    // The iced juice hands Gemini and GPT the arcana staff in WHATEVER level they drink it
+    // in, so its spec and in-hand texture have to be resident everywhere. The pickup path
+    // fetches a missing spec on demand, but a texture cannot be fetched after the scene has
+    // booted - the staff would be added and drawn invisible.
+    spawnWeaponIds.add(JUICE_EGG_WEAPON_ID);
+    const savedSlotIds = new Set<string>((useGameStore.getState().slots ?? []).map((s) => s.id));
+    // Player-pickupable weapons: spec hotbar + tavern dropSpawn ids +
+    // persisted player pickups. These get their in-hand texture
+    // loaded because the player holds them and they're rendered as
+    // drops on the ground.
+    // The cat's gift hands over a rifle the picked character may not carry, so the
+    // id has to be loaded for ANY character - otherwise `weaponsById.get()` misses it
+    // at click time and the gift silently does nothing (GPT never had an assault rifle
+    // in her hotbar, which is exactly how this stayed broken).
+    if (level.interactables?.some((item) => item.action === CAT_SHOP_ACTION)) {
+        spawnWeaponIds.add(CAT_SHOP_GIFT_WEAPON_ID);
+    }
+
+    // Tavern mode: every selectable character must be loadable, both so the NPC sprites
+    // can be drawn and because the picked girl brings HER hotbar - not the default
+    // character's. Without these ids `startingWeaponsFor` drops every weapon she owns and
+    // the player spawns with an empty hotbar and no weapon panel at all.
+    let allCharacters: CharacterSpec[] | undefined;
+    let characterCells: Record<string, { width: number; height: number }> | undefined;
+    if (level.tavern) {
+        const charIndex = await fetchCharacterIndex();
+        // Every seat gets the SAME treatment as the resolved character: tavern purchases and
+        // the pet bonus are not optional per-character. Without this the picked girl spawns
+        // from the raw YAML and a bought spirit level disappears the moment you walk into
+        // 海边亭台 - the HUD showed 160 HP on the beach and 110 in the tavern.
+        allCharacters = await Promise.all(
+            charIndex.characters.map(async (cid) => {
+                const upgraded = applyUpgrades(await fetchCharacter(cid), upgradeLevels);
+                return petBonus && petBonusAppliesTo(cid)
+                    ? applyPetBonus(upgraded, petBonus.percent)
+                    : upgraded;
+            }),
+        );
+        characterCells = Object.fromEntries(
+            await Promise.all(
+                allCharacters
+                    .filter((c) => c.sprite)
+                    .map(async (c) => [c.id, await getSpriteCellDims(c)] as const),
+            ),
+        );
+    }
+
+    const playerWeaponIds = new Set<string>([
+        ...character.hotbar,
+        ...spawnWeaponIds,
+        ...savedSlotIds,
+    ]);
+    for (const c of allCharacters ?? []) {
+        for (const wid of c.hotbar ?? []) playerWeaponIds.add(wid);
+    }
+    // Monster weapons: only need their bullet texture loaded, never
+    // held by the player. Kept out of the player set so the loader
+    // skips `visual.texture` for them.
+    const allWeaponIds = new Set<string>([...playerWeaponIds, ...monsterWeaponIds]);
+    const allWeaponEntries = await Promise.all(
+        [...allWeaponIds].map(async (wid) => [wid, await fetchWeapon(wid)] as const),
+    );
+    const weaponsById = new Map<string, WeaponSpec>(allWeaponEntries);
+
+    // Tavern weapon upgrades: rescale the player's weapons once, here, so
+    // bullet damage (`logic.ts` stamps `slot.spec.damage` onto each bullet),
+    // the HUD and the ammo mirrors all read the upgraded spec. Monster
+    // weapons are deliberately left alone — only the player's are on the
+    // ledger. See `lib/weapons/upgrades.ts`.
+    const weaponLevels = useGameStore.getState().weaponLevels;
+    for (const wid of playerWeaponIds) {
+        const spec = weaponsById.get(wid);
+        const level = weaponLevels[wid] ?? 0;
+        if (spec && level > 0) weaponsById.set(wid, applyWeaponUpgrade(spec, level));
+    }
+
+    // 鲸鲸祝福: +50% damage while DeepSeek holds the maxed pet. Same place and the
+    // same reason as the ladder above - one rescale, so every reader agrees.
+    if (blessingApplies(characterId, useGameStore.getState().petBonus?.percent ?? 0)) {
+        for (const wid of playerWeaponIds) {
+            const spec = weaponsById.get(wid);
+            if (spec) weaponsById.set(wid, applyBlessingDamage(spec));
+        }
+    }
+
+    // ── Boss level: maxed guns, plus one assault rifle ───────────────────
+    // `bossHotbar` appends the rifle once; `maxedWeaponLevels` puts every carried gun on its
+    // top rung, and the rifle is handed over already loaded (full magazine, full reserve) so
+    // the player is not asked to reload before the first phase even starts.
+    let bossCarried: string[] = [];
+    if (level.boss) {
+        bossCarried = bossHotbar(character.hotbar ?? []);
+        // The rifle may not be in the level's weapon set yet - fetch it so its texture and
+        // spec exist for the frame it appears in her hands.
+        if (!weaponsById.has(BOSS_EXTRA_WEAPON_ID)) {
+            weaponsById.set(BOSS_EXTRA_WEAPON_ID, await fetchWeapon(BOSS_EXTRA_WEAPON_ID));
+        }
+        // 只加不抹：整表覆盖会把玩家自己买的枪从账本里删掉（主人 2026-11-14 报的"丢枪械等级"）。
+        const levels = mergeBossWeaponLevels(
+            useGameStore.getState().weaponLevels,
+            maxedWeaponLevels(bossCarried, weaponsById),
+        );
+        useGameStore.setState({ weaponLevels: levels });
+        // Rescale the player's specs with those levels before anything reads damage.
+        for (const wid of bossCarried) {
+            const spec = weaponsById.get(wid);
+            const level = levels[wid] ?? 0;
+            if (spec && level > 0) weaponsById.set(wid, applyWeaponUpgrade(spec, level));
+        }
+        // Her store slots are what the scene restores guns from; add the rifle to them.
+        const slots = useGameStore.getState().slots ?? [];
+        if (!slots.some((slot) => slot.id === BOSS_EXTRA_WEAPON_ID)) {
+            const rifleSlot = fullWeaponSlot(
+                BOSS_EXTRA_WEAPON_ID,
+                weaponsById,
+                levels[BOSS_EXTRA_WEAPON_ID] ?? 0,
+                (spec) => pickText(spec.name, spec.nameZh),
+            );
+            if (rifleSlot) useGameStore.setState({ slots: [...slots, rifleSlot] });
+        }
+    }
+
+    const weapons = (level.boss ? bossCarried : character.hotbar)
+        .map((wid) => weaponsById.get(wid)!)
+        .filter(Boolean);
+
+    // The backpack draws names, prices and a colour block per item; hand it the
+    // drop specs once, here, where every spec is already resolved.
+    // Merge, don't replace: the bag is global and keeps items picked up in other scenes.
+    useGameStore.getState().setDropCatalog(
+        mergeDropCatalog(
+            useGameStore.getState().dropCatalog,
+            Object.fromEntries(
+                dropEntries.map(([id, spec]) => [
+                    id,
+                    {
+                        name: spec.name,
+                        nameZh: spec.nameZh,
+                        usable: spec.effect.type !== 'material' && spec.effect.type !== 'weapon',
+                        sellPrice: spec.sellPrice ?? 0,
+                        unusableNotice: spec.unusableNotice,
+                        unusableNoticeZh: spec.unusableNoticeZh,
+                        ...(() => {
+                            const text = describeEffect(
+                                spec.effect,
+                                spec.descriptionZh,
+                                spec.description,
+                            );
+                            return { effectZh: text.zh, effectEn: text.en, effectKind: spec.effect.type };
+                        })(),
+                        tint: spec.visual.tint,
+                        icon: spec.sprite
+                            ? {
+                                  // Relative, like every other texture path in the game.
+                                  path: spec.sprite.texture.replace(/^\//, ''),
+                                  rows: spec.sprite.grid?.rows ?? 1,
+                                  cols: spec.sprite.grid?.cols ?? 1,
+                                  frame: spec.anims?.idle?.frames?.[0] ?? 0,
+                              }
+                            : undefined,
+                    },
+                ]),
+            ),
+        ),
+    );
+
+    // 记住每个掉落的"带在身上就生效"加成：换关卡之后本关的掉落表里查不到它，
+    // 靠这份全局记录才不会让上限莫名其妙掉回去（见 `lib/drops/held-bonus.ts`）。
+    for (const [dropId, spec] of dropEntries) registerMaxBonus(dropId, spec);
+
+    const audioIndex = await fetchAudioIndex();
+    const sfxEntries = await Promise.all(
+        audioIndex.sfx.map(async (id) => [id, await fetchAudioSfx(id)] as const),
+    );
+    const musicEntries = await Promise.all(
+        audioIndex.music.map(async (id) => [id, await fetchAudioMusic(id)] as const),
+    );
+    const sfx = new Map<string, SfxSpec>(sfxEntries);
+    const music = new Map<string, MusicSpec>(musicEntries);
+
+    const spriteCell = await getSpriteCellDims(character);
+
+    return {
+        id,
+        level,
+        weapons,
+        weaponsById,
+        character,
+        spriteCell,
+        ...(characterCells ? { characterCells } : {}),
+        monsters: monsterSpecMap,
+        monsterCells,
+        drops: new Map(dropEntries),
+        sfx,
+        music,
+        monsterWeaponIds,
+        playerWeaponIds,
+        ...(allCharacters ? { allCharacters } : {}),
+    };
+}
+
+/**
+ * Read the scene id from the URL `?scene=<id>` query string.
+ * Returns null if absent — caller falls back to index.yaml[0].
+ */
+export function getSceneIdFromUrl(): string | null {
+    if (typeof window === 'undefined') return null;
+    const params = new URLSearchParams(window.location.search);
+    return params.get('scene');
+}
+
+/**
+ * Default scene id resolution: URL `?scene=` wins, else first entry in
+ * the level index.
+ */
+export async function resolveDefaultSceneId(): Promise<string> {
+    const fromUrl = getSceneIdFromUrl();
+    if (fromUrl) return fromUrl;
+    const index = await fetchLevelIndex();
+    const first = index.levels[0];
+    if (!first) {
+        throw new Error('Level index is empty — add an entry to public/data/levels/index.yaml');
+    }
+    return first;
+}
+
+/**
+ * Read a sprite-sheet texture's natural pixel dimensions and divide by
+ * its grid layout to get cell size. Skipped when the character has no
+ * sprite block (debug-rectangle fallback).
+ */
+/** Anything that carries a sheet and a grid: a character, or a monster (whose grid is optional). */
+interface SheetSpec {
+    sprite?: { texture: string; grid?: { rows: number; cols: number } };
+}
+
+export async function getSpriteCellDims(
+    character: SheetSpec,
+): Promise<{ width: number; height: number }> {
+    if (!character.sprite?.grid) return { width: 0, height: 0 };
+    const url = character.sprite.texture.startsWith('/')
+        ? character.sprite.texture
+        : `/${character.sprite.texture}`;
+    const natural = await new Promise<{ width: number; height: number }>((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve({ width: img.naturalWidth, height: img.naturalHeight });
+        img.onerror = () => reject(new Error(`Failed to load ${url}`));
+        img.src = url;
+    });
+    return {
+        width: Math.floor(natural.width / character.sprite.grid.cols),
+        height: Math.floor(natural.height / character.sprite.grid.rows),
+    };
+}
+
+/** Narrow a ResolvedScene down to what LoadScene's constructor takes. */
+export function toSceneAssets(resolved: ResolvedScene): SceneAssets {
+    return {
+        weapons: resolved.weapons,
+        weaponsById: resolved.weaponsById,
+        character: resolved.character,
+        spriteCell: resolved.spriteCell,
+        ...(resolved.characterCells ? { characterCells: resolved.characterCells } : {}),
+        monsterSpecs: resolved.monsters,
+        monsterCells: resolved.monsterCells,
+        dropSpecs: resolved.drops,
+        sfxSpecs: resolved.sfx,
+        musicSpecs: resolved.music,
+        monsterWeaponIds: resolved.monsterWeaponIds,
+        playerWeaponIds: resolved.playerWeaponIds,
+        ...(resolved.allCharacters ? { allCharacters: resolved.allCharacters } : {}),
+    };
+}

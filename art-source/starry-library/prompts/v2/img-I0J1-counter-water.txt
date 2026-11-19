@@ -1,0 +1,89 @@
+CAMERA — this is a game level background seen from directly above.
+- Camera high overhead, almost straight down: a top-down game-map view, like a floor plan.
+- ORTHOGRAPHIC: no perspective at all. Parallel lines stay parallel; the plank lines, the walkway
+  bands and the water's shoreline stay straight and evenly spaced from one edge of the image to
+  the other; no vanishing point, no converging lines, no foreshortening.
+- EVERY VISIBLE SURFACE IS HORIZONTAL. No vertical surface may be visible anywhere: no side of a
+  walkway, no edge with height, no thickness of a book stack, no elevation of the stone kerb. If
+  you can see the height of anything, the view is wrong.
+- NO ARCHITECTURE WITH HEIGHT: no railings, no vertical posts, no balusters, no steps, no arches,
+  no columns, no pedestals, no raised platforms. Nothing to climb, nothing to look up at.
+- NOTHING IS DIAGONAL: every plank line, every walkway band, the water boundary and the stone kerb
+  run exactly parallel to the image edges and meet at clean right angles. This is a floor plan.
+- No horizon line, no ceiling, no cast shadows anywhere.
+
+SPACE BUDGET — the most important requirement. An earlier attempt failed because the furniture ate
+the playable area.
+- OPEN AREA: at least 75% of the image is open ground the player can cross in any direction. The
+  water in the lower half is WALKABLE FLOOR, not a hazard: it is ankle-deep mirror-calm water over
+  the same stone floor, and the player runs across it.
+- Everything that blocks movement (stone kerb band, benches, walkway edging, slabs, book stacks)
+  together: at most 25% of the image.
+- The stone kerb on the left is a THIN narrow band, about 6% of the image, and nothing else stands
+  on the left border.
+- Leave wide open lanes everywhere: the player must be able to cross the whole image without
+  squeezing between two objects.
+- No large dark masses anywhere.
+
+EXPOSURE — this background is played on, so it must be clearly readable.
+- Mid-tones dominate. Overall image brightness around 90 to 125 of 255: a cool night scene that is
+  still CLEARLY LIT, never a dark painting.
+- The two halves have DIFFERENT natural brightness and that is intended: the warm wood half is the
+  brighter one, the water half is cooler and darker. Both must be evenly lit WITHIN themselves —
+  no bright pool and no dark corner inside either half. Do not brighten the water until it turns
+  grey: it stays deep blue, and it stays readable.
+- No more than about 15% of the image may be darker than #3a4258, and none of it may be pure
+  black. The water never falls below about #1e2e4d anywhere.
+- At least half of the image sits in the mid-tone range.
+- NO CAST SHADOWS: no directional shadow on the floor or on the water from any bench, slab, stack
+  or kerb.
+
+PALETTE, measured from the reference sheets:
+- Upper half, the warm room: polished dark wood floor, #865340 mid to #a8805f highlight, long
+  straight planks; brass and warm amber accents; paper white #f2eee9 details.
+- Lower half, the flooded room: mirror-calm deep blue water #1e2e4d to #2b3f66 with clearly
+  visible reflected stars; pale stone walkways #b9c2d6; wet pale slabs; paper white details.
+- Left border: pale stone kerb #c7c1cf, then starfield #273559 to #3b4a74 with clearly visible
+  stars, then a flat dark sea surface far away.
+- Both halves share the same cool moonlight fill so the warm and the cool meet softly.
+
+STYLE: soft semi-realistic anime background painting, painterly, clean readable shapes.
+
+One image, two rooms, one soft boundary, seen from directly above.
+
+THE UPPER HALF (a warm library room): open polished wood plank floor in warm brown, with one or two
+low flat benches and two or three flat stacks of books. This is the lower part of a warm
+lending-counter room; keep it mostly empty floor.
+
+THE LOWER HALF (a flooded mirror room): mirror-calm shallow water over the same stone floor,
+reflecting stars, crossed by FLAT pale stone walkways INLAID at exactly the same level as the
+water — water and stone are two flat surfaces side by side, like tiles in one floor. No steps, no
+raised edges, no kerbs with height, no platforms, nothing to climb. A few flat wet slabs and two
+or three flat stacks of books. Mostly open water.
+
+THE BOUNDARY: the two rooms meet along a SOFT HORIZONTAL BAND running straight across the MIDDLE of
+the image, from the left edge to the right edge, parallel to the top and bottom edges. It is a
+gentle transition roughly a quarter of the image tall — warm planks fading into water. Not a hard
+line, not a wall, not a step, not a doorway, not an arch. Nothing is built on the boundary.
+
+THE LEFT EDGE, the only outer edge: running straight down the left border, parallel to it, a THIN
+flat band about 6% of the image of pale stone kerb, seen from directly above as a flat strip with a
+line of small FLAT carved squares — NEVER a railing, NEVER a row of vertical posts or balusters,
+nothing whose height you could see. Beyond it a strip of deep blue starfield (#273559 to #3b4a74)
+with clearly visible stars, and far away a flat dark sea surface, both seen from directly above with
+no horizon line. This band runs the full height of the image, through both halves. The TOP border,
+the RIGHT border and the BOTTOM border carry NOTHING at all: plain continuing floor and plain
+continuing water to the very edge, because neighbouring images continue both rooms there.
+
+LANDMARK: none. This is a passage image, so keep it open. Two or three flat stacks of books, one or
+two low benches and a few flat wet slabs only, each a couple of percent of the image at most.
+
+RULES
+- Top-down only. No horizon line, no perspective, no side view, no ceiling, no walls with height.
+- Check that at least three quarters of the image is open crossable floor and water before
+  finishing.
+- Every material and every line runs straight off the image edge; nothing may stop at the edge,
+  fade out at the edge, or be centred on the edge.
+- No characters, no people, no creatures, no text, no letters, no numbers, no legible writing, no
+  UI, no watermark, no frame, no border, no vignette, no signature.
+- The composition stays generic and continuous: no focal point, no hero object.

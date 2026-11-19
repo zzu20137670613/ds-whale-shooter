@@ -1,0 +1,363 @@
+title: Starry Library · Counter
+titleZh: 'Claude的星空图书馆·柜台'
+
+# 2x2 拆分：本关是原来 11008x6144 地图的一块 5504x3072。
+# 碰撞墙与传送阵由主人 2026-11-11 的标注图生成（红=不可达，绿=传送阵），
+# 生成脚本把红区栅格化后合并成矩形，所以边界是 128px 的整数倍。
+background: assets/image/scenes/starry-library/starry-library-1-counter.png
+imageSize: 5504x3072
+# 主人 2026-11-12：图书馆词元盾光柱用深金色。
+tokenPillarTone: gold
+
+airWalls:
+    # 红区矩形 24 段（覆盖率阈值 0.35，宁可多挡不留缝）+ 4 段边界。
+    - id: border-top
+      kind: short
+      points:
+          - - 48
+            - 48
+          - - 5456
+            - 48
+          - - 5456
+            - 56
+          - - 48
+            - 56
+    - id: border-bottom
+      kind: short
+      points:
+          - - 48
+            - 3016
+          - - 5456
+            - 3016
+          - - 5456
+            - 3024
+          - - 48
+            - 3024
+    - id: border-left
+      kind: short
+      points:
+          - - 48
+            - 48
+          - - 56
+            - 48
+          - - 56
+            - 3024
+          - - 48
+            - 3024
+    - id: border-right
+      kind: short
+      points:
+          - - 5448
+            - 48
+          - - 5456
+            - 48
+          - - 5456
+            - 3024
+          - - 5448
+            - 3024
+    - id: blocked-01
+      kind: short
+      points:
+          - - 0
+            - 0
+          - - 5504
+            - 0
+          - - 5504
+            - 384
+          - - 0
+            - 384
+    - id: blocked-02
+      kind: short
+      points:
+          - - 0
+            - 384
+          - - 1152
+            - 384
+          - - 1152
+            - 512
+          - - 0
+            - 512
+    - id: blocked-03
+      kind: short
+      points:
+          - - 1536
+            - 384
+          - - 1792
+            - 384
+          - - 1792
+            - 512
+          - - 1536
+            - 512
+    - id: blocked-04
+      kind: short
+      points:
+          - - 3456
+            - 384
+          - - 3712
+            - 384
+          - - 3712
+            - 512
+          - - 3456
+            - 512
+    - id: blocked-05
+      kind: short
+      points:
+          - - 3840
+            - 384
+          - - 4224
+            - 384
+          - - 4224
+            - 512
+          - - 3840
+            - 512
+    - id: blocked-06
+      kind: short
+      points:
+          - - 4736
+            - 384
+          - - 5248
+            - 384
+          - - 5248
+            - 512
+          - - 4736
+            - 512
+    - id: blocked-07
+      kind: short
+      points:
+          - - 0
+            - 512
+          - - 768
+            - 512
+          - - 768
+            - 3072
+          - - 0
+            - 3072
+    - id: blocked-08
+      kind: short
+      points:
+          - - 896
+            - 512
+          - - 1024
+            - 512
+          - - 1024
+            - 640
+          - - 896
+            - 640
+    - id: blocked-09
+      kind: short
+      points:
+          - - 4864
+            - 512
+          - - 5248
+            - 512
+          - - 5248
+            - 640
+          - - 4864
+            - 640
+    - id: blocked-10
+      kind: short
+      points:
+          - - 4864
+            - 1920
+          - - 5120
+            - 1920
+          - - 5120
+            - 2432
+          - - 4864
+            - 2432
+    - id: blocked-11
+      kind: short
+      points:
+          - - 4736
+            - 2048
+          - - 4864
+            - 2048
+          - - 4864
+            - 2688
+          - - 4736
+            - 2688
+    - id: blocked-12
+      kind: short
+      points:
+          - - 5120
+            - 2048
+          - - 5248
+            - 2048
+          - - 5248
+            - 2432
+          - - 5120
+            - 2432
+    - id: blocked-13
+      kind: short
+      points:
+          - - 768
+            - 2176
+          - - 896
+            - 2176
+          - - 896
+            - 3072
+          - - 768
+            - 3072
+    - id: blocked-14
+      kind: short
+      points:
+          - - 4480
+            - 2176
+          - - 4736
+            - 2176
+          - - 4736
+            - 2816
+          - - 4480
+            - 2816
+    - id: blocked-15
+      kind: short
+      points:
+          - - 4352
+            - 2304
+          - - 4480
+            - 2304
+          - - 4480
+            - 3072
+          - - 4352
+            - 3072
+    - id: blocked-16
+      kind: short
+      points:
+          - - 4224
+            - 2432
+          - - 4352
+            - 2432
+          - - 4352
+            - 2944
+          - - 4224
+            - 2944
+    - id: blocked-17
+      kind: short
+      points:
+          - - 4864
+            - 2432
+          - - 4992
+            - 2432
+          - - 4992
+            - 2560
+          - - 4864
+            - 2560
+    - id: blocked-18
+      kind: short
+      points:
+          - - 4096
+            - 2560
+          - - 4224
+            - 2560
+          - - 4224
+            - 2688
+          - - 4096
+            - 2688
+    - id: blocked-19
+      kind: short
+      points:
+          - - 4992
+            - 2560
+          - - 5120
+            - 2560
+          - - 5120
+            - 2816
+          - - 4992
+            - 2816
+    - id: blocked-20
+      kind: short
+      points:
+          - - 4864
+            - 2688
+          - - 4992
+            - 2688
+          - - 4992
+            - 2816
+          - - 4864
+            - 2816
+    - id: blocked-21
+      kind: short
+      points:
+          - - 896
+            - 2816
+          - - 1664
+            - 2816
+          - - 1664
+            - 2944
+          - - 896
+            - 2944
+    - id: blocked-22
+      kind: short
+      points:
+          - - 3328
+            - 2816
+          - - 3840
+            - 2816
+          - - 3840
+            - 2944
+          - - 3328
+            - 2944
+    - id: blocked-23
+      kind: short
+      points:
+          - - 4480
+            - 2816
+          - - 4608
+            - 2816
+          - - 4608
+            - 2944
+          - - 4480
+            - 2944
+    - id: blocked-24
+      kind: short
+      points:
+          - - 3712
+            - 2944
+          - - 3840
+            - 2944
+          - - 3840
+            - 3072
+          - - 3712
+            - 3072
+
+characterSpawn:
+    x: 2400
+    'y': 1680
+    facing: right
+
+monsters: []
+spawner:
+    # 单块 5504x3072 内部再四等分成 2x2 象限，玩家第一次踏入某个象限时刷一波。
+    # 波次：入口 1 / 柜台 2 / 露台 2 / 卷轴 3。每次进入都重新刷（不再读存档）。
+    delayMs: 2000
+    waves: 2
+    near: { count: 4, minDistance: 300, maxDistance: 900 }
+    far: { count: 5, edgeInset: 420 }
+    exclude:
+        # 主人 2026-11-12：`又出现了图书馆柜台关右下角大书桌这里刷怪的情况`。
+        # 右下角那张斜放的大书桌（含椅子）在美术上是家具，怪站上去像浮在半空。
+        # 世界坐标从底图上量的：桌子占 x 3900-5504 / y 1850-3072；这里再留一点余量。
+        - { x: 3900, y: 1850, width: 1604, height: 1222 }
+    # 血量倍数：拆分后按关卡重调，等主人给数值。
+    pool:
+        melee: [drone]     # 星穹潜行者
+        ranged: [sniper]   # 星海狙手
+
+dropSpawns: []
+materials: []
+
+teleporters:
+    # 位置来自主人的绿色圆形标注；radius 就是画出来的圆半径。
+    # 传送阵清怪后才会淡入（见 teleporter.ts 的 appearAlpha）。
+    - id: from-entrance
+      x: 5341
+      'y': 1517
+      targetScene: starry-library-1-entrance
+      targetPortalId: to-counter
+      radius: 200
+    - id: to-terrace
+      x: 1810
+      'y': 2907
+      targetScene: starry-library-3-terrace
+      targetPortalId: from-counter
+      radius: 200

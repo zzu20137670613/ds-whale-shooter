@@ -1,0 +1,15 @@
+A single 2048x2048 image: exactly FOUR full-body figures of the same chibi whale-girl maid, left to right in ONE row, on a flat magenta background. This is a walk-cycle sprite sheet, not four views.
+
+THE FOUR FRAMES ARE THE SAME DRAWING. Three-quarter view, body facing the viewer's RIGHT, identical in every frame: same head angle, same eyes and look direction, same hair, same white frilled headdress, same whale tail hanging on her LEFT side, same navy dress and white apron, same arms, same height, same spacing. Copy the same figure four times and redraw ONLY the legs.
+
+The four leg phases, all four different - never copy one frame twice:
+1. contact: front foot flat on the ground, back leg straight behind, both feet down, calves apart.
+2. passing: back foot lifted and tucked beside the standing leg, knee bent, that shoe clearly off the ground.
+3. contact mirrored: the other foot forward, the other leg straight behind.
+4. passing mirrored: the other foot lifted and tucked.
+
+LEGS: two clearly separate legs. The stride is wide - at contact the front shoe is a full shoe-length ahead of the back shoe. Keep at least 8 px of magenta between the calves at the widest point, and at least 20 px somewhere on every frame. Legs never cross, never form an X, never merge into one column. Shoes point in the walking direction.
+
+DO NOT DRAW: four different camera angles; a head turn; her looking at the camera in some frames and not others; the tail swinging to the right side or hiding under the skirt; two identical poses; any shadow, floor line, ground strip, glow or contact shadow under the feet; a 2x3 or 2x2 grid; weapons; words; borders; panel lines.
+
+BACKGROUND: pure flat magenta #FF00FF, no gradient, no vignette, no texture. At least 40 px of flat magenta between neighbouring figures - no hair, arm or tail may touch.

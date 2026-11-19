@@ -1,0 +1,167 @@
+# Real art. The model returned a 6x4 sheet (24 frames) instead of 4x4, and the
+# row heights were uneven, so the grid was measured from the background gaps
+# rather than assumed - see the provenance note on `sprite.script` below. Ready
+# to regenerate? The plate is 底板E_千问_4x4结构底_2048_品红底.png.
+id: qwen
+name: Qwen
+nameZh: "Qwen"
+description: |
+    A technician who fights like she is drawing a diagram: a fan here, a talisman there, and the room arranged the way she wants it before anyone notices she has started.
+descriptionZh: |
+    技法型的角色，打架像在画图：这边一扇、那边一符，等别人反应过来，房间已经被她摆成想要的样子了。
+imageSize: 2048x2048
+prompt: |
+    DS Whale Shooter — Qwen sprite sheet
+
+    Qwen — technique type, fan and talisman crowd control. (Needs a new portrait.)
+
+    Layout and hard negatives follow the house format documented in
+    `deepseek.yaml`: 2048x2048, 4x4 grid, one flat continuous magenta field,
+    no grid lines, no text, no watermark, and the same character in all 16
+    cells — idle (row 1), walk (row 2), run (row 3), dodge (row 4).
+hp: 90
+armor: 0
+spRegenPerSec: 0.5
+sp: 210
+luck: 5
+moveSpeed: 5.0
+spRegenMs: 3400
+gender: female
+body:
+    halfW: 25
+    halfH: 25
+dodge:
+    spCost: 14
+    speed: 15
+    durationMs: 200
+    cooldownMs: 480
+hotbar:
+    - crane-fan
+    - exorcism-talisman
+
+skill:
+    # Divine Guest (请神术) — the next hit costs no HP, then twenty seconds at
+    # 1.5x attack damage. 60s cooldown, set by the owner; Every other skill's clock starts on
+    # use, and so does this one.
+    name: Divine Guest
+    nameZh: "请神术"
+    kind: divine-guest
+    spCost: 180
+    cooldownMs: 60000
+    buffMs: 20000
+    damageMul: 1.5
+    shieldHits: 1
+weaponMax: 4
+upgrades:
+    # 五条梯子，级数 = costs.length；价格是角色之间的区分度，效果是全局规则。
+    armor:
+        # 护甲：固定减伤 -5/级，满级 -25。承伤 = max(0, 伤害 - 护甲)，不会回血。
+        costs: [34, 68, 112, 168, 240]
+        effects:
+            - { stat: armor, mode: add, perLevel: 5 }
+    agility:
+        # 敏捷：移速绝对值 +0.3/级。
+        costs: [46, 92, 150, 222, 316]
+        effects:
+            - { stat: moveSpeed, mode: add, perLevel: 0.3 }
+    hp:
+        # 血量：每级 +20 最大血量上限，满级 +100。
+        costs: [35, 70, 115, 170, 240]
+        effects:
+            - { stat: hp, mode: add, perLevel: 20 }
+    spirit:
+        # 灵力：每级 +10 HP 上限、+10 SP 上限、+0.3 SP/秒。
+        costs: [28, 56, 92, 136, 192]
+        effects:
+            - { stat: hp, mode: add, perLevel: 10 }
+            - { stat: sp, mode: add, perLevel: 10 }
+            - { stat: spRegenPerSec, mode: add, perLevel: 0.3 }
+    luck:
+        # 幸运：+1/级，5 级。幸运 10 = 100% 暴击（双倍伤害）。
+        costs: [68, 136, 220, 340, 527]
+        effects:
+            - { stat: luck, mode: add, perLevel: 1 }
+stats:
+    # Display-only radar values for the tavern select card (1-10).
+    strength: 5
+    agility: 6
+    vitality: 5
+    spirit: 9
+sfx:
+    dodge: dodge
+    hurtFemale: player-hurt-female
+    throttleMs: 1200
+    footstep: footstep
+    footstepThrottleMs: 200
+    lowHpHeartbeat: low-hp-heartbeat
+    lowHpThreshold: 0.3
+    lowHpPulseMs: 900
+sprite:
+    texture: assets/image/characters/qwen/qwen.png
+    grid:
+        rows: 4
+        cols: 4
+    # Visual scale tracks `body` against deepseek's 26x26 → 1.35, so the
+    # sprite and the physics box stay in proportion across the roster.
+    scale: 0.4505
+    offset:
+        left: -2
+        bottom: -7
+    # Rebuilt 2026-11-11. Row 1 (idle) is a separate front-on drawing the owner sent
+    # because the old one hid her feet under the hem - magenta-keyed, despilled and
+    # edge-shrunk. Rows 2-4 come from raws/提取立绘扇子1.png (1536, white background):
+    # dodge = row 4 frames 1-3 (frame 4 carries a watermark, so the
+    # cycle is 1-2-3-2).
+    #
+    # The sheet's own walk row was moved DOWN to the (disabled) run slot. Measured
+    # here: its shoes travel 12.5px in a 384 cell, which is 5.6px on screen at
+    # scale 0.4505 - the owner saw exactly that: 脚一点没动. The row below it
+    # strides 54px (24px on screen), so that one drives walk now. The dress hides
+    # her legs from the ankle down, so anything under ~25px of travel reads as a
+    # slide no matter how many frames it has.
+    # Old note: raws/qwen.png is the 1536x1536 six-by-four sheet
+    # the model returned. It was de-watermarked, keyed at RGB distance 50, shrunk
+    # 2px and hole-filled, then cut by measured column bands and row bands. Four of
+    # each row's six frames were kept - row 4 skips column 5, the watermark cell,
+    # whose de-watermarking clipped her legs - placed bottom-aligned at one uniform
+    # scale, then quantised to 32 colours. Not a split-sheet-pale.py pass.
+    # Kept frames per row were 0,2,3,5 / 0,2,3,5 / 0,2,3,5 / 0,2,3,4; the schema
+    # only carries downsample/colors/pad, so the rest lives here.
+    script:
+        downsample: 3
+        colors: 32
+        pad: 2
+anims:
+    idle:
+        # Static, on purpose. The four idle frames were generated separately, so they are
+        # near-identical poses a few pixels apart - looping them read as a twitch, worst on
+        # the pale characters. Walking, running and dodging still animate.
+        frames:
+            - 0
+            - 0
+        frameRate: 1
+        repeat: -1
+
+    walk:
+        # Four frames of the striding pose. They were drawn as a run, but a 24px
+        # shoe travel is the only thing on this sheet that reads as a step.
+        frames:
+            - 4
+            - 7
+        frameRate: 10
+        repeat: -1
+    # ── run: OFF (2026-11-09) ───────────────────────────────
+    # 奔跑动作五个角色没一个合格，主人决定先不播。美术重画后把下面的
+    # 注释去掉、并恢复 logic.ts 里 driveAnims 的 sprint 分支即可。
+    # run:
+    #        frames:
+    #            - 8
+    #            - 11
+    #        frameRate: 12
+    #        repeat: -1
+    dodge:
+        frames:
+            - 12
+            - 15
+        frameRate: 20
+        repeat: 0
